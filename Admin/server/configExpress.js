@@ -1,8 +1,8 @@
 const express = require('express');
-const cookie = require('cookie-parser')
-const sessions = require('express-session')
 const reactServ = require('./reactServ');
+
 const cookieParser = require('cookie-parser');
+const sessions = require('express-session');
 const app = express();
 
 // config server and Hot Refresh

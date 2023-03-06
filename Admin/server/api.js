@@ -13,7 +13,9 @@ app.all('/login' , (req , res)=>{
   // เช็คการเข้าสู่ระบบจริงๆ
   let username = req.session.username ?? req.body['username'] ?? ''
   let password = req.session.password ?? req.body['password'] ?? ''
-  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [req.body['username'] , req.body['password']] , (err , result)=>{
+  if(username === '' || password === '') res.redirect('logout')
+
+  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
     if (err) throw err;
     console.log(result[0])
     if(result[0]){

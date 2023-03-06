@@ -3,3 +3,4 @@ Admin/.env
 Admin/package-lock.json
 Admin/package.json
 Admin/sql_database.sql
+Admin/.gitignore

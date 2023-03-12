@@ -12,6 +12,7 @@ export default class Main extends Component {
     }
 
     componentDidMount() {
+        console.log(window.location.pathname)
         clientMo.post('/check' , {'session' : sessionStorage.getItem('hasID')}).then((context)=>{
             console.log(context)
             if(context) 

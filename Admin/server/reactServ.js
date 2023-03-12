@@ -1,5 +1,7 @@
 require('dotenv').config().parsed
 
+const router = require('./routerApi')
+
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
@@ -25,6 +27,8 @@ module.exports = reactServ = (app) => {
             publicPath: config.output.publicPath,
         })
     );
+    
+    router(app)
     
     if(isDev) {
         app.use(

@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin'); //pugin HTML
 require('dotenv').config().parsed
 
 // Hot refresh
@@ -14,8 +13,6 @@ const jsPlugins = isDevMode ? ["react-refresh/babel"] : []; //use babel react re
 
 const plugins = isDevMode ? 
                     [ // Hot refresh
-                        new HtmlWebpackPlugin({ template: './public/index.html' }), //module read html
-                        
                         new webpack.HotModuleReplacementPlugin(), //module change hot refresh webpack
                         new ReactRefreshWebpackPlugin({ //module react refresh
                             overlay: {
@@ -23,17 +20,15 @@ const plugins = isDevMode ?
                             },
                         }), 
                     ] : [ //not hot refresh
-                        new HtmlWebpackPlugin({ template: './public/index.html' }),
-                    ];
+                        ];
 // Hot refresh
-
 module.exports = {
     mode: isDevMode ? "development" : "production", //set Mode 
     entry: {
         main,
     }, //set file main run react
     output: {
-        path: path.resolve(__dirname , "public"), //set path template main index.html
+        path: path.resolve(__dirname , "/public"), //set path template main index.html
         filename: "main.js", //set file main where build
         publicPath: '/', //set Path Project
     },

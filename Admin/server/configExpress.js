@@ -1,3 +1,4 @@
+const helmat = require('helmet')
 const express = require('express');
 const reactServ = require('./reactServ');
 
@@ -8,12 +9,12 @@ const app = express();
 // config server and Hot Refresh
 reactServ(app)
 
-const oneDay = 1000 * 60 * 60 * 24;
 app.use(sessions({
     secret : process.env.KEY_SESSION,
     saveUninitialized: true,
     cookie: {
-        maxAge: oneDay
+        maxAge: process.env.TIME_COKKIE,
+        secure: true
     },
     resave : false
 }))
@@ -23,6 +24,8 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(express.static('src/assets/style'))
 
+// secure server
+app.use(helmat())
 
 
 module.exports = app

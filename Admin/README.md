@@ -8,7 +8,9 @@
 
  - Server API 
    ```     
-   npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session
+   npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session 
+
+   npm i helmet
    ```
 
    - Ref session

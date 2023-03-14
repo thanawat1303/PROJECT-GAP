@@ -6,22 +6,24 @@ const db = require('./dbConfig')
 
 // req
 app.post('/check' , (req , res)=>{
-  (req.body['session'] == null) ? res.redirect('/logout') : res.redirect('login');
+  (req.body['session'] == null) ? res.redirect('logout') : res.redirect('login');
 })
 
 app.all('/login' , (req , res)=>{
   // เช็คการเข้าสู่ระบบจริงๆ
   let username = req.session.username ?? req.body['username'] ?? ''
   let password = req.session.password ?? req.body['password'] ?? ''
-  if(username === '' || password === '') res.redirect('logout')
+
+  if(username === '' || password === '') {
+    res.redirect('logout')
+    return 0
+  }
 
   db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
     if (err) throw err;
-    console.log(result[0])
     if(result[0]){
-      console.log('LOGIN')
-      req.session.username = req.body['username']
-      req.session.password = req.body['password']
+      req.session.username = username
+      req.session.password = password
       res.send('1')
     } else {
       res.redirect('logout')
@@ -31,7 +33,7 @@ app.all('/login' , (req , res)=>{
 
 app.get('/logout' , (req , res) => {
   console.log('LOGOUT')
-  res.clearCookie('chatgptU').send('')
+  res.clearCookie('connect.sid').send('')
 })
 
 module.exports = app

@@ -6,6 +6,13 @@ const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 const app = express();
 
+// secure server
+app.use(helmat(
+    {
+    contentSecurityPolicy: process.env.NODE_ENV == 'development' ? false : true,
+    }
+))
+
 // config server and Hot Refresh
 reactServ(app)
 
@@ -13,8 +20,8 @@ app.use(sessions({
     secret : process.env.KEY_SESSION,
     saveUninitialized: true,
     cookie: {
-        maxAge: process.env.TIME_COKKIE,
-        secure: true
+        maxAge: parseInt(process.env.TIME_COKKIE),
+        secure: process.env.NODE_ENV == 'development' ? false : true
     },
     resave : false
 }))
@@ -23,9 +30,5 @@ app.use(sessions({
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.static('src/assets/style'))
-
-// secure server
-app.use(helmat())
-
 
 module.exports = app

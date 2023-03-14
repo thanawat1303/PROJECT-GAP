@@ -9,12 +9,11 @@ class moduleClient {
                 body: JSON.stringify(data)
             }).then((e)=>e.text().then((context)=>context))
         },
-        this.get = async (url = "" , data={}) => {
+        this.get = async (url = "") => {
             return fetch(url, {
                 headers: {
                     'content-type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                }
             }).then((e)=>e.text().then((context)=>context))
         }
         this.addAction = (el = '' , action , deley) => {

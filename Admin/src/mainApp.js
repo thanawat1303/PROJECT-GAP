@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import {clientMo}  from "./assets/js/moduleClient";
 import Login from "./Login";
+import Admin from "./Admin";
 
 
-export default class Main extends Component {
+export default class MainApp extends Component {
     constructor(){
         super();
         this.state={
@@ -17,7 +18,7 @@ export default class Main extends Component {
             console.log(context)
             if(context) 
                 this.setState({
-                    body : <div>ADMIN</div>
+                    body : <Admin main={this}/>
                 })
             
             else 

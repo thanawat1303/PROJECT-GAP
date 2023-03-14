@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import {clientMo}  from "./assets/js/moduleClient";
 import './assets/style/Login.scss'
 
+import Admin from "./Admin";
+
 export default class Login extends Component {
 // this.props.main == Main app
     constructor(){
@@ -22,9 +24,9 @@ export default class Login extends Component {
                 clientMo.post('/login' , formData).then((context)=>{
                     if(context) {
                         this.props.main.setState({
-                            body : <div>ADMIN</div>
+                            body : <Admin main={this.props.main}/>
                         })
-                        sessionStorage.setItem('session' , '1')
+                        sessionStorage.setItem('hasID' , '1')
                     }
                     clientMo.addAction('#loading' , 'hide' , 1500)
                 })

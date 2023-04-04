@@ -1,4 +1,8 @@
 # React and Express
+- Start server
+  ```
+  npm run server
+  ```
 ## Libary by NodeJS
 ### main
  - init 

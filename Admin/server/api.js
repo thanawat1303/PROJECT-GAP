@@ -11,13 +11,15 @@ app.post('/check' , (req , res)=>{
 
 app.all('/login' , (req , res)=>{
   // เช็คการเข้าสู่ระบบจริงๆ
-  let username = req.session.username ?? req.body['username'] ?? ''
-  let password = req.session.password ?? req.body['password'] ?? ''
+  let username = req.session.username ?? req.body['username'] ?? '';
+  let password = req.session.password ?? req.body['password'] ?? '';
 
   if(username === '' || password === '') {
     res.redirect('logout')
     return 0
   }
+
+  db.resume()
 
   db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
     if (err) throw err;
@@ -28,6 +30,7 @@ app.all('/login' , (req , res)=>{
     } else {
       res.redirect('logout')
     }
+    // db.pause()
   })
 })
 

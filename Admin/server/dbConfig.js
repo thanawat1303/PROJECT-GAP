@@ -11,6 +11,7 @@ const con = db.createConnection({
 con.connect((err)=>{
     if (err) throw err;
     console.log("Connected database")
+    con.pause()
 })
 
 module.exports = con

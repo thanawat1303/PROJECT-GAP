@@ -1,3 +1,8 @@
+@font-face {
+    font-family: main-font;
+    src: url('DeliciousHandrawn-Regular.ttf');
+}
+
 * {
     box-sizing: border-box;
 }
@@ -25,4 +30,8 @@ body , html {
 .hide {
     opacity: 0 !important;
     visibility: hidden !important;
+}
+
+#root {
+    height: 100%;
 }

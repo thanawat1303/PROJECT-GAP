@@ -37,17 +37,42 @@ export default class Login extends Component {
         e.preventDefault()
     }
 
+    changeValUs = (e) => {
+        console.log(e.target.value)
+        if(e.target.value) {
+            document.querySelector('.content-user .label-login').classList.add('moveOn')
+        } else {
+            document.querySelector('.content-user .label-login').classList.remove('moveOn')
+        }
+    }
+
+    changeValPw = (e) => {
+        if(e.target.value !== "") {
+            e.target.setAttribute('style' , 'font-family: unset;padding: 3.5px 10px;')
+            document.querySelector('.content-pw').setAttribute('style' , 'margin: 22px 0px 5px 0px')
+            document.querySelector('.content-pw .label-login').classList.add('moveOn')
+        } else {
+            e.target.removeAttribute('style')
+            document.querySelector('.content-pw').removeAttribute('style')
+            document.querySelector('.content-pw .label-login').classList.remove('moveOn')
+        }
+    }
+
     render() {
         return (
-            <form onSubmit={this.submitFrom}>
-                <label>
-                    <input className="inputForm" type="text" name="username" placeholder="Username"/>
-                </label>
-                <label>
-                    <input className="inputForm" type="password" name="password" placeholder="Password"/>
-                </label>
-                <button type="submit">LOGIN</button>
-            </form>
+            <div className="box-login">
+                <form onSubmit={this.submitFrom} className="content-login">
+                    <label className="content-user">
+                        <span className="label-login">Username</span>
+                        <input onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="Username"/>
+                    </label>
+                    <label className="content-pw">
+                        <span className="label-login">Password</span>
+                        <input onChange={this.changeValPw} className="inputForm" type="password" name="password" placeholder="Password"/>
+                    </label>
+                    <button type="submit">LOGIN</button>
+                </form>
+            </div>
         )
     }
 }

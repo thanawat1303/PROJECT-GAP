@@ -28,6 +28,7 @@ module.exports = reactServ = (app) => {
         })
     );
     
+    // router api url
     router(app)
     
     if(isDev) {

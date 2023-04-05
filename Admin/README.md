@@ -75,6 +75,9 @@
     }
     ```
 
+### Responsive
+    - https://www.hobo-web.co.uk/best-screen-size/
+
 ## Referrent 
 - https://webpack.js.org/guides/development/
 - https://www.youtube.com/watch?v=mB1TKceLzh0

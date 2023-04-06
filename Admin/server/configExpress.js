@@ -32,5 +32,6 @@ app.use(cookieParser())
 app.use(express.static('src/assets/style'))
 app.use(express.static('src/assets/font'))
 app.use(express.static('src/assets/img'))
+app.use(express.static('src/assets/icon'))
 
 module.exports = app

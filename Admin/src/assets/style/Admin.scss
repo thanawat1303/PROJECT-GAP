@@ -1,0 +1,65 @@
+.admin {
+    .tab-bar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 65px;
+        padding: 0px 16px;
+
+        .Logo{
+            display: flex;
+            font-size: 18pt;
+            img{
+                margin-left: 5px;
+                margin-bottom: 10px;
+                max-width: 15px;
+            }
+        }
+
+        .bt-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .alarm {
+                background-color: rgba(255, 255, 255, 0);
+                transition: 0.2s;
+                border-radius: 50%;
+                margin: 0px 15px;
+                padding: 8px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                img {
+                    width: 24px;
+                }
+            }
+
+            .alarm:hover {
+                background-color: rgba(207, 207, 207, 0.589);
+            }
+
+            .profile {
+                background-color: rgb(20, 186, 20);
+                border-radius: 50%;
+                margin: 0px 15px;
+                transition: 0.2s;
+                padding: 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                img {
+                    width: 35px;
+                }
+            }
+
+            .profile:hover {
+                background-color: green;
+            }
+        }
+    }
+
+    .container-body-admin {
+        
+    }
+}

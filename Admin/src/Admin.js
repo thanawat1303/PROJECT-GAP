@@ -9,7 +9,8 @@ export default class Admin extends Component {
         super();
         this.state={
             nav: <NavAdmin bodyAdmin={this}/> ,
-            body: <div></div>
+            body: <div></div>,
+            timeOld : 0
         }
     }
 
@@ -25,13 +26,41 @@ export default class Admin extends Component {
         } , 1500)
     }
 
+    actionMenu = () => {
+        let list = document.querySelectorAll('.nav-menu .list-menu-nav')
+        let time = new Date()
+
+        if (time.getTime() - this.state.timeOld > 500) {
+            this.state.timeOld = time.getTime()
+            list.forEach((el , index) => {
+            
+                if(el.getAttribute('mini-nav') == '') {
+                    el.removeAttribute('mini-nav')
+                    setTimeout(()=>{el.removeAttribute('mini-nav-action')}, 300)
+                }
+                else {
+                    el.setAttribute('mini-nav' , '')
+                    setTimeout(()=>{el.setAttribute('mini-nav-action' , '')}, 300)
+                }
+                
+            })
+        }
+    }
+
     render() {
         return (
             <div className="admin">
                 <section className="tab-bar">
-                    <span className="Logo">
-                        หมอพืช
-                        <img  src="/logo.png"></img>
+                    <span className="pg-action">
+                        <span className="nav-menu">
+                            <span onClick={this.actionMenu} className="bg-icon">
+                                <img src="menu-1-svgrepo-com-green.svg"></img>
+                            </span>
+                        </span>
+                        <span className="Logo">
+                            หมอพืช
+                            <img  src="/logo.png"></img>
+                        </span>
                     </span>
                     <span className="bt-action">
                         <a className="alarm">

@@ -6,7 +6,7 @@ const db = require('./dbConfig')
 
 // req
 app.post('/check' , (req , res)=>{
-  (req.body['session'] == null) ? res.redirect('logout') : res.redirect('login');
+  res.redirect('login');
 })
 
 app.all('/login' , (req , res)=>{

@@ -20,7 +20,7 @@ app.use(sessions({
     secret : process.env.KEY_SESSION,
     saveUninitialized: true,
     cookie: {
-        maxAge: parseInt(process.env.TIME_COKKIE),
+        // maxAge: parseInt(process.env.TIME_COKKIE),
         secure: process.env.NODE_ENV == 'development' ? false : true
     },
     resave : false

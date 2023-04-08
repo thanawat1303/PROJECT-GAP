@@ -27,7 +27,7 @@ export default class Login extends Component {
                         this.props.main.setState({
                             body : <Admin main={this.props.main}/>
                         })
-                        sessionStorage.setItem('hasID' , '1')
+                        
                     } else {
                         document.querySelector('.error-login').classList.remove('hide')
                         for(let x = 0; x < e.target.length-1; x++) {

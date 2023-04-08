@@ -1,7 +1,25 @@
 $sizeIcon : 24px;
 $paddingNav : 0px 17px 0px 2px;
 $paddingNavPick : 0px 2px 0px 2px;
-$bg-hover: rgba(211, 211, 211, 0.449);
+$bg-hover: rgba(220, 220, 220, 0.449);
+$widthMiniNav : 60px;
+$widthNav : 165px;
+
+.admin * :not(a) {
+    -webkit-user-drag: none;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
 
 .admin {
     .tab-bar{
@@ -100,72 +118,103 @@ $bg-hover: rgba(211, 211, 211, 0.449);
             margin: 0px 0px 0px 17px;
             .list-menu-nav {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
-                border-radius: 16px 0px 0px 16px;
-                padding-right: 15px;
-                z-index: 1;
                 overflow: hidden;
+                border-radius: 16px 0px 0px 16px;
 
-                transition: background-color 0.2s , width 0.2s 0.2s;
-                width: 170px;
+                transition:background-color 0.2s , width 0.2s 0.2s;
+                width: $widthNav;
                 height: 45.2px;
-                
-                bot-gap-nav-icon {
+
+                bot-bt-nav {
                     display: flex;
                     align-items: center;
-                    justify-content: center;
-                    padding: $paddingNav;
-                    img {
-                        width: $sizeIcon;
-                        height: $sizeIcon;
-                        margin: 0px 8px;
-                    }
-                }
+                    border-radius: 16px 0px 0px 16px;
+                    padding-right: 10px;
 
-                bot-gap-string {
-                    text-align: start;
-                    font-size: 0.9vw;
-                    margin: 5px 0px;
-                    transition: 0.2s;
+                    transition: background-color 0.2s;
+                    width: $widthNav;
+                    height: 45.2px;
+                    
+                    bot-gap-nav-icon {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: $paddingNav;
+
+                        img {
+                            width: $sizeIcon;
+                            height: $sizeIcon;
+                            margin: 0px 8px;
+                        }
+                    }
+
+                    bot-gap-string {
+                        text-align: start;
+                        font-size: 0.9vw;
+                        margin: 5px 0px;
+                        transition: 0.2s;
+                    }
                 }
             }
 
-            .list-menu-nav:hover {
-                background-color: $bg-hover;
+            .list-menu-nav{
+                bot-bt-nav:hover {
+                    background-color: $bg-hover;
+                }
             }
 
             a[mini-nav] {
-                width: 43px;
+                width: $widthMiniNav;
 
-                bot-gap-string {
-                    opacity: 0;
-                    visibility: hidden;
+                bot-bt-nav{
+                    bot-gap-string {
+                        opacity: 0;
+                        visibility: hidden;
+                    }
                 }
             }
 
             a[mini-nav-action] {
-                transition: background-color 0.2s , width 0.2s 0s !important;
-                bot-gap-string {
-                    transition: 0.2s 0.2s;
+                transition: width 0.2s 0s !important;
+                bot-bt-nav {
+                    transition: background-color 0.2s;
+                    bot-gap-string {
+                        transition: 0.2s 0.2s;
+                    }
                 }
             }
+        }
+
+        bot-main {
+            background-color: $bg-hover;
+            display: flex;
+            width: 100%;
+            height: calc(100vh - 65px);
+            overflow-y: scroll;
+            overflow-x: hidden;
         }
     }
 }
 
 .list-menu-nav {
         
-    bot-gap-nav-icon {
-        cursor: pointer;
-        img {
+    bot-bt-nav {
+        bot-gap-nav-icon {
+            cursor: pointer;
+            img {
+                cursor: pointer;
+            }
+        }
+    
+        bot-gap-string {
             cursor: pointer;
         }
     }
+}
 
-    bot-gap-string {
-        cursor: pointer;
-    }
+a[nav-select] {
+    background-color: $bg-hover;
 }
 
 @media only screen and (min-width: 1280px) and  (min-height: 720px) and (max-width: 1920px) and (max-height: 1080px) {

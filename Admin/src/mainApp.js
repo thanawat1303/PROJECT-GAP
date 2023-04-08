@@ -14,7 +14,7 @@ export default class MainApp extends Component {
 
     componentDidMount() {
         console.log(window.location.pathname)
-        clientMo.post('/check' , {'session' : sessionStorage.getItem('hasID')}).then((context)=>{
+        clientMo.post('/check').then((context)=>{
             console.log(context)
             if(context) 
                 this.setState({

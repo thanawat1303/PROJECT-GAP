@@ -57,10 +57,10 @@ export default class Admin extends Component {
                                 <img src="menu-1-svgrepo-com-green.svg"></img>
                             </span>
                         </span>
-                        <span className="Logo">
+                        <a className="Logo" href="/" title="หมอพืช">
                             หมอพืช
                             <img  src="/logo.png"></img>
-                        </span>
+                        </a>
                     </span>
                     <span className="bt-action">
                         <a className="alarm">
@@ -74,7 +74,9 @@ export default class Admin extends Component {
                 </section>
                 <section className="container-body-admin">
                     {this.state.nav}
-                    {this.state.body}
+                    <bot-main>
+                        {this.state.body}
+                    </bot-main>
                 </section>
             </div>
         )

@@ -12,6 +12,7 @@ body , html {
     padding: 0;
     height: 100%;
     width: 100%;
+    touch-action:manipulation;
 }
 
 #loading {
@@ -25,6 +26,7 @@ body , html {
     opacity: 1;
     visibility: visible;
     transition: 1s opacity , 1s visibility;
+    z-index: 999;
 }
 
 .hide {

@@ -14,7 +14,23 @@ export default class Admin extends Component {
         }
     }
 
-    Logout = () => {
+    // componentDidMount(){
+    //     window.addEventListener('click' , this.detectClick)
+    //     window.addEventListener('contextmenu' , this.detectClick)
+    // }
+
+    // componentWillUnmount() {
+    //     window.removeEventListener('click' , this.detectClick)
+    //     window.removeEventListener('contextmenu' , this.detectClick)
+    // }
+
+    // detectClick = (e) => {
+
+    //     // check hide profile option 
+    // }
+
+    Logout = (e) => {
+        e.target.parentElement.classList.toggle('hide')
         clientMo.rmAction('#loading' , 'hide' , 0)
         setTimeout(()=>{
             clientMo.get('logout').then(()=>{
@@ -47,9 +63,29 @@ export default class Admin extends Component {
         }
     }
 
+    showOption = () => {
+        document.getElementById('profile-otion').classList.toggle('display')
+        document.querySelector('.profile-icon').classList.toggle('select')
+    }
+
+    hidePopUp = (e) => {
+        if(document.querySelector('#profile-otion.display')) {
+            let hide = true 
+            if(e.target == document.querySelector('.profile-icon #icon')) hide = false
+            if(e.target == document.querySelector('.profile-icon')) hide = false
+            if(e.target == document.querySelector('#profile-otion')) hide = false            
+            if(e.target == document.querySelector('#profile-otion #icon')) hide = false            
+
+            if(hide) {
+                document.querySelector('#profile-otion').classList.remove('display')
+                document.querySelector('.profile-icon').classList.remove('select')
+            }
+        }  
+    }
+
     render() {
         return (
-            <div className="admin">
+            <div className="admin" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
                 <section className="tab-bar">
                     <span className="pg-action">
                         <span className="nav-menu">
@@ -66,16 +102,25 @@ export default class Admin extends Component {
                         <a className="alarm">
                             <img src="alarm-svgrepo-com.svg"></img>
                         </a>
-                        <a className="profile">
-                            <img src="profile-svgrepo-com-white.svg"></img>
-                        </a>
+                        <section className="profile">
+                            <a onClick={this.showOption} className="profile-icon">
+                                <img id="icon" src="profile-svgrepo-com-white.svg"></img>
+                            </a>
+                            <div id="profile-otion">
+                                <a onClick={this.Logout} id="logout">
+                                    LOGOUT
+                                </a>
+                            </div>
+                        </section>
                         {/* <button onClick={this.Logout}>LOGOUT</button> */}
                     </span>
                 </section>
                 <section className="container-body-admin">
                     {this.state.nav}
                     <bot-main>
-                        {this.state.body}
+                        <bot-content>
+                            {this.state.body}
+                        </bot-content>
                     </bot-main>
                 </section>
             </div>

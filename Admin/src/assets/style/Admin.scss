@@ -4,6 +4,8 @@ $paddingNavPick : 0px 2px 0px 2px;
 $bg-hover: rgba(220, 220, 220, 0.449);
 $widthMiniNav : 60px;
 $widthNav : 165px;
+$outLineSelect : 4px;
+$outLineSelectColor : rgba(190, 190, 190, 0.384);
 
 .admin * :not(a) {
     -webkit-user-drag: none;
@@ -19,6 +21,10 @@ $widthNav : 165px;
 a {
     text-decoration: none;
     color: black;
+}
+
+a {
+    cursor: pointer;
 }
 
 .admin {
@@ -91,8 +97,8 @@ a {
                 background-color: $bg-hover;
             }
 
-            .profile {
-                background-color: rgb(20, 186, 20);
+            .profile-icon {
+                background-color: rgb(34, 191, 34);
                 border-radius: 50%;
                 margin: 0px 15px;
                 transition: 0.2s;
@@ -100,13 +106,50 @@ a {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+
+                outline: $outLineSelect solid rgba(255, 255, 255, 0);
                 img {
                     width: 35px;
+                    border-radius: 50%;
                 }
             }
 
-            .profile:hover {
-                background-color: green;
+            .profile-icon:hover {
+                outline: $outLineSelect solid $outLineSelectColor;
+                backdrop-filter: blur(10px);
+                // outline: 3px solid red;
+            }
+
+            .select {
+                outline: $outLineSelect solid $outLineSelectColor;
+                backdrop-filter: blur(10px);
+            }
+
+            #profile-otion{
+                position: fixed;
+                background-color: white;
+                transform: translate(-8px,10px);
+                border-radius: 10px;
+                box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.362);
+                font-size: 14px;
+                font-family: main-font;
+                padding: 5px 0px;
+                z-index: 5;
+
+                overflow: hidden;
+
+                transition: opacity 0.2s , visibility 0.2s;
+                opacity: 0;
+                visibility: hidden;
+
+                a#logout {
+                    padding:5px 8px;
+                    transition: 0.2s;
+                }
+
+                a:hover{
+                    background-color: $bg-hover;
+                }
             }
         }
     }
@@ -116,6 +159,7 @@ a {
         
         .nav-menu {
             margin: 0px 0px 0px 17px;
+            padding-top: 10px;
             .list-menu-nav {
                 display: flex;
                 align-items: center;
@@ -191,8 +235,41 @@ a {
             display: flex;
             width: 100%;
             height: calc(100vh - 65px);
-            overflow-y: scroll;
-            overflow-x: hidden;
+            padding: 10px;
+            border-radius: 13px;
+
+            bot-content {
+                background-color: white;
+                border: 2px solid green;
+                box-shadow:inset 0px 0px 5px greenyellow;
+                width: 100%;
+                height: 100%;
+                border-radius: 13px 6px 6px 13px;
+                padding: 8px;
+                padding-right: 0px;
+
+                overflow-y: scroll;
+                overflow-x: hidden;
+
+                word-break: break-all;
+
+            }
+
+            bot-content::-webkit-scrollbar {
+                width: 10px;
+                height: auto;
+                background-color: rgba(255, 255, 255, 0);
+                border-radius: 20px;
+            }
+    
+            bot-content::-webkit-scrollbar-thumb {
+                background: green;
+                border-radius: 20px;
+            }
+
+            bot-content::-webkit-scrollbar-thumb:hover {
+                background-color: rgb(0, 191, 0);
+            }
         }
     }
 }
@@ -215,6 +292,11 @@ a {
 
 a[nav-select] {
     background-color: $bg-hover;
+}
+
+.display {
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 @media only screen and (min-width: 1280px) and  (min-height: 720px) and (max-width: 1920px) and (max-height: 1080px) {

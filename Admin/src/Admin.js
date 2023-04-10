@@ -1,7 +1,9 @@
 import React , {Component} from "react";
 import { clientMo } from "./assets/js/moduleClient";
 import Login from "./Login";
+
 import NavAdmin from "./navAdmin";
+
 import './assets/style/Admin.scss'
 
 export default class Admin extends Component {
@@ -14,28 +16,13 @@ export default class Admin extends Component {
         }
     }
 
-    // componentDidMount(){
-    //     window.addEventListener('click' , this.detectClick)
-    //     window.addEventListener('contextmenu' , this.detectClick)
-    // }
-
-    // componentWillUnmount() {
-    //     window.removeEventListener('click' , this.detectClick)
-    //     window.removeEventListener('contextmenu' , this.detectClick)
-    // }
-
-    // detectClick = (e) => {
-
-    //     // check hide profile option 
-    // }
-
     Logout = (e) => {
         e.target.parentElement.classList.toggle('hide')
         clientMo.rmAction('#loading' , 'hide' , 0)
         setTimeout(()=>{
             clientMo.get('logout').then(()=>{
                 this.props.main.setState({
-                    body : <Login main={this.props.main}/>
+                    body : <Login main={this.props.main} state={true}/>
                 })
                 clientMo.addAction('#loading' , 'hide' , 1500)
             })
@@ -80,6 +67,7 @@ export default class Admin extends Component {
                 document.querySelector('#profile-otion').classList.remove('display')
                 document.querySelector('.profile-icon').classList.remove('select')
             }
+
         }  
     }
 

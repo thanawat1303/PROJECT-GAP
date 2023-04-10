@@ -13,7 +13,7 @@ export default class MainApp extends Component {
     }
 
     componentDidMount() {
-        console.log(window.location.pathname)
+
         clientMo.post('/check').then((context)=>{
             console.log(context)
             if(context) 
@@ -28,6 +28,7 @@ export default class MainApp extends Component {
             
             clientMo.addAction('#loading' , 'hide' , 1000)
         })
+        
     }
 
     render() {

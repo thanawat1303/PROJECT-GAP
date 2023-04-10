@@ -13,6 +13,13 @@ export default class Login extends Component {
         }
     }
 
+    componentDidMount() {
+        if(this.props.state) {
+            window.history.pushState({} , null , '/')
+        }
+        // else window.history.replaceState({} , null , '/')
+    }
+
     submitFrom = (e) => {
         if(e.target[0].value != '' && e.target[1].value != ''){
             clientMo.rmAction('#loading' , 'hide' , 0)

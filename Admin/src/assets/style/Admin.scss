@@ -7,6 +7,44 @@ $widthNav : 165px;
 $outLineSelect : 4px;
 $outLineSelectColor : rgba(190, 190, 190, 0.384);
 
+$widthNavModile : 140px;
+
+@media only screen and (max-width: 414px) and (min-width: 360px) and (min-height: 640px) {
+    .admin {
+        .container-body-admin {
+            .nav-menu {
+                .list-menu-nav {
+                    width: $widthNavModile;
+                    height: 45.2px;
+
+                    bot-bt-nav {
+                        width: $widthNavModile;
+                        height: 45.2px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (min-width: 414px) and (max-width: 1920px) and (max-height: 1080px) {
+    .admin {
+        .container-body-admin {
+            .nav-menu {
+                .list-menu-nav {
+                    width: $widthNav;
+                    height: 45.2px;
+
+                    bot-bt-nav {
+                        width: $widthNav;
+                        height: 45.2px;
+                    }
+                }
+            }
+        }
+    }
+}
+
 .admin * :not(a) {
     -webkit-user-drag: none;
 
@@ -167,7 +205,7 @@ a {
                 border-radius: 16px 0px 0px 16px;
 
                 transition:background-color 0.2s , width 0.2s 0.2s;
-                width: $widthNav;
+                
                 height: 45.2px;
 
                 bot-bt-nav {
@@ -177,7 +215,7 @@ a {
                     padding-right: 10px;
 
                     transition: background-color 0.2s;
-                    width: $widthNav;
+                    
                     height: 45.2px;
                     
                     bot-gap-nav-icon {
@@ -297,8 +335,4 @@ a[nav-select] {
 .display {
     opacity: 1 !important;
     visibility: visible !important;
-}
-
-@media only screen and (min-width: 1280px) and  (min-height: 720px) and (max-width: 1920px) and (max-height: 1080px) {
-    
 }

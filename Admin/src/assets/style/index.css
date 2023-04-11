@@ -3,6 +3,16 @@
     src: url('IBM_Plex_Mono/IBMPlexMono-Regular.ttf');
 }
 
+@font-face {
+    font-family: TH-font;
+    src: url('THSarabunNew.ttf');
+}
+
+@font-face {
+    font-family: Sans-font;
+    src: url('NotoSansThai-Light.ttf');
+}
+
 * {
     box-sizing: border-box;
 }

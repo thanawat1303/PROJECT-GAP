@@ -76,7 +76,10 @@ export default class NavAdmin extends Component {
                         <bot-gap-nav-icon>
                             <img src="people-svgrepo-com.svg"></img>
                         </bot-gap-nav-icon>
-                        <bot-gap-string>บัญชี<br></br>เจ้าหน้าที่ส่งเสริม</bot-gap-string>
+                        <bot-gap-string>
+                            <bot-string>บัญชี</bot-string>
+                            <bot-string>เจ้าหน้าที่ส่งเสริม</bot-string>    
+                        </bot-gap-string>
                     </bot-bt-nav>
                 </a>
                 <a onClick={this.selectMenu} className="list-menu-nav" id="pAccount" title="เพิ่มบัญชี" href="plus">
@@ -84,7 +87,10 @@ export default class NavAdmin extends Component {
                         <bot-gap-nav-icon>
                             <img src="plus-user-svgrepo-com.svg"></img>
                         </bot-gap-nav-icon>
-                        <bot-gap-string>เพิ่มบัญชี<br></br>เจ้าหน้าที่ส่งเสริม</bot-gap-string>
+                        <bot-gap-string>
+                            <bot-string>เพิ่มบัญชี</bot-string>
+                            <bot-string>เจ้าหน้าที่ส่งเสริม</bot-string>    
+                        </bot-gap-string>
                     </bot-bt-nav>
                 </a>
             </nav>

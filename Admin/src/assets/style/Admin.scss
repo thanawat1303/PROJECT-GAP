@@ -16,8 +16,8 @@ $outLineSelectColor : rgba(190, 190, 190, 0.384);
 $widthNav : 165px;
 $widthNavModile : 124px;
 
-$heightNav: 45.2px;
-$heightNavMobile: 40px;
+$heightNav: 58px;
+$heightNavMobile: 47px;
 
 .admin * :not(a) {
     -webkit-user-drag: none;
@@ -210,10 +210,22 @@ a {
                     }
 
                     bot-gap-string {
-                        text-align: start;
-                        font-size: 0.9vw;
-                        margin: 5px 0px;
                         transition: 0.2s;
+                        display: flex;
+                        justify-content: center;
+                        align-items: start;
+                        flex-direction: column;
+
+                        bot-string {
+                            text-align: start;
+                            font-family: Sans-font;
+                            font-size: 14px;
+                            display: flex;
+
+                            font-weight: 900;
+
+                            height: 20px;
+                        }
                     }
                 }
             }
@@ -314,7 +326,7 @@ a[nav-select] {
     visibility: visible !important;
 }
 
-@media only screen and (max-width: 500px) and (min-width: 360px) { //  and (min-height: 640px)
+@media only screen and (max-width: 500px) { //  and (min-height: 640px)
     .admin * {
         cursor: default;
     }
@@ -400,6 +412,13 @@ a[nav-select] {
                             }
                         }
 
+                        bot-gap-string {
+                            bot-string {
+                                font-size: 2.1vw;
+                                height: 15px;
+                            }
+                        }
+
                     }
                 }
 
@@ -415,11 +434,57 @@ a[nav-select] {
             }
 
             bot-main {
-                width: 100%;
                 height: calc(100vh - 55px);
             }
         }
     }
 }
 
-// เหลือย่อไอคอน โปรไฟล์กับแจ้งเตือน
+@media only screen and (max-width: 450px) {
+    .admin {
+        .container-body-admin {
+            .nav-menu {
+                .list-menu-nav {
+                    bot-gap-string {
+                        bot-string {
+                            // font-size: 3.8vw !important;
+                            font-size: 2.6vw !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 395px) {
+    .admin {
+        .container-body-admin {
+            .nav-menu {
+                .list-menu-nav {
+                    bot-gap-string {
+                        bot-string {
+                            font-size: 2.7vw !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 376px) {
+    .admin {
+        .container-body-admin {
+            .nav-menu {
+                .list-menu-nav {
+                    bot-gap-string {
+                        bot-string {
+                            font-size: 2.9vw !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -71,6 +71,8 @@ export default class Admin extends Component {
                 }
                 
             })
+
+            console.log(document.querySelector('.nav-menu .list-menu-nav').clientWidth)
         }
     }
 

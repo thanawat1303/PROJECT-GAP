@@ -16,6 +16,30 @@ export default class Admin extends Component {
         }
     }
 
+    componentDidMount() {
+        window.addEventListener('resize' , this.checkSize)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize' , this.checkSize)
+    }
+
+    checkSize = (e) => {
+        // e.target.innerHeight 
+        let list = document.querySelectorAll('.nav-menu .list-menu-nav')
+        if(e.target.innerWidth <= 500) {
+            list.forEach((el) => {
+                el.setAttribute('mini-nav' , '')
+                el.setAttribute('mini-nav-action' , '')
+            })
+        } else {
+            list.forEach((el) => {
+                el.removeAttribute('mini-nav')
+                el.removeAttribute('mini-nav-action')
+            })
+        }
+    }
+
     Logout = (e) => {
         e.target.parentElement.classList.toggle('hide')
         clientMo.rmAction('#loading' , 'hide' , 0)
@@ -29,7 +53,7 @@ export default class Admin extends Component {
         } , 1500)
     }
 
-    actionMenu = () => {
+    Menu = () => {
         let list = document.querySelectorAll('.nav-menu .list-menu-nav')
         let time = new Date()
 
@@ -77,7 +101,7 @@ export default class Admin extends Component {
                 <section className="tab-bar">
                     <span className="pg-action">
                         <span className="nav-menu">
-                            <span onClick={this.actionMenu} className="bg-icon">
+                            <span onClick={this.Menu} className="bg-icon">
                                 <img src="menu-1-svgrepo-com-green.svg"></img>
                             </span>
                         </span>

@@ -47,3 +47,13 @@ body , html {
 #root {
     height: 100%;
 }
+
+.bt-submit-form {
+    outline: 0px;
+
+    background-color: green;
+    border: 1.5px solid greenyellow;
+    color: white;
+
+    font-weight: 900;
+}

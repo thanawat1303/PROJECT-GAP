@@ -91,7 +91,7 @@ export default class Login extends Component {
                         <span className="label-login">Password</span>
                         <input onChange={this.changeValPw} className="inputForm" type="password" name="password" placeholder="Password"/>
                     </label>
-                    <button type="submit">LOGIN</button>
+                    <button type="submit" className="bt-submit-form">LOGIN</button>
                     <p className="error-login hide">Login Failed Please log in again.</p>
                 </form>
             </div>

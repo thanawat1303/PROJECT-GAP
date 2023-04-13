@@ -10,13 +10,16 @@ export default class Admin extends Component {
     constructor(){
         super();
         this.state={
-            nav: <NavAdmin bodyAdmin={this}/> ,
+            nav: <div></div> ,
             body: <div></div>,
             timeOld : 0
         }
     }
 
     componentDidMount() {
+        this.setState({
+            nav : <NavAdmin bodyAdmin={this} main={this.props.main}/>
+        })
         window.addEventListener('resize' , this.checkSize)
     }
 
@@ -104,7 +107,7 @@ export default class Admin extends Component {
                     <span className="pg-action">
                         <span className="nav-menu">
                             <span onClick={this.Menu} className="bg-icon">
-                                <img src="menu-1-svgrepo-com-green.svg"></img>
+                                <img src="/menu-1-svgrepo-com-green.svg"></img>
                             </span>
                         </span>
                         <a className="Logo" href="/" title="หมอพืช">
@@ -114,11 +117,11 @@ export default class Admin extends Component {
                     </span>
                     <span className="bt-action">
                         <a className="alarm">
-                            <img src="alarm-svgrepo-com.svg"></img>
+                            <img src="/alarm-svgrepo-com.svg"></img>
                         </a>
                         <section className="profile">
                             <a onClick={this.showOption} className="profile-icon">
-                                <img id="icon" src="profile-svgrepo-com-white.svg"></img>
+                                <img id="icon" src="/profile-svgrepo-com-white.svg"></img>
                             </a>
                             <div id="profile-otion">
                                 <a onClick={this.Logout} id="logout">
@@ -126,7 +129,6 @@ export default class Admin extends Component {
                                 </a>
                             </div>
                         </section>
-                        {/* <button onClick={this.Logout}>LOGOUT</button> */}
                     </span>
                 </section>
                 <section className="container-body-admin">

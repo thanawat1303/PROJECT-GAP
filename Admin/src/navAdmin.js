@@ -3,6 +3,7 @@ import { clientMo } from "./assets/js/moduleClient";
 
 import List from "./listDocter";
 import Plus from "./plusDocter";
+import Login from "./Login";
 
 export default class NavAdmin extends Component {
 
@@ -16,21 +17,22 @@ export default class NavAdmin extends Component {
     }
 
     changePage = () => {
-        this.checkPath(2)
+        this.checkPath(-1)
     }
 
     checkPath = (statusLoad = 0) =>{
         clientMo.post('/check').then((context)=>{
             if(context) {
                 let ele = ''
-                if(window.location.pathname == '/list' || window.location.pathname == '/')
+                let path = window.location.pathname.split('/');
+                if(path[1] == 'list' || path[1] == '')
                 {
-                    this.props.bodyAdmin.setState({body : <List status={statusLoad}/>})
+                    this.props.bodyAdmin.setState({body : <List status={statusLoad} main={this.props.main}/>})
                     ele = 'account'
                 }
-                else if (window.location.pathname == '/plus')
+                else if (path[1] == 'plus')
                 {
-                    this.props.bodyAdmin.setState({body : <Plus status={statusLoad}/>})
+                    this.props.bodyAdmin.setState({body : <Plus status={statusLoad} main={this.props.main}/>})
                     ele = 'pAccount'
                 }
 
@@ -39,8 +41,8 @@ export default class NavAdmin extends Component {
             }
             
             else 
-                this.setState({
-                    body : <Login main={this}/>
+                this.props.main.setState({
+                    body : <Login main={this.props.main} state={true}/>
                 })
         })
     }
@@ -54,15 +56,15 @@ export default class NavAdmin extends Component {
 
         clientMo.post('/check').then((context)=>{
             if(context) {
-                if(ele == 'account') this.props.bodyAdmin.setState({body : <List status={1}/>})
-                else if (ele == 'pAccount') this.props.bodyAdmin.setState({body : <Plus status={1}/>})
+                if(ele == 'account') this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main}/>})
+                else if (ele == 'pAccount') this.props.bodyAdmin.setState({body : <Plus status={1} main={this.props.main}/>})
                 document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                 document.getElementById(ele).setAttribute('nav-select' , '')
             }
             
             else 
-                this.setState({
-                    body : <Login main={this}/>
+                this.props.main.setState({
+                    body : <Login main={this.props.main} state={true}/>
                 })
         })
         
@@ -74,7 +76,7 @@ export default class NavAdmin extends Component {
                 <a onClick={this.selectMenu} className="list-menu-nav" id="account" title="บัญชี" href="list" >
                     <bot-bt-nav>
                         <bot-gap-nav-icon>
-                            <img src="people-svgrepo-com.svg"></img>
+                            <img src="/people-svgrepo-com.svg"></img>
                         </bot-gap-nav-icon>
                         <bot-gap-string>
                             <bot-string>บัญชี</bot-string>
@@ -85,7 +87,7 @@ export default class NavAdmin extends Component {
                 <a onClick={this.selectMenu} className="list-menu-nav" id="pAccount" title="เพิ่มบัญชี" href="plus">
                     <bot-bt-nav>
                         <bot-gap-nav-icon>
-                            <img src="plus-user-svgrepo-com.svg"></img>
+                            <img src="/plus-user-svgrepo-com.svg"></img>
                         </bot-gap-nav-icon>
                         <bot-gap-string>
                             <bot-string>เพิ่มบัญชี</bot-string>

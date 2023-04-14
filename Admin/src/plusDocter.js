@@ -22,14 +22,19 @@ export default class Plus extends Component {
         if(this.props.status == 1) window.history.pushState({}, null , '/plus')
         else {
             if(window.location.pathname == '/plus/confirm') {
-                console.log('Page confirm')
+                // Check state value confirm
+                // this.setState({
+                //     body : <Confirm main={this.props.main} state={0}/>
+                // })
             }
         }
     }
 
     render() {
         return (
-            this.state.body
+            <div id="content-plus">
+                {this.state.body}
+            </div>
         )
     }
 }
@@ -46,9 +51,9 @@ class FormPlus extends Component {
 
         clientMo.post('/check').then((context)=>{
             if(context) {
-                if(e.target[0].value != "" && e.target[1].value != "") {
+                if(e.target[0].value && e.target[1].value) {
                     this.props.body.setState({
-                        body : <Confirm main={this.props.main} state={true}/>
+                        body : <Confirm main={this.props.main} state={1}/>
                     })
                 }
             }
@@ -62,22 +67,20 @@ class FormPlus extends Component {
 
     render(){
         return (
-            <div id="content-plus">
-                <form id="Pform" onSubmit={this.Psubmit}>
-                    <Bot-head-form>เพิ่มบัญชีเจ้าหน้าที่ส่งเสริม</Bot-head-form>
-                    <label id="id" className="textbox-Pform">
-                        <input placeholder="รหัสประตัวผู้ส่งเสริม" id="user-id" type="text"></input>
-                        <img className="label-Pform" src="/user-svgrepo-com.svg"></img>
-                    </label>
-                    <label id="password" className="textbox-Pform">
-                        <input placeholder="รหัสผ่าน" id="password" type="password" onChange={this.changeFont}></input>
-                        <img className="label-Pform" src="/key-svgrepo-com.svg"></img>
-                    </label>
-                    <button type="submit" className="bTplus bt-submit-form">
-                        เพิ่มข้อมูล
-                    </button>
-                </form>
-            </div>
+            <form id="Pform" onSubmit={this.Psubmit}>
+                <Bot-head-form>เพิ่มบัญชีเจ้าหน้าที่ส่งเสริม</Bot-head-form>
+                <label id="id" className="textbox-Pform">
+                    <input placeholder="รหัสประตัวผู้ส่งเสริม" id="user-id" type="text"></input>
+                    <img className="label-Pform" src="/user-svgrepo-com.svg"></img>
+                </label>
+                <label id="password" className="textbox-Pform">
+                    <input placeholder="รหัสผ่าน" id="password" type="password" onChange={this.changeFont}></input>
+                    <img className="label-Pform" src="/key-svgrepo-com.svg"></img>
+                </label>
+                <button type="submit" className="bTplus bt-submit-form">
+                    เพิ่มข้อมูล
+                </button>
+            </form>
         )
     }
 }

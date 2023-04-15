@@ -82,7 +82,7 @@ export default class Login extends Component {
         return (
             <div className="box-login">
                 <form onSubmit={this.submitFrom} className="content-login">
-                    <div className="Logo-App"><img width={150}  src="/logo.png"></img></div>
+                    <div className="Logo-App"><img width={150}  src="/logo2.png"></img></div>
                     <label className="content-user">
                         <span className="label-login">Username</span>
                         <input onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="Username"/>

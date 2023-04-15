@@ -112,7 +112,7 @@ export default class Admin extends Component {
                         </span>
                         <a className="Logo" href="/" title="หมอพืช">
                             หมอพืช
-                            <img  src="/logo.png"></img>
+                            <img  src="/logo2.png"></img>
                         </a>
                     </span>
                     <span className="bt-action">

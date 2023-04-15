@@ -61,6 +61,26 @@ $fontSizeLabel: 18pt;
 
                 width: 100%;
             }
+
+            input[readOnly] {
+                background-color: rgba(128, 128, 128, 0.168);
+                cursor: default;
+            }
+        }
+
+        .textbox-Pform[requireded] {
+            border: 2px solid red !important;
+        }
+
+        .error-notM {
+            font-size: 14pt;
+            font-family: Sans-font;
+            margin-top: 15px;
+            font-weight: 900;
+            color: red;
+
+            opacity: 0;
+            visibility: hidden;
         }
     
         button {

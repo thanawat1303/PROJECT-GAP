@@ -23,11 +23,6 @@ export default class Plus extends Component {
         }
     }
 
-    changeFont = (e) => {
-        if(e.target.value != "") e.target.setAttribute('style' , 'font-family: main-font; font-size:16pt')
-        else e.target.removeAttribute('style')
-    }
-
     ShowPassword = (e) => {
         let input = e.target.previousSibling
         if(input.value) {
@@ -46,24 +41,81 @@ export default class Plus extends Component {
         e.target.setAttribute('src' , '/eye-closed-svgrepo-com.svg')
     }
 
+    functionUserInput = (e) => {
+        if(document.querySelector('#Pform #user-id').value && document.querySelector('#Pform #password').value) {
+            document.getElementById('password-again').removeAttribute('readOnly')
+        } else {
+            let eleBox = document.getElementById('password-box-again')
+            let eleInout = document.getElementById('password-again')
+            eleBox.removeAttribute('requireded')
+            eleInout.removeAttribute('style')
+            eleInout.value = ""
+            document.getElementById('password-again').setAttribute('readOnly' , "")
+        }
+    }
+
+    functionPasswordInput = (e) => {
+        if(e.target.value) e.target.setAttribute('style' , 'font-family: main-font; font-size:16pt')
+        else e.target.removeAttribute('style')
+
+        if(document.querySelector('#Pform #user-id').value && document.querySelector('#Pform #password').value) {
+            document.getElementById('password-again').removeAttribute('readOnly')
+        } else {
+            let eleBox = document.getElementById('password-box-again')
+            let eleInout = document.getElementById('password-again')
+            eleBox.removeAttribute('requireded')
+            eleInout.removeAttribute('style')
+            eleInout.value = ""
+            document.getElementById('password-again').setAttribute('readOnly' , "")
+        }
+    }
+
+    functionPasswordAgInput = (e) => {
+        if(e.target.value != "") e.target.setAttribute('style' , 'font-family: main-font; font-size:16pt')
+        else e.target.removeAttribute('style')
+    }
+
     Psubmit = (e) => {
         e.preventDefault()
+
+        for(let x=0; x <= 2; x++)
+                e.target[x].parentElement.removeAttribute('requireded')
+
         if(e.target[0].value && e.target[1].value && e.target[2].value)  {
+            if(e.target[1].value == e.target[2].value) {
+                clientMo.post('/check').then((context)=>{
+                    if(context) {
+                        this.setState({
+                            bodyConfirm : <Confirm main={this.props.main} body={this} state={1} HeadForm={"เพิ่มข้อมูล"}/>
+                        })
 
-            clientMo.post('/check').then((context)=>{
-                if(context) {
-                    this.setState({
-                        bodyConfirm : <Confirm main={this.props.main} state={1} HeadForm={"เพิ่มข้อมูล"}/>
-                    })
-                    document.getElementById('popup-confirm').setAttribute('popup-show' , "")
-                }
-                
-                else 
-                    this.props.main.setState({
-                        body : <Login main={this.props.main} state={true}/>
-                    })
-
-            })
+                        // reset border error
+                        e.target[0].value = e.target[1].value = e.target[2].value = ""
+                        e.target[1].removeAttribute('style')
+                        e.target[2].removeAttribute('style')
+    
+                        document.querySelector('#Pform .error-notM').removeAttribute('style')
+                        document.getElementById('popup-confirm').setAttribute('popup-show' , "")
+                    }
+                    
+                    else 
+                        this.props.main.setState({
+                            body : <Login main={this.props.main} state={true}/>
+                        })
+    
+                })
+            } else {
+                e.target[2].parentElement.setAttribute('requireded' , "")
+                document.querySelector('#Pform .error-notM').setAttribute('style' , 'opacity:1;visibility:visible;')
+            }
+        } else {
+            if(document.getElementById('password-again').getAttribute('readOnly') == ""){
+                for(let x=0; x <= 1; x++)
+                    (e.target[x].value == "") ? e.target[x].parentElement.setAttribute('requireded' , "") : e.target[x].parentElement.removeAttribute('requireded')
+            } else {
+                document.querySelector('#Pform .error-notM').removeAttribute('style')
+                e.target[2].parentElement.setAttribute('requireded' , "")
+            }
         }
     }
 
@@ -73,20 +125,20 @@ export default class Plus extends Component {
                 <form id="Pform" onSubmit={this.Psubmit}>
                     <Bot-head-form>เพิ่มบัญชีเจ้าหน้าที่ส่งเสริม</Bot-head-form>
                     <label id="id" className="textbox-Pform">
-                        <input placeholder="รหัสประตัวผู้ส่งเสริม" id="user-id" type="text"></input>
+                        <input placeholder="รหัสประตัวผู้ส่งเสริม" id="user-id" type="text" onChange={this.functionUserInput}></input>
                         {/* <img className="label-Pform" src="/user-svgrepo-com.svg"></img> */}
                     </label>
                     <label id="password-box" className="textbox-Pform">
-                        <input placeholder="รหัสผ่านของผู้ส่งเสริม" id="password" type="password" onChange={this.changeFont}></input>
+                        <input placeholder="รหัสผ่านของผู้ส่งเสริม" id="password" type="password" onChange={this.functionPasswordInput}></input>
                         <img onMouseDown={this.ShowPassword} onMouseUp={this.hidePassword} className="label-Pform" id="action-password" src="/eye-closed-svgrepo-com.svg"></img>
                     </label>
                     <label id="password-box-again" className="textbox-Pform">
-                        <input placeholder="รหัสผ่านอีกครั้ง" id="password-again" type="password" onChange={this.changeFont}></input>
-                        {/* <img className="label-Pform" src="/key-svgrepo-com.svg"></img> */}
+                        <input placeholder="รหัสผ่านอีกครั้ง" id="password-again" type="password" onChange={this.functionPasswordAgInput} readOnly></input>
                     </label>
                     <button type="submit" className="bTplus bt-submit-form">
                         เพิ่มข้อมูล
                     </button>
+                    <span className="error-notM">รหัสผ่านไม่ตรงกัน</span>
                 </form>
                 <section id="popup-confirm">
                     {this.state.bodyConfirm}
@@ -110,23 +162,33 @@ class Confirm extends Component {
         else if (this.props.state == 2)window.history.replaceState({} , null , '/plus/confirm')
     }
 
-    changeFont = (e) => {
+    functionPasswordInput = (e) => {
         if(e.target.value != "") e.target.setAttribute('style' , 'font-family: main-font; font-size:18pt')
         else e.target.removeAttribute('style')
     }
 
+    cancal = (e) => {
+        e.preventDefault()
+        document.getElementById('popup-confirm').removeAttribute('popup-show')
+        setTimeout(()=>{
+            this.props.body.setState({
+                bodyConfirm : ""
+            })
+        } , 1000)
+    }
+
     render(){
         return(
-            <form id="plus-confirm">
+            <section id="plus-confirm">
                 <bot-head-confirm>ยืนยันการเพิ่มข้อมูล</bot-head-confirm>
                 <section id="bodyForm-confirm">
-                    <input id="textbox-confirm" placeholder="รหัสผ่านผู้ดูแล" type="password" onChange={this.changeFont}></input>
+                    <input id="textbox-confirm" placeholder="รหัสผ่านผู้ดูแล" type="password" onChange={this.functionPasswordInput}></input>
                     <section id="bt-container-confirm">
-                        <button id="cancal">ยกเลิก</button>
+                        <button type="" id="cancal" onClick={this.cancal}>ยกเลิก</button>
                         <button id="confirm-bt">ยืนยัน</button>
                     </section>
                 </section>
-            </form>
+            </section>
         )
     }
 }

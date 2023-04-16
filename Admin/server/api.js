@@ -9,6 +9,33 @@ app.post('/check' , (req , res)=>{
   res.redirect('login');
 })
 
+// check action of user
+app.post('/checkUser' , (req , res)=> {
+  let username = req.session.username ?? '';
+  let password = req.body['password'] ?? '';
+
+  if(username === '') {
+    res.redirect('logout')
+    return 0
+  }
+
+  db.resume()
+
+  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+    if (err) throw err;
+    if(result[0]){
+      // add account docter
+      
+      res.send('1')
+    } else {
+      res.send('')
+    }
+    db.pause()
+  })
+})
+
+
+// check Login
 app.all('/login' , (req , res)=>{
   // เช็คการเข้าสู่ระบบจริงๆ
   let username = req.session.username ?? req.body['username'] ?? '';
@@ -30,7 +57,7 @@ app.all('/login' , (req , res)=>{
     } else {
       res.redirect('logout')
     }
-    // db.pause()
+    db.pause()
   })
 })
 

@@ -168,10 +168,14 @@ class Confirm extends Component {
         }
     }
 
-    componentDidMount(){
-        if (this.props.state == 1) window.history.pushState({}, null , '/plus/confirm')
-        else if (this.props.state == 2)window.history.replaceState({} , null , '/plus/confirm')
-    }
+    // componentDidMount(){
+    //     if (this.props.state == 1) window.history.pushState({}, null , '/plus/confirm')
+    //     else if (this.props.state == 2)window.history.replaceState({} , null , '/plus/confirm')
+    // }
+
+    // componentWillUnmount() {
+    //     window.history.back()
+    // }
 
     functionPasswordInput = (e) => {
         if(e.target.value != "") e.target.setAttribute('style' , 'font-family: main-font; font-size:18pt')
@@ -186,6 +190,37 @@ class Confirm extends Component {
                 bodyConfirm : ""
             })
         } , 1000)
+    }
+
+    showPassword = (e) => {
+        e.target.innerHTML = this.props.password
+    }
+
+    hidePassword = (e) => {
+        e.target.innerHTML = "[คลิกเพื่อแสดง]"
+    }
+
+    confirmForm = (e) => {
+        e.preventDefault()
+
+        let passwordAdmin = document.getElementById('textbox-confirm')
+
+        if(passwordAdmin.value && this.props.user && this.props.password) {
+            passwordAdmin.removeAttribute('requireded')
+
+            clientMo.post('/checkUser' , {password : passwordAdmin.value}).then((value)=>{
+                if(value) {
+                    // action when add complete
+                } else {
+                    passwordAdmin.setAttribute('placeholder' , 'รหัสผ่านไม่ถูกต้อง')
+                    passwordAdmin.setAttribute('requireded' , '')
+                    passwordAdmin.value = ""
+                    passwordAdmin.removeAttribute('style')
+                }
+            })
+        } else {
+            passwordAdmin.setAttribute('requireded' , '')
+        }
     }
 
     render(){
@@ -203,14 +238,14 @@ class Confirm extends Component {
                         <div id="content-password-box" className="content-again">
                             <div className="head-again">รหัสผ่านของผู้ส่งเสริม:</div> 
                             <span className="data-again">
-                                <span>{this.props.password}</span>
+                                <span onMouseDown={this.showPassword} onMouseUp={this.hidePassword}>{"[คลิกเพื่อแสดง]"}</span>
                             </span>
                         </div>
                     </section>
                     <input id="textbox-confirm" placeholder="รหัสผ่านผู้ดูแล" type="password" onChange={this.functionPasswordInput}></input>
                     <section id="bt-container-confirm">
                         <button type="" id="cancal" onClick={this.cancal}>ยกเลิก</button>
-                        <button id="confirm-bt">ยืนยัน</button>
+                        <button id="confirm-bt" onClick={this.confirmForm}>ยืนยัน</button>
                     </section>
                 </section>
             </section>

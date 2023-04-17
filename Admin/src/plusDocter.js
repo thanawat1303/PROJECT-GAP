@@ -90,6 +90,8 @@ export default class Plus extends Component {
             )  {
             // if(e.target[1].value == e.target[2].value) {
                 clientMo.post('/check').then((context)=>{
+                    // check user overlape
+                    
                     if(context) {
                         this.setState({
                             bodyConfirm : <Confirm main={this.props.main} body={this} state={1} user={e.target[0].value} password={e.target[1].value}/>

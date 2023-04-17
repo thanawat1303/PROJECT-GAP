@@ -99,7 +99,7 @@ $fontSizeLabel: 18pt;
         display: flex;
         justify-content: center;
         align-items: center;
-        position: absolute;
+        position: fixed;
         opacity: 0;
         visibility: hidden;
         z-index: 500;

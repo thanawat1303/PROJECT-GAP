@@ -89,10 +89,10 @@ export default class Plus extends Component {
             // && e.target[2].value
             )  {
             // if(e.target[1].value == e.target[2].value) {
-                clientMo.post('/check').then((context)=>{
-                    // check user overlape
-                    
-                    if(context) {
+                clientMo.post('/admin/chkOver' , { ID : e.target[0].value}).then((context)=>{
+                    if(context === '1') {
+
+                        // check user overlape
                         this.setState({
                             bodyConfirm : <Confirm main={this.props.main} body={this} state={1} user={e.target[0].value} password={e.target[1].value}/>
                         })
@@ -106,6 +106,10 @@ export default class Plus extends Component {
                         // document.querySelector('#Pform .error-notM').removeAttribute('style')
 
                         document.getElementById('popup-confirm').setAttribute('popup-show' , "")
+                    } else if (context === 'over') {
+                        console.log('overlape')
+                    } else if (context) {
+                        console.log('system error')
                     }
                     
                     else 
@@ -210,22 +214,24 @@ class Confirm extends Component {
         if(passwordAdmin.value && this.props.user && this.props.password) {
             passwordAdmin.removeAttribute('requireded')
 
-            clientMo.post('/checkUserAction' , {password : passwordAdmin.value}).then((value)=>{
+            clientMo.post('/admin/checkUserAction' , {password : passwordAdmin.value}).then((value)=>{
                 console.log(value)
-                if(value) {
+                if(value === '1') {
                     // action when add complete
                     let data = {
                         ID : this.props.user,
                         passwordDT : this.props.password,
                     }
-                    clientMo.post('/addDocter' , data).then((feedback)=>{
-                        console.log(feedback)
+                    clientMo.post('/admin/addDocter' , data).then((feedback)=>{
+                        
                     })
-                } else {
+                } else if (value === 'incorrect') {
                     passwordAdmin.setAttribute('placeholder' , 'รหัสผ่านไม่ถูกต้อง')
                     passwordAdmin.setAttribute('requireded' , '')
                     passwordAdmin.value = ""
                     passwordAdmin.removeAttribute('style')
+                } else {
+                    // log out
                 }
             })
         } else {

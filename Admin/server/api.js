@@ -5,12 +5,55 @@ const app = require('./configExpress')
 const db = require('./dbConfig')
 
 // req
-app.post('/check' , (req , res)=>{
+app.post('/admin/check' , (req , res)=>{
   res.redirect('login');
 })
 
+app.post('/admin/chkOver' , (req , res)=>{
+  let username = req.session.username
+  let password = req.session.password
+
+  if(username === '' || password === '') {
+    res.redirect('logout')
+    return 0
+  }
+
+  db.resume()
+
+  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+    if (err) {
+      db.pause()
+      console.log(err)
+      res.send('error')
+      return 0
+    };
+
+    if(result[0]){
+
+      if(req.body['ID']) {
+        db.query(`SELECT id_docter FROM accountdt WHERE id_docter=?` , [req.body['ID']] , (err,result)=>{
+          if(err) {
+            db.pause()
+            console.log(err)
+            res.send('error')
+            return 0
+          }
+          
+          if(result[0]) res.send('over')
+          else res.send('1')
+  
+          db.pause()
+        })
+      } else res.send('error ID')
+
+    } else {
+      res.redirect('logout')
+    }
+  })
+})
+
 // check action of user
-app.post('/checkUserAction' , (req , res)=> {
+app.post('/admin/checkUserAction' , (req , res)=> {
   let username = req.session.username ?? '';
   let password = req.body['password'] ?? '';
 
@@ -22,30 +65,38 @@ app.post('/checkUserAction' , (req , res)=> {
   db.resume()
 
   db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
-    if (err) throw err;
+    if (err) {
+      db.pause()
+      console.log(err)
+      res.send('error')
+      return 0
+    };
 
     if(result[0]){
       console.log(req.session.checkAction)
       req.session.checkAction = process.env.KEY_SESSION
       res.send('1')
     } else {
-      res.send('')
+      res.send('incorrect')
     }
 
     db.pause()
   })
 })
 
-app.post('/addDocter' , (req , res)=>{
+app.post('/admin/addDocter' , (req , res)=>{
   console.log(req.session.checkAction)
   if(req.body['ID'] && req.body['passwordDT'] && req.session.checkAction == process.env.KEY_SESSION) {
+
     db.resume()
 
     db.query(`INSERT INTO accountdt(
       Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account) 
       VALUES (?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1] , (err , result)=>{
       if(err) {
-        res.send('error Insert')
+        db.pause()
+        console.log(err)
+        res.send('error')
         return 0
       }
 
@@ -60,7 +111,7 @@ app.post('/addDocter' , (req , res)=>{
 
 
 // check Login
-app.all('/login' , (req , res)=>{
+app.all('/admin/login' , (req , res)=>{
   
   // เช็คการเข้าสู่ระบบจริงๆ
   let username = req.session.username ?? req.body['username'] ?? '';
@@ -74,21 +125,29 @@ app.all('/login' , (req , res)=>{
   db.resume()
 
   db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
-    if (err) throw err;
+    if (err){
+      db.pause()
+      console.log(err)
+      res.send('error')
+      return 0
+    };
+
     if(result[0]){
 
-      // create sestion login
+      // create session login
       req.session.username = username
       req.session.password = password
       res.send('1')
+
     } else {
       res.redirect('logout')
     }
+
     db.pause()
   })
 })
 
-app.get('/logout' , (req , res) => {
+app.get('/admin/logout' , (req , res) => {
   console.log('LOGOUT')
   res.clearCookie('connect.sid').send('')
 })

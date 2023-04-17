@@ -12,6 +12,7 @@ export default class Admin extends Component {
         this.state={
             nav: <div></div> ,
             body: <div></div>,
+            session: <div></div>,
             timeOld : 0
         }
     }
@@ -47,7 +48,7 @@ export default class Admin extends Component {
         e.target.parentElement.classList.toggle('hide')
         clientMo.rmAction('#loading' , 'hide' , 0)
         setTimeout(()=>{
-            clientMo.get('/logout').then(()=>{
+            clientMo.get('/admin/logout').then(()=>{
                 this.props.main.setState({
                     body : <Login main={this.props.main} state={true}/>
                 })
@@ -138,6 +139,9 @@ export default class Admin extends Component {
                             {this.state.body}
                         </bot-content>
                     </bot-main>
+                </section>
+                <section id="session">
+                    {this.state.session}
                 </section>
             </div>
         )

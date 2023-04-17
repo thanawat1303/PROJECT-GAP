@@ -4,6 +4,7 @@ import { clientMo } from "./assets/js/moduleClient";
 import List from "./listDocter";
 import Plus from "./plusDocter";
 import Login from "./Login";
+import SessionOut from "./sesionOut";
 
 export default class NavAdmin extends Component {
 
@@ -21,7 +22,7 @@ export default class NavAdmin extends Component {
     }
 
     checkPath = (statusLoad = 0) =>{
-        clientMo.post('/check').then((context)=>{
+        clientMo.post('/admin/check').then((context)=>{
             if(context) {
                 let ele = ''
                 let path = window.location.pathname.split('/');
@@ -41,6 +42,7 @@ export default class NavAdmin extends Component {
             }
             
             else 
+                // action session out
                 this.props.main.setState({
                     body : <Login main={this.props.main} state={true}/>
                 })
@@ -54,7 +56,7 @@ export default class NavAdmin extends Component {
 
         ele = ele.id
 
-        clientMo.post('/check').then((context)=>{
+        clientMo.post('/admin/check').then((context)=>{
             if(context) {
                 if(ele == 'account') this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main}/>})
                 else if (ele == 'pAccount') this.props.bodyAdmin.setState({body : <Plus status={1} main={this.props.main}/>})
@@ -62,10 +64,16 @@ export default class NavAdmin extends Component {
                 document.getElementById(ele).setAttribute('nav-select' , '')
             }
             
-            else 
-                this.props.main.setState({
-                    body : <Login main={this.props.main} state={true}/>
+            else {
+                // action session out
+
+                this.props.bodyAdmin.setState({
+                    session : <SessionOut main={this.props.main}/>
                 })
+
+                document.getElementById('session').setAttribute('show' , '')
+            
+            }
         })
         
     }

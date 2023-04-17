@@ -10,7 +10,7 @@ app.post('/check' , (req , res)=>{
 })
 
 // check action of user
-app.post('/checkUser' , (req , res)=> {
+app.post('/checkUserAction' , (req , res)=> {
   let username = req.session.username ?? '';
   let password = req.body['password'] ?? '';
 
@@ -23,20 +23,45 @@ app.post('/checkUser' , (req , res)=> {
 
   db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
     if (err) throw err;
+
     if(result[0]){
-      // add account docter
-      
+      console.log(req.session.checkAction)
+      req.session.checkAction = process.env.KEY_SESSION
       res.send('1')
     } else {
       res.send('')
     }
+
     db.pause()
   })
+})
+
+app.post('/addDocter' , (req , res)=>{
+  console.log(req.session.checkAction)
+  if(req.body['ID'] && req.body['passwordDT'] && req.session.checkAction == process.env.KEY_SESSION) {
+    db.resume()
+
+    db.query(`INSERT INTO accountdt(
+      Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account) 
+      VALUES (?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1] , (err , result)=>{
+      if(err) {
+        res.send('error Insert')
+        return 0
+      }
+
+      db.pause()
+      delete req.session.checkAction
+      res.send('1')
+    })
+  }
+  
+  else res.send('error session')
 })
 
 
 // check Login
 app.all('/login' , (req , res)=>{
+  
   // เช็คการเข้าสู่ระบบจริงๆ
   let username = req.session.username ?? req.body['username'] ?? '';
   let password = req.session.password ?? req.body['password'] ?? '';
@@ -51,6 +76,8 @@ app.all('/login' , (req , res)=>{
   db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
     if (err) throw err;
     if(result[0]){
+
+      // create sestion login
       req.session.username = username
       req.session.password = password
       res.send('1')

@@ -208,9 +208,17 @@ class Confirm extends Component {
         if(passwordAdmin.value && this.props.user && this.props.password) {
             passwordAdmin.removeAttribute('requireded')
 
-            clientMo.post('/checkUser' , {password : passwordAdmin.value}).then((value)=>{
+            clientMo.post('/checkUserAction' , {password : passwordAdmin.value}).then((value)=>{
+                console.log(value)
                 if(value) {
                     // action when add complete
+                    let data = {
+                        ID : this.props.user,
+                        passwordDT : this.props.password,
+                    }
+                    clientMo.post('/addDocter' , data).then((feedback)=>{
+                        console.log(feedback)
+                    })
                 } else {
                     passwordAdmin.setAttribute('placeholder' , 'รหัสผ่านไม่ถูกต้อง')
                     passwordAdmin.setAttribute('requireded' , '')

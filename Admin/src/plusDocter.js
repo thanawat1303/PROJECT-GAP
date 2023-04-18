@@ -1,7 +1,8 @@
 import React , {Component} from "react";
 import { clientMo } from "./assets/js/moduleClient";
 
-import Login from "./Login";
+import SessionOut from "./sesionOut";
+import Feedback from "./Feedback";
 
 import './assets/style/Plus.scss'
 
@@ -94,7 +95,7 @@ export default class Plus extends Component {
 
                         // check user overlape
                         this.setState({
-                            bodyConfirm : <Confirm main={this.props.main} body={this} state={1} user={e.target[0].value} password={e.target[1].value}/>
+                            bodyConfirm : <Confirm main={this.props.main} body={this} state={1} user={e.target[0].value} password={e.target[1].value} bodyAdmin={this.props.bodyAdmin}/>
                         })
 
                         // reset border error
@@ -113,9 +114,13 @@ export default class Plus extends Component {
                     }
                     
                     else 
-                        this.props.main.setState({
-                            body : <Login main={this.props.main} state={true}/>
-                        })
+                        {
+                            this.props.bodyAdmin.setState({
+                                session : <SessionOut main={this.props.main}/>
+                            })
+            
+                            document.getElementById('session').setAttribute('show' , '')
+                        }
     
                 })
             // } else {
@@ -170,7 +175,9 @@ class Confirm extends Component {
     constructor(){
         super();
         this.state={
-            Head: ""
+            Head: "",
+            feedback : <Feedback/>,
+            check: true,
         }
     }
 
@@ -211,7 +218,8 @@ class Confirm extends Component {
 
         let passwordAdmin = document.getElementById('textbox-confirm')
 
-        if(passwordAdmin.value && this.props.user && this.props.password) {
+        if(passwordAdmin.value && this.props.user && this.props.password && this.state.check) {
+            this.state.check = false
             passwordAdmin.removeAttribute('requireded')
 
             clientMo.post('/admin/checkUserAction' , {password : passwordAdmin.value}).then((value)=>{
@@ -222,8 +230,23 @@ class Confirm extends Component {
                         ID : this.props.user,
                         passwordDT : this.props.password,
                     }
+
+                    document.getElementById('feedback').setAttribute('show' , '')
                     clientMo.post('/admin/addDocter' , data).then((feedback)=>{
-                        
+                        // feedback complete add docter
+
+                        if(feedback == '1') {
+                            document.getElementById('img-feedback').setAttribute('show' , '')
+
+                            setTimeout(()=>{
+                                document.getElementById('popup-confirm').removeAttribute('popup-show')
+                                setTimeout(()=>{
+                                    this.props.body.setState({
+                                        bodyConfirm : ""
+                                    })
+                                } , 1000)
+                            } , 1200)
+                        }
                     })
                 } else if (value === 'incorrect') {
                     passwordAdmin.setAttribute('placeholder' , 'รหัสผ่านไม่ถูกต้อง')
@@ -231,7 +254,13 @@ class Confirm extends Component {
                     passwordAdmin.value = ""
                     passwordAdmin.removeAttribute('style')
                 } else {
-                    // log out
+
+                    this.props.bodyAdmin.setState({
+                        session : <SessionOut main={this.props.main}/>
+                    })
+    
+                    document.getElementById('session').setAttribute('show' , '')
+
                 }
             })
         } else {
@@ -243,6 +272,9 @@ class Confirm extends Component {
         return(
             <section id="plus-confirm">
                 <bot-head-confirm>ยืนยันการเพิ่มข้อมูล</bot-head-confirm>
+                <section id="feedback">
+                    {this.state.feedback}
+                </section>
                 <section id="bodyForm-confirm">
                     <section id="detailNewDocter">
                         <div id="content-username-box" className="content-again">

@@ -28,12 +28,12 @@ export default class NavAdmin extends Component {
                 let path = window.location.pathname.split('/');
                 if(path[1] == 'list' || path[1] == '')
                 {
-                    this.props.bodyAdmin.setState({body : <List status={statusLoad} main={this.props.main}/>})
+                    this.props.bodyAdmin.setState({body : <List status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
                     ele = 'account'
                 }
                 else if (path[1] == 'plus')
                 {
-                    this.props.bodyAdmin.setState({body : <Plus status={statusLoad} main={this.props.main}/>})
+                    this.props.bodyAdmin.setState({body : <Plus status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
                     ele = 'pAccount'
                 }
 
@@ -58,8 +58,8 @@ export default class NavAdmin extends Component {
 
         clientMo.post('/admin/check').then((context)=>{
             if(context) {
-                if(ele == 'account') this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main}/>})
-                else if (ele == 'pAccount') this.props.bodyAdmin.setState({body : <Plus status={1} main={this.props.main}/>})
+                if(ele == 'account') this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
+                else if (ele == 'pAccount') this.props.bodyAdmin.setState({body : <Plus status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
                 document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                 document.getElementById(ele).setAttribute('nav-select' , '')
             }

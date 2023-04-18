@@ -3,6 +3,8 @@ import {clientMo}  from "./assets/js/moduleClient";
 import Login from "./Login";
 import Admin from "./Admin";
 
+import './assets/style/main.scss'
+
 
 export default class MainApp extends Component {
     constructor(){

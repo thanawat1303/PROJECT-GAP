@@ -140,6 +140,7 @@ export default class Admin extends Component {
                         </bot-content>
                     </bot-main>
                 </section>
+                {/* feedBack */}
                 <section id="session">
                     {this.state.session}
                 </section>

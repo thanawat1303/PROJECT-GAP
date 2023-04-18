@@ -22,7 +22,7 @@ export default class SessionOut extends Component {
         return(
             <form id="session-out" onSubmit={this.Logout}>
                 <div>เซสชั่นหมดอายุ</div>
-                <button>ตกลง</button>
+                <button className="bt-submit-form">ตกลง</button>
             </form>
         )
     }

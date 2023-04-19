@@ -26,6 +26,11 @@
    npm i mysql
    ```
 
+ - UUID
+    ```
+    npm install uuid
+    ```
+
  - Client
 
    ```

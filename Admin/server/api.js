@@ -13,7 +13,7 @@ app.post('/admin/chkOver' , (req , res)=>{
   let username = req.session.username
   let password = req.session.password
 
-  if(username === '' || password === '') {
+  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
     res.redirect('logout')
     return 0
   }
@@ -57,7 +57,7 @@ app.post('/admin/checkUserAction' , (req , res)=> {
   let username = req.session.username ?? '';
   let password = req.body['password'] ?? '';
 
-  if(username === '') {
+  if(username === '' || req.hostname !== process.env.HOST_NAME) {
     res.redirect('logout')
     return 0
   }
@@ -74,7 +74,7 @@ app.post('/admin/checkUserAction' , (req , res)=> {
 
     if(result[0]){
       console.log(req.session.checkAction)
-      req.session.checkAction = process.env.KEY_SESSION
+      req.session.checkAction = process.env.KEY_SESSION + req.body['type']
       res.send('1')
     } else {
       res.send('incorrect')
@@ -86,7 +86,7 @@ app.post('/admin/checkUserAction' , (req , res)=> {
 
 app.post('/admin/addDocter' , (req , res)=>{
   console.log(req.session.checkAction)
-  if(req.body['ID'] && req.body['passwordDT'] && req.session.checkAction == process.env.KEY_SESSION) {
+  if(req.body['ID'] && req.body['passwordDT'] && req.session.checkAction === process.env.KEY_SESSION + 'add' && req.hostname === process.env.HOST_NAME) {
 
     db.resume()
 
@@ -101,12 +101,53 @@ app.post('/admin/addDocter' , (req , res)=>{
       }
 
       db.pause()
-      delete req.session.checkAction
       res.send('1')
     })
+    // res.send('0')
   }
   
   else res.send('error session')
+
+  delete req.session.checkAction
+})
+
+app.post('/admin/listDocter' , (req , res)=>{
+  let username = req.session.username
+  let password = req.session.password
+
+  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
+    res.redirect('logout')
+    return 0
+  }
+
+  db.resume()
+
+  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+    if (err){
+      db.pause()
+      console.log(err)
+      res.send('error')
+      return 0
+    };
+
+    if(result[0]){
+
+      db.query('SELECT Fullname_docter , id_docter , Image_docter , Job_care_center , Status_account FROM accountdt LIMIT 25;' , (err , result)=>{
+        if (err){
+          db.pause()
+          console.log(err)
+          res.send('error')
+          return 0
+        };
+
+        res.send(result)
+      })
+
+    } else {
+      res.redirect('logout')
+    }
+
+  })
 })
 
 
@@ -117,7 +158,7 @@ app.all('/admin/login' , (req , res)=>{
   let username = req.session.username ?? req.body['username'] ?? '';
   let password = req.session.password ?? req.body['password'] ?? '';
 
-  if(username === '' || password === '') {
+  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
     res.redirect('logout')
     return 0
   }

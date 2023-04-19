@@ -222,7 +222,7 @@ class Confirm extends Component {
             this.state.check = false
             passwordAdmin.removeAttribute('requireded')
 
-            clientMo.post('/admin/checkUserAction' , {password : passwordAdmin.value}).then((value)=>{
+            clientMo.post('/admin/checkUserAction' , {password : passwordAdmin.value , type : 'add'}).then((value)=>{
                 console.log(value)
                 if(value === '1') {
                     // action when add complete
@@ -236,7 +236,7 @@ class Confirm extends Component {
                         // feedback complete add docter
 
                         if(feedback == '1') {
-                            document.getElementById('img-feedback').setAttribute('show' , '')
+                            document.getElementById('img-feedback-correct').setAttribute('show' , '')
 
                             setTimeout(()=>{
                                 document.getElementById('popup-confirm').removeAttribute('popup-show')
@@ -245,7 +245,9 @@ class Confirm extends Component {
                                         bodyConfirm : ""
                                     })
                                 } , 1000)
-                            } , 1200)
+                            } , 1700)
+                        } else {
+                            document.getElementById('img-feedback-error').setAttribute('show' , '')
                         }
                     })
                 } else if (value === 'incorrect') {

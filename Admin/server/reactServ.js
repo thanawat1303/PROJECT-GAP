@@ -8,7 +8,7 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('../webpack.config.js');
 const compiler = webpack(config);
 
-const path = require("path");
+const path = require('path');
 const dirName = path.resolve(__dirname, "../src/");
 const isDev = process.env.NODE_ENV === "development";
 

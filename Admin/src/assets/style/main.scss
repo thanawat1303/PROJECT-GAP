@@ -98,17 +98,22 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        #img-feedback {
-            width: 85px;
+        #img-feedback-correct {
+            width: 125px;
             position: fixed;
-            transition: 1s;
-            opacity: 0;
-            visibility: hidden;
+            transform: rotateY(90deg);
+            transition: transform 1.5s;
         }
 
-        #img-feedback[show] {
-            opacity: 1;
-            visibility: visible;
+        #img-feedback-error {
+            width: 80px;
+            position: fixed;
+            transform: rotateY(90deg);
+            transition: transform 1.5s;
+        }
+        
+        #img-feedback-correct[show] , #img-feedback-error[show] {
+            transform: rotateY(0deg);
         }
     }
 }

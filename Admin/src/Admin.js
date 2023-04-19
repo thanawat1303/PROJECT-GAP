@@ -54,7 +54,7 @@ export default class Admin extends Component {
                 })
                 clientMo.addAction('#loading' , 'hide' , 1500)
             })
-        } , 1500)
+        } , 2000)
     }
 
     Menu = () => {

@@ -6,7 +6,8 @@ export default class List extends Component {
     constructor(){
         super();
         this.state={
-            body : <div></div>
+            body : <></>,
+            // list : []
         }
     }
 
@@ -14,9 +15,18 @@ export default class List extends Component {
         if (this.props.status == 0) window.history.replaceState({} , null , '/list' )
         else if(this.props.status == 1) window.history.pushState({}, null , '/list')
 
-        clientMo.post('/admin/listDocter').then((list)=>{
-            console.log(JSON.parse(list))
+        this.setState({
+            body : JSON.parse(this.props.list).map((listDT , index) =>
+                        <div key={index}>
+                            <p>{listDT['id_docter']}</p>
+                        </div>
+                    ) // use map is create element object
         })
+
+    }
+
+    LoadMore = () => {
+        // Load list docter more from database
     }
 
     render() {

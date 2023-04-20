@@ -10,7 +10,7 @@ export default class Plus extends Component {
     constructor(){
         super();
         this.state={
-            bodyConfirm : <div></div>
+            bodyConfirm : <div></div>,
         }
     }
 

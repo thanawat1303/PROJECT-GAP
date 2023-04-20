@@ -22,32 +22,46 @@ export default class NavAdmin extends Component {
     }
 
     checkPath = (statusLoad = 0) =>{
-        clientMo.post('/admin/check').then((context)=>{
-            if(context) {
-                let ele = ''
-                let path = window.location.pathname.split('/');
-                if(path[1] == 'list' || path[1] == '')
-                {
-                    this.props.bodyAdmin.setState({body : <List status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
-                    ele = 'account'
-                }
-                else if (path[1] == 'plus')
-                {
-                    this.props.bodyAdmin.setState({body : <Plus status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
-                    ele = 'pAccount'
-                }
+        let path = window.location.pathname.split('/');
+        if(path[1] == 'list' || path[1] == '')
+        {
+            clientMo.post('/admin/listDocter').then((list)=>{
+                if(list) {
+                    this.props.bodyAdmin.setState({body : <List status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin} list={list}/>})
+                    if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById('account').setAttribute('nav-select' , '')
+                } else this.sessionoff(true)
 
-                if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
-                document.getElementById(ele).setAttribute('nav-select' , '')
-            }
-            
-            else 
-                // action session out
-                this.props.main.setState({
-                    body : <Login main={this.props.main} state={true}/>
-                })
-        })
+            })
+        }
+        else if (path[1] == 'plus')
+        {
+            clientMo.post('/admin/check').then((context)=>{
+                if(context) {
+                    this.props.bodyAdmin.setState({body : <Plus status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
+                    if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById('pAccount').setAttribute('nav-select' , '')
+                }
+                
+                else this.sessionoff(true)
+                    
+            })
+        }
     }
+
+    sessionoff = (type = false) => {
+        if(type) {
+            this.props.main.setState({
+                body : <Login main={this.props.main} state={true}/>
+            })
+        } else {
+            this.props.bodyAdmin.setState({
+                session : <SessionOut main={this.props.main}/>
+            })
+    
+            document.getElementById('session').setAttribute('show' , '')
+        }
+    } 
 
     selectMenu = (e) => {
         e.preventDefault() 
@@ -56,25 +70,27 @@ export default class NavAdmin extends Component {
 
         ele = ele.id
 
-        clientMo.post('/admin/check').then((context)=>{
-            if(context) {
-                if(ele == 'account') this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
-                else if (ele == 'pAccount') this.props.bodyAdmin.setState({body : <Plus status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
-                document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
-                document.getElementById(ele).setAttribute('nav-select' , '')
-            }
+        if(ele == 'account') {
+            clientMo.post('/admin/listDocter').then((list)=>{
+                if(list) {
+                    this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin} list={list}/>})
+                    document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById(ele).setAttribute('nav-select' , '')
+                } else this.sessionoff()
+            })
+        }
+        else if (ele == 'pAccount') {
+            clientMo.post('/admin/check').then((context)=>{
+                if(context) {
+                    this.props.bodyAdmin.setState({body : <Plus status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
+                    document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById(ele).setAttribute('nav-select' , '')
+                }
+                
+                else this.sessionoff()
+            })
             
-            else {
-                // action session out
-
-                this.props.bodyAdmin.setState({
-                    session : <SessionOut main={this.props.main}/>
-                })
-
-                document.getElementById('session').setAttribute('show' , '')
-            
-            }
-        })
+        }
         
     }
 

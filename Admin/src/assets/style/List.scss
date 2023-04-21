@@ -1,22 +1,153 @@
 #body-list-docter {
     .container-docter {
-        display: flex;
-        justify-content: start;
+        display: inline-flex;
+        justify-content: space-between;
         align-items: center;
-        margin: 5px 5px;
+        margin: 0px 3px;
         margin-bottom: 10px;
         padding: 10px 5px;
         background-color: rgb(245, 237, 228);
         border-radius: 8px;
-        .img-docter {
-            width: 50px;
+        width: 49.4%;
+
+        .docter-detail {
+            display: flex;
+            justify-content: start;
+            align-content: center;
+            .img-docter {
+                width: 65px;
+            }
+    
+            .content-detail {
+                margin-left: 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: start;
+                font-family: Sans-font;
+                font-size: 11.5pt;
+                // width: 65%;
+    
+                .detail-name {
+                    width: 100%;
+                }
+    
+                div .detail {
+                    display: flex;
+                    .head-detail {
+                        width: 90px;
+                    }
+    
+                    .indetail {
+                        margin-left: 10px;
+                    }
+                }
+            }
         }
 
-        .content-detail {
-            margin-left: 5px;
+        .bt-manage {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: space-evenly;
+            // width: 165px; //
+            // height: 58px;
+            padding: 12px;
+            background-color: rgba(117, 195, 117, 0.697);
+            border-radius: 8px;
+            outline: 4px solid white;
+            // box-shadow: 0px 0px 5px white;
+            margin-right: 10px;
+            // width: 35%;
+
+            .bt-delete {
+                color: white;
+                background-color: red;
+                font-family: Sans-font;
+                font-size: 11pt;
+                border: 0;
+                border-radius: 8px;
+                padding:5px 8px;
+                margin-left: 10px;
+            }
+
+            .box-status {
+                width: 63.04px;
+                height: 31.6px;
+                background-color: white;
+                overflow: hidden;
+                border-radius: 8px;
+                // box-shadow: 0px 0px 5px gold;
+
+                .status {
+                    display: flex;
+                    height: 100%;
+                    width: 115px; // ปรับ
+                    transition: 0.5s;
+                    .bt-status {
+                        width: 12px; // ปรับ
+                        height: 100%;
+                        border: 0;
+                        // border-right: 2px solid rgba(132, 132, 132, 0.618);
+                        // border-right: 2px solid rgba(132, 132, 132, 0.618);
+                        box-shadow: 0px 0px 3px rgba(128, 128, 128, 0.479);
+                        padding: 0;
+                        transition: background-color 0.5s;
+                    }
+
+                    .bt-status[status="0"] {
+                        background-color: rgb(234, 255, 0);
+                    }
+
+                    .bt-status[status="1"] {
+                        background-color: green;
+                    }
+
+                    .list-status {
+                        width: 45%;
+                        font-family: Sans-font;
+                        font-size: 12pt;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-weight: 900;
+                        padding-top: 3px;
+                        text-align: center;
+                    }
+
+                    .list-status[openState] {
+                        // padding-right: 2px;
+                    }
+
+                    .list-status[closeState] {
+                        // padding-left: 2px;
+                    }
+                }
+
+                .status[status="0"] { // ปรับ
+                    transform: translateX(-53px);
+                }
+
+                .status[status="1"] {
+                    transform: translateX(0px);
+                }
+            }
+
+            // .bt-status {
+            //     color: white;
+            //     font-weight: 900;
+            // }
+
+            // .bt-status[status="1"] {
+            //     background-color: rgb(187, 187, 0);
+            // } 
+            // .bt-status[status="0"] {
+            //     background-color: green;
+            // } 
         }
     }
+
 }
+
+// .container-docter:nth-last-child(1) {
+//     margin-bottom: 0px;
+// }

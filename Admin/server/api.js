@@ -2,14 +2,15 @@ require('dotenv').config().parsed
 // import module express config
 const app = require('./configExpress')
 // module DB and connect DB
-const db = require('./dbConfig')
+const db = require('mysql')
+const dbpacket = require('./dbConfig')
 
 // req
-app.post('/admin/check' , (req , res)=>{
+app.post('/api/admin/check' , (req , res)=>{
   res.redirect('login');
 })
 
-app.post('/admin/chkOver' , (req , res)=>{
+app.post('/api/admin/chkOver' , (req , res)=>{
   let username = req.session.username
   let password = req.session.password
 
@@ -18,42 +19,50 @@ app.post('/admin/chkOver' , (req , res)=>{
     return 0
   }
 
-  db.resume()
+  let con = db.createConnection(dbpacket.listConfig())
 
-  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
-    if (err) {
-      db.pause()
-      console.log(err)
-      res.send('error')
+  con.connect((err) => {
+    if(err) {
+      dbpacket.dbErrorReturn(con , err , res)
       return 0
-    };
-
-    if(result[0]){
-
-      if(req.body['ID']) {
-        db.query(`SELECT id_docter FROM accountdt WHERE id_docter=?` , [req.body['ID']] , (err,result)=>{
-          if(err) {
-            db.pause()
-            console.log(err)
-            res.send('error')
-            return 0
-          }
-          
-          if(result[0]) res.send('over')
-          else res.send('1')
-  
-          db.pause()
-        })
-      } else res.send('error ID')
-
-    } else {
-      res.redirect('logout')
     }
+
+    con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+      if (err) {
+        dbpacket.dbErrorReturn(con , err , res)
+        return 0
+      };
+  
+      if(result[0]){
+  
+        if(req.body['ID']) {
+          con.query(`SELECT id_docter FROM accountdt WHERE id_docter=?` , [req.body['ID']] , (err,result)=>{
+            if(err) {
+              dbpacket.dbErrorReturn(con , err , res)
+              return 0
+            }
+
+            con.destroy()
+            
+            if(result[0]) res.send('over')
+            else res.send('1')
+
+          })
+        } else {
+          con.destroy()
+          res.send('error ID')
+        }
+  
+      } else {
+        con.destroy()
+        res.redirect('logout')
+      }
+    })
   })
 })
 
 // check action of user
-app.post('/admin/checkUserAction' , (req , res)=> {
+app.post('/api/admin/checkUserAction' , (req , res)=> {
   let username = req.session.username ?? '';
   let password = req.body['password'] ?? '';
 
@@ -62,56 +71,69 @@ app.post('/admin/checkUserAction' , (req , res)=> {
     return 0
   }
 
-  db.resume()
+  let con = db.createConnection(dbpacket.listConfig())
 
-  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
-    if (err) {
-      db.pause()
-      console.log(err)
-      res.send('error')
+  con.connect((err)=>{
+    if(err) {
+      dbpacket.dbErrorReturn(con , err , res)
       return 0
-    };
-
-    if(result[0]){
-      console.log(req.session.checkAction)
-      req.session.checkAction = process.env.KEY_SESSION + req.body['type']
-      res.send('1')
-    } else {
-      res.send('incorrect')
     }
 
-    db.pause()
+    con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+      if (err) {
+        dbpacket.dbErrorReturn(con , err , res)
+        return 0
+      };
+  
+      if(result[0]){
+        console.log(req.session.checkAction)
+        req.session.checkAction = process.env.KEY_SESSION + req.body['type']
+        res.send('1')
+      } else {
+        res.send('incorrect')
+      }
+  
+      con.destroy()
+    })
   })
 })
 
-app.post('/admin/addDocter' , (req , res)=>{
+app.post('/api/admin/addDocter' , (req , res)=>{
   console.log(req.session.checkAction)
   if(req.body['ID'] && req.body['passwordDT'] && req.session.checkAction === process.env.KEY_SESSION + 'add' && req.hostname === process.env.HOST_NAME) {
+    
+    delete req.session.checkAction
+    let con = db.createConnection(dbpacket.listConfig())
 
-    db.resume()
-
-    db.query(`INSERT INTO accountdt(
-      Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account) 
-      VALUES (?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1] , (err , result)=>{
+    con.connect((err)=> {
       if(err) {
-        db.pause()
-        console.log(err)
-        res.send('error')
+        dbpacket.dbErrorReturn(con , err , res)
         return 0
       }
 
-      db.pause()
-      res.send('1')
+      db.query(`INSERT INTO accountdt(
+        Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account) 
+        VALUES (?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1] , (err , result)=>{
+        if(err) {
+          dbpacket.dbErrorReturn(con , err , res)
+          return 0
+        }
+  
+        con.destroy()
+        res.send('1')
+      })
     })
     // res.send('0')
   }
   
-  else res.send('error session')
+  else {
+    delete req.session.checkAction
+    res.send('error session')
+  }
 
-  delete req.session.checkAction
 })
 
-app.post('/admin/listDocter' , (req , res)=>{
+app.post('/api/admin/listDocter' , (req , res)=>{
   let username = req.session.username
   let password = req.session.password
 
@@ -120,39 +142,95 @@ app.post('/admin/listDocter' , (req , res)=>{
     return 0
   }
 
-  db.resume()
+  let con = db.createConnection(dbpacket.listConfig())
 
-  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
-    if (err){
-      db.pause()
-      console.log(err)
-      res.send('error')
+  con.connect((err)=>{
+    if(err) {
+      dbpacket.dbErrorReturn(con , err , res)
       return 0
-    };
-
-    if(result[0]){
-
-      db.query('SELECT Fullname_docter , id_docter , Image_docter , Job_care_center , Status_account FROM accountdt LIMIT 25;' , (err , result)=>{
-        if (err){
-          db.pause()
-          console.log(err)
-          res.send('error')
-          return 0
-        };
-
-        res.send(result)
-      })
-
-    } else {
-      res.redirect('logout')
     }
 
+    con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+      if (err){
+        dbpacket.dbErrorReturn(con , err , res)
+        return 0
+      };
+  
+      if(result[0]){
+  
+        con.query('SELECT Fullname_docter , id_docter , Image_docter , Job_care_center , Status_account FROM accountdt LIMIT 25;' , (err , result)=>{
+          if (err){
+            dbpacket.dbErrorReturn(con , err , res)
+            return 0
+          };
+
+          con.destroy()
+          res.send(result)
+        })
+  
+      } else {
+        con.destroy()
+        res.redirect('logout')
+      }
+  
+    })
+  })
+})
+
+app.post('/api/admin/changeState' , (req,res)=>{
+  let username = req.session.username
+  let password = req.session.password
+
+  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
+    res.redirect('logout')
+    return 0
+  }
+
+  let con = db.createConnection(dbpacket.listConfig())
+
+  con.connect((err) => {
+    if(err) {
+      dbpacket.dbErrorReturn(con , err , res)
+      return 0
+    }
+
+    con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+      if (err) {
+        dbpacket.dbErrorReturn(con , err , res)
+        return 0
+      };
+  
+      if(result[0]){
+  
+        if(req.body['ID'] && req.body['status'] != undefined) {
+          con.query(`UPDATE accountdt SET Status_account = ? WHERE id_docter = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err,result)=>{
+            if(err) {
+              dbpacket.dbErrorReturn(con , err , res)
+              return 0
+            }
+
+            con.destroy()
+
+            console.log(result)
+            if(result.changedRows == 1) res.send('1')
+            else res.send('error')
+          })
+        } else {
+          con.destroy()
+          res.send('error ID or status')
+        }
+  
+      } else {
+        con.destroy()
+        res.redirect('logout')
+      }
+    })
   })
 })
 
 
 // check Login
-app.all('/admin/login' , (req , res)=>{
+app.all('/api/admin/login' , (req , res)=>{
   
   // เช็คการเข้าสู่ระบบจริงๆ
   let username = req.session.username ?? req.body['username'] ?? '';
@@ -163,32 +241,37 @@ app.all('/admin/login' , (req , res)=>{
     return 0
   }
 
-  db.resume()
+  let con = db.createConnection(dbpacket.listConfig())
 
-  db.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
-    if (err){
-      db.pause()
-      console.log(err)
-      res.send('error')
+  // db.resume()
+
+  con.connect((err) => {
+    if (err) {
+      dbpacket.dbErrorReturn(con , err , res)
       return 0
-    };
-
-    if(result[0]){
-
-      // create session login
-      req.session.username = username
-      req.session.password = password
-      res.send('1')
-
-    } else {
-      res.redirect('logout')
     }
 
-    db.pause()
+    con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+      if (err){
+        dbpacket.dbErrorReturn(con , err , res)
+        return 0
+      };
+  
+      if(result[0]){
+        // create session login
+        req.session.username = username
+        req.session.password = password
+        res.send('1')
+  
+      } else {
+        res.redirect('logout')
+      }
+      con.destroy()
+    })
   })
 })
 
-app.get('/admin/logout' , (req , res) => {
+app.get('/api/admin/logout' , (req , res) => {
   console.log('LOGOUT')
   res.clearCookie('connect.sid').send('')
 })

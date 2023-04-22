@@ -90,7 +90,7 @@ export default class Plus extends Component {
             // && e.target[2].value
             )  {
             // if(e.target[1].value == e.target[2].value) {
-                clientMo.post('/admin/chkOver' , { ID : e.target[0].value}).then((context)=>{
+                clientMo.post('/api/admin/chkOver' , { ID : e.target[0].value}).then((context)=>{
                     if(context === '1') {
 
                         // check user overlape
@@ -222,7 +222,7 @@ class Confirm extends Component {
             this.state.check = false
             passwordAdmin.removeAttribute('requireded')
 
-            clientMo.post('/admin/checkUserAction' , {password : passwordAdmin.value , type : 'add'}).then((value)=>{
+            clientMo.post('/api/admin/checkUserAction' , {password : passwordAdmin.value , type : 'add'}).then((value)=>{
                 console.log(value)
                 if(value === '1') {
                     // action when add complete
@@ -232,7 +232,7 @@ class Confirm extends Component {
                     }
 
                     document.getElementById('feedback').setAttribute('show' , '')
-                    clientMo.post('/admin/addDocter' , data).then((feedback)=>{
+                    clientMo.post('/api/admin/addDocter' , data).then((feedback)=>{
                         // feedback complete add docter
 
                         if(feedback == '1') {

@@ -114,12 +114,12 @@
                         text-align: center;
                     }
 
-                    .list-status[openState] {
-                        // padding-right: 2px;
+                    .list-status[openstate] {
+                        color: green;
                     }
 
-                    .list-status[closeState] {
-                        // padding-left: 2px;
+                    .list-status[closestate] {
+                        color: red;
                     }
                 }
 
@@ -151,3 +151,12 @@
 // .container-docter:nth-last-child(1) {
 //     margin-bottom: 0px;
 // }
+
+@media only screen and (max-width: 1400px) {
+    #body-list-docter {
+        .container-docter { 
+            display: flex;
+            width: 100%;
+        }
+    }
+}

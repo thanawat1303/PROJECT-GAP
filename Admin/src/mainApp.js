@@ -16,7 +16,7 @@ export default class MainApp extends Component {
 
     componentDidMount() {
 
-        clientMo.post('/admin/check').then((context)=>{
+        clientMo.post('/api/admin/check').then((context)=>{
             if(context) 
                 this.setState({
                     body : <Admin main={this}/>

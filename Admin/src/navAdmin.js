@@ -25,7 +25,7 @@ export default class NavAdmin extends Component {
         let path = window.location.pathname.split('/');
         if(path[1] == 'list' || path[1] == '')
         {
-            clientMo.post('/admin/listDocter').then((list)=>{
+            clientMo.post('/api/admin/listDocter').then((list)=>{
                 if(list) {
                     this.props.bodyAdmin.setState({body : <List status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -36,7 +36,7 @@ export default class NavAdmin extends Component {
         }
         else if (path[1] == 'plus')
         {
-            clientMo.post('/admin/check').then((context)=>{
+            clientMo.post('/api/admin/check').then((context)=>{
                 if(context) {
                     this.props.bodyAdmin.setState({body : <Plus status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -63,15 +63,11 @@ export default class NavAdmin extends Component {
         }
     } 
 
-    selectMenu = (e) => {
-        e.preventDefault() 
-        let ele = e.target
-        while(ele.tagName != 'A') ele = ele.parentElement
-
-        ele = ele.id
+    selectMenu = (e , ele) => {
+        e.preventDefault()
 
         if(ele == 'account') {
-            clientMo.post('/admin/listDocter').then((list)=>{
+            clientMo.post('/api/admin/listDocter').then((list)=>{
                 if(list) {
                     this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -80,7 +76,7 @@ export default class NavAdmin extends Component {
             })
         }
         else if (ele == 'pAccount') {
-            clientMo.post('/admin/check').then((context)=>{
+            clientMo.post('/api/admin/check').then((context)=>{
                 if(context) {
                     this.props.bodyAdmin.setState({body : <Plus status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -97,7 +93,7 @@ export default class NavAdmin extends Component {
     render() {
         return(
             <nav className="nav-menu">
-                <a onClick={this.selectMenu} className="list-menu-nav" id="account" title="บัญชี" href="list" >
+                <a onClick={e => this.selectMenu(e , 'account')} className="list-menu-nav" id="account" title="บัญชี" href="list" >
                     <bot-bt-nav>
                         <bot-gap-nav-icon>
                             <img src="/people-svgrepo-com.svg"></img>
@@ -108,7 +104,7 @@ export default class NavAdmin extends Component {
                         </bot-gap-string>
                     </bot-bt-nav>
                 </a>
-                <a onClick={this.selectMenu} className="list-menu-nav" id="pAccount" title="เพิ่มบัญชี" href="plus">
+                <a onClick={e => this.selectMenu(e , 'pAccount')} className="list-menu-nav" id="pAccount" title="เพิ่มบัญชี" href="plus">
                     <bot-bt-nav>
                         <bot-gap-nav-icon>
                             <img src="/plus-user-svgrepo-com.svg"></img>

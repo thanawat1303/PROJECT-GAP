@@ -18,7 +18,6 @@ export default class List extends Component {
         if (this.props.status == 0) window.history.replaceState({} , null , '/list' )
         else if(this.props.status == 1) window.history.pushState({}, null , '/list')
 
-        console.log(JSON.parse(this.props.list))
         this.setState({
             body : JSON.parse(this.props.list).map((listDT , index) =>
                         <div key={index} className="container-docter">
@@ -43,16 +42,16 @@ export default class List extends Component {
                                 </div>
                             </div>
                             <div className="bt-manage">
-                                <span className="box-status">
-                                    <div className="status" status={listDT['Status_account']}>
-                                        <span className="list-status" openState="">ON</span>
+                                <span className="box-status" onClick={() => this.changeStatus(listDT['id_docter'] , `status-${index}`)}>
+                                    <div className="status" id={`status-${index}`} status={listDT['Status_account']}>
+                                        <span className="list-status" openstate="">ON</span>
                                         <button 
                                             status={listDT['Status_account']} 
                                             className="bt-status"
                                             >
                                             {/* {(listDT['Status_account'] == 1) ? "ปิดบัญชี" : "เปิดบัญชี"} */}
                                         </button>
-                                        <span className="list-status" closeState="">OFF</span>
+                                        <span className="list-status" closestate="">OFF</span>
                                     </div>
                                 </span>
                                 <button className="bt-delete">ลบบัญชี</button>
@@ -65,6 +64,18 @@ export default class List extends Component {
 
     LoadMore = () => {
         // Load list docter more from database
+    }
+
+    changeStatus = (id , ele) => {
+        let status = document.getElementById(ele).getAttribute('status')
+        clientMo.post('/api/admin/changeState' , {ID : id , status:status}).then((result)=>{
+            if(result == 1) {
+                document.getElementById(ele).setAttribute('status' , (status == 1) ? 0 : 1)
+                document.querySelector(`#${ele} button`).setAttribute('status' , (status == 1) ? 0 : 1)
+            } else {
+                console.log(result)
+            }
+        })
     }
 
     render() {

@@ -3,6 +3,9 @@ import {clientMo}  from "./assets/js/moduleClient";
 
 import './assets/style/List.scss'
 
+import SessionOut from "./sesionOut";
+import Feedback from "./Feedback";
+
 
 export default class List extends Component {
     
@@ -10,6 +13,7 @@ export default class List extends Component {
         super();
         this.state={
             body : <></>,
+            delete : <></>
             // list : []
         }
     }
@@ -20,19 +24,19 @@ export default class List extends Component {
 
         this.setState({
             body : JSON.parse(this.props.list).map((listDT , index) =>
-                        <div key={index} className="container-docter">
+                        <div key={index} className="container-docter" id={`list-${index}`}>
                             <div className="docter-detail">
                                 <img className="img-docter" src={(listDT['Image_docter']['data'] != '') ? listDT['Image_docter']['data'] : '/doctor-svgrepo-com.svg'}></img>
                                 <div className="content-detail">
                                     <div className="detail-name">
                                         <div className="detail">
-                                            <span className="head-detail">ชื่อ - นามสกุล</span> :
+                                            <span className="head-detail">ชื่อ - นามสกุล</span> <div className="dot-space">:</div>
                                             <span className="indetail">{(listDT['Fullname_docter']) ? listDT['Fullname_docter'] : 'ยังไม่ระบุ'}</span>
                                         </div>
                                     </div>
                                     <div className="detail-id">
                                         <div className="detail">
-                                            <span className="head-detail">รหัสประจำตัว</span> :
+                                            <span className="head-detail">รหัสประจำตัว</span> <div className="dot-space">:</div>
                                             <span className="indetail">{listDT['id_docter']}</span>
                                         </div>
                                     </div>
@@ -54,7 +58,7 @@ export default class List extends Component {
                                         <span className="list-status" closestate="">OFF</span>
                                     </div>
                                 </span>
-                                <button className="bt-delete">ลบบัญชี</button>
+                                <button className="bt-delete" onClick={() => this.deleteAC(listDT['id_docter'] , index)}>ลบบัญชี</button>
                             </div>
                         </div>
                     ) // use map is create element object
@@ -74,14 +78,155 @@ export default class List extends Component {
                 document.querySelector(`#${ele} button`).setAttribute('status' , (status == 1) ? 0 : 1)
             } else {
                 console.log(result)
+                if(result == '') {
+                    this.props.bodyAdmin.setState({
+                        session : <SessionOut main={this.props.main}/>
+                    })
+    
+                    document.getElementById('session').setAttribute('show' , '')
+                }
             }
         })
+    }
+
+    deleteAC = (id , index) => {
+        if(id != "") {
+            clientMo.post('/api/admin/check').then((result)=>{
+                if(result) {
+                    document.getElementById('popup-delete').setAttribute('popup-show' , '')
+                    console.log(result)
+                    this.setState({
+                        delete : <ConfirmDelete main={this.props.main} bodyAdmin={this.props.bodyAdmin} id={id} body={this} index={index}/>
+                    })
+                } else {
+                    this.props.bodyAdmin.setState({
+                        session : <SessionOut main={this.props.main}/>
+                    })
+    
+                    document.getElementById('session').setAttribute('show' , '')
+                }
+            })
+        } else {
+            
+        }
     }
 
     render() {
         return (
             <section id="body-list-docter">
+                <div id="popup-delete">
+                    {this.state.delete}
+                </div>
                 {this.state.body}
+            </section>
+        )
+    }
+}
+
+class ConfirmDelete extends Component {
+    constructor(){
+        super();
+        this.state={
+            Head: "",
+            feedback : <Feedback/>,
+            check: true,
+        }
+    }
+
+    functionPasswordInput = (e) => {
+        if(e.target.value != "") e.target.setAttribute('style' , 'font-family: main-font; font-size:18pt')
+        else e.target.removeAttribute('style')
+    }
+
+    cancal = (e) => {
+        e.preventDefault()
+        document.getElementById('popup-delete').removeAttribute('popup-show')
+        setTimeout(()=>{
+            this.props.body.setState({
+                delete : ""
+            })
+        } , 1000)
+    }
+
+    confirmForm = (e) => {
+        e.preventDefault()
+
+        let passwordAdmin = document.getElementById('textbox-confirm')
+
+        if(passwordAdmin.value && this.props.id && this.state.check) {
+            this.state.check = false
+            passwordAdmin.removeAttribute('requireded')
+
+            clientMo.post('/api/admin/checkUserAction' , {password : passwordAdmin.value , type : 'delete'}).then((value)=>{
+                console.log(value)
+                if(value === '1') {
+                    // action when add complete
+
+                    document.getElementById('feedback').setAttribute('show' , '')
+                    clientMo.post('/api/admin/delete' , {ID : this.props.id}).then((feedback)=>{
+                        // feedback complete add docter
+                        console.log(feedback)
+                        if(feedback == '1') {
+                            document.getElementById('img-feedback-correct').setAttribute('show' , '')
+
+                            setTimeout(()=>{
+                                document.getElementById('popup-delete').removeAttribute('popup-show')
+                                setTimeout(()=>{
+                                    this.props.body.setState({
+                                        delete : ""
+                                    })
+                                } , 1000)
+                                document.querySelector(`#list-${this.props.index}`).setAttribute('delete' , '')
+                                setTimeout(()=>{
+                                    document.querySelector(`#list-${this.props.index}`).remove()
+                                } , 1100)
+                            } , 1700)
+                        } else {
+                            document.getElementById('img-feedback-error').setAttribute('show' , '')
+                        }
+                    })
+                } else if (value === 'incorrect') {
+                    passwordAdmin.setAttribute('placeholder' , 'รหัสผ่านไม่ถูกต้อง')
+                    passwordAdmin.setAttribute('requireded' , '')
+                    passwordAdmin.value = ""
+                    passwordAdmin.removeAttribute('style')
+                } else {
+
+                    this.props.bodyAdmin.setState({
+                        session : <SessionOut main={this.props.main}/>
+                    })
+    
+                    document.getElementById('session').setAttribute('show' , '')
+
+                }
+                this.state.check = true
+            })
+        } else {
+            passwordAdmin.setAttribute('requireded' , '')
+        }
+    }
+
+    render(){
+        return(
+            <section id="delete-confirm">
+                <bot-head-confirm>ยืนยันการลบบัญชี</bot-head-confirm>
+                <section id="feedback">
+                    {this.state.feedback}
+                </section>
+                <section id="bodyForm-confirm">
+                    <div id="detail-docter-delete">
+                        <div id="detail-id">
+                            {/* <div id="head-id">ID</div> */}
+                            <div id="id">{this.props.id}</div>
+                        </div>
+                        <div id="detail-text">กู้คืนบัญชีได้ภายใน 7 วัน</div>
+                    </div>
+                    <input id="textbox-confirm" placeholder="รหัสผ่านผู้ดูแล" type="password" onChange={this.functionPasswordInput}></input>
+                    <section id="bt-container-confirm">
+                        <button type="" id="cancal" onClick={this.cancal}>ยกเลิก</button>
+                        <button id="confirm-bt" onClick={this.confirmForm}>ยืนยัน</button>
+                    </section>
+                </section>
             </section>
         )
     }

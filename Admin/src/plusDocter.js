@@ -218,6 +218,7 @@ class Confirm extends Component {
 
         let passwordAdmin = document.getElementById('textbox-confirm')
 
+        console.log(passwordAdmin.value)
         if(passwordAdmin.value && this.props.user && this.props.password && this.state.check) {
             this.state.check = false
             passwordAdmin.removeAttribute('requireded')
@@ -232,7 +233,7 @@ class Confirm extends Component {
                     }
 
                     document.getElementById('feedback').setAttribute('show' , '')
-                    clientMo.post('/api/admin/addDocter' , data).then((feedback)=>{
+                    clientMo.post('/api/admin/add' , data).then((feedback)=>{
                         // feedback complete add docter
 
                         if(feedback == '1') {
@@ -264,6 +265,7 @@ class Confirm extends Component {
                     document.getElementById('session').setAttribute('show' , '')
 
                 }
+                this.state.check = true
             })
         } else {
             passwordAdmin.setAttribute('requireded' , '')

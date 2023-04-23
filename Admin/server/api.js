@@ -87,7 +87,18 @@ app.post('/api/admin/checkUserAction' , (req , res)=> {
   
       if(result[0]){
         console.log(req.session.checkAction)
-        req.session.checkAction = process.env.KEY_SESSION + req.body['type']
+        if(req.body['type'] == "add") 
+            req.session.checkADD = 
+                  {
+                    value : process.env.KEY_SESSION + "add",
+                    time : new Date().getTime()
+                  }
+        else if(req.body['type'] == "delete") 
+            req.session.checkDelete = 
+                  {
+                    value : process.env.KEY_SESSION + "delete",
+                    time : new Date().getTime()
+                  }
         res.send('1')
       } else {
         res.send('incorrect')
@@ -98,11 +109,14 @@ app.post('/api/admin/checkUserAction' , (req , res)=> {
   })
 })
 
-app.post('/api/admin/addDocter' , (req , res)=>{
-  console.log(req.session.checkAction)
-  if(req.body['ID'] && req.body['passwordDT'] && req.session.checkAction === process.env.KEY_SESSION + 'add' && req.hostname === process.env.HOST_NAME) {
+app.post('/api/admin/add' , (req , res)=>{
+  let timeoutSession = 20
+  if(req.body['ID'] && req.body['passwordDT'] && 
+      req.session.checkADD['value'] === process.env.KEY_SESSION + "add" && 
+      new Date().getTime() - req.session.checkADD['time'] <= timeoutSession &&
+      req.hostname === process.env.HOST_NAME) {
     
-    delete req.session.checkAction
+    delete req.session.checkADD
     let con = db.createConnection(dbpacket.listConfig())
 
     con.connect((err)=> {
@@ -111,13 +125,15 @@ app.post('/api/admin/addDocter' , (req , res)=>{
         return 0
       }
 
-      db.query(`INSERT INTO accountdt(
-        Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account) 
-        VALUES (?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1] , (err , result)=>{
+      con.query(`INSERT INTO accountdt(
+        Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account , Status_delete) 
+        VALUES (?,?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1,0] , (err , result)=>{
         if(err) {
           dbpacket.dbErrorReturn(con , err , res)
           return 0
         }
+
+        console.log(result)
   
         con.destroy()
         res.send('1')
@@ -127,7 +143,7 @@ app.post('/api/admin/addDocter' , (req , res)=>{
   }
   
   else {
-    delete req.session.checkAction
+    delete req.session.checkADD
     res.send('error session')
   }
 
@@ -158,7 +174,7 @@ app.post('/api/admin/listDocter' , (req , res)=>{
   
       if(result[0]){
   
-        con.query('SELECT Fullname_docter , id_docter , Image_docter , Job_care_center , Status_account FROM accountdt LIMIT 25;' , (err , result)=>{
+        con.query('SELECT Fullname_docter , id_docter , Image_docter , Job_care_center , Status_account FROM accountdt WHERE Status_delete=0 LIMIT 25;' , (err , result)=>{
           if (err){
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -228,7 +244,43 @@ app.post('/api/admin/changeState' , (req,res)=>{
   })
 })
 
+app.post('/api/admin/delete' , (req , res)=>{
+  let timeoutSession = 20
+  if(req.body['ID'] &&
+      req.session.checkDelete['value'] === process.env.KEY_SESSION + "delete" && 
+      new Date().getTime() - req.session.checkDelete['time'] <= timeoutSession &&
+      req.hostname === process.env.HOST_NAME) {
+    
+    delete req.session.checkDelete
+    let con = db.createConnection(dbpacket.listConfig())
 
+    con.connect((err)=> {
+      if(err) {
+        dbpacket.dbErrorReturn(con , err , res)
+        return 0
+      }
+
+      con.query(`UPDATE accountdt SET Status_delete = 1 WHERE id_docter=?` , [req.body['ID']] , (err , result)=>{
+        if(err) {
+          dbpacket.dbErrorReturn(con , err , res)
+          return 0
+        }
+
+        console.log(result)
+  
+        con.destroy()
+        res.send('1')
+      })
+    })
+    // res.send('0')
+  }
+  
+  else {
+    delete req.session.checkDelete
+    res.send('error session')
+  }
+
+})
 // check Login
 app.all('/api/admin/login' , (req , res)=>{
   

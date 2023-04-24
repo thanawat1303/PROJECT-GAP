@@ -17,7 +17,7 @@ $widthHeadDetail : 90px;
             display: flex;
             justify-content: start;
             align-items: center;
-            width: calc(100% - 95px);
+            width: calc(100% - 90px);
             .img-docter {
                 border-radius: 8px;
                 width: 85px;
@@ -29,9 +29,7 @@ $widthHeadDetail : 90px;
                 flex-direction: column;
                 justify-content: center;
                 align-items: start;
-                font-family: Sans-font;
-                font-size: 11.5pt;
-                max-width: calc(100% - 85px);
+                width: 100%;
                 // max-width: 100%;
     
                 .detail-name {
@@ -47,24 +45,43 @@ $widthHeadDetail : 90px;
                             padding: 0px 2px;
                             padding-top: 2px;
                             padding-left: 0px;
+                            font-family: Sans-font;
+                            font-size: 11.5pt;
     
                             width: $widthHeadDetail;
                         }
         
                         .indetail {
+                            display: flex;
                             background-color: white;
-                            padding: 0px 4px;
-                            padding-top: 2px;
+                            padding-left: 4px;
                             border-radius: 4px;
                             outline: 2px solid green;
                             margin-left: 0px;
                             overflow-x: scroll;
-                            max-width: calc(100% - $widthHeadDetail - 5px);
+                            width: calc(100% - $widthHeadDetail);
     
                             .text-detail {
-                                padding-right: 5px;
+                                // padding-right: 5px;
+                                // padding-top: 2px;
+                                display: flex;
+                                font-family: Sans-font;
+                                font-size: 11.5pt;
+                                border: 0px;
+                                outline: 0px;
+                                width: 100%;
                                 white-space: nowrap;
                             }
+
+                            .bt-showDetail {
+                                background-color: transparent;
+                                border-radius: 0px 8px 8px 0px;
+    
+                                .img-icon {
+                                    width: 5px;
+                                }
+                            }
+
                         }
     
                         .indetail::-webkit-scrollbar{
@@ -636,7 +653,6 @@ $widthHeadDetail : 90px;
 
                 .content-detail {
                     font-size: 8pt;
-
                     .detail-box {
                         .detail {
                             // display: block;

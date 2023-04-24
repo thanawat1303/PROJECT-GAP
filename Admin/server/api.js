@@ -227,7 +227,7 @@ app.post('/api/admin/changeState' , (req,res)=>{
 
             con.destroy()
 
-            console.log(result)
+            // console.log(result)
             if(result.changedRows == 1) res.send('1')
             else res.send('error')
           })

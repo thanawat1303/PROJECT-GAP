@@ -40,6 +40,7 @@ $widthHeadDetail : 90px;
                     width: 100%;
                     .detail {
                         display: flex;
+                        align-items: center;
                         margin: 4px 0px;
                         .head-detail {
                             padding: 0px 2px;
@@ -54,7 +55,8 @@ $widthHeadDetail : 90px;
                         .indetail {
                             display: flex;
                             background-color: white;
-                            padding-left: 4px;
+                            padding-left: 2px;
+                            padding-top: 2px;
                             border-radius: 4px;
                             outline: 2px solid green;
                             margin-left: 0px;
@@ -70,6 +72,8 @@ $widthHeadDetail : 90px;
                                 border: 0px;
                                 outline: 0px;
                                 width: 100%;
+                                // height: 10px;
+                                cursor: default;
                                 white-space: nowrap;
                             }
 
@@ -499,13 +503,6 @@ $widthHeadDetail : 90px;
                     }
                 }
             }
-            .bt-manage {
-                .box-status {
-                    .status {
-                        // cursor: default;
-                    }
-                }
-            }
         }
     }
 }
@@ -515,26 +512,36 @@ $widthHeadDetail : 90px;
     #body-list-docter {
         .container-docter { 
             .docter-detail {
+                width: calc(100% - 80px);
                 .img-docter {
                     width: 65px;
                 }
 
                 .content-detail {
-                    font-size: 10pt;
-
-                    div .detail {
-                        display: flex;
-                        .head-detail {
-                            width: 78px;
-                        }
-
-                        .dot-space {
-                            display: inline-flex;
-                        }
-        
-                        .indetail {
-                            display: flow-root;
-                            margin-left: 6px;
+                    margin-left: 5px;
+                    .detail-box {
+                        .detail {
+                            display: flex;
+                            .head-detail {
+                                font-size: 10pt;
+                                width: 78px;
+                            }
+    
+                            .dot-space {
+                                display: inline-flex;
+                            }
+            
+                            .indetail {
+                                // display: flow-root;
+                                padding-top: 0px;
+                                margin-left: 0px;
+                                width: 100%;
+                                max-width: calc(100% - 80px);
+    
+                                .text-detail {
+                                    font-size: 10pt;
+                                }
+                            }
                         }
                     }
                 }
@@ -658,6 +665,7 @@ $widthHeadDetail : 90px;
                             // display: block;
                             .head-detail {
                                 width: 65px;
+                                font-size: 8pt;
                             }
     
                             // .dot-space {
@@ -665,7 +673,10 @@ $widthHeadDetail : 90px;
                             // }
             
                             .indetail {
-                                max-width: 100%;
+                                max-width: calc(100% - 70px);
+                                .text-detail {
+                                    font-size: 8pt;
+                                }
                             }
                         }
                     }

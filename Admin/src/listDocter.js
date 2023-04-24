@@ -18,9 +18,24 @@ export default class List extends Component {
         }
     }
 
+    moreDetail = () => {
+        let maxsize = document.querySelector('.docter-detail').clientWidth 
+                - document.querySelector('.docter-detail .img-docter').clientWidth 
+                - document.querySelector('.docter-detail .head-detail').clientWidth 
+                - 10
+
+        // document.querySelectorAll('.docter-detail .detail .indetail').forEach((v , index)=>{
+        //     v.setAttribute('style' , `max-width:${maxsize}px`)
+        // })
+        
+        console.log(document.querySelector('.docter-detail').clientWidth , document.querySelector('.docter-detail .img-docter').clientWidth , document.querySelector('.docter-detail .head-detail').clientWidth)
+    }
+
     componentDidMount(){
         if (this.props.status == 0) window.history.replaceState({} , null , '/list' )
         else if(this.props.status == 1) window.history.pushState({}, null , '/list')
+
+        window.addEventListener('resize',this.moreDetail)
 
         this.setState({
             body : JSON.parse(this.props.list).map((listDT , index) =>
@@ -28,20 +43,33 @@ export default class List extends Component {
                             <div className="docter-detail">
                                 <img className="img-docter" src={(listDT['Image_docter']['data'] != '') ? listDT['Image_docter']['data'] : '/doctor-svgrepo-com.svg'}></img>
                                 <div className="content-detail">
-                                    <div className="detail-name">
+                                    <div className="detail-box">
                                         <div className="detail">
-                                            <span className="head-detail">ชื่อ - นามสกุล</span> <div className="dot-space">:</div>
-                                            <span className="indetail">{(listDT['Fullname_docter']) ? listDT['Fullname_docter'] : 'ยังไม่ระบุ'}</span>
+                                            <div className="head-detail">ชื่อ - นามสกุล</div>
+                                            <div className="indetail">
+                                                <div className="text-detail">
+                                                    {(listDT['Fullname_docter']) ? listDT['Fullname_docter'] : 'ยังไม่ระบุ'}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="detail-id">
+                                    <div className="detail-box">
                                         <div className="detail">
-                                            <span className="head-detail">รหัสประจำตัว</span> <div className="dot-space">:</div>
-                                            <span className="indetail">{listDT['id_docter']}</span>
+                                            <div className="head-detail">รหัสประจำตัว</div>
+                                            <div className="indetail">
+                                                <div className="text-detail">
+                                                    {listDT['id_docter']}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="detail-contect">
-                                        <span>{"ศูนย์ดูแล : " + ((listDT['Job_care_center']) ? listDT['Job_care_center'] : "ยังไม่ระบุ")}</span>
+                                    <div className="detail-box">
+                                        <div className="detail">
+                                            <div className="head-detail">ศูนย์ดูแล</div>
+                                            <div className="indetail">
+                                                <div className="text-detail">{(listDT['Job_care_center']) ? listDT['Job_care_center'] : "ยังไม่ระบุ"}</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -64,6 +92,10 @@ export default class List extends Component {
                     ) // use map is create element object
         })
 
+    }
+
+    componentWillUnmount(){
+        window.removeEventListener('resize' , this.moreDetail)
     }
 
     LoadMore = () => {
@@ -113,7 +145,7 @@ export default class List extends Component {
 
     render() {
         return (
-            <section id="body-list-docter">
+            <section id="body-list-docter" onLoad={this.moreDetail}>
                 <div id="popup-delete">
                     {this.state.delete}
                 </div>

@@ -511,6 +511,37 @@ a[nav-select] {
 
                 .Logo {
                     font-size: 14pt;
+
+                    img {
+                        margin-left: 2px;
+                        margin-bottom: 2px;
+                        width: 13px;
+                        height: 13px;
+                    }
+                }
+            }
+
+            .bt-action {
+                .alarm {
+                    margin: 0px 6px;
+                    padding: 5px;
+                    img {
+                        width: 17px;
+                    }
+                }
+                .profile {
+                    .profile-icon {
+                        margin:0px 6px;
+                        padding: 4px;
+                        img {
+                            width: 18px;
+                        }
+                    }
+
+                    #profile-otion {
+                        font-size: 10px;
+                    }
+
                 }
             }
         }
@@ -518,7 +549,7 @@ a[nav-select] {
             .nav-menu {
                 margin-left: 2px;
                 .list-menu-nav {
-                    width: 92px;
+                    width: 87px;
                     height: 36px;
                     bot-bt-nav {
                         padding-right: 2px !important;

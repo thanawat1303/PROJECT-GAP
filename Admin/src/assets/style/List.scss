@@ -121,6 +121,7 @@ $widthHeadDetail : 90px;
                 background-color: red;
                 font-family: Sans-font;
                 font-size: 11pt;
+                font-weight: 900;
                 border: 0;
                 border-radius: 8px;
                 padding:5px 8px;
@@ -713,6 +714,11 @@ $widthHeadDetail : 90px;
             }
 
             .bt-manage {
+                margin-top: 5px;
+                .bt-delete {
+                    font-size: 9px;
+                    
+                }
                 .box-status {
                     .status * {
                         cursor: default;

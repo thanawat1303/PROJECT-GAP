@@ -54,9 +54,10 @@ $widthHeadDetail : 90px;
         
                         .indetail {
                             display: flex;
+                            align-items: center;
                             background-color: white;
                             padding-left: 2px;
-                            padding-top: 2px;
+                            // padding-top: 2px;
                             border-radius: 4px;
                             outline: 2px solid green;
                             margin-left: 0px;
@@ -65,7 +66,8 @@ $widthHeadDetail : 90px;
     
                             .text-detail {
                                 // padding-right: 5px;
-                                // padding-top: 2px;
+                                padding-top: 3px;
+                                height: 20px;
                                 display: flex;
                                 font-family: Sans-font;
                                 font-size: 11.5pt;
@@ -78,11 +80,15 @@ $widthHeadDetail : 90px;
                             }
 
                             .bt-showDetail {
-                                background-color: transparent;
+                                // background-color: green;
                                 border-radius: 0px 8px 8px 0px;
+                                padding: 3px 3px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
     
                                 .img-icon {
-                                    width: 5px;
+                                    width: 29px;
                                 }
                             }
 
@@ -495,9 +501,9 @@ $widthHeadDetail : 90px;
                         .detail {
                             .indetail {
                                 max-width: calc(100% - $widthHeadDetail);
-                                .text-detail {
-                                    white-space: normal;
-                                }
+                                // .text-detail {
+                                //     white-space: normal;
+                                // }
                             }
                         }
                     }
@@ -540,6 +546,19 @@ $widthHeadDetail : 90px;
     
                                 .text-detail {
                                     font-size: 10pt;
+                                }
+
+                                .bt-showDetail {
+                                    // background-color: green;
+                                    // border-radius: 0px 8px 8px 0px;
+                                    // padding: 3px 3px;
+                                    // display: flex;
+                                    // justify-content: center;
+                                    // align-items: center;
+        
+                                    .img-icon {
+                                        width: 26px;
+                                    }
                                 }
                             }
                         }
@@ -655,7 +674,7 @@ $widthHeadDetail : 90px;
             // width: 100%;
             .docter-detail {
                 .img-docter {
-                    width: 50px;
+                    width: 10vw;
                 }
 
                 .content-detail {
@@ -664,8 +683,8 @@ $widthHeadDetail : 90px;
                         .detail {
                             // display: block;
                             .head-detail {
-                                width: 65px;
-                                font-size: 8pt;
+                                width: 58px;
+                                font-size: 7pt;
                             }
     
                             // .dot-space {
@@ -675,7 +694,17 @@ $widthHeadDetail : 90px;
                             .indetail {
                                 max-width: calc(100% - 70px);
                                 .text-detail {
-                                    font-size: 8pt;
+                                    padding-top: 3px;
+                                    font-size: 7pt;
+                                    height: 17px;
+                                }
+
+                                .bt-showDetail {
+                                    padding: 1px 2px;
+        
+                                    .img-icon {
+                                        width: 20px;
+                                    }
                                 }
                             }
                         }

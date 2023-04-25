@@ -77,6 +77,7 @@ a {
     
             .Logo{
                 display: flex;
+                font-family: Sans-font;
                 font-size: 18pt;
                 img{
                     margin-left: 5px;
@@ -489,3 +490,62 @@ a[nav-select] {
         }
     }
 }
+
+@media only screen and (max-width: 300px) {
+    .admin {
+        .tab-bar {
+            height: 38px;
+            padding: 0px 2px;
+            .pg-action {
+                .nav-menu {
+                    padding-right: 0px;
+                    padding-left: 0px;
+                    .bg-icon {
+                        padding:6px;
+                        img {
+                            width: 18px;
+                            height: 18px;
+                        }
+                    }
+                }
+
+                .Logo {
+                    font-size: 14pt;
+                }
+            }
+        }
+        .container-body-admin {
+            .nav-menu {
+                margin-left: 2px;
+                .list-menu-nav {
+                    width: 92px;
+                    height: 36px;
+                    bot-bt-nav {
+                        padding-right: 2px !important;
+                        bot-gap-string {
+                            bot-string {
+                                font-family: TH-font;
+                                font-size: 12px !important;
+                                font-weight: 600 !important;
+                            }
+                        }
+
+                        bot-gap-nav-icon {
+                            padding: 0px;
+                            img {
+                                width: 18px;
+                                height: 18px;
+                                margin: 0px 6px;
+                            }
+                        }
+                    }
+                }
+
+                .list-menu-nav[mini-nav] {
+                    width: 30px;
+                }
+            }
+        }
+    }
+}
+

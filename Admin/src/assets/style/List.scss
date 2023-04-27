@@ -602,7 +602,7 @@ $widthHeadDetail : 90px;
             display: block;
             // flex-direction: column;
             width: 100%;
-
+            // padding: 5px;
             .docter-detail {
                 align-items: start;
                 width: 100%;
@@ -635,7 +635,7 @@ $widthHeadDetail : 90px;
             .bt-manage {
                 flex-direction: row;
                 justify-content: end;
-                margin-top: 15px;
+                margin-top: 10px;
                 // margin-right: 0px;
 
                 .bt-delete {
@@ -673,6 +673,7 @@ $widthHeadDetail : 90px;
         .container-docter { 
             // display: flex;
             // width: 100%;
+            padding: 5px;
             .docter-detail {
                 .img-docter {
                     width: 10vw;
@@ -715,11 +716,31 @@ $widthHeadDetail : 90px;
 
             .bt-manage {
                 margin-top: 5px;
+                margin-bottom: 4px;
                 .bt-delete {
                     font-size: 9px;
-                    
+                    padding: 4px 5px;
                 }
                 .box-status {
+                    width: 42.08px;
+                    height: 23.2px;
+                    .status {
+                        width: 84.16px;
+                        .list-status {
+                            width: 34px;
+                            padding-top: 2px;
+                            font-size: 11px;
+                        }
+                    }
+
+                    .status[status="0"] { // ปรับ
+                        transform: translateX(-41.5px);
+                    }
+    
+                    .status[status="1"] {
+                        transform: translateX(0px);
+                    }
+
                     .status * {
                         cursor: default;
                     }

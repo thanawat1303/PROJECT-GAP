@@ -497,11 +497,12 @@ a[nav-select] {
             height: 38px;
             padding: 0px 2px;
             .pg-action {
+                margin-left: 2px;
                 .nav-menu {
                     padding-right: 0px;
                     padding-left: 0px;
                     .bg-icon {
-                        padding:6px;
+                        padding:4px;
                         img {
                             width: 18px;
                             height: 18px;
@@ -511,7 +512,7 @@ a[nav-select] {
 
                 .Logo {
                     font-size: 14pt;
-
+                    margin-left: 2px;
                     img {
                         margin-left: 2px;
                         margin-bottom: 2px;

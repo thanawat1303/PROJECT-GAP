@@ -72,6 +72,7 @@ export default class List extends Component {
                                             <div className="head-detail">ศูนย์ดูแล</div>
                                             <div className="indetail">
                                                 <input readOnly className="text-detail" value={(listDT['Job_care_center']) ? listDT['Job_care_center'] : "ยังไม่ระบุ"}></input>
+                                                <span className="detail-sub"></span>
                                                 <span className="bt-showDetail">
                                                     <img className="img-icon" src="user-card-id-svgrepo-com.svg"></img>
                                                 </span>

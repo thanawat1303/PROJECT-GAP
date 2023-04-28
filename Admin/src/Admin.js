@@ -28,10 +28,11 @@ export default class Admin extends Component {
         window.removeEventListener('resize' , this.checkSize)
     }
 
-    checkSize = (e) => {
+    checkSize = () => {
         // e.target.innerHeight 
         let list = document.querySelectorAll('.nav-menu .list-menu-nav')
-        if(e.target.innerWidth <= 500) {
+        console.log(window.innerWidth)
+        if(window.innerWidth <= 500) {
             list.forEach((el) => {
                 el.setAttribute('mini-nav' , '')
                 el.setAttribute('mini-nav-action' , '')
@@ -103,7 +104,7 @@ export default class Admin extends Component {
 
     render() {
         return (
-            <div className="admin" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
+            <div className="admin" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp} onLoad={this.checkSize}>
                 <section className="tab-bar">
                     <span className="pg-action">
                         <span className="nav-menu">

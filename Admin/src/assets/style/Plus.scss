@@ -19,7 +19,7 @@ $fontSizeLabel: 18pt;
     
         max-width: 260px;
 
-        Bot-head-form {
+        bot-head-form {
             font-family: Sans-font;
             margin: 15px 0px;
             font-size: 16pt;
@@ -44,10 +44,10 @@ $fontSizeLabel: 18pt;
             
     
             .label-Pform {
-                height: 38px;
+                height: 34px;
                 // border-left: 2px solid rgb(15, 191, 15);
                 // background-color: rgb(15, 191, 15);
-                padding: 5px;
+                padding: 2px;
             }
     
             input {
@@ -65,6 +65,11 @@ $fontSizeLabel: 18pt;
             input[readOnly] {
                 background-color: rgba(128, 128, 128, 0.168);
                 cursor: default;
+            }
+
+            input[put=""] {
+                font-family: main-font; 
+                font-size:16pt
             }
         }
 
@@ -232,7 +237,7 @@ $fontSizeLabel: 18pt;
                 visibility: hidden;
             
                 z-index: 601;
-                transition: 0.5s;
+                transition: opacity 0.5s , visibility 0.5s;
             
                 width: 310px;
                 height: 260px;
@@ -309,5 +314,83 @@ $fontSizeLabel: 18pt;
 
     #popup-confirm::-webkit-scrollbar {
         width: 0;
+    }
+}
+
+@media only screen and (max-width: 460px) {
+    #content-plus {
+        #Pform {
+            bot-head-form {
+                font-size: 5.5vw;
+            }
+
+            .textbox-Pform {
+                min-height: 11vw;
+                max-height: 9vw;
+                width: 90%;
+                .label-Pform {
+                    height: 9vw;
+                    padding: 2px;
+                    // padding-left: 0px;
+                }
+                input {
+                    padding: 3px 5px;
+                    font-size: 5vw;
+                }
+
+                input[put=""] {
+                    font-family: main-font; 
+                    font-size:5.7vw;
+                }
+            }
+
+            button {
+                font-size: 5vw;
+                width: 90%;
+                border-radius: 10px;
+            }
+        }
+
+        #popup-confirm {
+            #plus-confirm {
+                bot-head-confirm {
+                    font-size: 6vw;
+                }
+
+                #bodyForm-confirm {
+                    #detailNewDocter {
+    
+                        .content-again {
+                            .head-again {
+                                font-size: 5vw;
+                                font-weight: 900;
+                            }
+    
+                            .data-again {
+                                span {
+                                    font-size: 5vw;
+                                }
+                            }
+                        }
+                    }
+
+                    #textbox-confirm {
+                        font-family: Sans-font;
+                        font-size: 7vw;
+        
+                        margin: 15px 0px;
+        
+                        width: 70vw;
+                        height: 33px;
+                    }
+
+                    #bt-container-confirm{
+                        button{
+                            font-size: 6vw;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

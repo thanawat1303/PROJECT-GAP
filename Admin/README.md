@@ -35,6 +35,7 @@
 
    ```
    npm i react react-dom
+   npm i resize-observer-polyfill
    ```
 
    - style

@@ -1,4 +1,5 @@
 import React , {Component} from "react";
+import ResizeObserver from "resize-observer-polyfill";
 import {clientMo}  from "./assets/js/moduleClient";
 
 import './assets/style/List.scss'
@@ -13,29 +14,48 @@ export default class List extends Component {
         super();
         this.state={
             body : <></>,
-            delete : <></>
+            delete : <></>,
+            textDetail : <></>
             // list : []
         }
     }
 
-    moreDetail = () => {
-        let maxsize = document.querySelector('.docter-detail').clientWidth 
-                - document.querySelector('.docter-detail .img-docter').clientWidth 
-                - document.querySelector('.docter-detail .head-detail').clientWidth 
-                - 10
+    LoadDetailInput = () => {
+        document.querySelectorAll('.docter-detail .indetail .text-detail').forEach((ele)=>{
+            let icon = ele.nextElementSibling
+            if(ele.scrollWidth > ele.clientWidth && ele.getAttribute('checktext') == 1 && icon.className == "bt-showDetail") icon.setAttribute('show' , '')
+            else icon.removeAttribute('show')
+        })
+    }
 
-        // document.querySelectorAll('.docter-detail .detail .indetail').forEach((v , index)=>{
-        //     v.setAttribute('style' , `max-width:${maxsize}px`)
-        // })
-        
-        console.log(document.querySelector('.docter-detail').clientWidth , document.querySelector('.docter-detail .img-docter').clientWidth , document.querySelector('.docter-detail .head-detail').clientWidth)
+    ShowDetailInput = (e = document.getElementById(''), text) => {
+        // check user login
+        let show = document.getElementById('popup-detail-docter')
+        show.setAttribute('show' , '')
+        document.getElementById('popup-detail-docter').setAttribute(
+            'style' 
+            , `max-width:${window.innerWidth * 0.8}px; 
+                transform: translate(${e.offsetWidth + show.offsetWidth}px, ${e.offsetHeight - show.offsetHeight}px);`)
+        console.log()
+        this.setState({
+            textDetail : <ShowDetail text={text} body={this}/>
+        })
     }
 
     componentDidMount(){
         if (this.props.status == 0) window.history.replaceState({} , null , '/list' )
         else if(this.props.status == 1) window.history.pushState({}, null , '/list')
 
-        window.addEventListener('resize',this.moreDetail)
+        this.LoadDetailInput()
+
+        document.getElementById('popup-detail-docter').setAttribute('style' , `max-width:${window.innerWidth * 0.8}px`)
+
+        const resizeObserver = new ResizeObserver((entries) => {
+            entries.forEach((entry) => {
+                this.LoadDetailInput()
+            });
+        });
+        resizeObserver.observe(document.getElementById('body-list-docter'))
 
         this.setState({
             body : JSON.parse(this.props.list).map((listDT , index) =>
@@ -47,9 +67,9 @@ export default class List extends Component {
                                         <div className="detail">
                                             <div className="head-detail">ชื่อ - นามสกุล</div>
                                             <div className="indetail">
-                                                <input readOnly className="text-detail" value={(listDT['Fullname_docter']) ? listDT['Fullname_docter'] : 'ยังไม่ระบุ'}></input>
+                                                <input checktext={(listDT['Fullname_docter']) ? 1 : 0} readOnly className="text-detail" value={(listDT['Fullname_docter']) ? listDT['Fullname_docter'] : 'ยังไม่ระบุ'}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg"></img>
+                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -58,11 +78,9 @@ export default class List extends Component {
                                         <div className="detail">
                                             <div className="head-detail">รหัสประจำตัว</div>
                                             <div className="indetail">
-                                                <input readOnly className="text-detail" value={listDT['id_docter'] 
-                                                    // + "4444444444444444444444444444444444444"
-                                                    }></input>
+                                                <input readOnly className="text-detail" value={listDT['id_docter']}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg"></img>
+                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -72,9 +90,8 @@ export default class List extends Component {
                                             <div className="head-detail">ศูนย์ดูแล</div>
                                             <div className="indetail">
                                                 <input readOnly className="text-detail" value={(listDT['Job_care_center']) ? listDT['Job_care_center'] : "ยังไม่ระบุ"}></input>
-                                                <span className="detail-sub"></span>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg"></img>
+                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -103,7 +120,7 @@ export default class List extends Component {
     }
 
     componentWillUnmount(){
-        window.removeEventListener('resize' , this.moreDetail)
+        
     }
 
     LoadMore = () => {
@@ -153,9 +170,12 @@ export default class List extends Component {
 
     render() {
         return (
-            <section id="body-list-docter" onLoad={this.moreDetail}>
+            <section id="body-list-docter">
                 <div id="popup-delete">
                     {this.state.delete}
+                </div>
+                <div id="popup-detail-docter">
+                    {this.state.textDetail}
                 </div>
                 {this.state.body}
             </section>
@@ -268,6 +288,41 @@ class ConfirmDelete extends Component {
                     </section>
                 </section>
             </section>
+        )
+    }
+}
+
+class ShowDetail extends Component {
+    constructor(){
+        super()
+        this.state = {
+            textDetail : ""
+        }
+    }
+
+    componentDidMount() {
+        window.addEventListener('mousedown' , this.removePopup)
+        this.setState({
+            textDetail : this.props.text
+        })
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('mousedown' , this.removePopup)
+    }
+
+    removePopup = (e) => {
+        document.getElementById('popup-detail-docter').removeAttribute('show')
+        if(e.target.id != "show-popup-detail") this.props.body.setState({
+            textDetail : <></>
+        })
+    }
+
+    render() {
+        return(
+            <div id="show-popup-detail">
+                {this.state.textDetail}
+            </div>
         )
     }
 }

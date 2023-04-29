@@ -27,7 +27,7 @@ export default class Plus extends Component {
     ShowPassword = (e) => {
         let input = e.target.previousSibling
         if(input.value) {
-            input.removeAttribute('style')
+            input.removeAttribute('put')
             input.setAttribute('type' , 'text')
         }
         e.target.setAttribute('src' , '/eye-open-svgrepo-com.svg')
@@ -36,7 +36,7 @@ export default class Plus extends Component {
     hidePassword = (e) => {
         let input = e.target.previousSibling
         if(input.value) {
-            input.setAttribute('style' , 'font-family: main-font; font-size:16pt')
+            input.setAttribute('put' , '')
             input.setAttribute('type' , 'password')
         }
         e.target.setAttribute('src' , '/eye-closed-svgrepo-com.svg')
@@ -58,9 +58,10 @@ export default class Plus extends Component {
     }
 
     functionPasswordInput = (e) => {
-        if(e.target.value) e.target.setAttribute('style' , 'font-family: main-font; font-size:16pt')
-        else e.target.removeAttribute('style')
+        if(e.target.value) e.target.setAttribute('put' , '')
+        else e.target.removeAttribute('put')
 
+        if(e.target.type == "text") e.target.setAttribute('type' , 'password')
         // if(document.querySelector('#Pform #user-id').value && document.querySelector('#Pform #password').value) {
         //     document.getElementById('password-again').removeAttribute('readOnly')
         // } else {
@@ -101,7 +102,7 @@ export default class Plus extends Component {
                         // reset border error
                         e.target[0].value = e.target[1].value = ""
                         // = e.target[2].value = ""
-                        e.target[1].removeAttribute('style')
+                        e.target[1].removeAttribute('put')
 
                         // document.getElementById('password-again').setAttribute('readOnly' , "")
                         // document.querySelector('#Pform .error-notM').removeAttribute('style')
@@ -152,7 +153,7 @@ export default class Plus extends Component {
                     </label>
                     <label id="password-box" className="textbox-Pform">
                         <input placeholder="รหัสผ่านของผู้ส่งเสริม" id="password" type="password" onChange={this.functionPasswordInput}></input>
-                        <img onMouseDown={this.ShowPassword} onMouseUp={this.hidePassword} className="label-Pform" id="action-password" src="/eye-closed-svgrepo-com.svg"></img>
+                        <img onTouchStart={this.ShowPassword} onMouseDown={this.ShowPassword} onMouseUp={this.hidePassword} className="label-Pform" id="action-password" src="/eye-closed-svgrepo-com.svg"></img>
                     </label>
                     {/* <label id="password-box-again" className="textbox-Pform">
                         <input placeholder="รหัสผ่านอีกครั้ง" id="password-again" type="password" onChange={this.functionPasswordAgInput} readOnly></input>
@@ -181,14 +182,30 @@ class Confirm extends Component {
         }
     }
 
-    // componentDidMount(){
-    //     if (this.props.state == 1) window.history.pushState({}, null , '/plus/confirm')
-    //     else if (this.props.state == 2)window.history.replaceState({} , null , '/plus/confirm')
-    // }
+    sizeFeedBack = () => {
+        if(window.innerWidth <= 460) {
+            let body = document.querySelector('#plus-confirm #bodyForm-confirm')
+            let head = document.querySelector('#plus-confirm bot-head-confirm')
+            let feedback = document.querySelector('#plus-confirm #feedback')
 
-    // componentWillUnmount() {
-    //     window.history.back()
-    // }
+            feedback.setAttribute('style' , `
+                width:${body.clientWidth}px;
+                height:${body.clientHeight}px;
+                margin-top:${head.clientHeight}px;
+                padding-bottom:${head.clientHeight / 2}px;
+                `)
+        }
+    }
+
+    componentDidMount(){
+        // if (this.props.state == 1) window.history.pushState({}, null , '/plus/confirm')
+        // else if (this.props.state == 2)window.history.replaceState({} , null , '/plus/confirm')
+        window.addEventListener('resize' , this.sizeFeedBack)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize' , this.sizeFeedBack)
+    }
 
     functionPasswordInput = (e) => {
         if(e.target.value != "") e.target.setAttribute('style' , 'font-family: main-font; font-size:18pt')
@@ -276,7 +293,7 @@ class Confirm extends Component {
         return(
             <section id="plus-confirm">
                 <bot-head-confirm>ยืนยันการเพิ่มข้อมูล</bot-head-confirm>
-                <section id="feedback">
+                <section id="feedback" onLoad={this.sizeFeedBack}>
                     {this.state.feedback}
                 </section>
                 <section id="bodyForm-confirm">
@@ -290,7 +307,7 @@ class Confirm extends Component {
                         <div id="content-password-box" className="content-again">
                             <div className="head-again">รหัสผ่านของผู้ส่งเสริม:</div> 
                             <span className="data-again">
-                                <span onMouseDown={this.showPassword} onMouseUp={this.hidePassword}>{"[คลิกเพื่อแสดง]"}</span>
+                                <span onTouchStart={this.showPassword} onMouseDown={this.showPassword} onMouseUp={this.hidePassword}>{"[คลิกเพื่อแสดง]"}</span>
                             </span>
                         </div>
                     </section>

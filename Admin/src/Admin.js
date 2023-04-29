@@ -31,7 +31,8 @@ export default class Admin extends Component {
     checkSize = () => {
         // e.target.innerHeight 
         let list = document.querySelectorAll('.nav-menu .list-menu-nav')
-        console.log(window.innerWidth)
+        console.log(1)
+        // console.log(window.innerWidth)
         if(window.innerWidth <= 500) {
             list.forEach((el) => {
                 el.setAttribute('mini-nav' , '')
@@ -98,13 +99,12 @@ export default class Admin extends Component {
                 document.querySelector('#profile-otion').classList.remove('display')
                 document.querySelector('.profile-icon').classList.remove('select')
             }
-
         }  
     }
 
     render() {
         return (
-            <div className="admin" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp} onLoad={this.checkSize}>
+            <div className="admin" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
                 <section className="tab-bar">
                     <span className="pg-action">
                         <span className="nav-menu">
@@ -134,7 +134,9 @@ export default class Admin extends Component {
                     </span>
                 </section>
                 <section className="container-body-admin">
-                    {this.state.nav}
+                    <div onLoad={this.checkSize}>
+                        {this.state.nav}
+                    </div>
                     <bot-main>
                         <bot-content>
                             {this.state.body}

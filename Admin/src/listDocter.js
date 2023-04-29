@@ -30,6 +30,7 @@ export default class List extends Component {
 
     ShowDetailInput = (e = document.getElementById(''), text) => {
         // check user login
+        
         let show = document.getElementById('popup-detail-docter')
         show.setAttribute('show' , '')
         document.getElementById('popup-detail-docter').setAttribute(

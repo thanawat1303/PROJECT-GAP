@@ -29,7 +29,7 @@ export default class Login extends Component {
             }
 
             setTimeout(()=>{
-                clientMo.post('/api/admin/login' , formData).then((context)=>{
+                clientMo.post('/api/admin/auth' , formData).then((context)=>{
                     if(context) {
                         this.props.main.setState({
                             body : <Admin main={this.props.main}/>

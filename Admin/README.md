@@ -15,6 +15,8 @@
    npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session 
 
    npm i helmet
+
+   npm i bcrypt
    ```
 
    - Ref session

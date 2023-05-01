@@ -1,6 +1,7 @@
 require('dotenv').config().parsed
 // import module express config
 const app = require('./configExpress')
+const bcrypt = require('bcrypt')
 // module DB and connect DB
 const db = require('mysql')
 const dbpacket = require('./dbConfig')
@@ -155,20 +156,22 @@ app.post('/api/admin/add' , (req , res)=>{
 
     let con = db.createConnection(dbpacket.listConfig())
 
-    apifunc.auth(con , username , password , res , dbpacket).then((result)=>{
+    apifunc.auth(con , username , password , res , dbpacket).then( async (result)=>{
       if(result === "pass") {
-        con.query(`INSERT INTO accountdt(
-          Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account , Status_delete) 
-          VALUES (?,?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1,0] , (err , result)=>{
-          if(err) {
-            dbpacket.dbErrorReturn(con , err , res)
-            return 0
-          }
-  
-          console.log(result)
+        bcrypt.hash(req.body['passwordDT'] , parseInt(process.env.HashRound)).then((password)=>{
+          con.query(`INSERT INTO accountdt(
+            Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account , Status_delete) 
+            VALUES (?,?,?,?,?,?,?)` , ['',req.body['ID'],password,'','',1,0] , (err , result)=>{
+            if(err) {
+              dbpacket.dbErrorReturn(con , err , res)
+              return 0
+            }
     
-          con.destroy()
-          res.send('1')
+            console.log(result)
+      
+            con.destroy()
+            res.send('1')
+          })
         })
       }
     }).catch((err)=>{

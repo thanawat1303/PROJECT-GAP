@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+
 const apifunc = {
   auth: (connectDB, username, password, res, packetDB) => {
     return new Promise((resole, reject) => {

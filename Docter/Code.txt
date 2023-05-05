@@ -1,0 +1,7 @@
+UploadImg = () => {
+        let file = document.getElementById("test-img").files[0] //this is file want read to Base64
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => console.log(reader.result);
+        reader.onerror = error => console.log(error);
+    }

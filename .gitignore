@@ -1,7 +1,8 @@
 Admin/node_modules
 Docter/node_modules
+API/node_modules
 # Admin/.env
 # Admin/package-lock.json
 # Admin/package.json
 # Admin/sql_database.sql
-Admin/.gitignore
+# Admin/.gitignore

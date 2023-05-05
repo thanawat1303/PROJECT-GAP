@@ -1,0 +1,24 @@
+{
+  "name": "api_line",
+  "version": "1.0.0",
+  "description": "- \r  ```\r  npm init -y\r  ```",
+  "main": "api_line_gap.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thanawat1303/API_LINE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thanawat1303/API_LINE/issues"
+  },
+  "homepage": "https://github.com/thanawat1303/API_LINE#readme",
+  "dependencies": {
+    "@line/bot-sdk": "^7.5.2",
+    "dotenv": "^16.0.3"
+  }
+}

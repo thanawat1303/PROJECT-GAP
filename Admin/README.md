@@ -83,6 +83,9 @@
     }
     ```
 
+### Setup DB 
+    - On .env file
+
 ### Responsive
     - https://www.hobo-web.co.uk/best-screen-size/
 

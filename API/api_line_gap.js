@@ -29,7 +29,7 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "line:https://liff.line.me/1661049098-A9PON7LB"
+            "uri": "https://liff.line.me/1661049098-A9PON7LB"
           }
         },
         {
@@ -41,7 +41,7 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "line:https://liff.line.me/1661049098-dorebKYg"
+            "uri": "https://liff.line.me/1661049098-dorebKYg"
           }
         }
       ]

@@ -40,18 +40,18 @@
     "sass-loader": "^13.2.2",
     "style-loader": "^3.3.2",
     "uuid": "^9.0.0",
-    "webpack": "^5.81.0",
+    "webpack": "^5.82.0",
     "webpack-cli": "^5.0.2",
-    "webpack-dev-middleware": "^6.0.2",
+    "webpack-dev-middleware": "^6.1.0",
     "webpack-dev-server": "^4.13.3",
     "webpack-hot-middleware": "^2.25.3"
   },
   "nodemonConfig": {
-    "watch" : [
+    "watch": [
       "server",
       "webpack.config.js"
     ],
-    "ignore" : [
+    "ignore": [
       "/src"
     ],
     "delay": "1"

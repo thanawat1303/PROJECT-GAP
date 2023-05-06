@@ -15,7 +15,7 @@ export default class Login extends Component {
 
     componentDidMount() {
         if(this.props.state) {
-            window.history.pushState({} , null , '/')
+            window.history.pushState({} , null , '/admin')
         }
         // else window.history.replaceState({} , null , '/')
     }

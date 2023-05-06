@@ -1,0 +1,102 @@
+.box-login {
+
+    height: 100%;
+
+    .content-login {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+        width: 50%;
+        max-width: 300px;
+        text-align: center;
+        margin: auto auto;
+
+        button {
+            margin-top: 15px;
+            border-radius: 12px;
+            padding: 5px 0px;
+            
+            font-family: main-font;
+            font-size: 16pt;
+        }
+
+        .content-pw {
+            transition: 0.25s;
+        }
+
+        label {
+
+            margin: 5px 0px;
+            display: flex;
+            justify-content: end;
+
+            .label-login {
+                position: absolute;
+                transition: 0.3s;
+                transform: translate( -5px , 0px );
+                font-family: main-font;
+                font-size: 19px;
+                font-weight: 900;
+                z-index: -1;
+            }
+
+            .inputForm {
+                border-radius: 12px;
+                border: 0.5px solid greenyellow;
+                border-bottom: 4px solid greenyellow;
+                box-shadow: 0px 0px 2.5px greenyellow;
+                outline: 0px;
+                padding: 3px 10px;
+                width: 100%;
+                font-family: main-font;
+                font-weight: 900;
+                font-size: 16pt;
+            }
+        }
+    }
+}
+
+.moveOn {
+    transform: translate(-5px, -25px) !important;
+}
+
+.empty {
+    box-shadow: 0px 0px 5px red !important;
+}
+
+.error-login {
+    color: red;
+    font-family: main-font;
+    font-weight: 900;
+    font-size: 14px;
+}
+
+.Logo-App {
+    transition: 0.3s;
+    margin-bottom: 18px;
+
+    -webkit-user-drag: none;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+// responsive computer
+@media only screen and (min-width: 1280px) and  (min-height: 720px) and (max-width: 1920px) and (max-height: 1080px) {
+    .box-login {
+        .content-login {
+            button {
+                cursor: pointer;
+            }
+            button:hover {
+                box-shadow: 0px 0px 10px green;
+            }
+        }
+    }
+}
+

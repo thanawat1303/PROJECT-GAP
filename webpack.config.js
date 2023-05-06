@@ -7,8 +7,8 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 const isDevMode = process.env.NODE_ENV === "development";
 
 const main = isDevMode
-                ? ["webpack-hot-middleware/client", "./index.js"]
-                : ["./index.js"]
+                ? ["webpack-hot-middleware/client", "/index.js"]
+                : ["/index.js"]
 const jsPlugins = isDevMode ? ["react-refresh/babel"] : []; //use babel react refresh
 
 const plugins = isDevMode ? 
@@ -24,11 +24,9 @@ const plugins = isDevMode ?
 // Hot refresh
 module.exports = {
     mode: isDevMode ? "development" : "production", //set Mode 
-    entry: {
-        main,
-    }, //set file main run react
+    entry: main, //set file main run react
     output: {
-        path: path.resolve(__dirname , "/public"), //set path template main index.html
+        path: path.resolve(__dirname , "public"), //set path template main index.html
         filename: "main.js", //set file main where build
         publicPath: '/', //set Path Project
     },

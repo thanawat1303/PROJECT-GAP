@@ -1,0 +1,36 @@
+{
+  "name": "project-line-oa-gap",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000P\u0000R\u0000O\u0000J\u0000E\u0000C\u0000T\u0000-\u0000L\u0000I\u0000N\u0000E\u0000-\u0000O\u0000A\u0000-\u0000G\u0000A\u0000P\u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server .",
+    "server": "nodemon server/server.js",
+    "build": "webpack ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thanawat1303/PROJECT-LINE-OA-GAP.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thanawat1303/PROJECT-LINE-OA-GAP/issues"
+  },
+  "homepage": "https://github.com/thanawat1303/PROJECT-LINE-OA-GAP#readme",
+  
+  "nodemonConfig": {
+    "watch": [
+      "server",
+      "webpack.config.js",
+      "index.js"
+    ],
+    "ignore": [
+      "/Admin",
+      "/Docter"
+    ],
+    "delay": "1"
+  }
+}

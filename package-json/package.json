@@ -20,7 +20,6 @@
     "url": "https://github.com/thanawat1303/PROJECT-LINE-OA-GAP/issues"
   },
   "homepage": "https://github.com/thanawat1303/PROJECT-LINE-OA-GAP#readme",
-  
   "nodemonConfig": {
     "watch": [
       "server",

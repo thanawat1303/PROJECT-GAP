@@ -5,6 +5,7 @@ node_modules
 package-lock.json
 /package.json
 public/main.js
+main.js.LICENSE.txt
 # package.json
 # Admin/.env
 # Admin/package-lock.json

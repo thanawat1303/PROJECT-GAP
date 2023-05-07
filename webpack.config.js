@@ -5,6 +5,7 @@ require('dotenv').config().parsed
 const webpack = require("webpack");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const isDevMode = process.env.NODE_ENV === "development";
+const HtmlWebpack = require('html-webpack-plugin')
 
 const main = isDevMode
                 ? ["webpack-hot-middleware/client", "/index.js"]
@@ -19,7 +20,9 @@ const plugins = isDevMode ?
                                 sockIntegration: "whm",
                             },
                         }), 
-                    ] : [ //not hot refresh
+                    ] : [ new HtmlWebpack({
+                        template: './public/index.html'
+                    })
                         ];
 // Hot refresh
 module.exports = {

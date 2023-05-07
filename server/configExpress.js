@@ -1,3 +1,8 @@
+require('dotenv').config().parsed
+
+
+const router = require('./routerApi')
+
 const helmat = require('helmet')
 const express = require('express');
 const reactServ = require('./reactServ');
@@ -5,6 +10,8 @@ const reactServ = require('./reactServ');
 const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 const app = express();
+
+const isDev = process.env.NODE_ENV === "development";
 
 // secure server
 app.use(helmat(
@@ -14,7 +21,10 @@ app.use(helmat(
 ))
 
 // config server and Hot Refresh
-reactServ(app)
+if(isDev) reactServ(app)
+
+// router api url
+router(app)
 
 app.use(sessions({
     secret : process.env.KEY_SESSION,

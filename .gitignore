@@ -6,6 +6,7 @@ package-lock.json
 /package.json
 public/main.js
 main.js.LICENSE.txt
+main.js.map
 # package.json
 # Admin/.env
 # Admin/package-lock.json

@@ -23,7 +23,7 @@
   "nodemonConfig": {
     "watch": [
       "server",
-      "webpack.config.js",
+      "webpack.dev.config.js",
       "index.js"
     ],
     "ignore": [

@@ -351,8 +351,10 @@ app.all('/api/admin/auth' , (req , res)=>{
     }
     con.destroy()
   }).catch((err)=>{
-    con.destroy()
     if(err == "not pass") {
+      res.redirect('/api/admin/logout')
+      con.destroy()
+    } else if( err == "connect" ) {
       res.redirect('/api/admin/logout')
     }
   })

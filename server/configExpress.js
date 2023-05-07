@@ -1,6 +1,4 @@
 require('dotenv').config().parsed
-
-
 const router = require('./routerApi')
 
 const helmat = require('helmet')
@@ -14,11 +12,11 @@ const app = express();
 const isDev = process.env.NODE_ENV === "development";
 
 // secure server
-// app.use(helmat(
-//     {
-//     contentSecurityPolicy: process.env.NODE_ENV == 'development' ? false : true,
-//     }
-// ))
+app.use(helmat(
+    {
+    contentSecurityPolicy: process.env.NODE_ENV == 'development' ? false : true,
+    }
+))
 
 // config server and Hot Refresh
 if(isDev) reactServ(app)

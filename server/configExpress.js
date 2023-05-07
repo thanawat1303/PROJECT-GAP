@@ -21,7 +21,7 @@ app.use(helmat(
 ))
 
 // config server and Hot Refresh
-if(isDev) reactServ(app)
+// if(isDev) reactServ(app)
 
 // router api url
 router(app)

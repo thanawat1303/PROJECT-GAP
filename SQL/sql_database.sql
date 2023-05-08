@@ -1,1 +1,1 @@
-INSERT INTO line_chat_gap.admin (username , password , phone , address) VALUES ('admin' , 'admin' , '0902959765' , POINT(0000 , 0000))
+INSERT INTO line_chat_gap.admin (username , password , phone , address) VALUES ('admin' , SHA2('admin', 256) , '0902959765' , POINT(0000 , 0000))

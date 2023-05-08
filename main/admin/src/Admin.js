@@ -49,7 +49,7 @@ export default class Admin extends Component {
         e.target.parentElement.classList.toggle('hide')
         clientMo.rmAction('#loading' , 'hide' , 0)
         setTimeout(()=>{
-            clientMo.get('/api/admin/logout').then(()=>{
+            clientMo.get('/api/logout').then(()=>{
                 this.props.main.setState({
                     body : <Login main={this.props.main} state={true}/>
                 })

@@ -1,7 +1,7 @@
-const bcrypt = require('bcrypt')
+const packetDB = require('./dbConfig')
 
 const apifunc = {
-  auth: (connectDB, username, password, res, packetDB) => {
+  auth: (connectDB, username, password, res , authAccount) => {
     return new Promise((resole, reject) => {
       connectDB.connect(err => {
         if (err) {
@@ -10,7 +10,7 @@ const apifunc = {
         }
 
         connectDB.query(
-          `SELECT * FROM admin WHERE username=? AND password=?`,
+          `SELECT * FROM ${authAccount} WHERE username=? AND password=SHA2( ? , 256)`,
           [username, password],
           (err, result) => {
             if (err) {

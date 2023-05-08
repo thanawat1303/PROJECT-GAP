@@ -1,7 +1,7 @@
 require('dotenv').config().parsed
 // import module express config
-const app = require('./configExpress')
-const bcrypt = require('bcrypt')
+const app = require('./apiDocter')
+
 // module DB and connect DB
 const db = require('mysql')
 const dbpacket = require('./dbConfig')
@@ -12,17 +12,17 @@ app.post('/api/admin/check' , (req , res)=>{
 })
 
 app.post('/api/admin/chkOver' , (req , res)=>{
-  let username = req.session.username
-  let password = req.session.password
+  let username = req.session.user_admin
+  let password = req.session.pass_admin
 
   if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
-    res.redirect('/api/admin/logout')
+    res.redirect('/api/logout')
     return 0
   }
 
   let con = db.createConnection(dbpacket.listConfig())
 
-  apifunc.auth(con , username , password , res , dbpacket).then((result)=>{
+  apifunc.auth(con , username , password , res , "admin").then((result)=>{
     if(result === "pass") {
       if(req.body['ID']) {
         con.query(`SELECT id_docter FROM accountdt WHERE id_docter=?` , [req.body['ID']] , (err,result)=>{
@@ -45,7 +45,7 @@ app.post('/api/admin/chkOver' , (req , res)=>{
   }).catch((err)=>{
     con.destroy()
     if(err == "not pass") {
-      res.redirect('/api/admin/logout')
+      res.redirect('/api/logout')
     }
   })
 
@@ -83,7 +83,7 @@ app.post('/api/admin/chkOver' , (req , res)=>{
   
   //     } else {
   //       con.destroy()
-  //       res.redirect('/api/admin/logout')
+  //       res.redirect('/api/logout')
   //     }
   //   })
   // })
@@ -91,11 +91,11 @@ app.post('/api/admin/chkOver' , (req , res)=>{
 
 // check action of user
 app.post('/api/admin/checkUserAction' , (req , res)=> {
-  let username = req.session.username ?? '';
+  let username = req.session.user_admin ?? '';
   let password = req.body['password'] ?? '';
 
   if(username === '' || req.hostname !== process.env.HOST_NAME) {
-    res.redirect('/api/admin/logout')
+    res.redirect('/api/logout')
     return 0
   }
 
@@ -107,7 +107,7 @@ app.post('/api/admin/checkUserAction' , (req , res)=> {
       return 0
     }
 
-    con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+    con.query(`SELECT * FROM admin WHERE username=? AND password=SHA2( ? , 256)` , [username , password] , (err , result)=>{
       if (err) {
         dbpacket.dbErrorReturn(con , err , res)
         return 0
@@ -146,38 +146,34 @@ app.post('/api/admin/add' , (req , res)=>{
     
     delete req.session.checkADD
 
-    let username = req.session.username
-    let password = req.session.password
+    let username = req.session.user_admin
+    let password = req.session.pass_admin
 
     if(username === '' || password === '') {
-      res.redirect('/api/admin/logout')
+      res.redirect('/api/logout')
       return 0
     }
 
     let con = db.createConnection(dbpacket.listConfig())
 
-    apifunc.auth(con , username , password , res , dbpacket).then( async (result)=>{
+    apifunc.auth(con , username , password , res , "admin").then( async (result)=>{
       if(result === "pass") {
-        bcrypt.hash(req.body['passwordDT'] , parseInt(process.env.HashRound)).then((password)=>{
-          con.query(`INSERT INTO accountdt(
-            Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account , Status_delete) 
-            VALUES (?,?,?,?,?,?,?)` , ['',req.body['ID'],password,'','',1,0] , (err , result)=>{
-            if(err) {
-              dbpacket.dbErrorReturn(con , err , res)
-              return 0
-            }
+        con.query(`INSERT INTO accountdt(
+          Fullname_docter , id_docter , Password_docter , Image_docter , Job_care_center , Status_account , Status_delete) 
+          VALUES (?,?,SHA2(?,256),?,?,?,?)` , ['',req.body['ID'],password,'','',1,0] , (err , result)=>{
+          if(err) {
+            dbpacket.dbErrorReturn(con , err , res)
+            return 0
+          }
     
-            console.log(result)
-      
-            con.destroy()
-            res.send('1')
-          })
+          con.destroy()
+          res.send('1')
         })
       }
     }).catch((err)=>{
       con.destroy()
       if(err == "not pass") {
-        res.redirect('/api/admin/logout')
+        res.redirect('/api/logout')
       }
     })
 
@@ -212,17 +208,17 @@ app.post('/api/admin/add' , (req , res)=>{
 })
 
 app.post('/api/admin/listDocter' , (req , res)=>{
-  let username = req.session.username
-  let password = req.session.password
+  let username = req.session.user_admin
+  let password = req.session.pass_admin
 
   if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
-    res.redirect('/api/admin/logout')
+    res.redirect('/api/logout')
     return 0
   }
 
   let con = db.createConnection(dbpacket.listConfig())
 
-  apifunc.auth(con , username , password , res , dbpacket).then((result)=>{
+  apifunc.auth(con , username , password , res , "admin").then((result)=>{
     if(result === "pass") {
       con.query('SELECT Fullname_docter , id_docter , Image_docter , Job_care_center , Status_account FROM accountdt WHERE Status_delete=0 LIMIT 25;' , (err , result)=>{
         if (err){
@@ -237,23 +233,23 @@ app.post('/api/admin/listDocter' , (req , res)=>{
   }).catch((err)=>{
     con.destroy()
     if(err == "not pass") {
-      res.redirect('/api/admin/logout')
+      res.redirect('/api/logout')
     }
   })
 })
 
 app.post('/api/admin/changeState' , (req,res)=>{
-  let username = req.session.username
-  let password = req.session.password
+  let username = req.session.user_admin
+  let password = req.session.pass_admin
 
   if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
-    res.redirect('/api/admin/logout')
+    res.redirect('/api/logout')
     return 0
   }
 
   let con = db.createConnection(dbpacket.listConfig())
 
-  apifunc.auth(con , username , password , res , dbpacket).then((result)=>{
+  apifunc.auth(con , username , password , res , "admin").then((result)=>{
     if(result === "pass") {
       if(req.body['ID'] && req.body['status'] != undefined) {
         con.query(`UPDATE accountdt SET Status_account = ? WHERE id_docter = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err,result)=>{
@@ -276,7 +272,7 @@ app.post('/api/admin/changeState' , (req,res)=>{
   }).catch((err)=>{
     con.destroy()
     if(err == "not pass") {
-      res.redirect('/api/admin/logout')
+      res.redirect('/api/logout')
     }
   })
 })
@@ -290,17 +286,17 @@ app.post('/api/admin/delete' , (req , res)=>{
     
     delete req.session.checkDelete
 
-    let username = req.session.username
-    let password = req.session.password
+    let username = req.session.user_admin
+    let password = req.session.pass_admin
 
     if(username === '' || password === '') {
-      res.redirect('/api/admin/logout')
+      res.redirect('/api/logout')
       return 0
     }
 
     let con = db.createConnection(dbpacket.listConfig())
 
-    apifunc.auth(con , username , password , res , dbpacket).then((result)=>{
+    apifunc.auth(con , username , password , res , "admin").then((result)=>{
       if(result === "pass") {
         con.query(`UPDATE accountdt SET Status_delete = 1 WHERE id_docter=?` , [req.body['ID']] , (err , result)=>{
           if(err) {
@@ -316,7 +312,7 @@ app.post('/api/admin/delete' , (req , res)=>{
     }).catch((err)=>{
       con.destroy()
       if(err == "not pass") {
-        res.redirect('/api/admin/logout')
+        res.redirect('/api/logout')
       }
     })
   }
@@ -331,11 +327,11 @@ app.post('/api/admin/delete' , (req , res)=>{
 app.all('/api/admin/auth' , (req , res)=>{
   
   // เช็คการเข้าสู่ระบบจริงๆ
-  let username = req.session.username ?? req.body['username'] ?? '';
-  let password = req.session.password ?? req.body['password'] ?? '';
+  let username = req.session.user_admin ?? req.body['username'] ?? '';
+  let password = req.session.pass_admin ?? req.body['password'] ?? '';
 
   if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
-    res.redirect('/api/admin/logout')
+    res.redirect('/api/logout')
     return 0
   }
 
@@ -343,24 +339,24 @@ app.all('/api/admin/auth' , (req , res)=>{
 
   // db.resume()
 
-  apifunc.auth(con , username , password , res , dbpacket).then((result)=>{
+  apifunc.auth(con , username , password , res , "admin").then((result)=>{
     if(result === "pass") {
-      req.session.username = username
-      req.session.password = password
+      req.session.user_admin = username
+      req.session.pass_admin = password
       res.send('1')
     }
     con.destroy()
   }).catch((err)=>{
     if(err == "not pass") {
-      res.redirect('/api/admin/logout')
+      res.redirect('/api/logout')
       con.destroy()
     } else if( err == "connect" ) {
-      res.redirect('/api/admin/logout')
+      res.redirect('/api/logout')
     }
   })
 })
 
-app.get('/api/admin/logout' , (req , res) => {
+app.get('/api/logout' , (req , res) => {
   console.log('Logout')
   res.clearCookie('connect.sid').send('')
 })

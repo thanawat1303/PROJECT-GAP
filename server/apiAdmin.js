@@ -8,7 +8,7 @@ const dbpacket = require('./dbConfig')
 const apifunc = require('./apifunc')
 // req
 app.post('/api/admin/check' , (req , res)=>{
-  console.log(res.hostname)
+  console.log(req.hostname)
   res.redirect('/api/admin/auth');
 })
 

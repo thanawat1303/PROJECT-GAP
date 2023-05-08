@@ -18,9 +18,7 @@ const app = express();
 
 // config server and Hot Refresh
 
-
-
-if(process.platform != process.env.PlatformServer) reactServ(app)
+if(process.argv[2] != process.env.BUILD) reactServ(app)
 
 // router api url
 router(app)
@@ -30,7 +28,7 @@ app.use(sessions({
     saveUninitialized: true,
     cookie: {
         // maxAge: parseInt(process.env.TIME_COKKIE),
-        secure: process.env.NODE_ENV == 'development' ? false : true
+        secure: process.argv[2] != process.env.BUILD ? false : true
     },
     resave : false
 }))

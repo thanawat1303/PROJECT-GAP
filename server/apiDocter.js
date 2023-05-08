@@ -18,7 +18,7 @@ app.all('/api/docter/auth' , (req , res)=>{
     let username = req.session.user_docter ?? req.body['username'] ?? '';
     let password = req.session.pass_docter ?? req.body['password'] ?? '';
 
-    if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
+    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
         res.redirect('/api/logout')
         return 0
     }

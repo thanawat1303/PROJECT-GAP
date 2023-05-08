@@ -6,6 +6,8 @@ const app = require('./apiDocter')
 const db = require('mysql')
 const dbpacket = require('./dbConfig')
 const apifunc = require('./apifunc')
+
+const HOST_CHECK = process.argv[2] == process.env.BUILD ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
 // req
 app.post('/api/admin/check' , (req , res)=>{
   console.log(req.hostname)
@@ -16,7 +18,7 @@ app.post('/api/admin/chkOver' , (req , res)=>{
   let username = req.session.user_admin
   let password = req.session.pass_admin
 
-  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
+  if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
     res.redirect('/api/logout')
     return 0
   }
@@ -95,7 +97,7 @@ app.post('/api/admin/checkUserAction' , (req , res)=> {
   let username = req.session.user_admin ?? '';
   let password = req.body['password'] ?? '';
 
-  if(username === '' || req.hostname !== process.env.HOST_NAME) {
+  if(username === '' || req.hostname !== HOST_CHECK) {
     res.redirect('/api/logout')
     return 0
   }
@@ -143,7 +145,7 @@ app.post('/api/admin/add' , (req , res)=>{
   if(req.body['ID'] && req.body['passwordDT'] && 
       req.session.checkADD['value'] === process.env.KEY_SESSION + "add" && 
       new Date().getTime() - req.session.checkADD['time'] <= timeoutSession &&
-      req.hostname === process.env.HOST_NAME) {
+      req.hostname === HOST_CHECK) {
     
     delete req.session.checkADD
 
@@ -212,7 +214,7 @@ app.post('/api/admin/listDocter' , (req , res)=>{
   let username = req.session.user_admin
   let password = req.session.pass_admin
 
-  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
+  if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
     res.redirect('/api/logout')
     return 0
   }
@@ -243,7 +245,7 @@ app.post('/api/admin/changeState' , (req,res)=>{
   let username = req.session.user_admin
   let password = req.session.pass_admin
 
-  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
+  if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
     res.redirect('/api/logout')
     return 0
   }
@@ -283,7 +285,7 @@ app.post('/api/admin/delete' , (req , res)=>{
   if(req.body['ID'] &&
       req.session.checkDelete['value'] === process.env.KEY_SESSION + "delete" && 
       new Date().getTime() - req.session.checkDelete['time'] <= timeoutSession &&
-      req.hostname === process.env.HOST_NAME) {
+      req.hostname === HOST_CHECK) {
     
     delete req.session.checkDelete
 
@@ -331,7 +333,7 @@ app.all('/api/admin/auth' , (req , res)=>{
   let username = req.session.user_admin ?? req.body['username'] ?? '';
   let password = req.session.pass_admin ?? req.body['password'] ?? '';
 
-  if(username === '' || password === '' || req.hostname !== process.env.HOST_NAME) {
+  if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
     res.redirect('/api/logout')
     return 0
   }

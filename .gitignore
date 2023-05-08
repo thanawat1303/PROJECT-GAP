@@ -11,5 +11,5 @@ main.js.map
 # Admin/.env
 # Admin/package-lock.json
 # Admin/package.json
-# Admin/sql_database.sql
+# Admin/sql_DATABASE_DEV.sql
 # Admin/.gitignore

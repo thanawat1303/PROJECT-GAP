@@ -125,7 +125,7 @@ export default class List extends Component {
     }
 
     LoadMore = () => {
-        // Load list docter more from database
+        // Load list docter more from DATABASE_DEV
     }
 
     changeStatus = (id , ele) => {

@@ -5,7 +5,7 @@ const DB = {
             host: process.env.HOST,
             user: process.argv[2] == process.env.BUILD ? process.env.USER_DBSER : process.env.USER_DBDEV,
             password : process.argv[2] == process.env.BUILD ? process.env.PASSWORD_DBSER : process.env.PASSWORD_DBDEV,
-            DATABASE_DEV : process.argv[2] == process.env.BUILD ? process.env.DATABASE_SER : process.env.DATABASE_DEV
+            database : process.argv[2] == process.env.BUILD ? process.env.DATABASE_SER : process.env.DATABASE_DEV
         }
     },
     

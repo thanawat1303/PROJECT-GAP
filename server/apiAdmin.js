@@ -343,6 +343,7 @@ app.all('/api/admin/auth' , (req , res)=>{
   // db.resume()
 
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
+    console.log("pass")
     if(result === "pass") {
       req.session.user_admin = username
       req.session.pass_admin = password

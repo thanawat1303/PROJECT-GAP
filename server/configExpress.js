@@ -20,7 +20,7 @@ const app = express();
 
 
 
-if(process.platform == process.env.PlatformServer) reactServ(app)
+if(process.platform != process.env.PlatformServer) reactServ(app)
 
 // router api url
 router(app)

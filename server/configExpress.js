@@ -28,7 +28,7 @@ app.use(sessions({
     saveUninitialized: true,
     cookie: {
         // maxAge: parseInt(process.env.TIME_COKKIE),
-        secure: process.argv[2] != process.env.BUILD ? false : true
+        // secure: process.argv[2] != process.env.BUILD ? false : true
     },
     resave : false
 }))

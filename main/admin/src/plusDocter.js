@@ -15,12 +15,12 @@ export default class Plus extends Component {
     }
 
     componentDidMount(){
-        if(this.props.status == 1) window.history.pushState({}, null , '/plus')
+        if(this.props.status == 1) window.history.pushState({}, null , '/admin/plus')
         else {
-            if(window.location.pathname == '/plus/confirm') {
-                window.history.pushState({}, null , '/plus')
-                // check session confirm docter 
-            } else window.history.pushState({}, null , '/plus')
+            // if(window.location.pathname == '/admin/plus/confirm') {
+            //     window.history.pushState({}, null , '/admin/plus')
+            //     // check session confirm docter 
+            // } else window.history.pushState({}, null , '/admin/plus')
         }
     }
 
@@ -145,7 +145,7 @@ export default class Plus extends Component {
     render() {
         return (
             <div id="content-plus">
-                <form id="Pform" onSubmit={this.Psubmit}>
+                <form autoComplete="off" id="Pform" onSubmit={this.Psubmit}>
                     <Bot-head-form>เพิ่มบัญชีเจ้าหน้าที่ส่งเสริม</Bot-head-form>
                     <label id="id" className="textbox-Pform">
                         <input placeholder="รหัสประตัวผู้ส่งเสริม" id="user-id" type="text" onChange={this.functionUserInput}></input>

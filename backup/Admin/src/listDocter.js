@@ -70,7 +70,7 @@ export default class List extends Component {
                                             <div className="indetail">
                                                 <input checktext={(listDT['Fullname_docter']) ? 1 : 0} readOnly className="text-detail" value={(listDT['Fullname_docter']) ? listDT['Fullname_docter'] : 'ยังไม่ระบุ'}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -81,7 +81,7 @@ export default class List extends Component {
                                             <div className="indetail">
                                                 <input readOnly className="text-detail" value={listDT['id_docter']}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -92,7 +92,7 @@ export default class List extends Component {
                                             <div className="indetail">
                                                 <input readOnly className="text-detail" value={(listDT['Job_care_center']) ? listDT['Job_care_center'] : "ยังไม่ระบุ"}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>

@@ -22,6 +22,6 @@ module.exports = router = (app) => {
     });
 
     app.get('/' , function(req, res) {
-        res.sendFile(__dirname.replace('\server' , '/public/index.html'));
+        res.sendFile(__dirname.replace('\server' , '/public/index404.html'));
     });
 }

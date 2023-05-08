@@ -81,15 +81,15 @@ export default class Login extends Component {
     render() {
         return (
             <div className="box-login">
-                <form onSubmit={this.submitFrom} className="content-login">
+                <form autoComplete="off" onSubmit={this.submitFrom} className="content-login">
                     <div className="Logo-App"><img width={150}  src="/logo2.png"></img></div>
                     <label className="content-user">
                         <span className="label-login">Username</span>
-                        <input onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="Username"/>
+                        <input autoComplete="off" onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="Username"/>
                     </label>
                     <label className="content-pw">
                         <span className="label-login">Password</span>
-                        <input onChange={this.changeValPw} className="inputForm" type="password" name="password" placeholder="Password"/>
+                        <input autoComplete="off" onChange={this.changeValPw} className="inputForm" type="password" name="password" placeholder="Password"/>
                     </label>
                     <button type="submit" className="bt-submit-form">LOGIN</button>
                     <p className="error-login hide">Login Failed Please log in again.</p>

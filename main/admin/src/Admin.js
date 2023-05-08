@@ -31,7 +31,6 @@ export default class Admin extends Component {
     checkSize = () => {
         // e.target.innerHeight 
         let list = document.querySelectorAll('.nav-menu .list-menu-nav')
-        console.log(1)
         // console.log(window.innerWidth)
         if(window.innerWidth <= 500) {
             list.forEach((el) => {
@@ -77,8 +76,7 @@ export default class Admin extends Component {
                 }
                 
             })
-
-            console.log(document.querySelector('.nav-menu .list-menu-nav').clientWidth)
+            
         }
     }
 

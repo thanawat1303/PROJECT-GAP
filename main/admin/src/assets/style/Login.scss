@@ -53,6 +53,11 @@
                 font-weight: 900;
                 font-size: 16pt;
             }
+
+            .inputForm:focus {
+                background-color: #fff;
+                color: #000;
+              }
         }
     }
 }

@@ -23,7 +23,8 @@ export default class NavAdmin extends Component {
 
     checkPath = (statusLoad = 0) =>{
         let path = window.location.pathname.split('/');
-        if(path[1] == 'list' || path[1] == '')
+        console.log(path[1] + "/" + path[2])
+        if(path[1] + "/" + path[2] == 'admin/list' || path[1] + "/" + path[2] == 'admin/undefined')
         {
             clientMo.post('/api/admin/listDocter').then((list)=>{
                 if(list) {
@@ -34,7 +35,7 @@ export default class NavAdmin extends Component {
 
             })
         }
-        else if (path[1] == 'plus')
+        else if (path[1] + "/" + path[2] == 'admin/plus')
         {
             clientMo.post('/api/admin/check').then((context)=>{
                 if(context) {

@@ -266,6 +266,10 @@ class Confirm extends Component {
                             } , 1700)
                         } else {
                             document.getElementById('img-feedback-error').setAttribute('show' , '')
+
+                            setTimeout(()=>{
+                                document.getElementById('feedback').removeAttribute('show')
+                            } , 1700)
                         }
                     })
                 } else if (value === 'incorrect') {

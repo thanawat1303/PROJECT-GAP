@@ -141,7 +141,7 @@ app.post('/api/admin/checkUserAction' , (req , res)=> {
 })
 
 app.post('/api/admin/add' , (req , res)=>{
-  let timeoutSession = 20
+  let timeoutSession = 5000
   if(req.body['ID'] && req.body['passwordDT'] && 
       req.session.checkADD['value'] === process.env.KEY_SESSION + "add" && 
       new Date().getTime() - req.session.checkADD['time'] <= timeoutSession &&
@@ -341,9 +341,7 @@ app.all('/api/admin/auth' , (req , res)=>{
   let con = db.createConnection(dbpacket.listConfig())
 
   // db.resume()
-  console.log("wait check")
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
-    console.log("pass")
     if(result === "pass") {
       req.session.user_admin = username
       req.session.pass_admin = password
@@ -351,7 +349,6 @@ app.all('/api/admin/auth' , (req , res)=>{
     }
     con.destroy()
   }).catch((err)=>{
-    console.log(err)
     if(err == "not pass") {
       res.redirect('/api/logout')
       con.destroy()

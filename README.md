@@ -31,7 +31,7 @@
       npm run server
       ```
    
-   - on Deploy
+   - on Deploy product
       ```
       npm run server deploy
       ```

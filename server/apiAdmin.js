@@ -10,7 +10,6 @@ const apifunc = require('./apifunc')
 const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
 // req
 app.post('/api/admin/check' , (req , res)=>{
-  console.log(HOST_CHECK)
   res.redirect('/api/admin/auth');
 })
 

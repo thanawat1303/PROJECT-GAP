@@ -341,7 +341,7 @@ app.all('/api/admin/auth' , (req , res)=>{
   let con = db.createConnection(dbpacket.listConfig())
 
   // db.resume()
-
+  console.log("wait check")
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
     console.log("pass")
     if(result === "pass") {
@@ -351,6 +351,7 @@ app.all('/api/admin/auth' , (req , res)=>{
     }
     con.destroy()
   }).catch((err)=>{
+    console.log(err)
     if(err == "not pass") {
       res.redirect('/api/logout')
       con.destroy()

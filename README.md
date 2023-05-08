@@ -28,10 +28,10 @@
 ### Run server 
    - on Developer
       ```
-      npm run server
+      npm run server-dev
       ```
    
    - on Deploy product
       ```
-      npm run server deploy
+      npm run server
       ```

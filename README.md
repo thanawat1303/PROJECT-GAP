@@ -26,6 +26,12 @@
    ```
    
 ### Run server 
-   ```
-   npm run server
-   ```
+   - on Developer
+      ```
+      npm run server
+      ```
+   
+   - on Deploy
+      ```
+      npm run server deploy
+      ```

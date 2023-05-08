@@ -22,7 +22,7 @@ export default class Login extends Component {
         }).then(()=>{
             if(liff.isLoggedIn()) {
                 this.setState({
-                    inputUser : <input value={"222"} autoComplete="off" onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="รหัสประจำตัวผู้ส่งเสริม"/>
+                    inputUser : <input defaultValue={"222"} autoComplete="off" onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="รหัสประจำตัวผู้ส่งเสริม"/>
                 })
             }
         }).catch((err)=>console.log(err))

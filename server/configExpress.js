@@ -9,8 +9,6 @@ const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 const app = express();
 
-const isDev = process.env.NODE_ENV === "development";
-
 // secure server
 // app.use(helmat(
 //     {
@@ -19,7 +17,10 @@ const isDev = process.env.NODE_ENV === "development";
 // ))
 
 // config server and Hot Refresh
-if(isDev) reactServ(app)
+
+
+
+if(process.platform == process.env.PlatformServer) reactServ(app)
 
 // router api url
 router(app)

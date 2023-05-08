@@ -29,7 +29,7 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "https://liff.line.me/1661049098-A9PON7LB"
+            "uri": "https://liff.line.me/1661049098-dorebKYg"
           }
         },
         {
@@ -41,14 +41,14 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "https://liff.line.me/1661049098-dorebKYg"
+            "uri": "https://liff.line.me/1661049098-A9PON7LB"
           }
         }
       ]
     }
     
     richmenu.createRichMenu(jsonLogin).then((RichID)=>{
-      let pathImage = "assets/login.png"
+      let pathImage = "API/assets/login.png"
       richmenu.setRichMenuImage(RichID , fs.readFileSync(pathImage) , "image/png").then(()=>{
         richmenu.setDefaultRichMenu(RichID).then(()=>console.log(`Rich menu ID : ${RichID} is Run`))
       })

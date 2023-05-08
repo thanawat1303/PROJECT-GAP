@@ -23,12 +23,10 @@
   "nodemonConfig": {
     "watch": [
       "server",
-      "webpack.dev.config.js",
-      "index.js"
+      "webpack.dev.config.js"
     ],
     "ignore": [
-      "/Admin",
-      "/Docter"
+      "/main"
     ],
     "delay": "1"
   }

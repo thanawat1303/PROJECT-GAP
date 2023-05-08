@@ -6,7 +6,7 @@ import Admin from "./Admin";
 import './assets/style/main.scss'
 
 
-export default class MainApp extends Component {
+export default class MainAdmin extends Component {
     constructor(){
         super();
         this.state={

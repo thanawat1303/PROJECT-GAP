@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM  from "react-dom/client";
-import MainApp from "./main/admin/src/mainApp";
+import MainAdmin from "./main/admin/src/mainAdmin";
 
+let auth = window.location.pathname
+console.log(auth)
 const root = ReactDOM.createRoot(document.getElementById('root'))
-root.render(<MainApp/>)
+root.render(<MainAdmin/>)

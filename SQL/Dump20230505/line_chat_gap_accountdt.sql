@@ -16,13 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `accountdt`
+-- Table structure for table `acc_docter`
 --
 
-DROP TABLE IF EXISTS `accountdt`;
+DROP TABLE IF EXISTS `acc_docter`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `accountdt` (
+CREATE TABLE `acc_docter` (
   `id_docter` varchar(10) NOT NULL,
   `Password_docter` varchar(150) DEFAULT NULL,
   `Fullname_docter` varchar(50) NOT NULL,
@@ -35,13 +35,13 @@ CREATE TABLE `accountdt` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `accountdt`
+-- Dumping data for table `acc_docter`
 --
 
-LOCK TABLES `accountdt` WRITE;
-/*!40000 ALTER TABLE `accountdt` DISABLE KEYS */;
-INSERT INTO `accountdt` VALUES ('1163104','$2b$05$gamGv6sXpiF2q58d9/Rm/uVmDJs/7m0ZN0MxDkDRy/IQXnwV8XkCm','','','',1,0);
-/*!40000 ALTER TABLE `accountdt` ENABLE KEYS */;
+LOCK TABLES `acc_docter` WRITE;
+/*!40000 ALTER TABLE `acc_docter` DISABLE KEYS */;
+INSERT INTO `acc_docter` VALUES ('1163104','$2b$05$gamGv6sXpiF2q58d9/Rm/uVmDJs/7m0ZN0MxDkDRy/IQXnwV8XkCm','','','',1,0);
+/*!40000 ALTER TABLE `acc_docter` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

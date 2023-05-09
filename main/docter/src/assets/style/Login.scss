@@ -15,9 +15,9 @@
         button {
             margin-top: 15px;
             border-radius: 12px;
-            padding: 5px 0px;
+            padding: 2px 0px;
             
-            font-family: main-font;
+            font-family: Sans-font;
             font-size: 16pt;
         }
 
@@ -35,7 +35,7 @@
                 position: absolute;
                 transition: 0.3s;
                 transform: translate( -5px , 0px );
-                font-family: main-font;
+                font-family: Sans-font;
                 font-size: 19px;
                 font-weight: 900;
                 z-index: -1;
@@ -47,18 +47,19 @@
                 border-bottom: 4px solid greenyellow;
                 box-shadow: 0px 0px 2.5px greenyellow;
                 outline: 0px;
-                padding: 3px 10px;
+                padding: 2px 10px;
                 width: 100%;
-                font-family: main-font;
+                height: 35.8px;
+                font-family: Sans-font;
                 font-weight: 900;
-                font-size: 16pt;
+                font-size: 14pt;
             }
         }
     }
 }
 
 .moveOn {
-    transform: translate(-5px, -25px) !important;
+    transform: translate(-5px, -28px) !important;
 }
 
 .empty {
@@ -67,9 +68,9 @@
 
 .error-login {
     color: red;
-    font-family: main-font;
+    font-family: Sans-font;
     font-weight: 900;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .Logo-App {

@@ -3,7 +3,7 @@ import liff from "@line/liff"
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 import './assets/style/Login.scss'
 
-// import Admin from "./Admin";
+import Docter from "./Docter";
 
 export default class Login extends Component {
 // this.props.main == Main app
@@ -21,8 +21,10 @@ export default class Login extends Component {
             liffId : "1661049098-dorebKYg"
         }).then(()=>{
             if(liff.isLoggedIn()) {
-                this.setState({
-                    inputUser : <input defaultValue={"222"} autoComplete="off" onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="รหัสประจำตัวผู้ส่งเสริม"/>
+                clientMo.post("" , {id:liff.getAId()}).then((U_id)=>{
+                    this.setState({
+                        inputUser : <input defaultValue={U_id} autoComplete="off" onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="รหัสประจำตัวผู้ส่งเสริม"/>
+                    })
                 })
             }
         }).catch((err)=>console.log(err))
@@ -47,8 +49,7 @@ export default class Login extends Component {
                 clientMo.post('/api/docter/auth' , formData).then((context)=>{
                     if(context) {
                         this.props.main.setState({
-                            body : <></>
-                            // <Admin main={this.props.main}/>
+                            body : <Docter main={this.props.main}/>
                         })
                         
                     } else {
@@ -76,7 +77,7 @@ export default class Login extends Component {
         e.target.classList.remove('empty')
         if(e.target.value) {
             document.querySelector('.content-user .label-login').classList.add('moveOn')
-            document.querySelector('.Logo-App').setAttribute('style' , 'margin-bottom: 28px;')
+            document.querySelector('.Logo-App').setAttribute('style' , 'margin-bottom: 32px;')
         } else {
             document.querySelector('.Logo-App').removeAttribute('style')
             document.querySelector('.content-user .label-login').classList.remove('moveOn')
@@ -86,9 +87,11 @@ export default class Login extends Component {
     changeValPw = (e) => {
         e.target.classList.remove('empty')
         if(e.target.value !== "") {
-            document.querySelector('.content-pw').setAttribute('style' , 'margin: 22px 0px 5px 0px')
+            document.querySelector('.content-pw').setAttribute('style' , 'margin: 25px 0px 5px 0px')
             document.querySelector('.content-pw .label-login').classList.add('moveOn')
+            e.target.setAttribute('style' , 'font-family: main-font;')
         } else {
+            e.target.removeAttribute('style')
             document.querySelector('.content-pw').removeAttribute('style')
             document.querySelector('.content-pw .label-login').classList.remove('moveOn')
         }
@@ -100,15 +103,15 @@ export default class Login extends Component {
                 <form autoComplete="off" onSubmit={this.submitFrom} className="content-login">
                     <div className="Logo-App"><img width={150}  src="/logo2.png"></img></div>
                     <label className="content-user">
-                        <span className="label-login">Username</span>
+                        <span className="label-login">รหัสประจำตัวผู้ส่งเสริม</span>
                         {this.state.inputUser}
                     </label>
                     <label className="content-pw">
-                        <span className="label-login">Password</span>
+                        <span className="label-login">รหัสผ่าน</span>
                         <input autoComplete="off" onChange={this.changeValPw} className="inputForm" type="password" name="password" placeholder="รหัสผ่าน"/>
                     </label>
-                    <button type="submit" className="bt-submit-form">LOGIN</button>
-                    <p className="error-login hide">Login Failed Please log in again.</p>
+                    <button type="submit" className="bt-submit-form">เข้าสู่ระบบ</button>
+                    <p className="error-login hide">ไม่สามารถเข้าสู่ระบบได้ กรุณาลองอีกครั้ง.</p>
                 </form>
             </div>
         )

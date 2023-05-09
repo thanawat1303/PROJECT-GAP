@@ -7,9 +7,35 @@ const db = require('mysql')
 const dbpacket = require('./dbConfig')
 const apifunc = require('./apifunc')
 
+const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
+
 // req
 app.post('/api/docter/check' , (req , res)=>{
     res.redirect('/api/docter/auth');
+})
+
+app.post('/api/docter/checkline' , (req , res)=>{
+    let con = db.createConnection(dbpacket.listConfig())
+    con.connect((err)=>{
+        if (err) {
+            dbpacket.dbErrorReturn(con, err, res);
+            console.log("connect");
+            return 0;
+        }
+
+        con.query(`SELECT id_docter FROM acc_docter WHERE uid_line_docter=${req.body['id']}` , (err , result)=>{
+            if (err) {
+                dbpacket.dbErrorReturn(con, err, res);
+                console.log("query");
+            }
+
+            if (result[0]) {
+                res.send(result[0]['id_docter'])
+            } else {
+                res.send('')
+            }
+        })
+    })
 })
 
 app.all('/api/docter/auth' , (req , res)=>{
@@ -27,7 +53,7 @@ app.all('/api/docter/auth' , (req , res)=>{
 
     // db.resume()
 
-    apifunc.auth(con , username , password , res , "docter").then((result)=>{
+    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
         if(result === "pass") {
         req.session.user_docter = username
         req.session.pass_docter = password

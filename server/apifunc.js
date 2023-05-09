@@ -9,8 +9,11 @@ const apifunc = {
           reject("connect");
         }
 
+        let usernameDB = authAccount == "admin" ? "username" : authAccount == "acc_docter" ? "id_docter" : "";
+        let passwordDB = authAccount == "admin" ? "password" : authAccount == "acc_docter" ? "Password_docter" : "";
+
         connectDB.query(
-          `SELECT * FROM ${authAccount} WHERE username=? AND password=SHA2( ? , 256)`,
+          `SELECT * FROM ${authAccount} WHERE ${usernameDB}=? AND ${passwordDB}=SHA2( ? , 256)`,
           [username, password],
           (err, result) => {
             if (err) {

@@ -51,7 +51,7 @@ app.post('/api/docter/listFarmer' , (req , res)=>{
 
     apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
         if(result['result'] === "pass") {
-            con.query(`SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['Job_care_center']}" LIMIT 25;` , (err , result)=>{
+            con.query(`SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" LIMIT 25;` , (err , result)=>{
                 if (err){
                     dbpacket.dbErrorReturn(con , err , res)
                     return 0
@@ -86,9 +86,18 @@ app.all('/api/docter/auth' , (req , res)=>{
 
     apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
         if(result['result'] === "pass") {
-            req.session.user_docter = username
-            req.session.pass_docter = password
-            res.send('1')
+            if (result['data']['status_account'] == 0
+                    || result['data']['status_delete'] == 1) {
+                res.send('account')
+            }
+            else if(result['data']['fullname_docter'] 
+                    && result['data']['station_docter']) {
+                req.session.user_docter = username
+                req.session.pass_docter = password
+                res.send('pass')
+            } else {
+                res.send(`wait:${username}`)
+            }
         }
         con.destroy()
     }).catch((err)=>{

@@ -80,7 +80,7 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div className="box-login">
+            <div className="box-login-admin">
                 <form autoComplete="off" onSubmit={this.submitFrom} className="content-login">
                     <div className="Logo-App"><img width={150}  src="/logo2.png"></img></div>
                     <label className="content-user">

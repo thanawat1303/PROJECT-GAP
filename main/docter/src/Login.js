@@ -12,6 +12,7 @@ export default class Login extends Component {
         this.state={
             body : <div></div>,
             inputUser : <input autoComplete="off" onChange={this.changeValUs} className="inputForm" type="text" name="username" placeholder="รหัสประจำตัวผู้ส่งเสริม"/>,
+            formPersonal : <div></div>
         }
     }
 
@@ -39,6 +40,7 @@ export default class Login extends Component {
 
     submitFrom = (e) => {
         if(e.target[0].value != '' && e.target[1].value != ''){
+            this.setState({formPersonal : <></>})
             clientMo.rmAction('#loading' , 'hide' , 0)
             const formData = {
                 username : e.target[0].value,
@@ -47,13 +49,40 @@ export default class Login extends Component {
 
             setTimeout(()=>{
                 clientMo.post('/api/docter/auth' , formData).then((context)=>{
-                    if(context) {
+                    if(context == "pass") {
                         this.props.main.setState({
                             body : <Docter main={this.props.main}/>
                         })
                         
-                    } else {
-                        document.querySelector('.error-login').classList.remove('hide')
+                    } else if (context == "account") {
+                        let errorLogin = document.querySelector('.error-login')
+                        errorLogin.classList.remove('hide')
+                        errorLogin.innerHTML = "บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"
+                        for(let x = 0; x < e.target.length-1; x++) {
+                            e.target[x].removeAttribute('style')
+                            document.querySelector('.content-user .label-login').classList.remove('moveOn')
+                            document.querySelector('.content-pw .label-login').classList.remove('moveOn')
+                            document.querySelector('.content-pw').removeAttribute('style')
+                            e.target[x].value = ''
+                        }
+                    } else if (context.indexOf("wait") >= 0) {
+                        let id = context.split(':')
+                        document.querySelector("#box-login-docter #form-personal").setAttribute("show" , "")
+                        for(let x = 0; x < e.target.length-1; x++) {
+                            e.target[x].removeAttribute('style')
+                            document.querySelector('.content-user .label-login').classList.remove('moveOn')
+                            document.querySelector('.content-pw .label-login').classList.remove('moveOn')
+                            document.querySelector('.content-pw').removeAttribute('style')
+                            e.target[x].value = ''
+                        }
+                        this.setState({
+                            formPersonal : <FormPersonal id={id[1]} ele={this} main={this.props.main}/>
+                        })
+                    }
+                    else {
+                        let errorLogin = document.querySelector('.error-login')
+                        errorLogin.classList.remove('hide')
+                        errorLogin.innerHTML = "รหัสประจำตัวหรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง."
                         for(let x = 0; x < e.target.length-1; x++) {
                             e.target[x].removeAttribute('style')
                             document.querySelector('.content-user .label-login').classList.remove('moveOn')
@@ -99,7 +128,8 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div className="box-login">
+            <div id="box-login-docter">
+                <div id="form-personal">{this.state.formPersonal}</div>
                 <form autoComplete="off" onSubmit={this.submitFrom} className="content-login">
                     <div className="Logo-App"><img width={150}  src="/logo2.png"></img></div>
                     <label className="content-user">
@@ -111,7 +141,7 @@ export default class Login extends Component {
                         <input autoComplete="off" onChange={this.changeValPw} className="inputForm" type="password" name="password" placeholder="รหัสผ่าน"/>
                     </label>
                     <button type="submit" className="bt-submit-form">เข้าสู่ระบบ</button>
-                    <p className="error-login hide">ไม่สามารถเข้าสู่ระบบได้ กรุณาลองอีกครั้ง.</p>
+                    <p className="error-login hide"></p>
                 </form>
             </div>
         )
@@ -119,5 +149,114 @@ export default class Login extends Component {
 }
 
 class FormPersonal extends Component {
+    constructor(){
+        super();
+        this.state = {
+            error : <></>
+        }
+    }
 
+    confirm = () => {
+        let firstname = document.querySelector("#box-login-docter #form-personal #firstname")
+        let lastname = document.querySelector("#box-login-docter #form-personal #lastname")
+        let station = document.querySelector("#box-login-docter #form-personal #station")
+        let password = document.querySelector("#box-login-docter #form-personal #password")
+
+        if(firstname.value && lastname.value && station.value && password.value) {
+            clientMo.rmAction('#loading' , 'hide' , 0)
+            clientMo.post('/api/docter/savePersonal' , {
+                firstname:firstname.value,
+                lastname:lastname.value,
+                station:station.value,
+                username:this.props.id,
+                password:password.value
+            }).then((result)=>{
+                if(result === "pass"){
+                    this.props.main.setState({
+                        body : <Docter main={this.props.main}/>
+                    })
+                } else if(result === "password") {
+                    password.setAttribute('error' , "")
+                    password.setAttribute('placeholder' , "รหัสผ่านไม่ถูกต้อง")
+                } else if (result === "account") {
+                    let eleError = document.querySelector('#box-login-docter #form-personal #account-error')
+                    eleError.setAttribute("show" , "")
+                    this.setState({
+                        error : <showError ele={this}/>
+                    })
+                }
+
+                clientMo.addAction('#loading' , 'hide' , 1000)
+            })
+        }
+    }
+
+    cancel = () => {
+        document.querySelector("#box-login-docter #form-personal").removeAttribute("show")
+        setTimeout(()=>{
+            this.props.ele.setState({
+                formPersonal : <></>
+            })
+        } , 1000)
+    }
+
+    render(){
+        return(
+            <>
+            <div id="account-error">
+                {this.state.error}
+            </div>
+            <div id="form">
+                <div id="id-docter">
+                    รหัสประจำตัว
+                    <input value={this.props.id} readOnly></input>
+                </div>
+                <div id="form-input">
+                    <div id="fullname">
+                        <div id="input-firstname">
+                            <span>ชื่อ</span>
+                            <input type="text" id="firstname"></input>
+                        </div>
+                        <div id="input-lastname">
+                            <span>นามสกุล</span>
+                            <input type="text" id="lastname"></input>
+                        </div>
+                    </div>
+                    <div id="station-farm">
+                        <span>ศูนย์ปฏิบัติหน้าที่</span>
+                        <input type="text" id="station"></input>
+                    </div>
+                </div>
+                <div id="password">
+                    <input id="password" placeholder="รหัสผ่าน" type="password"></input>
+                </div>
+                <div id="confirm">
+                    <button id="bt-cancel" onClick={this.cancel}>ยกเลิก</button>
+                    <button id="bt-confirm" onClick={this.confirm}>บันทึกข้อมูล</button>
+                </div>
+            </div>
+            </>
+        )
+    }
+}
+
+class showError extends Component {
+
+    confirm = () => {
+        document.querySelector("#box-login-docter #form-personal").removeAttribute("show")
+        setTimeout(()=>{
+            this.props.ele.setState({
+                formPersonal : <></>
+            })
+        } , 1000)
+    }
+
+    render() {
+        return(
+            <div id="error-account">
+                <div>บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ</div>
+                <button onClick={this.confirm}>ตกลง</button>
+            </div>
+        )
+    }
 }

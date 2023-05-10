@@ -62,15 +62,15 @@ export default class List extends Component {
             body : JSON.parse(this.props.list).map((listDT , index) =>
                         <div key={index} className="container-docter" id={`list-${index}`}>
                             <div className="docter-detail">
-                                <img className="img-docter" src={(listDT['Image_docter']['data'] != '') ? listDT['Image_docter']['data'] : '/doctor-svgrepo-com.svg'}></img>
+                                <img className="img-docter" src={(listDT['img_docter']['data'] != '') ? listDT['img_docter']['data'] : '/doctor-svgrepo-com.svg'}></img>
                                 <div className="content-detail">
                                     <div className="detail-box">
                                         <div className="detail">
                                             <div className="head-detail">ชื่อ - นามสกุล</div>
                                             <div className="indetail">
-                                                <input checktext={(listDT['Fullname_docter']) ? 1 : 0} readOnly className="text-detail" value={(listDT['Fullname_docter']) ? listDT['Fullname_docter'] : 'ยังไม่ระบุ'}></input>
+                                                <input checktext={(listDT['fullname_docter']) ? 1 : 0} readOnly className="text-detail" value={(listDT['fullname_docter']) ? listDT['fullname_docter'] : 'ยังไม่ระบุ'}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -81,7 +81,7 @@ export default class List extends Component {
                                             <div className="indetail">
                                                 <input readOnly className="text-detail" value={listDT['id_docter']}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -90,9 +90,9 @@ export default class List extends Component {
                                         <div className="detail">
                                             <div className="head-detail">ศูนย์ดูแล</div>
                                             <div className="indetail">
-                                                <input readOnly className="text-detail" value={(listDT['Job_care_center']) ? listDT['Job_care_center'] : "ยังไม่ระบุ"}></input>
+                                                <input readOnly className="text-detail" value={(listDT['station_docter']) ? listDT['station_docter'] : "ยังไม่ระบุ"}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['Fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_docter'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -101,13 +101,13 @@ export default class List extends Component {
                             </div>
                             <div className="bt-manage">
                                 <span className="box-status" onClick={() => this.changeStatus(listDT['id_docter'] , `status-${index}`)}>
-                                    <div className="status" id={`status-${index}`} status={listDT['Status_account']}>
+                                    <div className="status" id={`status-${index}`} status={listDT['status_account']}>
                                         <span className="list-status" openstate="">ON</span>
                                         <button 
-                                            status={listDT['Status_account']} 
+                                            status={listDT['status_account']} 
                                             className="bt-status"
                                             >
-                                            {/* {(listDT['Status_account'] == 1) ? "ปิดบัญชี" : "เปิดบัญชี"} */}
+                                            {/* {(listDT['status_account'] == 1) ? "ปิดบัญชี" : "เปิดบัญชี"} */}
                                         </button>
                                         <span className="list-status" closestate="">OFF</span>
                                     </div>

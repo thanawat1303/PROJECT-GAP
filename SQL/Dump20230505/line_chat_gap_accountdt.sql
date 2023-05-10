@@ -24,12 +24,12 @@ DROP TABLE IF EXISTS `acc_docter`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `acc_docter` (
   `id_docter` varchar(10) NOT NULL,
-  `Password_docter` varchar(150) DEFAULT NULL,
-  `Fullname_docter` varchar(50) NOT NULL,
-  `Job_care_center` varchar(50) NOT NULL,
-  `Image_docter` longblob NOT NULL,
-  `Status_account` tinyint(1) NOT NULL,
-  `Status_delete` tinyint(1) NOT NULL,
+  `password_docter` varchar(150) DEFAULT NULL,
+  `fullname_docter` varchar(50) NOT NULL,
+  `station_docter` varchar(50) NOT NULL,
+  `img_docter` longblob NOT NULL,
+  `status_account` tinyint(1) NOT NULL,
+  `status_delete` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_docter`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

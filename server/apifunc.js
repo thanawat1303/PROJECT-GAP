@@ -22,7 +22,10 @@ const apifunc = {
             }
 
             if (result[0]) {
-              resole("pass");
+              resole({
+                data : result[0],
+                result:"pass"
+              });
             } else {
               reject("not pass");
             }

@@ -2,6 +2,9 @@ import React , {Component} from "react";
 import { clientMo } from "../../../src/assets/js/moduleClient";
 
 import Login from "./Login";
+
+import List from "./listFramer";
+
 import SessionOut from "./sesionOut";
 
 export default class NavDocter extends Component {
@@ -21,29 +24,29 @@ export default class NavDocter extends Component {
 
     checkPath = (statusLoad = 0) =>{
         let path = window.location.pathname.split('/');
-        if(path[1] + "/" + path[2] == 'admin/list' || path[1] + "/" + path[2] == 'admin/undefined')
+        if(path[1] + "/" + path[2] == 'docter/list' || path[1] + "/" + path[2] == 'docter/undefined')
         {
-            // clientMo.post('/api/admin/listDocter').then((list)=>{
-            //     if(list) {
-            //         this.props.bodyDocter.setState({body : <List status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
-            //         if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
-            //         document.getElementById('account').setAttribute('nav-select' , '')
-            //     } else this.sessionoff(true)
+            clientMo.post('/api/docter/listFarmer').then((list)=>{
+                if(list) {
+                    this.props.bodyDocter.setState({body : <List status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
+                    if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById('account').setAttribute('nav-select' , '')
+                } else this.sessionoff(true)
 
-            // })
+            })
         }
-        else if (path[1] + "/" + path[2] == 'admin/plus')
+        else if (path[1] + "/" + path[2] == 'docter/plus')
         {
-            // clientMo.post('/api/admin/check').then((context)=>{
-            //     if(context) {
-            //         this.props.bodyDocter.setState({body : <Plus status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter}/>})
-            //         if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
-            //         document.getElementById('pAccount').setAttribute('nav-select' , '')
-            //     }
+            clientMo.post('/api/docter/check').then((context)=>{
+                if(context) {
+                    this.props.bodyDocter.setState({body : <Plus status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter}/>})
+                    if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById('pAccount').setAttribute('nav-select' , '')
+                }
                 
-            //     else this.sessionoff(true)
+                else this.sessionoff(true)
                     
-            // })
+            })
         }
     }
 
@@ -65,7 +68,7 @@ export default class NavDocter extends Component {
         e.preventDefault()
 
         if(ele == 'account') {
-            clientMo.post('/api/admin/listDocter').then((list)=>{
+            clientMo.post('/api/docter/listFarmer').then((list)=>{
                 if(list) {
                     this.props.bodyDocter.setState({body : <List status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -74,7 +77,7 @@ export default class NavDocter extends Component {
             })
         }
         else if (ele == 'pAccount') {
-            clientMo.post('/api/admin/check').then((context)=>{
+            clientMo.post('/api/docter/check').then((context)=>{
                 if(context) {
                     this.props.bodyDocter.setState({body : <Plus status={1} main={this.props.main} bodyDocter={this.props.bodyDocter}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -98,7 +101,7 @@ export default class NavDocter extends Component {
                         </bot-gap-nav-icon>
                         <bot-gap-string>
                             <bot-string>บัญชี</bot-string>
-                            <bot-string>เจ้าหน้าที่ส่งเสริม</bot-string>    
+                            <bot-string>เกษตรกร</bot-string>    
                         </bot-gap-string>
                     </bot-bt-nav>
                 </a>
@@ -108,8 +111,8 @@ export default class NavDocter extends Component {
                             <img src="/plus-user-svgrepo-com.svg"></img>
                         </bot-gap-nav-icon>
                         <bot-gap-string>
-                            <bot-string>เพิ่มบัญชี</bot-string>
-                            <bot-string>เจ้าหน้าที่ส่งเสริม</bot-string>    
+                            <bot-string>เกษตรกร</bot-string>
+                            <bot-string>ลงทะเบียน</bot-string>    
                         </bot-gap-string>
                     </bot-bt-nav>
                 </a>

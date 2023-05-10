@@ -117,3 +117,7 @@ export default class Login extends Component {
         )
     }
 }
+
+class FormPersonal extends Component {
+
+}

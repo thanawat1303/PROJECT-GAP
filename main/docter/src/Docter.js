@@ -4,7 +4,7 @@ import Login from "./Login";
 
 import NavDocter from "./navDocter";
 
-import './assets/style/Admin.scss'
+import './assets/style/Docter.scss'
 
 export default class Docter extends Component {
     constructor(){
@@ -102,7 +102,7 @@ export default class Docter extends Component {
 
     render() {
         return (
-            <div className="admin" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
+            <div className="docter" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
                 <section className="tab-bar">
                     <span className="pg-action">
                         <span className="nav-menu">
@@ -124,14 +124,17 @@ export default class Docter extends Component {
                                 <img id="icon" src="/profile-svgrepo-com-white.svg"></img>
                             </a>
                             <div id="profile-otion">
+                                <a id="account-profile">
+                                    ข้อมูลส่วนตัว
+                                </a>
                                 <a onClick={this.Logout} id="logout">
-                                    LOGOUT
+                                    ออกจากระบบ
                                 </a>
                             </div>
                         </section>
                     </span>
                 </section>
-                <section className="container-body-admin">
+                <section className="container-body-docter">
                     <div onLoad={this.checkSize}>
                         {this.state.nav}
                     </div>

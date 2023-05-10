@@ -125,7 +125,7 @@ export default class Admin extends Component {
                             </a>
                             <div id="profile-otion">
                                 <a onClick={this.Logout} id="logout">
-                                    LOGOUT
+                                    ออกจากระบบ
                                 </a>
                             </div>
                         </section>

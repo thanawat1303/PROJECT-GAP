@@ -38,6 +38,37 @@ app.post('/api/docter/checkline' , (req , res)=>{
     })
 })
 
+app.post('/api/docter/listFarmer' , (req , res)=>{
+    let username = req.session.user_docter
+    let password = req.session.pass_docter
+
+    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        res.redirect('/api/logout')
+        return 0
+    }
+
+    let con = db.createConnection(dbpacket.listConfig())
+
+    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+        if(result['result'] === "pass") {
+            con.query(`SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['Job_care_center']}" LIMIT 25;` , (err , result)=>{
+                if (err){
+                    dbpacket.dbErrorReturn(con , err , res)
+                    return 0
+                };
+
+                con.destroy()
+                res.send(result)
+            })
+        }
+    }).catch((err)=>{
+        con.destroy()
+        if(err == "not pass") {
+            res.redirect('/api/logout')
+        }
+    })
+})
+
 app.all('/api/docter/auth' , (req , res)=>{
   
     // เช็คการเข้าสู่ระบบจริงๆ
@@ -54,10 +85,10 @@ app.all('/api/docter/auth' , (req , res)=>{
     // db.resume()
 
     apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
-        if(result === "pass") {
-        req.session.user_docter = username
-        req.session.pass_docter = password
-        res.send('1')
+        if(result['result'] === "pass") {
+            req.session.user_docter = username
+            req.session.pass_docter = password
+            res.send('1')
         }
         con.destroy()
     }).catch((err)=>{

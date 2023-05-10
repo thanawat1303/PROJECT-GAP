@@ -1,0 +1,13 @@
+CREATE TABLE `line_chat_gap`.`acc_farmer` (
+    id_table INT PRIMARY KEY AUTO_INCREMENT,
+    id_farmer varchar(50) NOT NULL,
+    id_docter varchar(50) NOT NULL,
+    fullname varchar(50) NOT NULL,
+    img LONGBLOB NOT NULL,
+    station varchar(50) NOT NULL,
+    location POINT NOT NULL,
+    password varchar(256) NOT NULL,
+    register_auth tinyint(1) NOT NULL,
+    date_register TIMESTAMP NOT NULL,
+    uid_line varchar(255) NOT NULL
+)

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 
 import Login from "./Login";
+import Docter from "./Docter";
 
 import './assets/style/main.scss'
 
@@ -19,7 +20,7 @@ export default class MainDocter extends Component {
             console.log(context)
             if(context) 
                 this.setState({
-                    body : <>PASS</>
+                    body : <Docter main={this}/>
                 })
             else 
                 this.setState({

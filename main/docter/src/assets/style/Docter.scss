@@ -19,7 +19,7 @@ $widthNavModile : 124px;
 $heightNav: 58px;
 $heightNavMobile: 47px;
 
-.admin * :not(a) {
+.docter * :not(a) {
     -webkit-user-drag: none;
 
     -webkit-touch-callout: none;
@@ -39,7 +39,7 @@ a {
     cursor: pointer;
 }
 
-.admin {
+.docter {
     .tab-bar{
         display: flex;
         justify-content: space-between;
@@ -150,6 +150,7 @@ a {
                     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.362);
                     font-size: 14px;
                     font-family: Sans-font;
+                    font-weight: 800;
                     padding: 5px 0px;
                     z-index: 5;
     
@@ -158,10 +159,11 @@ a {
                     transition: opacity 0.2s , visibility 0.2s;
                     opacity: 0;
                     visibility: hidden;
+
     
                     a {
                         text-align: center;
-                        padding:2px 8px;
+                        padding:5px 8px;
                         transition: 0.2s;
                     }
     
@@ -173,7 +175,7 @@ a {
         }
     }
 
-    .container-body-admin {
+    .container-body-docter {
         display: flex;
         
         .nav-menu {
@@ -194,12 +196,12 @@ a {
                     display: flex;
                     align-items: center;
                     border-radius: 16px 0px 0px 16px;
+                    padding: 6px 0px;
                     padding-right: 10px;
 
                     transition: background-color 0.2s;
                     
                     width: $widthNav;
-                    padding: 7px 0px;
                     // height: $heightNav;
                     
                     bot-gap-nav-icon {
@@ -333,7 +335,7 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 500px) { //  and (min-height: 640px)
-    .admin * {
+    .docter * {
         cursor: default;
     }
 
@@ -352,7 +354,7 @@ a[nav-select] {
         }
     }
 
-    .admin {
+    .docter {
         .tab-bar {
             height: 55px;
             padding: 0px 5px;
@@ -389,21 +391,20 @@ a[nav-select] {
                     }
 
                     #profile-otion {
-                        width: 85px;
-                        font-size: 13px;
-                        transform: translate(-30px,10px);
+                        width: 90px;
+                        transform: translate(-40px,10px);
                     }
                 }
             }
         }
         
-        .container-body-admin {
+        .container-body-docter {
             .nav-menu {
 
                 margin-left: 6px;
 
                 .list-menu-nav {
-                    width: $widthNavModile;
+                    width: 119px;
                     // height: $heightNavMobile;
 
                     bot-bt-nav {
@@ -422,7 +423,7 @@ a[nav-select] {
 
                         bot-gap-string {
                             bot-string {
-                                font-size: 2.1vw;
+                                font-size: 10px;
                                 height: 15px;
                             }
                         }
@@ -448,9 +449,9 @@ a[nav-select] {
     }
 }
 
-@media only screen and (max-width: 450px) {
-    .admin {
-        .container-body-admin {
+@media only screen and (max-width: 445px) {
+    .docter {
+        .container-body-docter {
             .nav-menu {
                 .list-menu-nav {
                     bot-gap-string {
@@ -466,10 +467,11 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 395px) {
-    .admin {
-        .container-body-admin {
+    .docter {
+        .container-body-docter {
             .nav-menu {
                 .list-menu-nav {
+                    width: 124px;
                     bot-gap-string {
                         bot-string {
                             font-size: 2.7vw !important;
@@ -482,8 +484,24 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 376px) {
-    .admin {
-        .container-body-admin {
+    .docter {
+        .tab-bar {
+            .bt-action {
+                .profile {
+                    #profile-otion {
+                        width: 80px;
+                        font-size: 12px;
+                        transform: translate(-40px,10px);
+                        padding: 3px 0px;
+
+                        a {
+                            padding: 3px 0px;
+                        }
+                    }
+                }
+            }
+        }
+        .container-body-docter {
             .nav-menu {
                 .list-menu-nav {
                     bot-gap-string {
@@ -498,7 +516,7 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 300px) {
-    .admin {
+    .docter {
         .tab-bar {
             height: 38px;
             padding: 0px 2px;
@@ -546,27 +564,31 @@ a[nav-select] {
                     }
 
                     #profile-otion {
-                        width: 69px;
+                        width: 70px;
                         font-size: 10px;
-                        transform: translate(-40px,10px);
+                        padding: 3px 0px;
+
+                        a {
+                            padding: 3px 0px;
+                        }
                     }
 
                 }
             }
         }
-        .container-body-admin {
+        .container-body-docter {
             .nav-menu {
                 margin-left: 2px;
                 .list-menu-nav {
                     width: 87px;
                     // height: 36px;
                     bot-bt-nav {
-                        padding: 4px 0px;
+                        padding: 3px 0px;
                         padding-right: 2px !important;
                         bot-gap-string {
                             bot-string {
                                 font-family: TH-font;
-                                font-size: 11px !important;
+                                font-size: 12px !important;
                                 font-weight: 600 !important;
                             }
                         }

@@ -25,7 +25,7 @@ app.post('/api/admin/chkOver' , (req , res)=>{
   let con = db.createConnection(dbpacket.listConfig())
 
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
-    if(result === "pass") {
+    if(result['result'] === "pass") {
       if(req.body['ID']) {
         con.query(`SELECT id_docter FROM acc_docter WHERE id_docter=?` , [req.body['ID']] , (err,result)=>{
           if(err) {
@@ -159,10 +159,10 @@ app.post('/api/admin/add' , (req , res)=>{
     let con = db.createConnection(dbpacket.listConfig())
 
     apifunc.auth(con , username , password , res , "admin").then( async (result)=>{
-      if(result === "pass") {
+      if(result['result'] === "pass") {
         con.query(`INSERT INTO acc_docter(
           Fullname_docter , id_docter , uid_line_docter , Password_docter , Image_docter , Job_care_center , Status_account , Status_delete) 
-          VALUES (?,?,SHA2(?,256),?,?,?,?)` , ['',req.body['ID'] ,'',req.body['passwordDT'],'','',1,0] , (err , result)=>{
+          VALUES (?,?,?,SHA2(?,256),?,?,?,?)` , ['',req.body['ID'] ,'',req.body['passwordDT'],'','',1,0] , (err , result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -221,7 +221,7 @@ app.post('/api/admin/listDocter' , (req , res)=>{
   let con = db.createConnection(dbpacket.listConfig())
 
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
-    if(result === "pass") {
+    if(result['result'] === "pass") {
       con.query('SELECT Fullname_docter , id_docter , Image_docter , Job_care_center , Status_account FROM acc_docter WHERE Status_delete=0 LIMIT 25;' , (err , result)=>{
         if (err){
           dbpacket.dbErrorReturn(con , err , res)
@@ -252,7 +252,7 @@ app.post('/api/admin/changeState' , (req,res)=>{
   let con = db.createConnection(dbpacket.listConfig())
 
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
-    if(result === "pass") {
+    if(result['result'] === "pass") {
       if(req.body['ID'] && req.body['status'] != undefined) {
         con.query(`UPDATE acc_docter SET Status_account = ? WHERE id_docter = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err,result)=>{
           if(err) {
@@ -299,7 +299,7 @@ app.post('/api/admin/delete' , (req , res)=>{
     let con = db.createConnection(dbpacket.listConfig())
 
     apifunc.auth(con , username , password , res , "admin").then((result)=>{
-      if(result === "pass") {
+      if(result['result'] === "pass") {
         con.query(`UPDATE acc_docter SET Status_delete = 1 WHERE id_docter=?` , [req.body['ID']] , (err , result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
@@ -341,7 +341,7 @@ app.all('/api/admin/auth' , (req , res)=>{
 
   // db.resume()
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
-    if(result === "pass") {
+    if(result['result'] === "pass") {
       req.session.user_admin = username
       req.session.pass_admin = password
       res.send('1')

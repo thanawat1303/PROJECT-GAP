@@ -38,6 +38,59 @@ app.post('/api/docter/checkline' , (req , res)=>{
     })
 })
 
+app.post('/api/docter/savePersonal' , (req , res)=>{
+    let username = req.body['username'] ?? '';
+    let password = req.body['password'] ?? '';
+
+    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        res.redirect('/api/logout')
+        return 0
+    }
+
+    let con = db.createConnection(dbpacket.listConfig())
+
+    // db.resume()
+
+    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+        if(result['result'] === "pass") {
+            if (result['data']['status_account'] == 0
+                    || result['data']['status_delete'] == 1) {
+                con.destroy()
+                res.send('account')
+            }
+            else {
+                let fullname = req.body['firstname'] + " " + req.body['lastname']
+                con.query(`UPDATE acc_docter SET fullname_docter=? , station_docter=? WHERE id_docter = ?`
+                , [fullname , req.body['station'] , username]
+                , (err , val)=>{
+                    if (err) {
+                        dbpacket.dbErrorReturn(con, err, res);
+                        console.log("query");
+                    }
+                    console.log(val)
+                    if(val['changedRows'] == 1){
+                        req.session.user_docter = username
+                        req.session.pass_docter = password
+                        res.send('pass')
+                    } else {
+                        console.log("update error")
+                        res.send('error')
+                    }
+                    con.destroy()
+                })
+            }
+        }
+    }).catch((err)=>{
+        console.log(err)
+        if(err == "not pass") {
+            res.send('password')
+            con.destroy()
+        } else if( err == "connect" ) {
+            res.redirect('/api/logout')
+        }
+    })
+})
+
 app.post('/api/docter/listFarmer' , (req , res)=>{
     let username = req.session.user_docter
     let password = req.session.pass_docter
@@ -51,7 +104,11 @@ app.post('/api/docter/listFarmer' , (req , res)=>{
 
     apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
         if(result['result'] === "pass") {
-            con.query(`SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" LIMIT 25;` , (err , result)=>{
+            let queryType = (req.body['type'] === 'list') ? 
+                                `SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 1 LIMIT 30;` :
+                            (req.body['type'] === 'push') ? 
+                                `SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 0 LIMIT 30;` : ""
+            con.query(queryType , (err , result)=>{
                 if (err){
                     dbpacket.dbErrorReturn(con , err , res)
                     return 0

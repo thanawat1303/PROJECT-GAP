@@ -1,0 +1,1 @@
+INSERT INTO acc_farmer VALUES (1 , "1163" , "" , "สมศัก ใจดี" , "" , "ราชมงคล" , POINT(0,0) , "admin" , 0 , '2023-11-5' , "")

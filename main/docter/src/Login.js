@@ -49,13 +49,15 @@ export default class Login extends Component {
 
             setTimeout(()=>{
                 clientMo.post('/api/docter/auth' , formData).then((context)=>{
+                    let errorLogin = document.querySelector('.error-login')
+                    errorLogin.classList.add('hide')
+                    errorLogin.innerHTML = ""
                     if(context == "pass") {
                         this.props.main.setState({
                             body : <Docter main={this.props.main}/>
                         })
                         
                     } else if (context == "account") {
-                        let errorLogin = document.querySelector('.error-login')
                         errorLogin.classList.remove('hide')
                         errorLogin.innerHTML = "บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"
                         for(let x = 0; x < e.target.length-1; x++) {
@@ -80,7 +82,6 @@ export default class Login extends Component {
                         })
                     }
                     else {
-                        let errorLogin = document.querySelector('.error-login')
                         errorLogin.classList.remove('hide')
                         errorLogin.innerHTML = "รหัสประจำตัวหรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง."
                         for(let x = 0; x < e.target.length-1; x++) {
@@ -164,29 +165,39 @@ class FormPersonal extends Component {
 
         if(firstname.value && lastname.value && station.value && password.value) {
             clientMo.rmAction('#loading' , 'hide' , 0)
-            clientMo.post('/api/docter/savePersonal' , {
-                firstname:firstname.value,
-                lastname:lastname.value,
-                station:station.value,
-                username:this.props.id,
-                password:password.value
-            }).then((result)=>{
-                if(result === "pass"){
-                    this.props.main.setState({
-                        body : <Docter main={this.props.main}/>
-                    })
-                } else if(result === "password") {
-                    password.setAttribute('error' , "")
-                    password.setAttribute('placeholder' , "รหัสผ่านไม่ถูกต้อง")
-                } else if (result === "account") {
-                    let eleError = document.querySelector('#box-login-docter #form-personal #account-error')
-                    eleError.setAttribute("show" , "")
-                    this.setState({
-                        error : <showError ele={this}/>
-                    })
-                }
-
-                clientMo.addAction('#loading' , 'hide' , 1000)
+            document.querySelectorAll("#box-login-docter #form-personal .field-personal").forEach((val , key) => {
+                val.removeAttribute('request')
+            })
+            setTimeout(()=>{
+                clientMo.post('/api/docter/savePersonal' , {
+                    firstname:firstname.value,
+                    lastname:lastname.value,
+                    station:station.value,
+                    username:this.props.id,
+                    password:password.value
+                }).then((result)=>{
+                    if(result === "pass"){
+                        this.props.main.setState({
+                            body : <Docter main={this.props.main}/>
+                        })
+                    } else if(result === "password") {
+                        password.setAttribute('error' , "")
+                        password.setAttribute('placeholder' , "รหัสผ่านไม่ถูกต้อง")
+                        password.value = ""
+                    } else if (result === "account") {
+                        let eleError = document.querySelector('#box-login-docter #form-personal #account-error')
+                        eleError.setAttribute("show" , "")
+                        this.setState({
+                            error : <ShowError ele={this}/>
+                        })
+                    }
+    
+                    clientMo.addAction('#loading' , 'hide' , 1000)
+                })
+            } , 1500)
+        } else {
+            document.querySelectorAll("#box-login-docter #form-personal .field-personal").forEach((val , key) => {
+                (!val.value) ? val.setAttribute('request' , "") : val.removeAttribute('request')
             })
         }
     }
@@ -215,20 +226,20 @@ class FormPersonal extends Component {
                     <div id="fullname">
                         <div id="input-firstname">
                             <span>ชื่อ</span>
-                            <input type="text" id="firstname"></input>
+                            <input type="text" id="firstname" className="field-personal"></input>
                         </div>
                         <div id="input-lastname">
                             <span>นามสกุล</span>
-                            <input type="text" id="lastname"></input>
+                            <input type="text" id="lastname" className="field-personal"></input>
                         </div>
                     </div>
                     <div id="station-farm">
                         <span>ศูนย์ปฏิบัติหน้าที่</span>
-                        <input type="text" id="station"></input>
+                        <input type="text" id="station" className="field-personal"></input>
                     </div>
                 </div>
-                <div id="password">
-                    <input id="password" placeholder="รหัสผ่าน" type="password"></input>
+                <div id="field-password">
+                    <input id="password" placeholder="รหัสผ่าน" type="password" className="field-personal"></input>
                 </div>
                 <div id="confirm">
                     <button id="bt-cancel" onClick={this.cancel}>ยกเลิก</button>
@@ -240,7 +251,7 @@ class FormPersonal extends Component {
     }
 }
 
-class showError extends Component {
+class ShowError extends Component {
 
     confirm = () => {
         document.querySelector("#box-login-docter #form-personal").removeAttribute("show")

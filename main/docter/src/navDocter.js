@@ -4,6 +4,7 @@ import { clientMo } from "../../../src/assets/js/moduleClient";
 import Login from "./Login";
 
 import List from "./listFramer";
+import Push from "./PushFramer";
 
 import SessionOut from "./sesionOut";
 
@@ -26,7 +27,7 @@ export default class NavDocter extends Component {
         let path = window.location.pathname.split('/');
         if(path[1] + "/" + path[2] == 'docter/list' || path[1] + "/" + path[2] == 'docter/undefined')
         {
-            clientMo.post('/api/docter/listFarmer').then((list)=>{
+            clientMo.post('/api/docter/listFarmer'  , {type:'list'}).then((list)=>{
                 if(list) {
                     this.props.bodyDocter.setState({body : <List status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -35,17 +36,15 @@ export default class NavDocter extends Component {
 
             })
         }
-        else if (path[1] + "/" + path[2] == 'docter/plus')
+        else if (path[1] + "/" + path[2] == 'docter/push')
         {
-            clientMo.post('/api/docter/check').then((context)=>{
-                if(context) {
-                    this.props.bodyDocter.setState({body : <Plus status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter}/>})
+            clientMo.post('/api/docter/listFarmer' , {type:'push'}).then((list)=>{
+                if(list) {
+                    this.props.bodyDocter.setState({body : <Push status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
-                    document.getElementById('pAccount').setAttribute('nav-select' , '')
+                    document.getElementById("pAccount").setAttribute('nav-select' , '')
                 }
-                
-                else this.sessionoff(true)
-                    
+                else this.sessionoff()
             })
         }
     }
@@ -68,22 +67,22 @@ export default class NavDocter extends Component {
         e.preventDefault()
 
         if(ele == 'account') {
-            clientMo.post('/api/docter/listFarmer').then((list)=>{
+            clientMo.post('/api/docter/listFarmer' , {type:'list'}).then((list)=>{
                 if(list) {
                     this.props.bodyDocter.setState({body : <List status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById(ele).setAttribute('nav-select' , '')
-                } else this.sessionoff()
+                } 
+                else this.sessionoff()
             })
         }
         else if (ele == 'pAccount') {
-            clientMo.post('/api/docter/check').then((context)=>{
-                if(context) {
-                    this.props.bodyDocter.setState({body : <Plus status={1} main={this.props.main} bodyDocter={this.props.bodyDocter}/>})
+            clientMo.post('/api/docter/listFarmer' , {type:'push'}).then((list)=>{
+                if(list) {
+                    this.props.bodyDocter.setState({body : <Push status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById(ele).setAttribute('nav-select' , '')
                 }
-                
                 else this.sessionoff()
             })
             

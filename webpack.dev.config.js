@@ -14,6 +14,9 @@ const plugins = isDevMode ?
                                 sockIntegration: "whm",
                             },
                         }), 
+                        new webpack.DefinePlugin({
+                            "process.env.REACT_API_KEY" : JSON.stringify("AIzaSyDgCfVBI9YfvOp1esw8dnuPTtNOpr9YgI4")
+                        })
                     ] : [ //not hot refresh
                         ];
 // Hot refresh

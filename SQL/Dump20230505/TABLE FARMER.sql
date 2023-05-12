@@ -8,6 +8,6 @@ CREATE TABLE `line_chat_gap`.`acc_farmer` (
     location POINT NOT NULL,
     password varchar(256) NOT NULL,
     register_auth tinyint(1) NOT NULL,
-    date_register TIMESTAMP NOT NULL,
+    date_register TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     uid_line varchar(255) NOT NULL
 )

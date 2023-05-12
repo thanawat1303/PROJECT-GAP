@@ -105,9 +105,19 @@ app.post('/api/docter/listFarmer' , (req , res)=>{
     apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
         if(result['result'] === "pass") {
             let queryType = (req.body['type'] === 'list') ? 
-                                `SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 1 LIMIT 30;` :
+                                `SELECT id_table , id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 1 LIMIT 30;` :
                             (req.body['type'] === 'push') ? 
-                                `SELECT id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 0 LIMIT 30;` : ""
+                                `
+                                    SELECT acc_farmer.id_table , acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img  FROM acc_farmer , 
+                                    (
+                                        SELECT MAX(id_table) AS id_table , id_farmer , MAX(date_register) AS date_register
+                                        FROM acc_farmer 
+                                        WHERE station = "${result['data']['station_docter']}" and register_auth = 0 
+                                        GROUP BY id_farmer 
+                                        ORDER BY date_register
+                                    ) AS MaxRowDate
+                                    WHERE acc_farmer.id_table = MaxRowDate.id_table LIMIT 30;
+                                ` : ""
             con.query(queryType , (err , result)=>{
                 if (err){
                     dbpacket.dbErrorReturn(con , err , res)
@@ -124,6 +134,58 @@ app.post('/api/docter/listFarmer' , (req , res)=>{
             res.redirect('/api/logout')
         }
     })
+})
+
+app.post("/docter/api/docter/pull" , (req , res)=>{
+    let username = req.session.user_docter
+    let password = req.session.pass_docter
+
+    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        res.redirect('/api/logout')
+        return 0
+    }
+
+    let con = db.createConnection(dbpacket.listConfig())
+
+    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+        if(result['result'] === "pass") {
+            console.log(req.body['id'])
+            con.query('SELECT id_farmer , id_docter , fullname , img , station , location , date_register FROM acc_farmer WHERE id_table=? and register_auth = 0' , 
+            [req.body['id']] , (err , resul)=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("query");
+                }
+
+                if(resul[0]) {
+                    console.log(resul[0])
+                    res.send(resul[0])
+                } else {
+                    console.log('not found')
+                    res.send('not found')
+                }
+            })
+        }
+    }).catch((err)=>{
+        con.destroy()
+        if(err == "not pass") {
+            res.redirect('/api/logout')
+        }
+    })
+
+    // apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+    //     if(result['result'] === "pass") {
+    //         con.query('UPDATE acc_farmer SET id_docter = ? , register_auth = 1 WHERE register_auth = 0;' , 
+    //         [username] , (err , resul)=>{
+
+    //         })
+    //     }
+    // }).catch((err)=>{
+    //     con.destroy()
+    //     if(err == "not pass") {
+    //         res.redirect('/api/logout')
+    //     }
+    // })
 })
 
 app.all('/api/docter/auth' , (req , res)=>{

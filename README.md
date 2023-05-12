@@ -18,6 +18,10 @@
 
       npm i @line/bot-sdk #api line
       npm i @line/liff
+
+      npm install @google/maps
+      npm i @react-google-maps/api  
+      npm install google-map-react
       ```
 
 ### Build Project

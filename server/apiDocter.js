@@ -1,20 +1,22 @@
 require('dotenv').config().parsed
+
 // import module express config
 const app = require('./apiFarmer')
 
 // module DB and connect DB
 const db = require('mysql')
+
 const dbpacket = require('./dbConfig')
 const apifunc = require('./apifunc')
 
 const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
 
 // req
-app.post('/api/docter/check' , (req , res)=>{
-    res.redirect('/api/docter/auth');
+app.post('/api/doctor/check' , (req , res)=>{
+    res.redirect('/api/doctor/auth');
 })
 
-app.post('/api/docter/checkline' , (req , res)=>{
+app.post('/api/doctor/checkline' , (req , res)=>{
     let con = db.createConnection(dbpacket.listConfig())
     con.connect((err)=>{
         if (err) {
@@ -38,7 +40,7 @@ app.post('/api/docter/checkline' , (req , res)=>{
     })
 })
 
-app.post('/api/docter/savePersonal' , (req , res)=>{
+app.post('/api/doctor/savePersonal' , (req , res)=>{
     let username = req.body['username'] ?? '';
     let password = req.body['password'] ?? '';
 
@@ -55,7 +57,7 @@ app.post('/api/docter/savePersonal' , (req , res)=>{
         if(result['result'] === "pass") {
             if (result['data']['status_account'] == 0
                     || result['data']['status_delete'] == 1) {
-                con.destroy()
+                con.end()
                 res.send('account')
             }
             else {
@@ -69,14 +71,14 @@ app.post('/api/docter/savePersonal' , (req , res)=>{
                     }
                     console.log(val)
                     if(val['changedRows'] == 1){
-                        req.session.user_docter = username
-                        req.session.pass_docter = password
+                        req.session.user_doctor = username
+                        req.session.pass_doctor = password
                         res.send('pass')
                     } else {
                         console.log("update error")
                         res.send('error')
                     }
-                    con.destroy()
+                    con.end()
                 })
             }
         }
@@ -84,16 +86,16 @@ app.post('/api/docter/savePersonal' , (req , res)=>{
         console.log(err)
         if(err == "not pass") {
             res.send('password')
-            con.destroy()
+            con.end()
         } else if( err == "connect" ) {
             res.redirect('/api/logout')
         }
     })
 })
 
-app.post('/api/docter/listFarmer' , (req , res)=>{
-    let username = req.session.user_docter
-    let password = req.session.pass_docter
+app.post('/api/doctor/listFarmer' , (req , res)=>{
+    let username = req.session.user_doctor
+    let password = req.session.pass_doctor
 
     if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
         res.redirect('/api/logout')
@@ -107,38 +109,28 @@ app.post('/api/docter/listFarmer' , (req , res)=>{
             let queryType = (req.body['type'] === 'list') ? 
                                 `SELECT id_table , id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 1 LIMIT 30;` :
                             (req.body['type'] === 'push') ? 
-                                `
-                                    SELECT acc_farmer.id_table , acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img  FROM acc_farmer , 
-                                    (
-                                        SELECT MAX(id_table) AS id_table , id_farmer , MAX(date_register) AS date_register
-                                        FROM acc_farmer 
-                                        WHERE station = "${result['data']['station_docter']}" and register_auth = 0 
-                                        GROUP BY id_farmer 
-                                        ORDER BY date_register
-                                    ) AS MaxRowDate
-                                    WHERE acc_farmer.id_table = MaxRowDate.id_table LIMIT 30;
-                                ` : ""
+                                `SELECT id_table , fullname , img , date_register FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 0 ORDER BY date_register DESC LIMIT 30;` : ""
             con.query(queryType , (err , result)=>{
                 if (err){
                     dbpacket.dbErrorReturn(con , err , res)
                     return 0
                 };
 
-                con.destroy()
+                con.end()
                 res.send(result)
             })
         }
     }).catch((err)=>{
-        con.destroy()
+        con.end()
         if(err == "not pass") {
             res.redirect('/api/logout')
         }
     })
 })
 
-app.post("/docter/api/docter/pull" , (req , res)=>{
-    let username = req.session.user_docter
-    let password = req.session.pass_docter
+app.post("/doctor/api/doctor/pull" , (req , res)=>{
+    let username = req.session.user_doctor
+    let password = req.session.pass_doctor
 
     if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
         res.redirect('/api/logout')
@@ -149,8 +141,7 @@ app.post("/docter/api/docter/pull" , (req , res)=>{
 
     apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
         if(result['result'] === "pass") {
-            console.log(req.body['id'])
-            con.query('SELECT id_farmer , id_docter , fullname , img , station , location , date_register FROM acc_farmer WHERE id_table=? and register_auth = 0' , 
+            con.query('SELECT fullname , img , location , date_register FROM acc_farmer WHERE id_table=? and register_auth = 0 ORDER BY date_register DESC' , 
             [req.body['id']] , (err , resul)=>{
                 if (err) {
                     dbpacket.dbErrorReturn(con, err, res);
@@ -158,16 +149,16 @@ app.post("/docter/api/docter/pull" , (req , res)=>{
                 }
 
                 if(resul[0]) {
-                    console.log(resul[0])
                     res.send(resul[0])
                 } else {
-                    console.log('not found')
                     res.send('not found')
                 }
+
+                con.end()
             })
         }
     }).catch((err)=>{
-        con.destroy()
+        con.end()
         if(err == "not pass") {
             res.redirect('/api/logout')
         }
@@ -181,18 +172,62 @@ app.post("/docter/api/docter/pull" , (req , res)=>{
     //         })
     //     }
     // }).catch((err)=>{
-    //     con.destroy()
+    //     con.end()
     //     if(err == "not pass") {
     //         res.redirect('/api/logout')
     //     }
     // })
 })
 
-app.all('/api/docter/auth' , (req , res)=>{
+app.post('/doctor/api/doctor/confirmAcc' , (req , res)=>{
+    let username = req.session.user_doctor
+    let password = req.body['password']
+
+    if(username === '' || req.hostname !== HOST_CHECK) {
+        res.redirect('/api/logout')
+        return 0
+    }
+
+    let con = db.createConnection(dbpacket.listConfig())
+
+    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+        if(result['result'] === "pass") {
+            con.query(`
+                        UPDATE acc_farmer SET register_auth=? , id_docter=? , id_farmer=?
+                        WHERE id_table=? and register_auth = 0`
+                        , [req.body['ans'] ? 1 : 3 , username , req.body['farmer'] , req.body['id']]
+                        , (err , result)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("query");
+                            }
+
+                            if(result.changedRows == 1) {
+                                // con.query(`UPDATE acc_farmer SET register_auth=3 WHERE date_register < ? and id_table < ?` , [])
+                                con.end()
+                                if(req.body['ans']) {
+                                    // add Line
+                                } else {
+                                    // unconnect form save before
+                                }
+                                res.send('complete')
+                            } 
+                            else res.send('not found')
+                        })
+        }
+    }).catch((err)=>{
+        con.end()
+        if(err == "not pass") {
+            res.send('account not pass')
+        }
+    })
+})
+
+app.all('/api/doctor/auth' , (req , res)=>{
   
     // เช็คการเข้าสู่ระบบจริงๆ
-    let username = req.session.user_docter ?? req.body['username'] ?? '';
-    let password = req.session.pass_docter ?? req.body['password'] ?? '';
+    let username = req.session.user_doctor ?? req.body['username'] ?? '';
+    let password = req.session.pass_doctor ?? req.body['password'] ?? '';
 
     if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
         res.redirect('/api/logout')
@@ -211,18 +246,18 @@ app.all('/api/docter/auth' , (req , res)=>{
             }
             else if(result['data']['fullname_docter'] 
                     && result['data']['station_docter']) {
-                req.session.user_docter = username
-                req.session.pass_docter = password
+                req.session.user_doctor = username
+                req.session.pass_doctor = password
                 res.send('pass')
             } else {
                 res.send(`wait:${username}`)
             }
         }
-        con.destroy()
+        con.end()
     }).catch((err)=>{
         if(err == "not pass") {
         res.redirect('/api/logout')
-        con.destroy()
+        con.end()
         } else if( err == "connect" ) {
         res.redirect('/api/logout')
         }

@@ -14,18 +14,18 @@ module.exports = router = (app) => {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });
     // plus
-    app.get('/admin/docter' , function(req, res) {
+    app.get('/admin/doctor' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });
 
     // router docter
-    app.get('/docter' , function(req, res) {
+    app.get('/doctor' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });
-    app.get('/docter/list' , function(req, res) {
+    app.get('/doctor/list' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });
-    app.get('/docter/push' , function(req, res) {
+    app.get('/doctor/push' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });
 

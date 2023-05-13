@@ -26,8 +26,11 @@ $ScaleBox : 70px;
             border-radius: 15px;
             display: flex;
             #img-fm-confirm {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 background-color: white;
-                height: 140px;
                 padding: 10px;
                 border-radius: 10px 0px 0px 10px;
                 box-shadow: 0px 0px 10px gainsboro;
@@ -72,18 +75,37 @@ $ScaleBox : 70px;
                 flex-direction: column;
                 justify-content: center;
                 align-items: start;
-                height: $ScaleBox;
+                padding: 2px 0px;
                 padding-left: 8px;
-    
-                .id-fm {
-                    font-family: Sans-font;
-                    font-size: 20px;
-                    font-weight: 900;
-                }
+
+                width: 100%;
     
                 .name-fm {
-                    font-family: Sans-font;
-                    font-weight: 500;
+                    input{
+                        font-family: Sans-font;
+                        font-size: 17px;
+                        font-weight: 900;
+                        border: 0;
+                        outline: 0;
+                        width: 100%;
+                        padding: 0px;
+                        display: flex;
+                        cursor: default;
+                    }
+                }
+    
+                .date-fm {
+                    width: 100%;
+                    input {
+                        font-family: Sans-font;
+                        font-size: 14px;
+                        border: 0;
+                        outline: 0;
+                        width: 100%;
+                        padding: 0px;
+                        display: flex;
+                        cursor: default;
+                    }
                 }
             }
         }
@@ -95,7 +117,7 @@ $ScaleBox : 70px;
         #list-push-docter {
             .container-push {
                 margin-left: 3px;
-                width: 50%;
+                width: 49%;
             }
         }
     }
@@ -107,6 +129,48 @@ $ScaleBox : 70px;
             .container-push {
                 margin: 3px 0px;
                 width: 100%;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    #page-push-docter {
+        #list-push-docter {
+            .container-push {
+                margin: 3px 0px;
+                width: 100%;
+
+                align-items: start;
+
+                padding: 2px 8px;
+
+                .img-docter {
+                    width: 35px;
+                    border-radius: 5px;
+                    margin-top: 8px;
+                }
+        
+                .detail-content-fm {
+        
+                    .name-fm {
+                        input {
+                            font-family: TH-font;
+                            font-size: 16px;
+                            font-weight: 900;
+                        }
+                    }
+        
+                    .date-fm {
+                        width: 100%;
+                        input {
+                            font-family: TH-font;
+                            font-size: 14px;
+                            font-weight: 600;
+                            
+                        }
+                    }
+                }
             }
         }
     }

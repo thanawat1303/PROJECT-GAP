@@ -14,13 +14,13 @@ export default class List extends Component {
     }
 
     componentDidMount() {
-        if (this.props.status == 0) window.history.replaceState({} , null , '/docter/list')
-        else if(this.props.status == 1) window.history.pushState({}, null , '/docter/list')
+        if (this.props.status == 0) window.history.replaceState({} , null , '/doctor/list')
+        else if(this.props.status == 1) window.history.pushState({}, null , '/doctor/list')
         
         this.setState({
             body : JSON.parse(this.props.list).map((listFm , index) =>
                         <div key={index} className="container-fm">
-                            
+                            <input readOnly value={listFm['fullname']}></input>
                         </div>
                     ) // use map is create element object
         })
@@ -28,6 +28,8 @@ export default class List extends Component {
     }
 
     render() {
-        return(<></>)
+        return(
+            this.state.body
+        )
     }
 }

@@ -3,7 +3,7 @@ import liff from "@line/liff"
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 import './assets/style/Login.scss'
 
-import Docter from "./Docter";
+import Docter from "./Doctor";
 
 export default class Login extends Component {
 // this.props.main == Main app
@@ -31,7 +31,7 @@ export default class Login extends Component {
         }).catch((err)=>console.log(err))
 
         if(this.props.state) {
-            window.history.pushState({} , null , '/docter')
+            window.history.pushState({} , null , '/doctor')
         }
 
         
@@ -48,7 +48,7 @@ export default class Login extends Component {
             }
 
             setTimeout(()=>{
-                clientMo.post('/api/docter/auth' , formData).then((context)=>{
+                clientMo.post('/api/doctor/auth' , formData).then((context)=>{
                     let errorLogin = document.querySelector('.error-login')
                     errorLogin.classList.add('hide')
                     errorLogin.innerHTML = ""
@@ -169,7 +169,7 @@ class FormPersonal extends Component {
                 val.removeAttribute('request')
             })
             setTimeout(()=>{
-                clientMo.post('/api/docter/savePersonal' , {
+                clientMo.post('/api/doctor/savePersonal' , {
                     firstname:firstname.value,
                     lastname:lastname.value,
                     station:station.value,

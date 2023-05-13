@@ -2,11 +2,11 @@ import React , {Component} from "react";
 import { clientMo } from "../../../src/assets/js/moduleClient";
 import Login from "./Login";
 
-import NavDocter from "./navDocter";
+import NavDoctor from "./navDoctor";
 
-import './assets/style/Docter.scss'
+import './assets/style/doctor.scss'
 
-export default class Docter extends Component {
+export default class Doctor extends Component {
     constructor(){
         super();
         this.state={
@@ -19,7 +19,7 @@ export default class Docter extends Component {
 
     componentDidMount() {
         this.setState({
-            nav : <NavDocter bodyDocter={this} main={this.props.main}/>
+            nav : <NavDoctor bodyDocter={this} main={this.props.main}/>
         })
         window.addEventListener('resize' , this.checkSize)
     }

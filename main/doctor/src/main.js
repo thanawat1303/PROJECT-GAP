@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 
 import Login from "./Login";
-import Docter from "./Docter";
+import Doctor from "./Doctor";
 
 import './assets/style/main.scss'
 
-export default class MainDocter extends Component {
+export default class MainDoctor extends Component {
     constructor(){
         super();
         this.state={
@@ -16,11 +16,11 @@ export default class MainDocter extends Component {
 
     componentDidMount() {
 
-        clientMo.post('/api/docter/check').then((context)=>{
+        clientMo.post('/api/doctor/check').then((context)=>{
             console.log(context)
             if(context) 
                 this.setState({
-                    body : <Docter main={this}/>
+                    body : <Doctor main={this}/>
                 })
             else 
                 this.setState({

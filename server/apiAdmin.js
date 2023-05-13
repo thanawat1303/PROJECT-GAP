@@ -4,6 +4,7 @@ const app = require('./apiDocter')
 
 // module DB and connect DB
 const db = require('mysql')
+
 const dbpacket = require('./dbConfig')
 const apifunc = require('./apifunc')
 
@@ -33,19 +34,19 @@ app.post('/api/admin/chkOver' , (req , res)=>{
             return 0
           }
 
-          con.destroy()
+          con.end()
           
           if(result[0]) res.send('over')
           else res.send('1')
 
         })
       } else {
-        con.destroy()
+        con.end()
         res.send('error ID')
       }
     }
   }).catch((err)=>{
-    con.destroy()
+    con.end()
     if(err == "not pass") {
       res.redirect('/api/logout')
     }
@@ -72,19 +73,19 @@ app.post('/api/admin/chkOver' , (req , res)=>{
   //             return 0
   //           }
 
-  //           con.destroy()
+  //           con.end()
             
   //           if(result[0]) res.send('over')
   //           else res.send('1')
 
   //         })
   //       } else {
-  //         con.destroy()
+  //         con.end()
   //         res.send('error ID')
   //       }
   
   //     } else {
-  //       con.destroy()
+  //       con.end()
   //       res.redirect('/api/logout')
   //     }
   //   })
@@ -134,7 +135,7 @@ app.post('/api/admin/checkUserAction' , (req , res)=> {
         res.send('incorrect')
       }
   
-      con.destroy()
+      con.end()
     })
   })
 })
@@ -168,12 +169,12 @@ app.post('/api/admin/add' , (req , res)=>{
             return 0
           }
     
-          con.destroy()
+          con.end()
           res.send('1')
         })
       }
     }).catch((err)=>{
-      con.destroy()
+      con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
       }
@@ -195,7 +196,7 @@ app.post('/api/admin/add' , (req , res)=>{
 
     //     console.log(result)
   
-    //     con.destroy()
+    //     con.end()
     //     res.send('1')
     //   })
     // })
@@ -228,12 +229,12 @@ app.post('/api/admin/listDocter' , (req , res)=>{
           return 0
         };
 
-        con.destroy()
+        con.end()
         res.send(result)
       })
     }
   }).catch((err)=>{
-    con.destroy()
+    con.end()
     if(err == "not pass") {
       res.redirect('/api/logout')
     }
@@ -260,19 +261,19 @@ app.post('/api/admin/changeState' , (req,res)=>{
             return 0
           }
 
-          con.destroy()
+          con.end()
 
           // console.log(result)
           if(result.changedRows == 1) res.send('1')
           else res.send('error')
         })
       } else {
-        con.destroy()
+        con.end()
         res.send('error ID or status')
       }
     }
   }).catch((err)=>{
-    con.destroy()
+    con.end()
     if(err == "not pass") {
       res.redirect('/api/logout')
     }
@@ -306,13 +307,13 @@ app.post('/api/admin/delete' , (req , res)=>{
             return 0
           }
     
-          con.destroy()
+          con.end()
           res.send('1')
         })
       }
 
     }).catch((err)=>{
-      con.destroy()
+      con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
       }
@@ -346,11 +347,11 @@ app.all('/api/admin/auth' , (req , res)=>{
       req.session.pass_admin = password
       res.send('1')
     }
-    con.destroy()
+    con.end()
   }).catch((err)=>{
     if(err == "not pass") {
       res.redirect('/api/logout')
-      con.destroy()
+      con.end()
     } else if( err == "connect" ) {
       res.redirect('/api/logout')
     }

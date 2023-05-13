@@ -1,11 +1,9 @@
 import React , {Component} from "react";
-import Login from "./Login";
-
-import { clientMo } from "../../../src/assets/js/moduleClient";
 
 export default class SessionOut extends Component {
 
     Logout = (e) => {
+        e.preventDefault()
         window.location.href = '/admin'
     }
 

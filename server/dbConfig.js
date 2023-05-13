@@ -1,4 +1,5 @@
 require('dotenv').config().parsed
+
 const DB = {
     listConfig : () => {
         return {
@@ -12,7 +13,7 @@ const DB = {
     dbErrorReturn : (con , err , res) => {
         console.log(err)
         res.send('error')
-        con.destroy()
+        con.end()
     }   
 }
 

@@ -25,9 +25,9 @@ export default class NavDocter extends Component {
 
     checkPath = (statusLoad = 0) =>{
         let path = window.location.pathname.split('/');
-        if(path[1] + "/" + path[2] == 'docter/list' || path[1] + "/" + path[2] == 'docter/undefined')
+        if(path[1] + "/" + path[2] == 'doctor/list' || path[1] + "/" + path[2] == 'doctor/undefined')
         {
-            clientMo.post('/api/docter/listFarmer'  , {type:'list'}).then((list)=>{
+            clientMo.post('/api/doctor/listFarmer'  , {type:'list'}).then((list)=>{
                 if(list) {
                     this.props.bodyDocter.setState({body : <List status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -36,9 +36,9 @@ export default class NavDocter extends Component {
 
             })
         }
-        else if (path[1] + "/" + path[2] == 'docter/push')
+        else if (path[1] + "/" + path[2] == 'doctor/push')
         {
-            clientMo.post('/api/docter/listFarmer' , {type:'push'}).then((list)=>{
+            clientMo.post('/api/doctor/listFarmer' , {type:'push'}).then((list)=>{
                 if(list) {
                     this.props.bodyDocter.setState({body : <Push status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -67,7 +67,7 @@ export default class NavDocter extends Component {
         e.preventDefault()
 
         if(ele == 'account') {
-            clientMo.post('/api/docter/listFarmer' , {type:'list'}).then((list)=>{
+            clientMo.post('/api/doctor/listFarmer' , {type:'list'}).then((list)=>{
                 if(list) {
                     this.props.bodyDocter.setState({body : <List status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -77,7 +77,8 @@ export default class NavDocter extends Component {
             })
         }
         else if (ele == 'pAccount') {
-            clientMo.post('/api/docter/listFarmer' , {type:'push'}).then((list)=>{
+            clientMo.post('/api/doctor/listFarmer' , {type:'push'}).then((list)=>{
+                console.log(list)
                 if(list) {
                     this.props.bodyDocter.setState({body : <Push status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -112,6 +113,17 @@ export default class NavDocter extends Component {
                         <bot-gap-string>
                             <bot-string>เกษตรกร</bot-string>
                             <bot-string>ลงทะเบียน</bot-string>    
+                        </bot-gap-string>
+                    </bot-bt-nav>
+                </a>
+                <a onClick={e => this.selectMenu(e , 'formSaveFm')} className="list-menu-nav" id="pAccount" title="เพิ่มบัญชี" href="plus">
+                    <bot-bt-nav>
+                        <bot-gap-nav-icon>
+                            <img src="/plus-user-svgrepo-com.svg"></img>
+                        </bot-gap-nav-icon>
+                        <bot-gap-string>
+                            <bot-string>Export</bot-string>
+                            <bot-string>ข้อมูล</bot-string>    
                         </bot-gap-string>
                     </bot-bt-nav>
                 </a>

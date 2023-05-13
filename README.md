@@ -22,6 +22,8 @@
       npm install @google/maps
       npm i @react-google-maps/api  
       npm install google-map-react
+
+      npm i moment-timezone
       ```
 
 ### Build Project

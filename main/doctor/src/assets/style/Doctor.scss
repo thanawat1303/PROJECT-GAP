@@ -19,7 +19,7 @@ $widthNavModile : 124px;
 $heightNav: 58px;
 $heightNavMobile: 47px;
 
-.docter * :not(a) {
+.doctor * :not(a) {
     -webkit-user-drag: none;
 
     -webkit-touch-callout: none;
@@ -39,7 +39,7 @@ a {
     cursor: pointer;
 }
 
-.docter {
+.doctor {
     .tab-bar{
         display: flex;
         justify-content: space-between;
@@ -175,7 +175,7 @@ a {
         }
     }
 
-    .container-body-docter {
+    .container-body-doctor {
         display: flex;
         
         .nav-menu {
@@ -335,7 +335,7 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 500px) { //  and (min-height: 640px)
-    .docter * {
+    .doctor * {
         cursor: default;
     }
 
@@ -354,7 +354,7 @@ a[nav-select] {
         }
     }
 
-    .docter {
+    .doctor {
         .tab-bar {
             height: 55px;
             padding: 0px 5px;
@@ -398,7 +398,7 @@ a[nav-select] {
             }
         }
         
-        .container-body-docter {
+        .container-body-doctor {
             .nav-menu {
 
                 margin-left: 6px;
@@ -450,8 +450,8 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 445px) {
-    .docter {
-        .container-body-docter {
+    .doctor {
+        .container-body-doctor {
             .nav-menu {
                 .list-menu-nav {
                     bot-gap-string {
@@ -467,8 +467,8 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 395px) {
-    .docter {
-        .container-body-docter {
+    .doctor {
+        .container-body-doctor {
             .nav-menu {
                 .list-menu-nav {
                     width: 124px;
@@ -484,7 +484,7 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 376px) {
-    .docter {
+    .doctor {
         .tab-bar {
             .bt-action {
                 .profile {
@@ -501,7 +501,7 @@ a[nav-select] {
                 }
             }
         }
-        .container-body-docter {
+        .container-body-doctor {
             .nav-menu {
                 .list-menu-nav {
                     bot-gap-string {
@@ -516,7 +516,7 @@ a[nav-select] {
 }
 
 @media only screen and (max-width: 300px) {
-    .docter {
+    .doctor {
         .tab-bar {
             height: 38px;
             padding: 0px 2px;
@@ -576,7 +576,7 @@ a[nav-select] {
                 }
             }
         }
-        .container-body-docter {
+        .container-body-doctor {
             .nav-menu {
                 margin-left: 2px;
                 .list-menu-nav {

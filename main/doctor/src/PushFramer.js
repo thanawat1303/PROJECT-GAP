@@ -4,13 +4,15 @@ import { MapsJSX , DAYUTC, TIMEUTC} from "../../../src/assets/js/module";
 
 import "./assets/style/Push.scss"
 
+// import { ListProfileShow } from "./ListProfileCV";
+
 export default class Push extends Component {
 
     constructor(){
         super()
         this.state = {
             body : <></>,
-            detail : <></>
+            detail : <></>,
         }
     }
 
@@ -19,7 +21,7 @@ export default class Push extends Component {
         this.setState({
             body : JSON.parse(this.props.list).map((listFm , index) =>
                         <div key={index} className="container-push" onClick={()=>this.showDetail(listFm['id_table'])}>
-                            <img className="img-docter" src={(listFm['img']['data'] != '') ? listFm['img']['data'] : '/farmer-svgrepo-com.svg'}></img>
+                            <img className="img-doctor" src={(listFm['img']['data'] != '') ? listFm['img']['data'] : '/farmer-svgrepo-com.svg'}></img>
                             <div className="detail-content-fm">
                                 <div className="name-fm"><input readOnly value={`ชื่อเกษตรกร ${listFm['fullname']}`}></input></div>
                                 <div className="date-fm"><DAYUTC date={listFm['date_register']}/></div>
@@ -31,7 +33,7 @@ export default class Push extends Component {
     }
 
     showDetail = (id) => {
-        clientMo.post("api/doctor/pull" , {id:id}).then((profile)=>{
+        clientMo.post("api/doctor/pull" , {id:id , type:false}).then((profile)=>{
             if(profile) {
                 this.setState({
                     detail : <DetailConfirm bodyPush={this} profile={profile} id={id}/>
@@ -52,11 +54,11 @@ export default class Push extends Component {
 
     render(){
         return(
-            <section id="page-push-docter">
+            <section id="page-push-doctor">
                 <section id="detail-confirm" onClick={this.close}>
                     {this.state.detail}
                 </section>
-                <section id="list-push-docter">
+                <section id="list-push-doctor">
                     {this.state.body}
                 </section>
             </section>
@@ -69,7 +71,8 @@ class DetailConfirm extends Component {
         super()
         this.state = {
             img : <></>,
-            detail : <></>
+            detail : <></>,
+            // listAll : <></>
         }
     }
 
@@ -80,7 +83,7 @@ class DetailConfirm extends Component {
             detail : 
                     <>
                         <div id="id-profile-confirm">
-                            <input type="text" autoComplete="off" placeholder="กรอกรหัสประจำตัวเกษตรกร"></input>
+                            <input type="text" defaultValue={profileP['id_farmer']} autoComplete="off" placeholder="กรอกรหัสประจำตัวเกษตรกร"></input>
                         </div>
                         <div id="fullname-profile-confirm">
                             <input readOnly value={profileP['fullname']}></input>
@@ -103,9 +106,13 @@ class DetailConfirm extends Component {
                             <button className="cancel" onClick={()=>this.submit(false)}>ไม่อนุมัติ</button>
                             <button className="submit" onClick={()=>this.submit(true)}>อนุมัติ</button>
                         </div>
-                    </>
-            
+                    </>,
         })
+        // clientMo.post('/api/doctor/listFarmer' , {type : 'list'}).then((farmer)=>{
+        //     this.setState({
+        //         listAll: <ListProfileShow farmer={JSON.parse(farmer)} DetailConfirm={this}/>
+        //     })
+        // })
     }
 
     onLoadComplete = () =>{
@@ -116,7 +123,8 @@ class DetailConfirm extends Component {
     submit = async (ansIn) => {
         let id_farmer = document.querySelector("#id-profile-confirm input")
         let passwordDoctor = document.querySelector("#password-confirm-fm-push input")
-        if(id_farmer.value && passwordDoctor.value) {
+        let ansConfirm = (ansIn) ? id_farmer.value && passwordDoctor.value : passwordDoctor.value
+        if(ansConfirm) {
             const result = await clientMo.post('/doctor/api/doctor/confirmAcc' , {
                 id : this.props.id,
                 farmer : id_farmer.value,
@@ -146,6 +154,9 @@ class DetailConfirm extends Component {
                     <div id="img-fm-confirm">
                         {this.state.img}
                     </div>
+                    {/* <div id="list-convert-confirm">
+                        {this.state.listAll}
+                    </div> */}
                 </div>
                 <div id="detail-profile-confirm">
                     {this.state.detail}

@@ -8,7 +8,7 @@ import Push from "./PushFramer";
 
 import SessionOut from "./sesionOut";
 
-export default class NavDocter extends Component {
+export default class NavDoctor extends Component {
 
     componentDidMount() {
         this.checkPath()
@@ -29,7 +29,7 @@ export default class NavDocter extends Component {
         {
             clientMo.post('/api/doctor/listFarmer'  , {type:'list'}).then((list)=>{
                 if(list) {
-                    this.props.bodyDocter.setState({body : <List status={statusLoad} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
+                    this.props.bodyDoctor.setState({body : <List status={statusLoad} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById('account').setAttribute('nav-select' , '')
                 } else this.sessionoff(true)
@@ -40,7 +40,7 @@ export default class NavDocter extends Component {
         {
             clientMo.post('/api/doctor/listFarmer' , {type:'push'}).then((list)=>{
                 if(list) {
-                    this.props.bodyDocter.setState({body : <Push status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
+                    this.props.bodyDoctor.setState({body : <Push status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById("pAccount").setAttribute('nav-select' , '')
                 }
@@ -55,7 +55,7 @@ export default class NavDocter extends Component {
                 body : <Login main={this.props.main} state={true}/>
             })
         } else {
-            this.props.bodyDocter.setState({
+            this.props.bodyDoctor.setState({
                 session : <SessionOut main={this.props.main}/>
             })
     
@@ -69,7 +69,7 @@ export default class NavDocter extends Component {
         if(ele == 'account') {
             clientMo.post('/api/doctor/listFarmer' , {type:'list'}).then((list)=>{
                 if(list) {
-                    this.props.bodyDocter.setState({body : <List status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
+                    this.props.bodyDoctor.setState({body : <List status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById(ele).setAttribute('nav-select' , '')
                 } 
@@ -80,7 +80,7 @@ export default class NavDocter extends Component {
             clientMo.post('/api/doctor/listFarmer' , {type:'push'}).then((list)=>{
                 console.log(list)
                 if(list) {
-                    this.props.bodyDocter.setState({body : <Push status={1} main={this.props.main} bodyDocter={this.props.bodyDocter} list={list}/>})
+                    this.props.bodyDoctor.setState({body : <Push status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById(ele).setAttribute('nav-select' , '')
                 }

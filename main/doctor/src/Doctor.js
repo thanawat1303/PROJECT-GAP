@@ -19,7 +19,7 @@ export default class Doctor extends Component {
 
     componentDidMount() {
         this.setState({
-            nav : <NavDoctor bodyDocter={this} main={this.props.main}/>
+            nav : <NavDoctor bodyDoctor={this} main={this.props.main}/>
         })
         window.addEventListener('resize' , this.checkSize)
     }
@@ -102,7 +102,7 @@ export default class Doctor extends Component {
 
     render() {
         return (
-            <div className="docter" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
+            <div className="doctor" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
                 <section className="tab-bar">
                     <span className="pg-action">
                         <span className="nav-menu">
@@ -134,7 +134,7 @@ export default class Doctor extends Component {
                         </section>
                     </span>
                 </section>
-                <section className="container-body-docter">
+                <section className="container-body-doctor">
                     <div onLoad={this.checkSize}>
                         {this.state.nav}
                     </div>

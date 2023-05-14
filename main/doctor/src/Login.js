@@ -3,7 +3,7 @@ import liff from "@line/liff"
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 import './assets/style/Login.scss'
 
-import Docter from "./Doctor";
+import Doctor from "./Doctor";
 
 export default class Login extends Component {
 // this.props.main == Main app
@@ -54,7 +54,7 @@ export default class Login extends Component {
                     errorLogin.innerHTML = ""
                     if(context == "pass") {
                         this.props.main.setState({
-                            body : <Docter main={this.props.main}/>
+                            body : <Doctor main={this.props.main}/>
                         })
                         
                     } else if (context == "account") {
@@ -69,7 +69,7 @@ export default class Login extends Component {
                         }
                     } else if (context.indexOf("wait") >= 0) {
                         let id = context.split(':')
-                        document.querySelector("#box-login-docter #form-personal").setAttribute("show" , "")
+                        document.querySelector("#box-login-doctor #form-personal").setAttribute("show" , "")
                         for(let x = 0; x < e.target.length-1; x++) {
                             e.target[x].removeAttribute('style')
                             document.querySelector('.content-user .label-login').classList.remove('moveOn')
@@ -129,7 +129,7 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div id="box-login-docter">
+            <div id="box-login-doctor">
                 <div id="form-personal">{this.state.formPersonal}</div>
                 <form autoComplete="off" onSubmit={this.submitFrom} className="content-login">
                     <div className="Logo-App"><img width={150}  src="/logo2.png"></img></div>
@@ -158,14 +158,14 @@ class FormPersonal extends Component {
     }
 
     confirm = () => {
-        let firstname = document.querySelector("#box-login-docter #form-personal #firstname")
-        let lastname = document.querySelector("#box-login-docter #form-personal #lastname")
-        let station = document.querySelector("#box-login-docter #form-personal #station")
-        let password = document.querySelector("#box-login-docter #form-personal #password")
+        let firstname = document.querySelector("#box-login-doctor #form-personal #firstname")
+        let lastname = document.querySelector("#box-login-doctor #form-personal #lastname")
+        let station = document.querySelector("#box-login-doctor #form-personal #station")
+        let password = document.querySelector("#box-login-doctor #form-personal #password")
 
         if(firstname.value && lastname.value && station.value && password.value) {
             clientMo.rmAction('#loading' , 'hide' , 0)
-            document.querySelectorAll("#box-login-docter #form-personal .field-personal").forEach((val , key) => {
+            document.querySelectorAll("#box-login-doctor #form-personal .field-personal").forEach((val , key) => {
                 val.removeAttribute('request')
             })
             setTimeout(()=>{
@@ -178,14 +178,14 @@ class FormPersonal extends Component {
                 }).then((result)=>{
                     if(result === "pass"){
                         this.props.main.setState({
-                            body : <Docter main={this.props.main}/>
+                            body : <Doctor main={this.props.main}/>
                         })
                     } else if(result === "password") {
                         password.setAttribute('error' , "")
                         password.setAttribute('placeholder' , "รหัสผ่านไม่ถูกต้อง")
                         password.value = ""
                     } else if (result === "account") {
-                        let eleError = document.querySelector('#box-login-docter #form-personal #account-error')
+                        let eleError = document.querySelector('#box-login-doctor #form-personal #account-error')
                         eleError.setAttribute("show" , "")
                         this.setState({
                             error : <ShowError ele={this}/>
@@ -196,14 +196,14 @@ class FormPersonal extends Component {
                 })
             } , 1500)
         } else {
-            document.querySelectorAll("#box-login-docter #form-personal .field-personal").forEach((val , key) => {
+            document.querySelectorAll("#box-login-doctor #form-personal .field-personal").forEach((val , key) => {
                 (!val.value) ? val.setAttribute('request' , "") : val.removeAttribute('request')
             })
         }
     }
 
     cancel = () => {
-        document.querySelector("#box-login-docter #form-personal").removeAttribute("show")
+        document.querySelector("#box-login-doctor #form-personal").removeAttribute("show")
         setTimeout(()=>{
             this.props.ele.setState({
                 formPersonal : <></>
@@ -218,7 +218,7 @@ class FormPersonal extends Component {
                 {this.state.error}
             </div>
             <div id="form">
-                <div id="id-docter">
+                <div id="id-doctor">
                     รหัสประจำตัว
                     <input value={this.props.id} readOnly></input>
                 </div>
@@ -254,7 +254,7 @@ class FormPersonal extends Component {
 class ShowError extends Component {
 
     confirm = () => {
-        document.querySelector("#box-login-docter #form-personal").removeAttribute("show")
+        document.querySelector("#box-login-doctor #form-personal").removeAttribute("show")
         setTimeout(()=>{
             this.props.ele.setState({
                 formPersonal : <></>

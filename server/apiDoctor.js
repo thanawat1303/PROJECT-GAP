@@ -25,14 +25,14 @@ app.post('/api/doctor/checkline' , (req , res)=>{
             return 0;
         }
 
-        con.query(`SELECT id_docter FROM acc_docter WHERE uid_line_docter=${req.body['id']}` , (err , result)=>{
+        con.query(`SELECT id_doctor FROM acc_doctor WHERE uid_line_doctor=${req.body['id']}` , (err , result)=>{
             if (err) {
                 dbpacket.dbErrorReturn(con, err, res);
                 console.log("query");
             }
 
             if (result[0]) {
-                res.send(result[0]['id_docter'])
+                res.send(result[0]['id_doctor'])
             } else {
                 res.send('')
             }
@@ -53,7 +53,7 @@ app.post('/api/doctor/savePersonal' , (req , res)=>{
 
     // db.resume()
 
-    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
         if(result['result'] === "pass") {
             if (result['data']['status_account'] == 0
                     || result['data']['status_delete'] == 1) {
@@ -62,7 +62,7 @@ app.post('/api/doctor/savePersonal' , (req , res)=>{
             }
             else {
                 let fullname = req.body['firstname'] + " " + req.body['lastname']
-                con.query(`UPDATE acc_docter SET fullname_docter=? , station_docter=? WHERE id_docter = ?`
+                con.query(`UPDATE acc_doctor SET fullname_doctor=? , station_doctor=? WHERE id_doctor = ?`
                 , [fullname , req.body['station'] , username]
                 , (err , val)=>{
                     if (err) {
@@ -93,6 +93,40 @@ app.post('/api/doctor/savePersonal' , (req , res)=>{
     })
 })
 
+app.post('/api/doctor/profileDoctor' , (req , res)=>{
+    let username = req.session.user_doctor
+    let password = req.session.pass_doctor
+
+    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        res.redirect('/api/logout')
+        return 0
+    }
+
+    let con = db.createConnection(dbpacket.listConfig())
+
+    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        if(result['result'] === "pass") {
+            con.query(`
+                SELECT fullname_doctor , img_doctor 
+                FROM acc_doctor
+                WHERE id_doctor=? and status_delete=0 and status_account=1; 
+            ` , [req.body['id']] , (err , profile)=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("query");
+                }
+                con.end()
+                res.send(profile)
+            })
+        }
+    }).catch((err)=>{
+        con.end()
+        if(err == "not pass") {
+            res.redirect('/api/logout')
+        }
+    })
+})
+
 app.post('/api/doctor/listFarmer' , (req , res)=>{
     let username = req.session.user_doctor
     let password = req.session.pass_doctor
@@ -104,12 +138,26 @@ app.post('/api/doctor/listFarmer' , (req , res)=>{
 
     let con = db.createConnection(dbpacket.listConfig())
 
-    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
         if(result['result'] === "pass") {
             let queryType = (req.body['type'] === 'list') ? 
-                                `SELECT id_table , id_farmer , fullname , img FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 1 LIMIT 30;` :
+                                `
+                                SELECT acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img , MaxRowDate.CountFM  FROM acc_farmer , 
+                                    (
+                                        SELECT MAX(id_table) AS id_table , id_farmer , COUNT(id_farmer) AS CountFM , MAX(date_register) AS date_register
+                                        FROM acc_farmer 
+                                        WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 
+                                        GROUP BY id_farmer 
+                                        ORDER BY date_register
+                                    ) AS MaxRowDate
+                                WHERE acc_farmer.id_table = MaxRowDate.id_table LIMIT 30;
+                                ` 
+                                :
                             (req.body['type'] === 'push') ? 
-                                `SELECT id_table , fullname , img , date_register FROM acc_farmer WHERE station = "${result['data']['station_docter']}" and register_auth = 0 ORDER BY date_register DESC LIMIT 30;` : ""
+                                `SELECT id_table , fullname , img , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 0 ORDER BY date_register DESC LIMIT 30;` 
+                                : 
+                            (req.body['type'] === 'profile') ? 
+                                `SELECT id_table , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 and id_farmer=${req.body['farmer']} ORDER BY date_register DESC;` : ""
             con.query(queryType , (err , result)=>{
                 if (err){
                     dbpacket.dbErrorReturn(con , err , res)
@@ -139,10 +187,10 @@ app.post("/doctor/api/doctor/pull" , (req , res)=>{
 
     let con = db.createConnection(dbpacket.listConfig())
 
-    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
         if(result['result'] === "pass") {
-            con.query('SELECT fullname , img , location , date_register FROM acc_farmer WHERE id_table=? and register_auth = 0 ORDER BY date_register DESC' , 
-            [req.body['id']] , (err , resul)=>{
+            con.query('SELECT fullname , id_farmer , id_doctor , img , location , date_register FROM acc_farmer WHERE id_table=? and register_auth = ? ORDER BY date_register DESC' , 
+            [req.body['id'] , (req.body['type']) ? 1 : 0] , (err , resul)=>{
                 if (err) {
                     dbpacket.dbErrorReturn(con, err, res);
                     console.log("query");
@@ -151,7 +199,7 @@ app.post("/doctor/api/doctor/pull" , (req , res)=>{
                 if(resul[0]) {
                     res.send(resul[0])
                 } else {
-                    res.send('not found')
+                    res.send([])
                 }
 
                 con.end()
@@ -164,9 +212,9 @@ app.post("/doctor/api/doctor/pull" , (req , res)=>{
         }
     })
 
-    // apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+    // apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
     //     if(result['result'] === "pass") {
-    //         con.query('UPDATE acc_farmer SET id_docter = ? , register_auth = 1 WHERE register_auth = 0;' , 
+    //         con.query('UPDATE acc_farmer SET id_doctor = ? , register_auth = 1 WHERE register_auth = 0;' , 
     //         [username] , (err , resul)=>{
 
     //         })
@@ -190,10 +238,10 @@ app.post('/doctor/api/doctor/confirmAcc' , (req , res)=>{
 
     let con = db.createConnection(dbpacket.listConfig())
 
-    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
         if(result['result'] === "pass") {
             con.query(`
-                        UPDATE acc_farmer SET register_auth=? , id_docter=? , id_farmer=?
+                        UPDATE acc_farmer SET register_auth=? , id_doctor=? , id_farmer=?
                         WHERE id_table=? and register_auth = 0`
                         , [req.body['ans'] ? 1 : 3 , username , req.body['farmer'] , req.body['id']]
                         , (err , result)=>{
@@ -238,14 +286,14 @@ app.all('/api/doctor/auth' , (req , res)=>{
 
     // db.resume()
 
-    apifunc.auth(con , username , password , res , "acc_docter").then((result)=>{
+    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
         if(result['result'] === "pass") {
             if (result['data']['status_account'] == 0
                     || result['data']['status_delete'] == 1) {
                 res.send('account')
             }
-            else if(result['data']['fullname_docter'] 
-                    && result['data']['station_docter']) {
+            else if(result['data']['fullname_doctor'] 
+                    && result['data']['station_doctor']) {
                 req.session.user_doctor = username
                 req.session.pass_doctor = password
                 res.send('pass')

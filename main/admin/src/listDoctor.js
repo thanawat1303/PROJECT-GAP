@@ -21,7 +21,7 @@ export default class List extends Component {
     }
 
     LoadDetailInput = () => {
-        document.querySelectorAll('.docter-detail .indetail .text-detail').forEach((ele)=>{
+        document.querySelectorAll('.doctor-detail .indetail .text-detail').forEach((ele)=>{
             let icon = ele.nextElementSibling
             if(ele.scrollWidth > ele.clientWidth && ele.getAttribute('checktext') == 1 && icon.className == "bt-showDetail") icon.setAttribute('show' , '')
             else icon.removeAttribute('show')
@@ -31,9 +31,9 @@ export default class List extends Component {
     ShowDetailInput = (e = document.getElementById(''), text) => {
         // check user login
         
-        let show = document.getElementById('popup-detail-docter')
+        let show = document.getElementById('popup-detail-doctor')
         show.setAttribute('show' , '')
-        document.getElementById('popup-detail-docter').setAttribute(
+        document.getElementById('popup-detail-doctor').setAttribute(
             'style' 
             , `max-width:${window.innerWidth * 0.8}px; 
                 transform: translate(${e.offsetWidth + show.offsetWidth}px, ${e.offsetHeight - show.offsetHeight}px);`)
@@ -49,28 +49,28 @@ export default class List extends Component {
 
         this.LoadDetailInput()
 
-        document.getElementById('popup-detail-docter').setAttribute('style' , `max-width:${window.innerWidth * 0.8}px`)
+        document.getElementById('popup-detail-doctor').setAttribute('style' , `max-width:${window.innerWidth * 0.8}px`)
 
         const resizeObserver = new ResizeObserver((entries) => {
             entries.forEach((entry) => {
                 this.LoadDetailInput()
             });
         });
-        resizeObserver.observe(document.getElementById('body-list-docter'))
+        resizeObserver.observe(document.getElementById('body-list-doctor'))
 
         this.setState({
             body : JSON.parse(this.props.list).map((listDT , index) =>
-                        <div key={index} className="container-docter" id={`list-${index}`}>
-                            <div className="docter-detail">
-                                <img className="img-docter" src={(listDT['img_docter']['data'] != '') ? listDT['img_docter']['data'] : '/doctor-svgrepo-com.svg'}></img>
+                        <div key={index} className="container-doctor" id={`list-${index}`}>
+                            <div className="doctor-detail">
+                                <img className="img-doctor" src={(listDT['img_doctor']['data'] != '') ? listDT['img_doctor']['data'] : '/doctor-svgrepo-com.svg'}></img>
                                 <div className="content-detail">
                                     <div className="detail-box">
                                         <div className="detail">
                                             <div className="head-detail">ชื่อ - นามสกุล</div>
                                             <div className="indetail">
-                                                <input checktext={(listDT['fullname_docter']) ? 1 : 0} readOnly className="text-detail" value={(listDT['fullname_docter']) ? listDT['fullname_docter'] : 'ยังไม่ระบุ'}></input>
+                                                <input checktext={(listDT['fullname_doctor']) ? 1 : 0} readOnly className="text-detail" value={(listDT['fullname_doctor']) ? listDT['fullname_doctor'] : 'ยังไม่ระบุ'}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_doctor'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -79,9 +79,9 @@ export default class List extends Component {
                                         <div className="detail">
                                             <div className="head-detail">รหัสประจำตัว</div>
                                             <div className="indetail">
-                                                <input readOnly className="text-detail" value={listDT['id_docter']}></input>
+                                                <input readOnly className="text-detail" value={listDT['id_doctor']}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_doctor'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -90,9 +90,9 @@ export default class List extends Component {
                                         <div className="detail">
                                             <div className="head-detail">ศูนย์ดูแล</div>
                                             <div className="indetail">
-                                                <input readOnly className="text-detail" value={(listDT['station_docter']) ? listDT['station_docter'] : "ยังไม่ระบุ"}></input>
+                                                <input readOnly className="text-detail" value={(listDT['station_doctor']) ? listDT['station_doctor'] : "ยังไม่ระบุ"}></input>
                                                 <span className="bt-showDetail">
-                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_docter'])}></img>
+                                                    <img className="img-icon" src="/user-card-id-svgrepo-com.svg" onClick={e => this.ShowDetailInput(e.target , listDT['fullname_doctor'])}></img>
                                                 </span>
                                             </div>
                                         </div>
@@ -100,7 +100,7 @@ export default class List extends Component {
                                 </div>
                             </div>
                             <div className="bt-manage">
-                                <span className="box-status" onClick={() => this.changeStatus(listDT['id_docter'] , `status-${index}`)}>
+                                <span className="box-status" onClick={() => this.changeStatus(listDT['id_doctor'] , `status-${index}`)}>
                                     <div className="status" id={`status-${index}`} status={listDT['status_account']}>
                                         <span className="list-status" openstate="">ON</span>
                                         <button 
@@ -112,7 +112,7 @@ export default class List extends Component {
                                         <span className="list-status" closestate="">OFF</span>
                                     </div>
                                 </span>
-                                <button className="bt-delete" onClick={() => this.deleteAC(listDT['id_docter'] , index)}>ลบบัญชี</button>
+                                <button className="bt-delete" onClick={() => this.deleteAC(listDT['id_doctor'] , index)}>ลบบัญชี</button>
                             </div>
                         </div>
                     ) // use map is create element object
@@ -125,7 +125,7 @@ export default class List extends Component {
     }
 
     LoadMore = () => {
-        // Load list docter more from DATABASE_DEV
+        // Load list doctor more from DATABASE_DEV
     }
 
     changeStatus = (id , ele) => {
@@ -171,11 +171,11 @@ export default class List extends Component {
 
     render() {
         return (
-            <section id="body-list-docter">
+            <section id="body-list-doctor">
                 <div id="popup-delete">
                     {this.state.delete}
                 </div>
-                <div id="popup-detail-docter">
+                <div id="popup-detail-doctor">
                     {this.state.textDetail}
                 </div>
                 {this.state.body}
@@ -225,7 +225,7 @@ class ConfirmDelete extends Component {
 
                     document.getElementById('feedback').setAttribute('show' , '')
                     clientMo.post('/api/admin/delete' , {ID : this.props.id}).then((feedback)=>{
-                        // feedback complete add docter
+                        // feedback complete add doctor
                         console.log(feedback)
                         if(feedback == '1') {
                             document.getElementById('img-feedback-correct').setAttribute('show' , '')
@@ -275,7 +275,7 @@ class ConfirmDelete extends Component {
                     {this.state.feedback}
                 </section>
                 <section id="bodyForm-confirm">
-                    <div id="detail-docter-delete">
+                    <div id="detail-doctor-delete">
                         <div id="detail-id">
                             {/* <div id="head-id">ID</div> */}
                             <div id="id">{this.props.id}</div>
@@ -313,7 +313,7 @@ class ShowDetail extends Component {
     }
 
     removePopup = (e) => {
-        document.getElementById('popup-detail-docter').removeAttribute('show')
+        document.getElementById('popup-detail-doctor').removeAttribute('show')
         if(e.target.id != "show-popup-detail") this.props.body.setState({
             textDetail : <></>
         })

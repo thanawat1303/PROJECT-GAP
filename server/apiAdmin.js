@@ -1,6 +1,6 @@
 require('dotenv').config().parsed
 // import module express config
-const app = require('./apiDocter')
+const app = require('./apiDoctor')
 
 // module DB and connect DB
 const db = require('mysql')
@@ -28,7 +28,7 @@ app.post('/api/admin/chkOver' , (req , res)=>{
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
     if(result['result'] === "pass") {
       if(req.body['ID']) {
-        con.query(`SELECT id_docter FROM acc_docter WHERE id_docter=?` , [req.body['ID']] , (err,result)=>{
+        con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err,result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -67,7 +67,7 @@ app.post('/api/admin/chkOver' , (req , res)=>{
   //     if(result[0]){
   
   //       if(req.body['ID']) {
-  //         con.query(`SELECT id_docter FROM acc_docter WHERE id_docter=?` , [req.body['ID']] , (err,result)=>{
+  //         con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err,result)=>{
   //           if(err) {
   //             dbpacket.dbErrorReturn(con , err , res)
   //             return 0
@@ -161,8 +161,8 @@ app.post('/api/admin/add' , (req , res)=>{
 
     apifunc.auth(con , username , password , res , "admin").then( async (result)=>{
       if(result['result'] === "pass") {
-        con.query(`INSERT INTO acc_docter(
-          fullname_docter , id_docter , uid_line_docter , password_docter , img_docter , station_docter , status_account , status_delete) 
+        con.query(`INSERT INTO acc_doctor(
+          fullname_doctor , id_doctor , uid_line_doctor , password_doctor , img_doctor , station_doctor , status_account , status_delete) 
           VALUES (?,?,?,SHA2(?,256),?,?,?,?)` , ['',req.body['ID'] ,'',req.body['passwordDT'],'','',1,0] , (err , result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
@@ -186,8 +186,8 @@ app.post('/api/admin/add' , (req , res)=>{
     //     return 0
     //   }
 
-    //   con.query(`INSERT INTO acc_docter(
-    //     fullname_docter , id_docter , password_docter , img_docter , station_docter , status_account , status_delete) 
+    //   con.query(`INSERT INTO acc_doctor(
+    //     fullname_doctor , id_doctor , password_doctor , img_doctor , station_doctor , status_account , status_delete) 
     //     VALUES (?,?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1,0] , (err , result)=>{
     //     if(err) {
     //       dbpacket.dbErrorReturn(con , err , res)
@@ -210,7 +210,7 @@ app.post('/api/admin/add' , (req , res)=>{
 
 })
 
-app.post('/api/admin/listDocter' , (req , res)=>{
+app.post('/api/admin/listDoctor' , (req , res)=>{
   let username = req.session.user_admin
   let password = req.session.pass_admin
 
@@ -223,7 +223,7 @@ app.post('/api/admin/listDocter' , (req , res)=>{
 
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
     if(result['result'] === "pass") {
-      con.query('SELECT fullname_docter , id_docter , img_docter , station_docter , status_account FROM acc_docter WHERE status_delete=0 LIMIT 25;' , (err , result)=>{
+      con.query('SELECT fullname_doctor , id_doctor , img_doctor , station_doctor , status_account FROM acc_doctor WHERE status_delete=0 LIMIT 25;' , (err , result)=>{
         if (err){
           dbpacket.dbErrorReturn(con , err , res)
           return 0
@@ -255,7 +255,7 @@ app.post('/api/admin/changeState' , (req,res)=>{
   apifunc.auth(con , username , password , res , "admin").then((result)=>{
     if(result['result'] === "pass") {
       if(req.body['ID'] && req.body['status'] != undefined) {
-        con.query(`UPDATE acc_docter SET status_account = ? WHERE id_docter = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err,result)=>{
+        con.query(`UPDATE acc_doctor SET status_account = ? WHERE id_doctor = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err,result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -301,7 +301,7 @@ app.post('/api/admin/delete' , (req , res)=>{
 
     apifunc.auth(con , username , password , res , "admin").then((result)=>{
       if(result['result'] === "pass") {
-        con.query(`UPDATE acc_docter SET status_delete = 1 WHERE id_docter=?` , [req.body['ID']] , (err , result)=>{
+        con.query(`UPDATE acc_doctor SET status_delete = 1 WHERE id_doctor=?` , [req.body['ID']] , (err , result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
             return 0

@@ -41,3 +41,6 @@
       ```
       npm run server
       ```
+
+# React
+   - Class Componant and Funtion Componant เวลา setState จะแตกต่างกัน

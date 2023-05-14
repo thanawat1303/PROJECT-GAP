@@ -7,6 +7,6 @@
 -- 1683969861
 
 
--- UPDATE line_chat_gap.acc_farmer SET register_auth=0 , id_docter='' 
+-- UPDATE line_chat_gap.acc_farmer SET register_auth=0 , id_doctor='' 
 -- WHERE id_table=7 and id_farmer='1164' and UNIX_TIMESTAMP(date_register)=UNIX_TIMESTAMP("2023-05-13T16:31:13") 
 -- and register_auth = 0

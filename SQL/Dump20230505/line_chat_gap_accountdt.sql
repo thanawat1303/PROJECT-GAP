@@ -16,32 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `acc_docter`
+-- Table structure for table `acc_doctor`
 --
 
-DROP TABLE IF EXISTS `acc_docter`;
+DROP TABLE IF EXISTS `acc_doctor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `acc_docter` (
-  `id_docter` varchar(10) NOT NULL,
-  `password_docter` varchar(150) DEFAULT NULL,
-  `fullname_docter` varchar(50) NOT NULL,
-  `station_docter` varchar(50) NOT NULL,
-  `img_docter` longblob NOT NULL,
+CREATE TABLE `acc_doctor` (
+  `id_doctor` varchar(10) NOT NULL,
+  `password_doctor` varchar(150) DEFAULT NULL,
+  `fullname_doctor` varchar(50) NOT NULL,
+  `station_doctor` varchar(50) NOT NULL,
+  `img_doctor` longblob NOT NULL,
   `status_account` tinyint(1) NOT NULL,
   `status_delete` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id_docter`)
+  PRIMARY KEY (`id_doctor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `acc_docter`
+-- Dumping data for table `acc_doctor`
 --
 
-LOCK TABLES `acc_docter` WRITE;
-/*!40000 ALTER TABLE `acc_docter` DISABLE KEYS */;
-INSERT INTO `acc_docter` VALUES ('1163104','$2b$05$gamGv6sXpiF2q58d9/Rm/uVmDJs/7m0ZN0MxDkDRy/IQXnwV8XkCm','','','',1,0);
-/*!40000 ALTER TABLE `acc_docter` ENABLE KEYS */;
+LOCK TABLES `acc_doctor` WRITE;
+/*!40000 ALTER TABLE `acc_doctor` DISABLE KEYS */;
+INSERT INTO `acc_doctor` VALUES ('1163104','$2b$05$gamGv6sXpiF2q58d9/Rm/uVmDJs/7m0ZN0MxDkDRy/IQXnwV8XkCm','','','',1,0);
+/*!40000 ALTER TABLE `acc_doctor` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

@@ -18,7 +18,7 @@ module.exports = router = (app) => {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });
 
-    // router docter
+    // router doctor
     app.get('/doctor' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });

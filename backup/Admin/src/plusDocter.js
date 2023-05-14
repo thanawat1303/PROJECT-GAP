@@ -19,7 +19,7 @@ export default class Plus extends Component {
         else {
             if(window.location.pathname == '/plus/confirm') {
                 window.history.pushState({}, null , '/plus')
-                // check session confirm docter 
+                // check session confirm doctor 
             } else window.history.pushState({}, null , '/plus')
         }
     }
@@ -251,7 +251,7 @@ class Confirm extends Component {
 
                     document.getElementById('feedback').setAttribute('show' , '')
                     clientMo.post('/api/admin/add' , data).then((feedback)=>{
-                        // feedback complete add docter
+                        // feedback complete add doctor
 
                         if(feedback == '1') {
                             document.getElementById('img-feedback-correct').setAttribute('show' , '')
@@ -297,7 +297,7 @@ class Confirm extends Component {
                     {this.state.feedback}
                 </section>
                 <section id="bodyForm-confirm">
-                    <section id="detailNewDocter">
+                    <section id="detailNewDoctor">
                         <div id="content-username-box" className="content-again">
                             <div className="head-again">รหัสประจำตัวผู้ส่งเสริม:</div> 
                             <span className="data-again">

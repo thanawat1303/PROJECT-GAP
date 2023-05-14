@@ -1,7 +1,7 @@
 $widthHeadDetail : 90px;
 
-#body-list-docter {
-    .container-docter {
+#body-list-doctor {
+    .container-doctor {
         display: inline-flex;
         justify-content: space-between;
         align-items: center;
@@ -13,12 +13,12 @@ $widthHeadDetail : 90px;
         transition: 1s;
         width: 49.4%;
 
-        .docter-detail {
+        .doctor-detail {
             display: flex;
             justify-content: start;
             align-items: center;
             width: calc(100% - 90px);
-            .img-docter {
+            .img-doctor {
                 border-radius: 8px;
                 width: 85px;
             }
@@ -222,7 +222,7 @@ $widthHeadDetail : 90px;
         }
     }
 
-    .container-docter[delete] {
+    .container-doctor[delete] {
         transform: translateX(30%);
         opacity: 0;
         visibility: hidden;
@@ -263,7 +263,7 @@ $widthHeadDetail : 90px;
 
             overflow: hidden;
 
-            #detail-docter-delete {
+            #detail-doctor-delete {
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -456,7 +456,7 @@ $widthHeadDetail : 90px;
         width: 0;
     }
 
-    #popup-detail-docter {
+    #popup-detail-doctor {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -475,7 +475,7 @@ $widthHeadDetail : 90px;
         }
     }
 
-    #popup-detail-docter[show=""] {
+    #popup-detail-doctor[show=""] {
         opacity: 1;
         visibility: visible;
         padding: 2px 3px;
@@ -483,16 +483,16 @@ $widthHeadDetail : 90px;
 
 }
 
-// .container-docter:nth-last-child(1) {
+// .container-doctor:nth-last-child(1) {
 //     margin-bottom: 0px;
 // }
 
 @media only screen and (max-width: 1200px) {
-    #body-list-docter {
-        .container-docter { 
+    #body-list-doctor {
+        .container-doctor { 
             display: inline-flex;
             width: 49.3%;
-            // .docter-detail {
+            // .doctor-detail {
             //     // align-items: start;
             //     .content-detail {
             //         .detail-box {
@@ -519,12 +519,12 @@ $widthHeadDetail : 90px;
 }
 
 @media only screen and (max-width: 1100px) {
-    #body-list-docter {
-        .container-docter { 
+    #body-list-doctor {
+        .container-doctor { 
             display: flex;
             // align-items: end;
             width: 100%;
-            .docter-detail {
+            .doctor-detail {
                 align-items: center;
                 .content-detail {
                     .detail-box {
@@ -545,11 +545,11 @@ $widthHeadDetail : 90px;
 
 // ต้องมีเลื่อนรายละเอียดกับหัวข้อ
 @media only screen and (max-width: 750px) {
-    #body-list-docter {
-        .container-docter { 
-            .docter-detail {
+    #body-list-doctor {
+        .container-doctor { 
+            .doctor-detail {
                 width: calc(100% - 80px);
-                .img-docter {
+                .img-doctor {
                     width: 65px;
                 }
 
@@ -626,16 +626,16 @@ $widthHeadDetail : 90px;
 }
 
 @media only screen and (max-width: 680px) {
-    #body-list-docter {
-        .container-docter { 
+    #body-list-doctor {
+        .container-doctor { 
             display: block;
             // flex-direction: column;
             width: 100%;
             // padding: 5px;
-            .docter-detail {
+            .doctor-detail {
                 align-items: start;
                 width: 100%;
-                .img-docter {
+                .img-doctor {
                     width: 65px;
                 }
 
@@ -698,13 +698,13 @@ $widthHeadDetail : 90px;
 }
 
 @media only screen and (max-width: 500px) {
-    #body-list-docter {
-        .container-docter { 
+    #body-list-doctor {
+        .container-doctor { 
             // display: flex;
             // width: 100%;
             padding: 5px;
-            .docter-detail {
-                .img-docter {
+            .doctor-detail {
+                .img-doctor {
                     width: 13vw;
                 }
 

@@ -1,6 +1,6 @@
 $ScaleBox : 70px;
 
-#page-push-docter {
+#page-push-doctor {
 
     #detail-confirm {
         position: fixed;
@@ -53,7 +53,7 @@ $ScaleBox : 70px;
         visibility: visible;
     }
 
-    #list-push-docter {
+    #list-push-doctor {
         .container-push {
             display: inline-flex;
             flex-direction: row;
@@ -65,7 +65,7 @@ $ScaleBox : 70px;
             margin-left: 3px;
     
             width: 33%;
-            .img-docter {
+            .img-doctor {
                 width: $ScaleBox;
                 border-radius: 5px;
             }
@@ -81,6 +81,7 @@ $ScaleBox : 70px;
                 width: 100%;
     
                 .name-fm {
+                    width: 100%;
                     input{
                         font-family: Sans-font;
                         font-size: 17px;
@@ -113,8 +114,8 @@ $ScaleBox : 70px;
 }
 
 @media only screen and (max-width: 1200px) {
-    #page-push-docter {
-        #list-push-docter {
+    #page-push-doctor {
+        #list-push-doctor {
             .container-push {
                 margin-left: 3px;
                 width: 49%;
@@ -123,9 +124,9 @@ $ScaleBox : 70px;
     }
 }
 
-@media only screen and (max-width: 800px) {
-    #page-push-docter {
-        #list-push-docter {
+@media only screen and (max-width: 920px) {
+    #page-push-doctor {
+        #list-push-doctor {
             .container-push {
                 margin: 3px 0px;
                 width: 100%;
@@ -135,8 +136,8 @@ $ScaleBox : 70px;
 }
 
 @media only screen and (max-width: 300px) {
-    #page-push-docter {
-        #list-push-docter {
+    #page-push-doctor {
+        #list-push-doctor {
             .container-push {
                 margin: 3px 0px;
                 width: 100%;
@@ -145,7 +146,7 @@ $ScaleBox : 70px;
 
                 padding: 2px 8px;
 
-                .img-docter {
+                .img-doctor {
                     width: 35px;
                     border-radius: 5px;
                     margin-top: 8px;

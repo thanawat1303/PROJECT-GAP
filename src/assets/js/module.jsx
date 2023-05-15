@@ -33,6 +33,17 @@ const TIMEUTC = (props) => {
     return(<input readOnly value={Time}></input>)
 }
 
+const ClosePopUp = (e , id , stateChange , back=false) => {
+    if(e.target.id === id) {
+        document.getElementById(id).removeAttribute('show')
+        stateChange()
+    }
+
+    if(e.target.id === id && back) {
+        window.history.back()
+    }
+}
+
 // const useAPI = (props) => {
 //     const [ Data , SetURL ] = useState(null)
 //     const [ Error , SetError] = useState(null)
@@ -58,4 +69,4 @@ const TIMEUTC = (props) => {
 //     })
 // }
 
-export {MapsJSX , DAYUTC , TIMEUTC}
+export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp}

@@ -11,7 +11,7 @@ const apifunc = require('./apifunc')
 
 const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
 
-// req
+// req doctor detail
 app.post('/api/doctor/check' , (req , res)=>{
     res.redirect('/api/doctor/auth');
 })
@@ -93,7 +93,50 @@ app.post('/api/doctor/savePersonal' , (req , res)=>{
     })
 })
 
-app.post('/api/doctor/profileDoctor' , (req , res)=>{
+app.all('/api/doctor/auth' , (req , res)=>{
+  
+    // เช็คการเข้าสู่ระบบจริงๆ
+    let username = req.session.user_doctor ?? req.body['username'] ?? '';
+    let password = req.session.pass_doctor ?? req.body['password'] ?? '';
+
+    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        res.redirect('/api/logout')
+        return 0
+    }
+
+    let con = db.createConnection(dbpacket.listConfig())
+
+    // db.resume()
+
+    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        if(result['result'] === "pass") {
+            if (result['data']['status_account'] == 0
+                    || result['data']['status_delete'] == 1) {
+                res.send('account')
+            }
+            else if(result['data']['fullname_doctor'] 
+                    && result['data']['station_doctor']) {
+                req.session.user_doctor = username
+                req.session.pass_doctor = password
+                res.send('pass')
+            } else {
+                res.send(`wait:${username}`)
+            }
+        }
+        con.end()
+    }).catch((err)=>{
+        if(err == "not pass") {
+        res.redirect('/api/logout')
+        con.end()
+        } else if( err == "connect" ) {
+        res.redirect('/api/logout')
+        }
+    })
+
+})
+
+// req manager farmer
+app.post('/api/doctor/approverFm' , (req , res)=>{
     let username = req.session.user_doctor
     let password = req.session.pass_doctor
 
@@ -101,7 +144,7 @@ app.post('/api/doctor/profileDoctor' , (req , res)=>{
         res.redirect('/api/logout')
         return 0
     }
-
+เกษตร
     let con = db.createConnection(dbpacket.listConfig())
 
     apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
@@ -227,7 +270,7 @@ app.post("/doctor/api/doctor/pull" , (req , res)=>{
     // })
 })
 
-app.post('/doctor/api/doctor/confirmAcc' , (req , res)=>{
+app.post('/doctor/api/doctor/confirmFm' , (req , res)=>{
     let username = req.session.user_doctor
     let password = req.body['password']
 
@@ -271,46 +314,8 @@ app.post('/doctor/api/doctor/confirmAcc' , (req , res)=>{
     })
 })
 
-app.all('/api/doctor/auth' , (req , res)=>{
-  
-    // เช็คการเข้าสู่ระบบจริงๆ
-    let username = req.session.user_doctor ?? req.body['username'] ?? '';
-    let password = req.session.pass_doctor ?? req.body['password'] ?? '';
-
-    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
-        res.redirect('/api/logout')
-        return 0
-    }
-
-    let con = db.createConnection(dbpacket.listConfig())
-
-    // db.resume()
-
-    apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
-        if(result['result'] === "pass") {
-            if (result['data']['status_account'] == 0
-                    || result['data']['status_delete'] == 1) {
-                res.send('account')
-            }
-            else if(result['data']['fullname_doctor'] 
-                    && result['data']['station_doctor']) {
-                req.session.user_doctor = username
-                req.session.pass_doctor = password
-                res.send('pass')
-            } else {
-                res.send(`wait:${username}`)
-            }
-        }
-        con.end()
-    }).catch((err)=>{
-        if(err == "not pass") {
-        res.redirect('/api/logout')
-        con.end()
-        } else if( err == "connect" ) {
-        res.redirect('/api/logout')
-        }
-    })
-
+app.post('/api/doctor/listForm' , (req , res)=>{
+    
 })
 
 module.exports = app

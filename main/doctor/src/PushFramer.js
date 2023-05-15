@@ -125,7 +125,7 @@ class DetailConfirm extends Component {
         let passwordDoctor = document.querySelector("#password-confirm-fm-push input")
         let ansConfirm = (ansIn) ? id_farmer.value && passwordDoctor.value : passwordDoctor.value
         if(ansConfirm) {
-            const result = await clientMo.post('/doctor/api/doctor/confirmAcc' , {
+            const result = await clientMo.post('/doctor/api/doctor/confirmFm' , {
                 id : this.props.id,
                 farmer : id_farmer.value,
                 password : passwordDoctor.value,

@@ -30,7 +30,17 @@ const ShowDetailFarmer = (props) => {
                 
                 document.getElementById('popup-detail-farmer').setAttribute('show' , "")
             })
+
+        document.getElementById('popup-detail-farmer').addEventListener('click' , ClosePage)
+
+        return () => {
+            document.getElementById('popup-detail-farmer').removeEventListener('click' , ClosePage)
+        }
     } , [])
+
+    const ClosePage = (e) => {
+        ClosePopUp(e , "popup-detail-farmer" , ()=>props.listFarm.setState({DetailFarmer:<></>}) , true)
+    }
 
     const ChangeProfile = (id_table) => {
         clientMo.post('/doctor/api/doctor/pull' , {

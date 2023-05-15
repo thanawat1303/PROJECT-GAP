@@ -64,7 +64,7 @@ export default class List extends Component {
         })
 
         this.setState({
-            DetailFarmer : <ShowDetailFarmer list={result} status={status} main={this.props.main} id={id}/>
+            DetailFarmer : <ShowDetailFarmer list={result} status={status} main={this.props.main} id={id} listFarm={this}/>
         })
     }
 
@@ -74,7 +74,7 @@ export default class List extends Component {
                 <div id="list">
                     {this.state.body}
                 </div>
-                <div id="popup-detail-farmer" onClick={(e)=>ClosePopUp(e , "popup-detail-farmer" , ()=>this.setState({DetailFarmer:<></>}) , true)}>
+                <div id="popup-detail-farmer">
                     {this.state.DetailFarmer}
                 </div>
             </div>

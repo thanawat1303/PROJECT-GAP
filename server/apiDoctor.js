@@ -1,17 +1,5 @@
-// import module express config
-// const app = require('./apiFarmer')
+module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , WebSocket) => {
 
-// // module DB and connect DB
-// const db = require('mysql')
-
-// const dbpacket = require('./dbConfig')
-// const apifunc = require('./apifunc')
-
-// const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
-
-// req doctor detail
-
-module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) => {
     require('dotenv').config().parsed
 
     app.post('/api/doctor/check' , (req , res)=>{
@@ -317,6 +305,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     })
     
     app.post('/api/doctor/listForm' , (req , res)=>{
-        
+        console.log("connect")
     })
+
 }

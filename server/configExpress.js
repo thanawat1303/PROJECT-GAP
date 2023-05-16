@@ -7,6 +7,10 @@ module.exports = appConfig = (username , password) => {
 
     const helmat = require('helmet')
     const express = require('express');
+
+    const http = require('http')
+    const ws = require('ws')
+
     const reactServ = require('./reactServ');
 
     const db = require('mysql')
@@ -14,7 +18,9 @@ module.exports = appConfig = (username , password) => {
     const cookieParser = require('cookie-parser');
     const sessions = require('express-session');
     const app = express();
-
+    const server = http.createServer(app)
+    
+    const webSc = new ws.Server({server})
     // set Server
     const dbpacket = require('./dbConfig')
     const listDB = dbpacket.listConfig(username , password)
@@ -54,7 +60,7 @@ module.exports = appConfig = (username , password) => {
     // router api url
     router(app)
     apiAdmin(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
-    apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
+    apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB,webSc)
 
-    return app
+    return server
 }

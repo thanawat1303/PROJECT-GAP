@@ -1,18 +1,51 @@
-process.stdin.on('data', (data) => {
-    const input = data.toString().trim(); // แปลงข้อมูลที่รับเข้ามาให้อยู่ในรูปแบบสตริงและตัดช่องว่างที่ต้นท้าย
-  
-    console.log('คุณป้อน:', input);
-});
+const db = require('mysql')
+require('dotenv').config().parsed
 
-let username = "dev1303"
-let password = "1660500178936Ff"
+let username = process.env.USER_DBDEV ?? ""
+let password = process.env.PASSWORD_DBDEV ?? ""
+let state = 0
 
-if(true) {
+if(!username && !password) {
+    process.stdout.write('USERNAME DB : ')
+    process.stdin.on('data', (data) => {
+        const input = data.toString().trim();
+    
+        if(state == 0) {
+            username = input
+            process.stdout.write('PASSWORD DB: ')
+            state = 1
+        }
+        else if(state == 1) password = input
+
+        if(username && password && state == 1) {
+            db.createConnection({
+                host: process.env.HOST,
+                user: username,
+                password : password,
+                database : process.argv[2] == process.env.BUILD ? process.env.DATABASE_SER : process.env.DATABASE_DEV 
+            }).connect((err)=>{
+                if (err) {
+                    state = 0
+                    username , password = ""
+                    if(err.errno == 1045) {console.log('Denien connect Database')}
+                    
+                    console.log('Please enter username and password again\n')
+                    process.stdout.write('USERNAME DB : ')
+                } else {
+                    console.log("Check DB connected success!");
+                    state = 2
+
+                    const app = require('./configExpress')(username , password)
+                    app.listen(process.env.PORT , "0.0.0.0" , function () {
+                        console.log('Start on port '+process.env.PORT+'!\n');
+                    });
+                };
+            })
+        }
+    });
+} else {
     const app = require('./configExpress')(username , password)
     app.listen(process.env.PORT , "0.0.0.0" , function () {
         console.log('Start on port '+process.env.PORT+'!\n');
     });
-} else {
-    console.log("Found Problem Run Server")
-    // exit
 }

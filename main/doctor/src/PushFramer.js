@@ -19,13 +19,8 @@ export default class Push extends Component {
     componentDidMount(){
         if(this.props.status == 1) window.history.pushState({}, null , '/doctor/push')
         
-        this.props.socket.send(JSON.stringify({
-            type:"connect",
-            value:"push"
-        }))
-        this.props.socket.addEventListener('message' , this.checkSocket)
-
-        window.addEventListener('beforeunload' , this.UnConnectPage)
+        this.props.socket.emit("open PagePush")
+        this.props.socket.on('push list' , this.checkSocket)
 
         this.setState({
             body : JSON.parse(this.props.list).map((listFm , index) =>
@@ -42,26 +37,21 @@ export default class Push extends Component {
     }
 
     componentWillUnmount() {
-        this.props.socket.removeEventListener('message' , this.checkSocket)
         this.UnConnectPage()
-        window.removeEventListener('beforeunload' , this.UnConnectPage)
     }
 
     checkSocket = (event) => {
         document.querySelectorAll('.container-push[checking]').forEach((ele , index)=>{
             ele.removeAttribute('checking')
         })
-        JSON.parse(event.data).map((val , index)=>{
-            let ele = document.querySelector(`#container-push-${val[0]}`)
+        JSON.parse(event).map((ObJectMsg , index)=>{
+            let ele = document.querySelector(`#container-push-${ObJectMsg[1]}`)
             ele.setAttribute('checking' , "")
         })
     }
 
     UnConnectPage = () => {
-        this.props.socket.send(JSON.stringify({
-            type:"unconnect",
-            value:"push"
-        }))
+        this.props.socket.emit("close PagePush")
     }
 
     showDetail = (id , index , e=document.getElementById('')) => {
@@ -117,13 +107,10 @@ class DetailConfirm extends Component {
 
     componentDidMount(){
         let profileP = JSON.parse(this.props.profile)
-        this.props.socket.send(JSON.stringify({
-            type:"push",
-            command : "off",
+        this.props.socket.emit('open detail on pagePush' , JSON.stringify({
             id:this.props.index
         }))
 
-        window.addEventListener('beforeunload' , this.UnSelectFarmer)
         this.setState({
             img : <img src={(profileP['img']['data'] != '') ? profileP['img']['data'] : '/farmer-svgrepo-com.svg'}></img>,
             detail : 
@@ -163,13 +150,10 @@ class DetailConfirm extends Component {
 
     componentWillUnmount(){
         this.UnSelectFarmer()
-        window.removeEventListener('beforeunload' , this.UnSelectFarmer)
     }
 
     UnSelectFarmer = () => {
-        this.props.socket.send(JSON.stringify({
-            type:"push",
-            command : "on",
+        this.props.socket.emit("close detail on pagePush" , JSON.stringify({
             id:this.props.index
         }))
     }

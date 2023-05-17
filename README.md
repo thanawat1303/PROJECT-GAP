@@ -23,7 +23,7 @@
       npm i @react-google-maps/api  
       npm install google-map-react
 
-      npm i moment-timezone
+      npm i socket.io socket.io-client
       ```
 
 ### Build Project

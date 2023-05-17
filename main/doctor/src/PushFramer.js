@@ -18,9 +18,18 @@ export default class Push extends Component {
 
     componentDidMount(){
         if(this.props.status == 1) window.history.pushState({}, null , '/doctor/push')
+        
+        this.props.socket.send(JSON.stringify({
+            type:"connect",
+            value:"push"
+        }))
+        this.props.socket.addEventListener('message' , this.checkSocket)
+
+        window.addEventListener('beforeunload' , this.UnConnectPage)
+
         this.setState({
             body : JSON.parse(this.props.list).map((listFm , index) =>
-                        <div key={index} className="container-push" onClick={()=>this.showDetail(listFm['id_table'])}>
+                        <div key={index} className="container-push" id={`container-push-${index}`} onClick={(e)=>this.showDetail(listFm['id_table'] , index , e)}>
                             <img className="img-doctor" src={(listFm['img']['data'] != '') ? listFm['img']['data'] : '/farmer-svgrepo-com.svg'}></img>
                             <div className="detail-content-fm">
                                 <div className="name-fm"><input readOnly value={`ชื่อเกษตรกร ${listFm['fullname']}`}></input></div>
@@ -32,14 +41,44 @@ export default class Push extends Component {
         })
     }
 
-    showDetail = (id) => {
-        clientMo.post("api/doctor/pull" , {id:id , type:false}).then((profile)=>{
-            if(profile) {
-                this.setState({
-                    detail : <DetailConfirm bodyPush={this} profile={profile} id={id}/>
-                })
-            }
+    componentWillUnmount() {
+        this.props.socket.removeEventListener('message' , this.checkSocket)
+        this.UnConnectPage()
+        window.removeEventListener('beforeunload' , this.UnConnectPage)
+    }
+
+    checkSocket = (event) => {
+        document.querySelectorAll('.container-push[checking]').forEach((ele , index)=>{
+            ele.removeAttribute('checking')
         })
+        JSON.parse(event.data).map((val , index)=>{
+            let ele = document.querySelector(`#container-push-${val[0]}`)
+            ele.setAttribute('checking' , "")
+        })
+    }
+
+    UnConnectPage = () => {
+        this.props.socket.send(JSON.stringify({
+            type:"unconnect",
+            value:"push"
+        }))
+    }
+
+    showDetail = (id , index , e=document.getElementById('')) => {
+        let ele = e.target
+        while(ele.className != "container-push"){
+            ele = ele.parentElement
+        }
+
+        if(ele.getAttribute('checking') == undefined){
+            clientMo.post("api/doctor/pull" , {id:id , type:false}).then((profile)=>{
+                if(profile) {
+                    this.setState({
+                        detail : <DetailConfirm socket={this.props.socket} bodyPush={this} profile={profile} id={id} index={index}/>
+                    })
+                }
+            })
+        }
     }
 
     close = (e) => {
@@ -78,6 +117,13 @@ class DetailConfirm extends Component {
 
     componentDidMount(){
         let profileP = JSON.parse(this.props.profile)
+        this.props.socket.send(JSON.stringify({
+            type:"push",
+            command : "off",
+            id:this.props.index
+        }))
+
+        window.addEventListener('beforeunload' , this.UnSelectFarmer)
         this.setState({
             img : <img src={(profileP['img']['data'] != '') ? profileP['img']['data'] : '/farmer-svgrepo-com.svg'}></img>,
             detail : 
@@ -113,6 +159,19 @@ class DetailConfirm extends Component {
         //         listAll: <ListProfileShow farmer={JSON.parse(farmer)} DetailConfirm={this}/>
         //     })
         // })
+    }
+
+    componentWillUnmount(){
+        this.UnSelectFarmer()
+        window.removeEventListener('beforeunload' , this.UnSelectFarmer)
+    }
+
+    UnSelectFarmer = () => {
+        this.props.socket.send(JSON.stringify({
+            type:"push",
+            command : "on",
+            id:this.props.index
+        }))
     }
 
     onLoadComplete = () =>{

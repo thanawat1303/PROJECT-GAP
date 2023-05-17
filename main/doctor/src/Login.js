@@ -54,7 +54,7 @@ export default class Login extends Component {
                     errorLogin.innerHTML = ""
                     if(context == "pass") {
                         this.props.main.setState({
-                            body : <Doctor main={this.props.main}/>
+                            body : <Doctor socket={this.props.socket} main={this.props.main}/>
                         })
                         
                     } else if (context == "account") {

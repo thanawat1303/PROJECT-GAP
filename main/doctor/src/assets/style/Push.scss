@@ -110,6 +110,10 @@ $ScaleBox : 70px;
                 }
             }
         }
+
+        .container-push[checking=""] {
+            opacity: 0.4;
+        }
     }
 }
 

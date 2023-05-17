@@ -19,7 +19,7 @@ export default class Doctor extends Component {
 
     componentDidMount() {
         this.setState({
-            nav : <NavDoctor bodyDoctor={this} main={this.props.main}/>
+            nav : <NavDoctor bodyDoctor={this} main={this.props.main} socket={this.props.socket}/>
         })
         window.addEventListener('resize' , this.checkSize)
     }
@@ -51,7 +51,7 @@ export default class Doctor extends Component {
         setTimeout(()=>{
             clientMo.get('/api/logout').then(()=>{
                 this.props.main.setState({
-                    body : <Login main={this.props.main} state={true}/>
+                    body : <Login socket={this.props.socket} main={this.props.main} state={true}/>
                 })
                 clientMo.addAction('#loading' , 'hide' , 1500)
             })

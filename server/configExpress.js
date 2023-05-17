@@ -19,13 +19,16 @@ module.exports = appConfig = (username , password) => {
     const sessions = require('express-session');
     const app = express();
     const server = http.createServer(app)
-    
-    const webSc = new ws.Server({server})
     // set Server
     const dbpacket = require('./dbConfig')
+
     const listDB = dbpacket.listConfig(username , password)
     const apifunc = require('./apifunc')
     const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
+
+    // protocal websocket
+    const WebSocket = require('./webSocket')
+    WebSocket(server)
 
     // secure server
     // app.use(helmat(
@@ -60,7 +63,7 @@ module.exports = appConfig = (username , password) => {
     // router api url
     router(app)
     apiAdmin(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
-    apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB,webSc)
+    apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
 
     return server
 }

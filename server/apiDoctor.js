@@ -1,4 +1,4 @@
-module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , WebSocket) => {
+module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) => {
 
     require('dotenv').config().parsed
 

@@ -44,6 +44,10 @@ const ClosePopUp = (e , id , stateChange , back=false) => {
     }
 }
 
+const Socket = (eventSc , message) => {
+    const socket = new WebSocket(`ws://${window.location.href}:3000`);
+}
+
 // const useAPI = (props) => {
 //     const [ Data , SetURL ] = useState(null)
 //     const [ Error , SetError] = useState(null)

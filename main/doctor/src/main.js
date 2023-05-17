@@ -20,11 +20,11 @@ export default class MainDoctor extends Component {
             console.log(context)
             if(context) 
                 this.setState({
-                    body : <Doctor main={this}/>
+                    body : <Doctor main={this} socket={this.props.socket}/>
                 })
             else 
                 this.setState({
-                    body : <Login main={this}/>
+                    body : <Login socket={this.props.socket} main={this}/>
                 }) 
             
             clientMo.addAction('#loading' , 'hide' , 1000)

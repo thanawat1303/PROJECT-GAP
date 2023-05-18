@@ -9,7 +9,6 @@ let auth = window.location.pathname.split('/')[1]
 const root = ReactDOM.createRoot(document.getElementById('root'))
 // const socket = new WebSocket();
 const socket = io(window.location.protocol+"//"+window.location.host)
-console.log(window.location.protocol+"//"+window.location.host)
 
 socket.on('connect' , ()=>{
     if(auth == "admin") root.render(<MainAdmin socket={socket}/>)

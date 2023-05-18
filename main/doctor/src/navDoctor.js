@@ -7,6 +7,7 @@ import List from "./listFramer";
 import Push from "./PushFramer";
 
 import SessionOut from "./sesionOut";
+import { ListFormFarm } from "./ListForm";
 
 export default class NavDoctor extends Component {
 
@@ -47,6 +48,17 @@ export default class NavDoctor extends Component {
                 else this.sessionoff()
             })
         }
+        else if (path[1] + "/" + path[2] == 'doctor/listformfarm')
+        {
+            clientMo.post('/api/doctor/listForm' , {type : 0}).then((list)=>{
+                if(list) {
+                    this.props.bodyDoctor.setState({body : <ListFormFarm socket={this.props.socket} status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
+                    if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById("list-form-farm").setAttribute('nav-select' , '')
+                }
+                else this.sessionoff()
+            })
+        }
     }
 
     sessionoff = (type = false) => {
@@ -78,9 +90,20 @@ export default class NavDoctor extends Component {
         }
         else if (ele == 'pAccount') {
             clientMo.post('/api/doctor/listFarmer' , {type:'push'}).then((list)=>{
-                console.log(list)
                 if(list) {
                     this.props.bodyDoctor.setState({body : <Push socket={this.props.socket} status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
+                    document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                    document.getElementById(ele).setAttribute('nav-select' , '')
+                }
+                else this.sessionoff()
+            })
+        }
+
+        else if (ele == 'list-form-farm') {
+            clientMo.post('/api/doctor/listForm' , {type : 0}).then((list)=>{
+                console.log(list)
+                if(list) {
+                    this.props.bodyDoctor.setState({body : <ListFormFarm socket={this.props.socket} status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById(ele).setAttribute('nav-select' , '')
                 }
@@ -94,7 +117,7 @@ export default class NavDoctor extends Component {
     render() {
         return(
             <nav className="nav-menu">
-                <a onClick={e => this.selectMenu(e , 'account')} className="list-menu-nav" id="account" title="บัญชี" href="list" >
+                <a onClick={e => this.selectMenu(e , 'account')} className="list-menu-nav" id="account" title="บัญชี" href="/doctor/list" >
                     <bot-bt-nav>
                         <bot-gap-nav-icon>
                             <img src="/people-svgrepo-com.svg"></img>
@@ -105,7 +128,7 @@ export default class NavDoctor extends Component {
                         </bot-gap-string>
                     </bot-bt-nav>
                 </a>
-                <a onClick={e => this.selectMenu(e , 'pAccount')} className="list-menu-nav" id="pAccount" title="เพิ่มบัญชี" href="plus">
+                <a onClick={e => this.selectMenu(e , 'pAccount')} className="list-menu-nav" id="pAccount" title="เพิ่มบัญชี" href="/doctor/plus">
                     <bot-bt-nav>
                         <bot-gap-nav-icon>
                             <img src="/plus-user-svgrepo-com.svg"></img>
@@ -113,6 +136,17 @@ export default class NavDoctor extends Component {
                         <bot-gap-string>
                             <bot-string>เกษตรกร</bot-string>
                             <bot-string>ลงทะเบียน</bot-string>    
+                        </bot-gap-string>
+                    </bot-bt-nav>
+                </a>
+                <a onClick={e => this.selectMenu(e , 'list-form-farm')} className="list-menu-nav" id="list-form-farm" title="แบบบันทึกางการเกษตร" href="/doctor/listform">
+                    <bot-bt-nav>
+                        <bot-gap-nav-icon>
+                            <img src="/plus-user-svgrepo-com.svg"></img>
+                        </bot-gap-nav-icon>
+                        <bot-gap-string>
+                            <bot-string>แบบบันทึก</bot-string>
+                            <bot-string>การเกษตร</bot-string>    
                         </bot-gap-string>
                     </bot-bt-nav>
                 </a>

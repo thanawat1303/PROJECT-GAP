@@ -1,4 +1,4 @@
-INSERT INTO line_chat_gap.acc_farmer(id_farmer,id_doctor,fullname,img,station,location,password,register_auth,uid_line) VALUES ("" , "" , "ธนวัฒน์ เอี่ยมใจดี" , "" , "ราชมงคล" , POINT(14,100) , SHA2("admin" , 256) , 0 , "")
+INSERT INTO line_chat_gap.acc_farmer(id_farmer,id_doctor,fullname,img,station,location,password,register_auth,uid_line,date_doctor_confirm) VALUES ("1163105" , "" , "ธนวัฒน์ เอี่ยมละออ" , "" , "ราชมงคล" , POINT(14,100) , SHA2("admin" , 256) , 1 , "1116" ,"")
 
 -- DELETE FROM line_chat_gap.acc_farmer 
 -- DROP TABLE line_chat_gap.acc_farmer 

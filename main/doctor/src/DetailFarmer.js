@@ -2,13 +2,13 @@ import React , {useState , useEffect} from "react"
 import { clientMo } from "../../../src/assets/js/moduleClient"
 import { DAYUTC , TIMEUTC , MapsJSX , ClosePopUp } from "../../../src/assets/js/module"
 import { ShowDetailDoctor } from "./DetailDoctor";
-import { ShowFormFarmer } from "./FormFarm";
 
 const ShowDetailFarmer = (props) => {
     const [fullname , setFullname] = useState("")
     const [date , setDate] = useState("")
     const [time , setTime] = useState("")
     const [img , setImg] = useState("")
+    const [station , setStation] = useState("")
     const [maps , setMaps] = useState("")
 
     const [doctorID , setDoctorID] = useState("")
@@ -25,6 +25,7 @@ const ShowDetailFarmer = (props) => {
                 setDate(<DAYUTC date={profile['date_register']}/>)
                 setTime(<TIMEUTC time={profile['date_register']}/>)
                 setDoctorID(profile['id_doctor'])
+                setStation(profile['station'])
 
                 setMaps(<MapsJSX w={200} h={200} lat={profile['location']['x']} lng={profile['location']['y']}/>)
                 
@@ -54,6 +55,7 @@ const ShowDetailFarmer = (props) => {
                 setDate(<DAYUTC date={profile['date_register']}/>)
                 setTime(<TIMEUTC time={profile['date_register']}/>)
                 setDoctorID(profile['id_doctor'])
+                setStation(profile['station'])
 
                 setMaps(<MapsJSX w={200} h={200} lat={profile['location']['x']} lng={profile['location']['y']}/>)
             })
@@ -79,21 +81,14 @@ const ShowDetailFarmer = (props) => {
                 <div className="id">{props.id}</div>
                 <div className="profile-detail">
                     <div className="profile-left">
-                        <div className="list-select">
-                            {
-                                JSON.parse(props.list).map((list , index)=>
-                                    <div key={index} onClick={()=>ChangeProfile(list['id_table'])}>
-                                        {(index == 0) ? "ล่าสุด" : index + 1}
-                                    </div>
-                                )
-                            }
-                        </div>
+                        
                     </div>
                     <div className="profile-right">
                         <div className="img-profile">
                             <img src={img}></img>
                         </div>
                         <div className="fullname">{fullname}</div>
+                        <div className="station">{station}</div>
                         <div className="date">
                             {date}
                         </div>
@@ -106,9 +101,6 @@ const ShowDetailFarmer = (props) => {
                         <div className="option-farmer-all">
                             <div className="doctor" onClick={()=>showDoctor(doctorID)}>
                                 DOCTOR
-                            </div>
-                            <div className="form-farmer" onClick={()=>showFormFarmer(props.id)}>
-                                FORM
                             </div>
                         </div>
                     </div>

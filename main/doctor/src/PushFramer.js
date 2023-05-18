@@ -24,7 +24,7 @@ export default class Push extends Component {
 
         this.setState({
             body : JSON.parse(this.props.list).map((listFm , index) =>
-                        <div key={index} className="container-push" id={`container-push-${index}`} onClick={(e)=>this.showDetail(listFm['id_table'] , index , e)}>
+                        <div key={index} className="container-push" id={`container-push-${listFm['id_table']}`} onClick={(e)=>this.showDetail(listFm['id_table'] , e , listFm['countID'])}>
                             <img className="img-doctor" src={(listFm['img']['data'] != '') ? listFm['img']['data'] : '/farmer-svgrepo-com.svg'}></img>
                             <div className="detail-content-fm">
                                 <div className="name-fm"><input readOnly value={`ชื่อเกษตรกร ${listFm['fullname']}`}></input></div>
@@ -54,7 +54,7 @@ export default class Push extends Component {
         this.props.socket.emit("close PagePush")
     }
 
-    showDetail = (id , index , e=document.getElementById('')) => {
+    showDetail = (id , e=document.getElementById('') , count) => {
         let ele = e.target
         while(ele.className != "container-push"){
             ele = ele.parentElement
@@ -64,7 +64,7 @@ export default class Push extends Component {
             clientMo.post("api/doctor/pull" , {id:id , type:false}).then((profile)=>{
                 if(profile) {
                     this.setState({
-                        detail : <DetailConfirm socket={this.props.socket} bodyPush={this} profile={profile} id={id} index={index}/>
+                        detail : <DetailConfirm socket={this.props.socket} bodyPush={this} profile={profile} id={id} index={id} count={count}/>
                     })
                 }
             })
@@ -136,8 +136,8 @@ class DetailConfirm extends Component {
                         </div>
                         <div id="bt-action-confirm">
                             {/* <button className="cancel" onClick={(e)=>this.close(e,true)}>ยกเลิก</button> */}
-                            <button className="cancel" onClick={()=>this.submit(false)}>ไม่อนุมัติ</button>
-                            <button className="submit" onClick={()=>this.submit(true)}>อนุมัติ</button>
+                            <button className="cancel" onClick={()=>this.submit(false , this.props.count , profileP)}>ไม่อนุมัติ</button>
+                            <button className="submit" onClick={()=>this.submit(true , this.props.count , profileP)}>อนุมัติ</button>
                         </div>
                     </>,
         })
@@ -153,9 +153,11 @@ class DetailConfirm extends Component {
     }
 
     UnSelectFarmer = () => {
-        this.props.socket.emit("close detail on pagePush" , JSON.stringify({
-            id:this.props.index
-        }))
+        this.props.socket.emit("close detail on pagePush")
+        
+        // , JSON.stringify({
+        //     id:this.props.index
+        // }))
     }
 
     onLoadComplete = () =>{
@@ -163,16 +165,21 @@ class DetailConfirm extends Component {
         console.log("loadPush")
     }
 
-    submit = async (ansIn) => {
+    submit = async (ansIn , count , profile) => {
         let id_farmer = document.querySelector("#id-profile-confirm input")
         let passwordDoctor = document.querySelector("#password-confirm-fm-push input")
         let ansConfirm = (ansIn) ? id_farmer.value && passwordDoctor.value : passwordDoctor.value
+        console.log(profile['date_register'])
         if(ansConfirm) {
             const result = await clientMo.post('/doctor/api/doctor/confirmFm' , {
                 id : this.props.id,
                 farmer : id_farmer.value,
                 password : passwordDoctor.value,
-                ans : ansIn
+                ans : ansIn,
+                uid_line : profile['uid_line'],
+                date : profile['date_register'],
+                station : profile['station'],
+                count:count
             })
             console.log(result)
         } else {

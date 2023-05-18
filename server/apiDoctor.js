@@ -140,9 +140,9 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
                 con.query(`
-                    SELECT fullname_doctor , img_doctor 
+                    SELECT fullname_doctor , img_doctor , status_delete , status_account
                     FROM acc_doctor
-                    WHERE id_doctor=? and status_delete=0 and status_account=1; 
+                    WHERE id_doctor=?; 
                 ` , [req.body['id']] , (err , profile)=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
@@ -175,9 +175,9 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
             if(result['result'] === "pass") {
                 let queryType = (req.body['type'] === 'list') ? 
                                     `
-                                    SELECT acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img , MaxRowDate.CountFM  FROM acc_farmer , 
+                                    SELECT acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img FROM acc_farmer , 
                                         (
-                                            SELECT MAX(id_table) AS id_table , id_farmer , COUNT(id_farmer) AS CountFM , MAX(date_register) AS date_register
+                                            SELECT MAX(id_table) AS id_table , id_farmer , MAX(date_register) AS date_register
                                             FROM acc_farmer 
                                             WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 
                                             GROUP BY id_farmer 
@@ -187,7 +187,18 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                     ` 
                                     :
                                 (req.body['type'] === 'push') ? 
-                                    `SELECT id_table , fullname , img , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 0 ORDER BY date_register DESC LIMIT 30;` 
+                                    `
+                                    SELECT acc_farmer.id_table , acc_farmer.fullname , acc_farmer.img , acc_farmer.date_register , LineID.countID
+                                    FROM acc_farmer , (
+                                        SELECT MAX(date_register) as DateLast , uid_line , MAX(id_table) as id_table , COUNT(uid_line) as countID
+                                        FROM acc_farmer 
+                                        WHERE station = "${result['data']['station_doctor']}" and register_auth = 0 
+                                        GROUP BY uid_line
+                                    ) AS LineID
+                                    WHERE acc_farmer.id_table=LineID.id_table and acc_farmer.date_register=LineID.DateLast
+                                    ORDER BY acc_farmer.date_register 
+                                    DESC LIMIT 30;
+                                    ` 
                                     : 
                                 (req.body['type'] === 'profile') ? 
                                     `SELECT id_table , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 and id_farmer=${req.body['farmer']} ORDER BY date_register DESC;` : ""
@@ -222,20 +233,15 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
-                con.query('SELECT fullname , id_farmer , id_doctor , img , location , date_register FROM acc_farmer WHERE id_table=? and register_auth = ? ORDER BY date_register DESC' , 
+                con.query('SELECT fullname , id_farmer , id_doctor , img , location , station , date_register , uid_line FROM acc_farmer WHERE id_table=? and register_auth = ? ORDER BY date_register DESC' , 
                 [req.body['id'] , (req.body['type']) ? 1 : 0] , (err , resul)=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
                         console.log("query");
                     }
-    
-                    if(resul[0]) {
-                        res.send(resul[0])
-                    } else {
-                        res.send([])
-                    }
-    
+
                     con.end()
+                    res.send(resul[0])
                 })
             }
         }).catch((err)=>{
@@ -273,10 +279,117 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
-                con.query(`
-                            UPDATE acc_farmer SET register_auth=? , id_doctor=? , id_farmer=?
+                if(req.body['ans']) {
+                    con.query(`
+                            SELECT id_table , uid_line
+                            FROM acc_farmer 
+                            WHERE id_farmer=? 
+                                and register_auth=1 
+                                and UNIX_TIMESTAMP(date_register) < UNIX_TIMESTAMP(?)
+                                and station = ?
+                        `   , [req.body['farmer'] , req.body['date'] , req.body['station']]
+                            , (err , resultOn)=>{
+                                if (err) {
+                                    dbpacket.dbErrorReturn(con, err, res);
+                                    console.log("query");
+                                }
+
+                                let arrayID = resultOn.map(item => item.id_table)
+                                let uid_line = resultOn.map(item => item.uid_line)
+                                con.query(`
+                                    SELECT id_table , uid_line
+                                    FROM acc_farmer 
+                                    WHERE id_farmer=? 
+                                        and register_auth=1 
+                                        and UNIX_TIMESTAMP(date_register) > UNIX_TIMESTAMP(?)
+                                        and station = ?
+                                    ORDER BY date_register DESC;
+                                ` 
+                                , [req.body['farmer'] , req.body['date'] , req.body['station']]
+                                , (err , ObThan)=>{
+                                    if (err) {
+                                        dbpacket.dbErrorReturn(con, err, res);
+                                        console.log("query");
+                                    }
+
+                                    let idLast = "" , idLineLast = "" , checkQuery = 0
+                                    if(ObThan.length > 0) {
+                                        arrayID = arrayID.concat(ObThan.filter((val , index) => index > 0)
+                                                        .map(item => item.id_table) , [req.body['id']]).join(', ')
+                                        uid_line = uid_line.concat(ObThan.filter((val , index) => index > 0)
+                                                        .map(item => item.uid_line) , [req.body['uid_line']])
+
+                                        idLast = ObThan.filter((val , index) => index == 0)
+                                                        .map(item => item.id_table).join("")
+                                        idLineLast = ObThan.filter((val , index) => index == 0)
+                                                        .map(item => item.uid_line).join("")
+                                    } else {
+                                        arrayID = arrayID.join(', ')
+
+                                        idLast = req.body['id']
+                                        idLineLast = req.body['uid_line']
+                                    }
+                                    if(arrayID) { //unconnect user
+                                        con.query(
+                                            `
+                                                UPDATE acc_farmer 
+                                                SET register_auth=2 , id_farmer = ?
+                                                WHERE id_table IN (${arrayID}) 
+                                                    and (register_auth=1 or register_auth=0)
+                                                    and station = ?
+                                            `
+                                            , [req.body['farmer'] , req.body['station']]
+                                            , (err , resultAll) => {
+                                                checkQuery+=1
+                                                if(checkQuery == 3) {
+                                                    con.end()
+                                                    res.send("complete")
+                                                }
+                                            })
+                                    }
+
+                                    let Uid_line_query = uid_line.join(', ')
+                                    if(Uid_line_query) {
+                                        con.query(
+                                            `
+                                                UPDATE formplant 
+                                                SET id_uid_line=?
+                                                WHERE id_uid_line IN (${Uid_line_query})
+                                            `
+                                            , [idLineLast]
+                                            , (err , resultAll) => {
+                                                checkQuery+=1
+                                                if(checkQuery == 3) {
+                                                    con.end()
+                                                    res.send("complete")
+                                                }
+                                            })
+                                    }
+                                    con.query(
+                                        `
+                                            UPDATE acc_farmer 
+                                            SET register_auth=1 , id_doctor=? , date_doctor_confirm=? , id_farmer = ?
+                                            WHERE id_table=? and register_auth = 0
+                                        `
+                                        , [ username ,  , new Date() , req.body['farmer'] , idLast]
+                                        , (err , resultAll) => {
+                                            checkQuery+=1
+                                            if(checkQuery == 3) {
+                                                con.end()
+                                                res.send("complete")
+                                            }
+                                        })
+
+                                    console.log(arrayID)
+                                    console.log(uid_line)
+                                })
+                            })
+                } else {
+                    con.query(`
+                            UPDATE acc_farmer 
+                            SET register_auth=3 , id_doctor=? , uid_line="" , date_doctor_confirm=?
                             WHERE id_table=? and register_auth = 0`
-                            , [req.body['ans'] ? 1 : 3 , username , req.body['farmer'] , req.body['id']]
+                            , [ username , new Date() , req.body['id']]
                             , (err , result)=>{
                                 if (err) {
                                     dbpacket.dbErrorReturn(con, err, res);
@@ -284,17 +397,29 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                 }
     
                                 if(result.changedRows == 1) {
-                                    // con.query(`UPDATE acc_farmer SET register_auth=3 WHERE date_register < ? and id_table < ?` , [])
                                     con.end()
-                                    if(req.body['ans']) {
-                                        // add Line
-                                    } else {
-                                        // unconnect form save before
+                                    if(req.body['uid_line']) {
+                                        // unconnect form save before and Uid_line of req.body['uid_line']
                                     }
                                     res.send('complete')
                                 } 
                                 else res.send('not found')
                             })
+                }
+                
+                // con.query(`UPDATE acc_farmer SET register_auth=3 , id_doctor=?
+                //             WHERE id_table != ? and register_auth = 0 and uid_line=?` 
+                // , [username , req.body['id'] , req.body['uid_line']] 
+                // , (err , result)=>{
+                //     if (err) {
+                //         dbpacket.dbErrorReturn(con, err, res);
+                //         console.log("query");
+                //     }
+
+                //     if(result.changedRows == (req.body['count'] - 1)) {
+                        
+                //     }
+                // })
             }
         }).catch((err)=>{
             con.end()
@@ -305,7 +430,45 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     })
     
     app.post('/api/doctor/listForm' , (req , res)=>{
-        console.log("connect")
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+            if(result['result'] === "pass") {
+                con.query(`
+                            SELECT formplant.id_plant , formplant.type_plant , formplant.date_plant , 
+                            acc_farmer.id_farmer , acc_farmer.fullname   
+                            FROM formplant , 
+                                (
+                                    SELECT id_farmer , uid_line , fullname FROM acc_farmer 
+                                    WHERE station = ? and register_auth = 1
+                                ) AS acc_farmer
+                            WHERE formplant.id_uid_line = acc_farmer.uid_line and formplant.submit_plant=?
+                            ORDER BY date_plant 
+                            LIMIT 30;
+                            ` , 
+                            [ result['data']['station_doctor'] , req.body['type']] , (err , listFarm)=>{
+                                if (err) {
+                                    dbpacket.dbErrorReturn(con, err, res);
+                                    console.log("query");
+                                }
+                                con.end()
+                                res.send(listFarm)
+                            })
+            }
+        }).catch((err)=>{
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        })
     })
 
 }

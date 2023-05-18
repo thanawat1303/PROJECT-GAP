@@ -28,6 +28,9 @@ module.exports = router = (app) => {
     app.get('/doctor/push' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index.html'));
     });
+    app.get('/doctor/listformfarm' , function(req, res) {
+        res.sendFile(__dirname.replace('\server' , '/public/index.html'));
+    });
 
     // page error 404
     app.get('/' , function(req, res) {

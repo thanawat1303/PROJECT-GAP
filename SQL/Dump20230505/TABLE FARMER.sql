@@ -1,3 +1,5 @@
+DROP TABLE `line_chat_gap`.`acc_farmer`;
+
 CREATE TABLE `line_chat_gap`.`acc_farmer` (
     id_table INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_farmer varchar(50) NOT NULL,
@@ -9,5 +11,6 @@ CREATE TABLE `line_chat_gap`.`acc_farmer` (
     password varchar(256) NOT NULL,
     register_auth tinyint(1) NOT NULL,
     date_register DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_doctor_confirm varchar(100) NOT NULL,
     uid_line varchar(255) NOT NULL
 )

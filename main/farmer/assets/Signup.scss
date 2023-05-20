@@ -1,0 +1,34 @@
+#content-signup-farmer {
+    .form-sigup {
+        .detail-profile {
+            .location {
+                .map-genarate {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: 200px;
+
+                    .map {
+                        opacity: 0;
+                        visibility: hidden;
+                    }
+                    .map[show=""] {
+                        opacity: 1;
+                        visibility: visible;
+                    }
+
+                    .loading-map {
+                        position: absolute;
+                        opacity: 1;
+                        visibility: visible;
+                    }
+                    .loading-map[hide=""] {
+                        opacity: 0;
+                        visibility: hidden;
+                    }
+                }
+            }
+        }
+    }
+}

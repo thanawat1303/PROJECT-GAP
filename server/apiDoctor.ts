@@ -1,21 +1,20 @@
-module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) => {
+require('dotenv').config().parsed
+export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any) {
 
-    require('dotenv').config().parsed
-
-    app.post('/api/doctor/check' , (req , res)=>{
+    app.post('/api/doctor/check' , (req:any , res:any)=>{
         res.redirect('/api/doctor/auth');
     })
     
-    app.post('/api/doctor/checkline' , (req , res)=>{
+    app.post('/api/doctor/checkline' , (req:any , res:any)=>{
         let con = Database.createConnection(listDB)
-        con.connect((err)=>{
+        con.connect((err:any)=>{
             if (err) {
                 dbpacket.dbErrorReturn(con, err, res);
                 console.log("connect");
                 return 0;
             }
     
-            con.query(`SELECT id_doctor FROM acc_doctor WHERE uid_line_doctor=${req.body['id']}` , (err , result)=>{
+            con.query(`SELECT id_doctor FROM acc_doctor WHERE uid_line_doctor=${req.body['id']}` , (err:any , result:any)=>{
                 if (err) {
                     dbpacket.dbErrorReturn(con, err, res);
                     console.log("query");
@@ -30,7 +29,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
         })
     })
     
-    app.post('/api/doctor/savePersonal' , (req , res)=>{
+    app.post('/api/doctor/savePersonal' , (req:any , res:any)=>{
         let username = req.body['username'] ?? '';
         let password = req.body['password'] ?? '';
     
@@ -43,7 +42,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         // Database.resume()
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
                 if (result['data']['status_account'] == 0
                         || result['data']['status_delete'] == 1) {
@@ -54,7 +53,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                     let fullname = req.body['firstname'] + " " + req.body['lastname']
                     con.query(`UPDATE acc_doctor SET fullname_doctor=? , station_doctor=? WHERE id_doctor = ?`
                     , [fullname , req.body['station'] , username]
-                    , (err , val)=>{
+                    , (err:any , val:any)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
                             console.log("query");
@@ -72,7 +71,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                     })
                 }
             }
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             console.log(err)
             if(err == "not pass") {
                 res.send('password')
@@ -83,7 +82,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
         })
     })
     
-    app.all('/api/doctor/auth' , (req , res)=>{
+    app.all('/api/doctor/auth' , (req:any , res:any)=>{
       
         // เช็คการเข้าสู่ระบบจริงๆ
         let username = req.session.user_doctor ?? req.body['username'] ?? '';
@@ -98,7 +97,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         // Database.resume()
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
                 if (result['data']['status_account'] == 0
                         || result['data']['status_delete'] == 1) {
@@ -114,7 +113,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                 }
             }
             con.end()
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             if(err == "not pass") {
             res.redirect('/api/logout')
             con.end()
@@ -126,7 +125,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     })
     
     // req manager farmer
-    app.post('/api/doctor/approverFm' , (req , res)=>{
+    app.post('/api/doctor/approverFm' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -134,16 +133,16 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
             res.redirect('/api/logout')
             return 0
         }
-    เกษตร
+
         let con = Database.createConnection(listDB)
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
                 con.query(`
                     SELECT fullname_doctor , img_doctor , status_delete , status_account
                     FROM acc_doctor
                     WHERE id_doctor=?; 
-                ` , [req.body['id']] , (err , profile)=>{
+                ` , [req.body['id']] , (err:any , profile:any)=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
                         console.log("query");
@@ -152,7 +151,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                     res.send(profile)
                 })
             }
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')
@@ -160,7 +159,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
         })
     })
     
-    app.post('/api/doctor/listFarmer' , (req , res)=>{
+    app.post('/api/doctor/listFarmer' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -171,7 +170,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         let con = Database.createConnection(listDB)
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
                 let queryType = (req.body['type'] === 'list') ? 
                                     `
@@ -202,7 +201,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                     : 
                                 (req.body['type'] === 'profile') ? 
                                     `SELECT id_table , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 and id_farmer=${req.body['farmer']} ORDER BY date_register DESC;` : ""
-                con.query(queryType , (err , result)=>{
+                con.query(queryType , (err:any , result:any)=>{
                     if (err){
                         dbpacket.dbErrorReturn(con , err , res)
                         return 0
@@ -212,7 +211,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                     res.send(result)
                 })
             }
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')
@@ -220,7 +219,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
         })
     })
     
-    app.post("/doctor/api/doctor/pull" , (req , res)=>{
+    app.post("/doctor/api/doctor/pull" , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -231,10 +230,10 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         let con = Database.createConnection(listDB)
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
                 con.query('SELECT fullname , id_farmer , id_doctor , img , location , station , date_register , uid_line FROM acc_farmer WHERE id_table=? and register_auth = ? ORDER BY date_register DESC' , 
-                [req.body['id'] , (req.body['type']) ? 1 : 0] , (err , resul)=>{
+                [req.body['id'] , (req.body['type']) ? 1 : 0] , (err:any , resul:any)=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
                         console.log("query");
@@ -244,21 +243,21 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                     res.send(resul[0])
                 })
             }
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')
             }
         })
     
-        // apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        // apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
         //     if(result['result'] === "pass") {
         //         con.query('UPDATE acc_farmer SET id_doctor = ? , register_auth = 1 WHERE register_auth = 0;' , 
-        //         [username] , (err , resul)=>{
+        //         [username] , (err:any , resul)=>{
     
         //         })
         //     }
-        // }).catch((err)=>{
+        // }).catch((err:any)=>{
         //     con.end()
         //     if(err == "not pass") {
         //         res.redirect('/api/logout')
@@ -266,7 +265,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
         // })
     })
     
-    app.post('/doctor/api/doctor/confirmFm' , (req , res)=>{
+    app.post('/doctor/api/doctor/confirmFm' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.body['password']
     
@@ -277,7 +276,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         let con = Database.createConnection(listDB)
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
                 if(req.body['ans']) {
                     con.query(`
@@ -288,14 +287,14 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                 and UNIX_TIMESTAMP(date_register) < UNIX_TIMESTAMP(?)
                                 and station = ?
                         `   , [req.body['farmer'] , req.body['date'] , req.body['station']]
-                            , (err , resultOn)=>{
+                            , (err:any , resultOn:any)=>{
                                 if (err) {
                                     dbpacket.dbErrorReturn(con, err, res);
                                     console.log("query");
                                 }
 
-                                let arrayID = resultOn.map(item => item.id_table)
-                                let uid_line = resultOn.map(item => item.uid_line)
+                                let arrayID = resultOn.map((item:any) => item.id_table)
+                                let uid_line = resultOn.map((item:any) => item.uid_line)
                                 con.query(`
                                     SELECT id_table , uid_line
                                     FROM acc_farmer 
@@ -306,7 +305,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                     ORDER BY date_register DESC;
                                 ` 
                                 , [req.body['farmer'] , req.body['date'] , req.body['station']]
-                                , (err , ObThan)=>{
+                                , (err:any , ObThan:any)=>{
                                     if (err) {
                                         dbpacket.dbErrorReturn(con, err, res);
                                         console.log("query");
@@ -314,15 +313,15 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
 
                                     let idLast = "" , idLineLast = "" , checkQuery = 0
                                     if(ObThan.length > 0) {
-                                        arrayID = arrayID.concat(ObThan.filter((val , index) => index > 0)
-                                                        .map(item => item.id_table) , [req.body['id']]).join(', ')
-                                        uid_line = uid_line.concat(ObThan.filter((val , index) => index > 0)
-                                                        .map(item => item.uid_line) , [req.body['uid_line']])
+                                        arrayID = arrayID.concat(ObThan.filter((val:any , index:any) => index > 0)
+                                                        .map((item:any) => item.id_table) , [req.body['id']]).join(', ')
+                                        uid_line = uid_line.concat(ObThan.filter((val:any , index:any) => index > 0)
+                                                        .map((item:any) => item.uid_line) , [req.body['uid_line']])
 
-                                        idLast = ObThan.filter((val , index) => index == 0)
-                                                        .map(item => item.id_table).join("")
-                                        idLineLast = ObThan.filter((val , index) => index == 0)
-                                                        .map(item => item.uid_line).join("")
+                                        idLast = ObThan.filter((val:any , index:any) => index == 0)
+                                                        .map((item:any) => item.id_table).join("")
+                                        idLineLast = ObThan.filter((val:any , index:any) => index == 0)
+                                                        .map((item:any) => item.uid_line).join("")
                                     } else {
                                         arrayID = arrayID.join(', ')
 
@@ -339,9 +338,9 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                                     and station = ?
                                             `
                                             , [req.body['farmer'] , req.body['station']]
-                                            , (err , resultAll) => {
+                                            , (err:any , resultAll:any) => {
                                                 checkQuery+=1
-                                                if(checkQuery == 3) {
+                                                if(checkQuery == 4) {
                                                     con.end()
                                                     res.send("complete")
                                                 }
@@ -357,9 +356,9 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                                 WHERE id_uid_line IN (${Uid_line_query})
                                             `
                                             , [idLineLast]
-                                            , (err , resultAll) => {
+                                            , (err:any , resultAll:any) => {
                                                 checkQuery+=1
-                                                if(checkQuery == 3) {
+                                                if(checkQuery == 4) {
                                                     con.end()
                                                     res.send("complete")
                                                 }
@@ -372,9 +371,24 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                                             WHERE id_table=? and register_auth = 0
                                         `
                                         , [ username ,  , new Date() , req.body['farmer'] , idLast]
-                                        , (err , resultAll) => {
+                                        , (err:any , resultAll:any) => {
                                             checkQuery+=1
-                                            if(checkQuery == 3) {
+                                            if(checkQuery == 4) {
+                                                con.end()
+                                                res.send("complete")
+                                            }
+                                        })
+                                    
+                                    con.query(
+                                        `
+                                            UPDATE formplant 
+                                            SET id_farmer=?
+                                            WHERE id_uid_line=?
+                                        `
+                                        , [ req.body['farmer'] , idLineLast]
+                                        , (err:any , resultAll:any) => {
+                                            checkQuery+=1
+                                            if(checkQuery == 4) {
                                                 con.end()
                                                 res.send("complete")
                                             }
@@ -390,7 +404,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                             SET register_auth=3 , id_doctor=? , uid_line="" , date_doctor_confirm=?
                             WHERE id_table=? and register_auth = 0`
                             , [ username , new Date() , req.body['id']]
-                            , (err , result)=>{
+                            , (err:any , result:any)=>{
                                 if (err) {
                                     dbpacket.dbErrorReturn(con, err, res);
                                     console.log("query");
@@ -410,7 +424,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                 // con.query(`UPDATE acc_farmer SET register_auth=3 , id_doctor=?
                 //             WHERE id_table != ? and register_auth = 0 and uid_line=?` 
                 // , [username , req.body['id'] , req.body['uid_line']] 
-                // , (err , result)=>{
+                // , (err:any , result)=>{
                 //     if (err) {
                 //         dbpacket.dbErrorReturn(con, err, res);
                 //         console.log("query");
@@ -421,7 +435,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
                 //     }
                 // })
             }
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             con.end()
             if(err == "not pass") {
                 res.send('account not pass')
@@ -429,7 +443,7 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
         })
     })
     
-    app.post('/api/doctor/listForm' , (req , res)=>{
+    app.post('/api/doctor/listForm' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -440,30 +454,30 @@ module.exports = apiDoctor = (app , Database , apifunc , HOST_CHECK , dbpacket ,
     
         let con = Database.createConnection(listDB)
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
                 con.query(`
-                            SELECT formplant.id_plant , formplant.type_plant , formplant.date_plant , 
-                            acc_farmer.id_farmer , acc_farmer.fullname   
-                            FROM formplant , 
-                                (
-                                    SELECT id_farmer , uid_line , fullname FROM acc_farmer 
-                                    WHERE station = ? and register_auth = 1
-                                ) AS acc_farmer
-                            WHERE formplant.id_uid_line = acc_farmer.uid_line and formplant.submit_plant=?
-                            ORDER BY date_plant 
-                            LIMIT 30;
-                            ` , 
-                            [ result['data']['station_doctor'] , req.body['type']] , (err , listFarm)=>{
-                                if (err) {
-                                    dbpacket.dbErrorReturn(con, err, res);
-                                    console.log("query");
-                                }
-                                con.end()
-                                res.send(listFarm)
-                            })
+                        SELECT formplant.id_plant , formplant.type_plant , formplant.date_plant , 
+                        acc_farmer.id_farmer , acc_farmer.fullname   
+                        FROM formplant , 
+                            (
+                                SELECT id_farmer , uid_line , fullname FROM acc_farmer 
+                                WHERE station = ? and register_auth = ?
+                            ) AS acc_farmer
+                        WHERE ((formplant.id_uid_line = acc_farmer.uid_line) or (formplant.id_farmer = acc_farmer.id_farmer)) and formplant.submit_plant=?
+                        ORDER BY date_plant 
+                        LIMIT 30;
+                        ` , 
+                        [ result['data']['station_doctor'] , req.body['approve'] , req.body['type']] , (err:any , listFarm:any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("query");
+                            }
+                            con.end()
+                            res.send(listFarm)
+                        })
             }
-        }).catch((err)=>{
+        }).catch((err:any)=>{
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')

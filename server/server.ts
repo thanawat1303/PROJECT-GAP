@@ -1,4 +1,5 @@
-const db = require('mysql')
+import db from 'mysql'
+import {appConfig} from './configExpress'
 require('dotenv').config().parsed
 
 let username = process.env.USER_DBDEV ?? ""
@@ -23,10 +24,10 @@ if(!username && !password) {
                 user: username,
                 password : password,
                 database : process.argv[2] == process.env.BUILD ? process.env.DATABASE_SER : process.env.DATABASE_DEV 
-            }).connect((err)=>{
+            }).connect((err: { errno: number })=>{
                 if (err) {
                     state = 0
-                    username , password = ""
+                    username = password = ""
                     if(err.errno == 1045) {console.log('Denien connect Database')}
                     
                     console.log('Please enter username and password again\n')
@@ -35,7 +36,7 @@ if(!username && !password) {
                     console.log("Check DB connected success!");
                     state = 2
 
-                    const app = require('./configExpress')(username , password)
+                    const app = appConfig(username , password)
                     app.listen(process.env.PORT , "0.0.0.0" , function () {
                         console.log('Start on port '+process.env.PORT+'!\n');
                     });
@@ -44,7 +45,7 @@ if(!username && !password) {
         }
     });
 } else {
-    const app = require('./configExpress')(username , password)
+    const app = appConfig(username , password)
     app.listen(process.env.PORT , "0.0.0.0" , function () {
         console.log('Start on port '+process.env.PORT+'!\n');
     });

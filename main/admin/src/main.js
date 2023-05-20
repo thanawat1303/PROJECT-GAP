@@ -17,7 +17,6 @@ export default class MainAdmin extends Component {
     componentDidMount() {
 
         clientMo.post('/api/admin/check').then((context)=>{
-            console.log(context)
             if(context) 
                 this.setState({
                     body : <Admin main={this}/>

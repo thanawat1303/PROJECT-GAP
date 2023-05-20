@@ -4,6 +4,7 @@ import io from "socket.io-client"
 
 import MainAdmin from "./main/admin/src/main";
 import MainDoctor from "./main/doctor/src/main";
+import { MainFarmer } from "./main/farmer/main";
 
 let auth = window.location.pathname.split('/')[1]
 const root = ReactDOM.createRoot(document.getElementById('root'))
@@ -13,4 +14,5 @@ const socket = io(window.location.protocol+"//"+window.location.host)
 socket.on('connect' , ()=>{
     if(auth == "admin") root.render(<MainAdmin socket={socket}/>)
     else if(auth == "doctor") root.render(<MainDoctor socket={socket}/>)
+    else if(auth == "farmer") root.render(<MainFarmer socket={socket}/>)
 })

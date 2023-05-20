@@ -1,4 +1,4 @@
-module.exports = WebSocketServ = (server) => {
+export default function WebSocketServ (server : any) {
     // const WebSoc = require('ws')
     // const Socket = new WebSoc.Server({server})
 
@@ -7,7 +7,7 @@ module.exports = WebSocketServ = (server) => {
     const {Server} = require('socket.io')
     const io = new Server(server)
 
-    io.on("connect" , (socket)=>{
+    io.on("connect" , (socket : any)=>{
         socket.on("open PagePush" , ()=>{
             socket.emit('push list' , JSON.stringify(Array.from(Push)))
             socket.join('page push')
@@ -17,11 +17,11 @@ module.exports = WebSocketServ = (server) => {
         })
         
         // open detail
-        socket.on("open detail on pagePush" , (msg)=>{
+        socket.on("open detail on pagePush" , (msg : any)=>{
             Push.set(socket.id,JSON.parse(msg)['id'])
             socket.to("page push").emit('push list' , JSON.stringify(Array.from(Push)))
         })
-        socket.on("close detail on pagePush" , (msg)=>{
+        socket.on("close detail on pagePush" , (msg : any)=>{
             Push.delete(socket.id)
             socket.to("page push").emit('push list' , JSON.stringify(Array.from(Push)))
             socket.emit('push list' , JSON.stringify(Array.from(Push)))

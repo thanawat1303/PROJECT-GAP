@@ -24,6 +24,10 @@
       npm install google-map-react
 
       npm i socket.io socket.io-client
+
+      npm i typescript
+
+      npm i --save-dev @types/mysql @types/react @types/webpack-hot-middleware @types/webpack
       ```
 
 ### Build Project

@@ -1,13 +1,14 @@
-const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-const config = require('../webpack.dev.config');
-const compiler = webpack(config);
+import webpack, { Configuration } from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
+import {_config} from '../webpack.dev.config';
+import path from 'path';
 
-const path = require('path');
-const dirName = path.resolve(__dirname, "../src/");
-
-module.exports = reactServ = (app) => {
+export default function reactServ(app : any) {
+    const WebpackConfig = _config as Configuration
+    const compiler = webpack(WebpackConfig);
+    const dirName = path.resolve(__dirname, "../src/");
+    
     compiler.hooks.afterEmit.tap("cleanup-the-require-cache", () => {
         Object.keys(require.cache)
         .filter((key) => key.includes(dirName))
@@ -17,7 +18,7 @@ module.exports = reactServ = (app) => {
     // set middleware main path on web
     app.use(
         webpackDevMiddleware(compiler, {
-            publicPath: config.output.publicPath,
+            publicPath: _config.output.publicPath,
         })
     );
     

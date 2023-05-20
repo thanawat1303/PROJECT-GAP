@@ -1,11 +1,14 @@
-const packetDB = require('./dbConfig')
+import dbFunc from './dbConfig';
+const ErrorDB = (connectDB : any, err : any, res : any) => {
+  dbFunc.dbErrorReturn(connectDB, err, res)
+}
 
 const apifunc = {
-  auth: (connectDB, username, password, res , authAccount) => {
+  auth: (connectDB : any, username : any, password : any, res : any, authAccount : any) => {
     return new Promise((resole, reject) => {
-      connectDB.connect(err => {
+      connectDB.connect((err:any) => {
         if (err) {
-          packetDB.dbErrorReturn(connectDB, err, res);
+          ErrorDB(connectDB, err, res);
           reject("connect");
         }
 
@@ -15,9 +18,9 @@ const apifunc = {
         connectDB.query(
           `SELECT * FROM ${authAccount} WHERE ${usernameDB}=? AND ${passwordDB}=SHA2( ? , 256)`,
           [username, password],
-          (err, result) => {
+          (err : any, result : any) => {
             if (err) {
-              packetDB.dbErrorReturn(connectDB, err, res);
+              ErrorDB(connectDB, err, res);
               reject("query");
             }
 
@@ -36,4 +39,4 @@ const apifunc = {
   }
 };
 
-module.exports = apifunc;
+export default apifunc;

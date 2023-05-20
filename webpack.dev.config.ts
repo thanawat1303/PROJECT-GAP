@@ -1,26 +1,12 @@
-const path = require('path');
+import path from 'path';
 require('dotenv').config().parsed
 
 // Hot refresh
-const webpack = require("webpack");
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const isDevMode = process.env.NODE_ENV === "development";
+import webpack from "webpack";
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 
-const plugins = isDevMode ? 
-                    [ // Hot refresh
-                        new webpack.HotModuleReplacementPlugin(), //module change hot refresh webpack
-                        new ReactRefreshWebpackPlugin({ //module react refresh
-                            overlay: {
-                                sockIntegration: "whm",
-                            },
-                        }), 
-                        new webpack.DefinePlugin({
-                            "process.env.REACT_API_KEY" : JSON.stringify("AIzaSyDgCfVBI9YfvOp1esw8dnuPTtNOpr9YgI4")
-                        })
-                    ] : [ //not hot refresh
-                        ];
 // Hot refresh
-module.exports = {
+export const _config = {
     mode: "development", //set Mode 
     entry: ["webpack-hot-middleware/client", "/index.js"], //set file main run react
     output: {
@@ -32,13 +18,23 @@ module.exports = {
     target: "web",
     devtool: 'inline-source-map',
     devServer: {
-        port: process.env.PORT,
+        port: process.env.PORT ?? 8000,
         static: "./public",
         open: true,
         hot: true,
         liveReload: true,
     },
-    plugins,
+    plugins : [ // Hot refresh
+            new webpack.HotModuleReplacementPlugin(), //module change hot refresh webpack
+            new ReactRefreshWebpackPlugin({ //module react refresh
+                overlay: {
+                    sockIntegration: "whm",
+                },
+            }), 
+            new webpack.DefinePlugin({
+                "process.env.REACT_API_KEY" : JSON.stringify("AIzaSyDgCfVBI9YfvOp1esw8dnuPTtNOpr9YgI4")
+            })
+    ] ,
     resolve: {
         extensions: [".js" , ".jsx" , ".json"],
     },

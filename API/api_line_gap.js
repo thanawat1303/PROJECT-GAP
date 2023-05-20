@@ -69,6 +69,10 @@ const RichMenu = {
     someone : (RichMenuID) => {
       richmenu.deleteRichMenu(RichMenuID).then(()=>console.log("Delete Complete"))
     }
+  },
+
+  DeleteFriend : (userId) => {
+    richmenu.linkRichMenuToUser(userId)
   }
 
 }

@@ -1,4 +1,4 @@
-DELETE FROM `line_chat_gap`.`formplant`
+-- DELETE FROM `line_chat_gap`.`formplant`
 -- INSERT INTO `line_chat_gap`.`formplant`(
 --     id_plant ,
 --     id_uid_line,
@@ -14,8 +14,8 @@ DELETE FROM `line_chat_gap`.`formplant`
 --     history_plant,
 --     submit_plant 
 -- ) VALUES (
---     "111115",
---     "1124",
+--     "111475",
+--     "1120",
 --     "เมล่อน",
 --     1,
 --     10,

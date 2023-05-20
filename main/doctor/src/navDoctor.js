@@ -41,7 +41,7 @@ export default class NavDoctor extends Component {
         {
             clientMo.post('/api/doctor/listFarmer' , {type:'push'}).then((list)=>{
                 if(list) {
-                    this.props.bodyDoctor.setState({body : <Push socket={this.props.socket} status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
+                    this.props.bodyDoctor.setState({body : <Push socket={this.props.socket} status={statusLoad} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
                     document.getElementById("pAccount").setAttribute('nav-select' , '')
                 }
@@ -50,14 +50,16 @@ export default class NavDoctor extends Component {
         }
         else if (path[1] + "/" + path[2] == 'doctor/listformfarm')
         {
-            clientMo.post('/api/doctor/listForm' , {type : 0}).then((list)=>{
-                if(list) {
-                    this.props.bodyDoctor.setState({body : <ListFormFarm socket={this.props.socket} status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
-                    if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
-                    document.getElementById("list-form-farm").setAttribute('nav-select' , '')
-                }
-                else this.sessionoff()
-            })
+            if(path[3] == "approve" || path[3] == undefined || path[3] == "wait" || path[3] == "") {
+                clientMo.post('/api/doctor/listForm' , {type : 0 , approve:(path[3] == "wait") ? 0 : 1}).then((list)=>{
+                    if(list) {
+                        this.props.bodyDoctor.setState({body : <ListFormFarm socket={this.props.socket} status={statusLoad} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list} path={path[3]}/>})
+                        if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                        document.getElementById("list-form-farm").setAttribute('nav-select' , '')
+                    }
+                    else this.sessionoff()
+                })
+            }
         }
     }
 
@@ -100,7 +102,7 @@ export default class NavDoctor extends Component {
         }
 
         else if (ele == 'list-form-farm') {
-            clientMo.post('/api/doctor/listForm' , {type : 0}).then((list)=>{
+            clientMo.post('/api/doctor/listForm' , {type : 0 , approve:1}).then((list)=>{
                 console.log(list)
                 if(list) {
                     this.props.bodyDoctor.setState({body : <ListFormFarm socket={this.props.socket} status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})

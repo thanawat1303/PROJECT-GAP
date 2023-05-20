@@ -12,14 +12,13 @@
 
 // const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
 // req
-module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) => {
-  require('dotenv').config().parsed
-
-  app.post('/api/admin/check' , (req , res)=>{
+require('dotenv').config().parsed
+export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any) {
+  app.post('/api/admin/check' , (req:any , res:any)=>{
     res.redirect('/api/admin/auth');
   })
   
-  app.post('/api/admin/chkOver' , (req , res)=>{
+  app.post('/api/admin/chkOver' , (req:any , res:any)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -30,10 +29,10 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
     let con = Database.createConnection(listDB)
   
-    apifunc.auth(con , username , password , res , "admin").then((result)=>{
+    apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
       if(result['result'] === "pass") {
         if(req.body['ID']) {
-          con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err,result)=>{
+          con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err:any,result:any)=>{
             if(err) {
               dbpacket.dbErrorReturn(con , err , res)
               return 0
@@ -50,31 +49,31 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
           res.send('error ID')
         }
       }
-    }).catch((err)=>{
+    }).catch((err:any)=>{
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
       }
     })
   
-    // con.connect((err) => {
+    // con.connect((err:any) => {
     //   if(err) {
-    //     dbpacket.dbErrorReturn(con , err , res)
+    //     dbpacket.dbErrorReturn(con , err , res:any)
     //     return 0
     //   }
   
-    //   con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
+    //   con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err:any , result:any)=>{
     //     if (err) {
-    //       dbpacket.dbErrorReturn(con , err , res)
+    //       dbpacket.dbErrorReturn(con , err , res:any)
     //       return 0
     //     };
     
     //     if(result[0]){
     
     //       if(req.body['ID']) {
-    //         con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err,result)=>{
+    //         con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err:any,result:any)=>{
     //           if(err) {
-    //             dbpacket.dbErrorReturn(con , err , res)
+    //             dbpacket.dbErrorReturn(con , err , res:any)
     //             return 0
     //           }
   
@@ -98,7 +97,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   })
   
   // check action of user
-  app.post('/api/admin/checkUserAction' , (req , res)=> {
+  app.post('/api/admin/checkUserAction' , (req:any , res:any)=> {
     let username = req.session.user_admin ?? '';
     let password = req.body['password'] ?? '';
   
@@ -109,13 +108,13 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
     let con = Database.createConnection(listDB)
   
-    con.connect((err)=>{
+    con.connect((err:any)=>{
       if(err) {
         dbpacket.dbErrorReturn(con , err , res)
         return 0
       }
   
-      con.query(`SELECT * FROM admin WHERE username=? AND password=SHA2( ? , 256)` , [username , password] , (err , result)=>{
+      con.query(`SELECT * FROM admin WHERE username=? AND password=SHA2( ? , 256)` , [username , password] , (err:any , result:any)=>{
         if (err) {
           dbpacket.dbErrorReturn(con , err , res)
           return 0
@@ -145,7 +144,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
     })
   })
   
-  app.post('/api/admin/add' , (req , res)=>{
+  app.post('/api/admin/add' , (req:any , res:any)=>{
     let timeoutSession = 5000
     if(req.body['ID'] && req.body['passwordDT'] && 
         req.session.checkADD['value'] === process.env.KEY_SESSION + "add" && 
@@ -164,11 +163,11 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
       let con = Database.createConnection(listDB)
   
-      apifunc.auth(con , username , password , res , "admin").then( async (result)=>{
+      apifunc.auth(con , username , password , res , "admin").then( async (result:any)=>{
         if(result['result'] === "pass") {
           con.query(`INSERT INTO acc_doctor(
             fullname_doctor , id_doctor , uid_line_doctor , password_doctor , img_doctor , station_doctor , status_account , status_delete) 
-            VALUES (?,?,?,SHA2(?,256),?,?,?,?)` , ['',req.body['ID'] ,'',req.body['passwordDT'],'','',1,0] , (err , result)=>{
+            VALUES (?,?,?,SHA2(?,256),?,?,?,?)` , ['',req.body['ID'] ,'',req.body['passwordDT'],'','',1,0] , (err:any , result:any)=>{
             if(err) {
               dbpacket.dbErrorReturn(con , err , res)
               return 0
@@ -178,24 +177,24 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
             res.send('1')
           })
         }
-      }).catch((err)=>{
+      }).catch((err:any)=>{
         con.end()
         if(err == "not pass") {
           res.redirect('/api/logout')
         }
       })
   
-      // con.connect((err)=> {
+      // con.connect((err:any)=> {
       //   if(err) {
-      //     dbpacket.dbErrorReturn(con , err , res)
+      //     dbpacket.dbErrorReturn(con , err , res:any)
       //     return 0
       //   }
   
       //   con.query(`INSERT INTO acc_doctor(
       //     fullname_doctor , id_doctor , password_doctor , img_doctor , station_doctor , status_account , status_delete) 
-      //     VALUES (?,?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1,0] , (err , result)=>{
+      //     VALUES (?,?,?,?,?,?,?)` , ['',req.body['ID'],req.body['passwordDT'],'','',1,0] , (err:any , result:any)=>{
       //     if(err) {
-      //       dbpacket.dbErrorReturn(con , err , res)
+      //       dbpacket.dbErrorReturn(con , err , res:any)
       //       return 0
       //     }
   
@@ -215,7 +214,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
   })
   
-  app.post('/api/admin/listDoctor' , (req , res)=>{
+  app.post('/api/admin/listDoctor' , (req:any , res:any)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -226,9 +225,9 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
     let con = Database.createConnection(listDB)
   
-    apifunc.auth(con , username , password , res , "admin").then((result)=>{
+    apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
       if(result['result'] === "pass") {
-        con.query('SELECT fullname_doctor , id_doctor , img_doctor , station_doctor , status_account FROM acc_doctor WHERE status_delete=0 LIMIT 25;' , (err , result)=>{
+        con.query('SELECT fullname_doctor , id_doctor , img_doctor , station_doctor , status_account FROM acc_doctor WHERE status_delete=0 LIMIT 25;' , (err:any , result:any)=>{
           if (err){
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -238,7 +237,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
           res.send(result)
         })
       }
-    }).catch((err)=>{
+    }).catch((err:any)=>{
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -246,7 +245,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
     })
   })
   
-  app.post('/api/admin/changeState' , (req,res)=>{
+  app.post('/api/admin/changeState' , (req:any,res:any)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -257,10 +256,10 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
     let con = Database.createConnection(listDB)
   
-    apifunc.auth(con , username , password , res , "admin").then((result)=>{
+    apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
       if(result['result'] === "pass") {
         if(req.body['ID'] && req.body['status'] != undefined) {
-          con.query(`UPDATE acc_doctor SET status_account = ? WHERE id_doctor = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err,result)=>{
+          con.query(`UPDATE acc_doctor SET status_account = ? WHERE id_doctor = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err:any,result:any)=>{
             if(err) {
               dbpacket.dbErrorReturn(con , err , res)
               return 0
@@ -277,7 +276,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
           res.send('error ID or status')
         }
       }
-    }).catch((err)=>{
+    }).catch((err:any)=>{
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -285,7 +284,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
     })
   })
   
-  app.post('/api/admin/delete' , (req , res)=>{
+  app.post('/api/admin/delete' , (req:any , res:any)=>{
     let timeoutSession = 20
     if(req.body['ID'] &&
         req.session.checkDelete['value'] === process.env.KEY_SESSION + "delete" && 
@@ -304,9 +303,9 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
       let con = Database.createConnection(listDB)
   
-      apifunc.auth(con , username , password , res , "admin").then((result)=>{
+      apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
         if(result['result'] === "pass") {
-          con.query(`UPDATE acc_doctor SET status_delete = 1 WHERE id_doctor=?` , [req.body['ID']] , (err , result)=>{
+          con.query(`UPDATE acc_doctor SET status_delete = 1 WHERE id_doctor=?` , [req.body['ID']] , (err:any , result:any)=>{
             if(err) {
               dbpacket.dbErrorReturn(con , err , res)
               return 0
@@ -317,7 +316,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
           })
         }
   
-      }).catch((err)=>{
+      }).catch((err:any)=>{
         con.end()
         if(err == "not pass") {
           res.redirect('/api/logout')
@@ -332,7 +331,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
   
   })
   // check Login
-  app.all('/api/admin/auth' , (req , res)=>{
+  app.all('/api/admin/auth' , (req:any , res:any)=>{
     
     // เช็คการเข้าสู่ระบบจริงๆ
     let username = req.session.user_admin ?? req.body['username'] ?? '';
@@ -346,14 +345,14 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
     let con = Database.createConnection(listDB)
   
     // Database.resume()
-    apifunc.auth(con , username , password , res , "admin").then((result)=>{
+    apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
       if(result['result'] === "pass") {
         req.session.user_admin = username
         req.session.pass_admin = password
         res.send('1')
       }
       con.end()
-    }).catch((err)=>{
+    }).catch((err:any)=>{
       if(err == "not pass") {
         res.redirect('/api/logout')
         con.end()
@@ -363,7 +362,7 @@ module.exports = apiAdmin = (app , Database , apifunc , HOST_CHECK , dbpacket , 
     })
   })
   
-  app.get('/api/logout' , (req , res) => {
+  app.get('/api/logout' , (req:any , res:any) => {
     console.log('Logout')
     res.clearCookie('connect.sid').send('')
   })

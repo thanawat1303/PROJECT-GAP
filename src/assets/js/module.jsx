@@ -62,50 +62,81 @@ const useLiff = (idLiff) => {
     return [init , Liff];
 }
 
-const Camera = (props) => {
+import "../style/camera.scss"
+const Camera = (props) => { // ยังไม่เสร็จ
     const [StatusCamera , setStatus] = useState(false)
     const [BodyCamera , setBody] = useState(<></>)
     const ContentCamera = useRef()
-    const PreviewCamera = useRef()
 
     useEffect(()=>{
         props.control.current.addEventListener('click' , CameraOnOff)
         console.log(props.img)
+        return () => {
+            props.control.current.removeEventListener('click' , CameraOnOff)
+        }
     } , [])
 
     const CameraOnOff = () => {
         if(!StatusCamera) {
-            ContentCamera.current.style.opacity = '1'
-            ContentCamera.current.style.visibility = 'visible'
-            setBody(<video ref={PreviewCamera}></video>)
+            ContentCamera.current.setAttribute("show" , "")
+            setBody(<CameraOpen/>)
             setStatus(true)
         } else {
-            ContentCamera.current.style.opacity = '0'
-            ContentCamera.current.style.visibility = 'hidden'
+            ContentCamera.current.removeAttribute("show")
             setBody(<></>)
             setStatus(false)
         }
     }
 
-    return(
-        <div ref={ContentCamera} className="content-camera" style={{
-            display:"flex",
-            position:"absolute",
-            justifyContent:"center",
-            alignItems:"center",
-            width:"100%",
-            height:"100%",
-            top:"0",
-            bottom:"0",
-            backgroundColor:"#000000c9",
-            backdropFilter:"blur(8px)",
-            zIndex:100,
+    const CameraOpen = () => {
+        const PreviewCamera = useRef()
+        let Stream = null
+        const ObNavigor = navigator.mediaDevices
 
-            transition:"0.5s opacity , 0.5s visibility",
-            opacity:0,
-            visibility:"hidden"
-        }} onClick={CameraOnOff}>
+        useEffect(()=>{
+            OpenCamera()
+            return () => {
+                StopCamera()
+            }
+        })
+
+        const OpenCamera = () => {
+            ObNavigor.getUserMedia({
+                video:{
+                    width:{ideal: 260 },
+                    height: {ideal: 260}
+                },
+                audio:false
+            }).then((stream)=>{
+                Stream = stream //set stream video
+                PreviewCamera.current.srcObject = Stream //add Object stream
+                stream = null //set stream off
+            }).catch((err)=>{
+                alert(err)
+            })
+        }
+
+        const StopCamera = () => {
+            if(Stream) {
+                Stream.getTracks().forEach(track => {
+                    track.stop();
+                })
+                Stream = null
+            }
+        }
+
+        return(
+            <section className="frame-camera">
+                <canvas id="result-camera-capture"></canvas>
+                <video ref={PreviewCamera} autoPlay></video>
+            </section>
+        )
+    }
+
+    return(
+        <div ref={ContentCamera} className="content-camera" onClick={CameraOnOff}>
             {BodyCamera}
+            <button>CAPTURE</button>
         </div>
     )
 }

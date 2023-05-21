@@ -28,6 +28,8 @@
       npm i typescript
 
       npm i --save-dev @types/mysql @types/react @types/webpack-hot-middleware @types/webpack
+
+      npm install exifr
       ```
 
 ### Build Project

@@ -5,7 +5,8 @@ import './assets/Signup.scss'
 import { clientMo } from "../../src/assets/js/moduleClient";
 
 const SignUp = (props) => {
-    const Image = useRef()
+    const ImageCerrent = useRef()
+    const [PreviewImage , setPreview] = useState("/icons8-camera.svg")
     const ControlImage = useRef()
 
     const Fullname = useRef()
@@ -41,6 +42,26 @@ const SignUp = (props) => {
         PullMap()
     }
 
+    // const InputImage = (e) => {
+    //     const file = e.target.files[0]
+
+    //     if(file) {
+    //         const reader = new FileReader()
+    //         reader.onload = (e) => {
+    //             if(new Date().getTime() - file.lastModified < 1000) {
+    //                 setPreview(e.target.result)
+    //             } 
+    //             else {
+    //                 alert('โปรดใช้รูปถ่ายปัจจุบัน')
+    //                 setPreview("/icons8-camera.svg")
+    //             }
+    //         }
+    //         reader.readAsDataURL(file)
+    //     } else {
+    //         setPreview("/icons8-camera.svg")
+    //     }
+    // }
+
     return (
         <section id="content-signup-farmer">
             <Camera control={ControlImage} img={Image}/>
@@ -50,9 +71,9 @@ const SignUp = (props) => {
             </div>
             <div className="form-sigup">
                 <div id="preview-image">
-                    <img src="/icons8-camera.svg" width="60%"></img>
-                    <input ref={Image} type="file"></input>
-                    <span ref={ControlImage}>อัปโหลดรูปภาพ</span>
+                    <img ref={ImageCerrent} src={PreviewImage} width="60%" onClick={()=>ControlImage.current.click()}></img>
+                    {/* <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input> */}
+                    <span ref={ControlImage}></span>
                 </div>
                 <div className="detail-profile">
                     <label className="fullname">

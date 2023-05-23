@@ -19,12 +19,14 @@ if(!username && !password) {
         else if(state == 1) password = input
 
         if(username && password && state == 1) {
-            db.createConnection({
+            let con = db.createConnection({
                 host: process.env.HOST,
                 user: username,
                 password : password,
                 database : process.argv[2] == process.env.BUILD ? process.env.DATABASE_SER : process.env.DATABASE_DEV 
-            }).connect((err: { errno: number })=>{
+            })
+            
+            con.connect((err: { errno: number })=>{
                 if (err) {
                     state = 0
                     username = password = ""
@@ -35,6 +37,7 @@ if(!username && !password) {
                 } else {
                     console.log("Check DB connected success!");
                     state = 2
+                    con.end()
 
                     const app = appConfig(username , password)
                     app.listen(process.env.PORT , "0.0.0.0" , function () {

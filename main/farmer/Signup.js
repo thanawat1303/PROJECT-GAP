@@ -28,11 +28,8 @@ const SignUp = (props) => {
     const [stepOn , setstepOn] = useState(1)
     const [stepApprov , setApprov] = useState(1)
 
-    const [ProfileData , setProfile] = useState(new Map([
-        ["firstname" , ""],
-        ["lastname" , ""],
-        ["password" , ""]
-    ]))
+    const [ProfileData , setProfile] = useState(new Map([]))
+    const DataProfile = new Map()
 
     const back = useRef()
     const next = useRef()
@@ -79,10 +76,13 @@ const SignUp = (props) => {
         console.log(ProfileData)
         switch(stepInMedthod) {
             case 1 :
-                setStep(<StepOne stepAp={setApprov} step={stepApprov} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepOne stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
             case 2 :
-                setStep(<StepTwo/>)
+                setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                break;
+            case 3 :
+                setStep(<StepThree stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
         }
     }
@@ -125,20 +125,29 @@ const StepOne = (props) => {
         checkData()
     } , [])
 
-    const checkData = () =>{
-        let firstname = Firstname.current
-        let lastname = Lastname.current
-        let password = Password.current
-        let remember = OldID.current
-        if(firstname.value && lastname.value && password.value && remember.value){
-            props.stepAp(2)
+    const checkData = (e) =>{
+        if(e) {
+            props.data.set(e.target.getAttribute("data") , e.target.value)
             props.update(new Map([
                 ...props.profile , 
-                ["firstname" , firstname.value],
-                ["lastname" , lastname.value] , 
-                ["password" , password.value] , 
-                ["oldID" , remember.value] , 
+                ...props.data
             ]))
+        } 
+        else {
+            props.data.set("firstname" , Firstname.current.value)
+            props.data.set("lastname" , Lastname.current.value)
+            props.data.set("password" , Password.current.value)
+            props.data.set("oldID" , OldID.current.value)
+        }
+
+        if(
+            props.data.get("firstname") &&
+            props.data.get("lastname") &&
+            props.data.get("password") &&
+            props.data.get("oldID")
+            )
+        {
+            props.stepAp(2)
         } else {
             props.stepAp(1)
         }
@@ -152,37 +161,48 @@ const StepOne = (props) => {
             <div className="detail-farmer">
                 <label className="fullname">
                     <span>ชื่อ</span>
-                    <input defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname}></input> 
+                    <input defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
                 </label>
                 <label className="fullname">
                     <span>นามสกุล</span>
-                    <input defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname}></input> 
+                    <input defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
                 </label>
                 <label className="password">
                     <span>รหัสผ่าน</span>
-                    <input defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password}></input> 
+                    <input defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password} data="password"></input> 
                 </label>
                 <label className="select-remember">
                     <span>รหัสประจำตัว * หากมีหรือจำได้</span>
-                    <input defaultValue={props.profile.get("oldID")} onChange={checkData} type="text" ref={OldID}></input>
+                    <input defaultValue={props.profile.get("oldID")} onChange={checkData} type="text" ref={OldID} data="oldID"></input>
                 </label>
             </div>
         </section>
     )
 }
 
-const StepTwo = () => {
-    const Location = useRef()
+const StepTwo = (props) => {
     const Station = useRef()
     let timeOutLoad = null
 
     const LoadingMap = useRef()
-    const Map = useRef()
+    const MapEle = useRef()
+    const HeadList = useRef()
 
     const [LocationCurrent , setCurrent] = useState(<></>)
+    const [ListStation , setStation] = useState(<></>)
+    const [Listready , setReady] = useState(false)
+    const [Selected , setSelected] = useState(props.profile.get("station"))
 
     useEffect(()=>{
+        props.stepAp(2)
         PullMap()
+
+        clientMo.post("/api/farmer/listStation").then((list)=>{
+            setStation(JSON.parse(list))
+            setReady(true)
+            if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
+        })
+
         return () => {
             clearTimeout(timeOutLoad)
         }
@@ -190,21 +210,48 @@ const StepTwo = () => {
 
     const PullMap = () => {
         LoadingMap.current.removeAttribute('hide','')
-        Map.current.removeAttribute('show','')
+        MapEle.current.removeAttribute('show','')
         setCurrent(<></>)
-        timeOutLoad = setTimeout(()=>{
-                            navigator.geolocation.getCurrentPosition((location)=>{
-                                LoadingMap.current.setAttribute('hide','')
-                                Map.current.setAttribute('show','')
-                                setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
-                            } , null , {
-                                enableHighAccuracy: true
-                            })
-                        } , 1000)
+        timeOutLoad = setTimeout(
+            ()=>{
+                navigator.geolocation.getCurrentPosition((location)=>{
+                    LoadingMap.current.setAttribute('hide','')
+                    MapEle.current.setAttribute('show','')
+                    props.data.set("latitude" , location.coords.latitude)
+                    props.data.set("longitude" , location.coords.longitude)
+                    CheckData()
+                    setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
+                } , null , {
+                    enableHighAccuracy: true
+                })
+            } , 1000)
     }
 
     const reloadMap = () => {
         PullMap()
+    }
+
+    const CheckData = (e) => {
+        if(e) {
+            setSelected(e.target.value)
+        }
+
+        props.data.set("station" , Station.current.value)
+        props.update(new Map([
+            ...props.profile , 
+            ...props.data
+        ]))
+
+        console.log(props.data)
+
+        if(props.data.get("station") 
+            && props.data.get("latitude") 
+            && props.data.get("longitude")) 
+        {
+            props.stepAp(3)
+        } else {
+            props.stepAp(2)
+        }
     }
 
     return (
@@ -214,7 +261,7 @@ const StepTwo = () => {
                     ตำแหน่งแปลงที่ทำการเกษตร
                     <div className="warnning">* เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่ทำการเกษตรกรของท่าน</div>
                     <div className="map-genarate">
-                        <div ref={Map} className="map">
+                        <div ref={MapEle} className="map">
                             {LocationCurrent}
                         </div>
                         <div ref={LoadingMap} className="loading-map">
@@ -225,25 +272,37 @@ const StepTwo = () => {
                 </label>
                 <label className="station">
                     ศูนย์ที่เกษตรกรอยู่ในการดูแล
-                    <input ref={Station}></input> 
+                    <select value={Selected} ref={Station} onChange={CheckData}>
+                        <option ref={HeadList} value="" disabled>
+                            {(Listready) ? "เลือกศูนย์" : "กำลังโหลด"}
+                        </option>
+                        {
+                        (Listready) ? 
+                            ListStation.map((val , index)=>
+                                <option key={index} value={val['id_station']}>{val['name_station']}</option>
+                            )
+                            : <></>
+                        }
+                    </select> 
                 </label>
             </div>
         </section>
     )
 }
 
-const stepThree = () => {
+const StepThree = () => {
     const ImageCerrent = useRef()
     const [PreviewImage , setPreview] = useState("/icons8-camera.svg")
     const ControlImage = useRef()
 
     return (
-        <div id="preview-image">
-            <Camera control={ControlImage} img={Image}/>
-            <img ref={ImageCerrent} src={PreviewImage} width="60%" onClick={()=>ControlImage.current.click()}></img>
-            {/* <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input> */}
-            <span ref={ControlImage}></span>
-        </div>
+        // <div id="preview-image">
+        //     <Camera control={ControlImage} img={Image}/>
+        //     <img ref={ImageCerrent} src={PreviewImage} width="60%" onClick={()=>ControlImage.current.click()}></img>
+        //     {/* <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input> */}
+        //     <span ref={ControlImage}></span>
+        // </div>
+        <></>
     )
 }
 

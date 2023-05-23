@@ -8,7 +8,6 @@ const MapsJSX = (props) => {
     useEffect(()=>{
         setLag(props.lat)
         setLng(props.lng)
-        console.log(props.lat , props.lng)
     } , [])
     return(
         <iframe src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_API_KEY}&q=${latitude},${longtitude}&zoom=18&maptype=satellite`} 

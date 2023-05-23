@@ -57,6 +57,7 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
                             console.log("query");
+                            return 0
                         }
                         console.log(val)
                         if(val['changedRows'] == 1){

@@ -22,14 +22,18 @@ const MainFarmer = (props) => {
                         // สมัครเข้าต้องค้นหาบัญชีโดยไม่ตรง status ยกเลิกบัญชี
                         if(profile.userId) {
                             // clientMo.post("/api/farmer/check" , {profile:profile})
-                            setBody(<SignUp profile={profile}/>)
+                            clientMo.post("/api/farmer/sign" , {uid:profile.userId}).then(()=>{
+                                setBody(<SignUp profile={profile}/>)
+                            })
                         }
                     })
                 } else {
                     liff.login()
                 }
             } else {
-                setBody(<SignUp />)
+                clientMo.post("/api/farmer/sign" , {uid:"TEST"}).then(()=>{
+                    setBody(<SignUp />)
+                })
                 // setBody(<NonLine />)
             }
             clientMo.addAction('#loading' , 'hide' , 1000)

@@ -8,10 +8,15 @@ import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 // Hot refresh
 export const _config = {
     mode: "development", //set Mode 
-    entry: ["webpack-hot-middleware/client", "/index.js"], //set file main run react
+    entry:
+        {
+            admin : ["./index_jsx/admin.js" , "webpack-hot-middleware/client"] , 
+            doctor : ["./index_jsx/doctor.js" , "webpack-hot-middleware/client"] , 
+            farmer : ["./index_jsx/farmer.js" , "webpack-hot-middleware/client"],
+        }, //set file main run react
     output: {
         path: path.resolve(__dirname , "public"), //set path template main index.html
-        filename: "main.js", //set file main where build
+        filename: "[name].main.js", //set file main where build
         publicPath: '/', //set Path Project
     },
 

@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server .",
-    "server-dev": "nodemon server/server.js",
-    "server": "nodemon server/server.js deploy",
+    "server-dev": "nodemon",
+    "server": "nodemon deploy",
     "build": "webpack --mode production"
   },
   "repository": {
@@ -24,8 +24,10 @@
   "nodemonConfig": {
     "watch": [
       "server",
-      "webpack.dev.config.js"
+      "webpack.dev.config.ts"
     ],
+    "ext": "ts",
+    "exec": "npx ts-node server/server.ts",
     "ignore": [
       "/main"
     ],

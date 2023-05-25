@@ -56,10 +56,43 @@
                 }
             }
 
-            #preview-image {
+            .step-three {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                flex-direction: column;
+
+                .frame-picture {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    overflow: hidden;
+
+                    .Loading-img {
+                        position: absolute;
+                        background-color: white;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 10;
+                    }
+
+                    img {
+                        transform: translate(0,0);
+                        // transition: 0.5s;
+                    }
+
+                    img[size="w"] {
+                        width: 100%;
+                        height: auto;
+                    }
+
+                    img[size="h"] {
+                        width: auto;
+                        height: 100%;
+                    }
+                }
             }
         }
     }

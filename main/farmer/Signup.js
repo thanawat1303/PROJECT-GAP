@@ -3,11 +3,13 @@ import { Camera, MapsJSX } from "../../src/assets/js/module";
 
 import './assets/Signup.scss'
 import { clientMo } from "../../src/assets/js/moduleClient";
+import { PopupAlert } from "./PopupAlert";
 
 const SignUp = (props) => {
     const [step , setStep] = useState(1)
     const [stepOn , setstepOn] = useState(1)
     const [stepApprov , setApprov] = useState(1)
+    const [Feedback , setFeed] = useState(<></>)
 
     const [ProfileData , setProfile] = useState(new Map([]))
     const DataProfile = new Map()
@@ -18,7 +20,7 @@ const SignUp = (props) => {
     const DetailProfile = useRef()
 
     useEffect(()=>{
-        selectStep(1)
+        selectStep(stepApprov)
     } , [])
 
     const changeStep = (type) => {
@@ -55,7 +57,6 @@ const SignUp = (props) => {
     }
 
     const selectStep = (stepInMedthod) => {
-        console.log(ProfileData)
         switch(stepInMedthod) {
             case 1 :
                 setStep(<StepOne stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
@@ -64,13 +65,14 @@ const SignUp = (props) => {
                 setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
             case 3 :
-                setStep(<StepThree detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepThree feed={setFeed} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
         }
     }
 
     return (
         <section id="content-signup-farmer">
+            {Feedback}
             <div className="title">
                 <p className="title-form">ทะเบียนเกษตรกร</p>
                 <p className="subtitle">สมัครบัญชี</p>
@@ -125,8 +127,7 @@ const StepOne = (props) => {
         if(
             props.data.get("firstname") &&
             props.data.get("lastname") &&
-            props.data.get("password") &&
-            props.data.get("oldID")
+            props.data.get("password")
             )
         {
             props.stepAp(2)
@@ -298,6 +299,11 @@ const StepThree = (props) => {
     const frameLate = 1
     let TimeOut = new Set()
 
+    const [ResultOnPopUp , setResult] = useState({
+        text : "",
+        result : 0
+    })
+
     useEffect(()=>{
         Frame.current.style.width = `${props.detailBody.current.clientWidth * 0.8}px`
         Frame.current.style.height = `${props.detailBody.current.clientWidth * 0.8}px`
@@ -308,6 +314,7 @@ const StepThree = (props) => {
         console.log(props.detailBody.current.clientWidth)
         ImageCurrent.current.style.transform = `translate(${CurrentP.x}px , ${CurrentP.y}px)`
         props.confirm.current.addEventListener("click" , confirmData)
+        props.feed(<></>)
         return () => {
             props.confirm.current.removeEventListener("click" , confirmData)
         }
@@ -457,37 +464,80 @@ const StepThree = (props) => {
     }
 
     const CropImageToData = () => {
-        const context = CropImg.current.getContext('2d')
-        const FrameIn = Frame.current
-        const Img = ImageCurrent.current
+        if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
+            const context = CropImg.current.getContext('2d')
+            const FrameIn = Frame.current
+            const Img = ImageCurrent.current
 
-        const sizeImgW = parseFloat(CropImg.current.getAttribute("w"))
-        const sizeImgH = parseFloat(CropImg.current.getAttribute("H"))
-        const Pox = parseFloat(Img.getAttribute("pox"))
-        const Poy = parseFloat(Img.getAttribute("poy"))
+            const sizeImgW = parseFloat(CropImg.current.getAttribute("w"))
+            const sizeImgH = parseFloat(CropImg.current.getAttribute("H"))
+            const Pox = parseFloat(Img.getAttribute("pox"))
+            const Poy = parseFloat(Img.getAttribute("poy"))
 
-        const scaleW = sizeImgW / Img.width
-        const scaleH = sizeImgH / Img.height
+            const scaleW = sizeImgW / Img.width
+            const scaleH = sizeImgH / Img.height
 
-        context.drawImage(
-            Img,
-            ((FrameIn.offsetLeft - Img.offsetLeft) * scaleW) - (Pox * scaleW),
-            ((FrameIn.offsetTop - Img.offsetTop) * scaleH) - (Poy * scaleH),
-            sizeImgW,
-            sizeImgH,
-            0,
-            0,
-            sizeImgW,
-            sizeImgH,
-        )
+            context.drawImage(
+                Img,
+                ((FrameIn.offsetLeft - Img.offsetLeft) * scaleW) - (Pox * scaleW),
+                ((FrameIn.offsetTop - Img.offsetTop) * scaleH) - (Poy * scaleH),
+                sizeImgW,
+                sizeImgH,
+                0,
+                0,
+                sizeImgW,
+                sizeImgH,
+            )
 
-        return CropImg.current.toDataURL('image/jpeg')
+            return CropImg.current.toDataURL('image/jpeg')
+        }
     }
 
     const confirmData = () => {
-        let CropImage = CropImageToData()
-        props.data.set("Image" , CropImage)
-        updateData()
+        if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
+            let CropImage = CropImageToData()
+            props.data.set("Image" , CropImage)
+            updateData()
+
+            let data = {
+                "firstname" : props.profile.get("firstname"),
+                "lastname" : props.profile.get("lastname"),
+                "password" : props.profile.get("password"),
+                "oldID" : props.profile.get("oldID"),                
+                "lat" : props.profile.get("latitude"),                
+                "lng" : props.profile.get("longitude"),                
+                "station" : props.profile.get("station"),                
+                "Img" : props.data.get("Image"),                
+            }
+            if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img) {
+                props.feed(<PopupAlert result={ResultOnPopUp}/>)
+                clientMo.post("/api/farmer/signup" , data).then((result)=>{
+                    console.log(result)
+                    if(result === "insert complete"){
+                        setResult({
+                            text : "" ,
+                            result : 1
+                        })
+                    } else if (result === "search") {
+                        setResult({
+                            text : "บัญชีรอการตรวจสอบ" ,
+                            result : 2
+                        })
+                        console.log(result)
+                    } else if (result === "error") {
+                        setResult({
+                            text : "SERVER ERROR" ,
+                            result : 2
+                        })
+                    } else {
+                        setResult({
+                            text : "ข้อผิดพลาดการดึงข้อมูล" ,
+                            result : 2
+                        })
+                    }
+                })
+            }
+        }
     } 
 
     const updateData = () => {

@@ -17,7 +17,7 @@ const RichMenu = {
         "height": 843
       },
       "selected": true,
-      "name": "Login",
+      "name": "signup",
       "chatBarText": "เข้าสู่ระบบ",
       "areas": [
         {
@@ -48,7 +48,7 @@ const RichMenu = {
     }
     
     richmenu.createRichMenu(jsonLogin).then((RichID)=>{
-      let pathImage = "API/assets/login.png"
+      let pathImage = "API/assets/menu-first.png"
       richmenu.setRichMenuImage(RichID , fs.readFileSync(pathImage) , "image/png").then(()=>{
         richmenu.setDefaultRichMenu(RichID).then(()=>console.log(`Rich menu ID : ${RichID} is Run`))
       })
@@ -73,11 +73,17 @@ const RichMenu = {
 
   DeleteFriend : (userId) => {
     richmenu.linkRichMenuToUser(userId)
+  } ,
+
+  GetRichMenu : () => {
+    richmenu.getRichMenuList().then((list)=>{
+      console.log(list)
+    })
   }
 
 }
 
-RichMenu.createRichLogin()
+RichMenu.DeleteRichMenu.All()
 
 // const createRichLogin = () => {
   // const jsonLogin = 

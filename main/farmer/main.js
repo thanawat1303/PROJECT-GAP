@@ -23,7 +23,7 @@ const MainFarmer = (props) => {
                         if(profile.userId) {
                             // clientMo.post("/api/farmer/check" , {profile:profile})
                             clientMo.post("/api/farmer/sign" , {uid:profile.userId}).then(()=>{
-                                setBody(<SignUp profile={profile}/>)
+                                setBody(<SignUp profile={profile} liff={liff}/>)
                             })
                         }
                     })

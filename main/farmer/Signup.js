@@ -5,11 +5,11 @@ import './assets/Signup.scss'
 import { clientMo } from "../../src/assets/js/moduleClient";
 import { PopupAlert } from "./PopupAlert";
 
-const SignUp = (props) => {
+const SignUp = ({liff}) => {
     const [step , setStep] = useState(1)
     const [stepOn , setstepOn] = useState(1)
     const [stepApprov , setApprov] = useState(1)
-    const [Feedback , setFeed] = useState(<></>)
+    const [PreviewData , setPreviewData] = useState(<></>)
 
     const [ProfileData , setProfile] = useState(new Map([]))
     const DataProfile = new Map()
@@ -65,14 +65,14 @@ const SignUp = (props) => {
                 setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
             case 3 :
-                setStep(<StepThree feed={setFeed} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepThree liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
         }
     }
 
     return (
         <section id="content-signup-farmer">
-            {Feedback}
+            {PreviewData}
             <div className="title">
                 <p className="title-form">ทะเบียนเกษตรกร</p>
                 <p className="subtitle">สมัครบัญชี</p>
@@ -299,11 +299,6 @@ const StepThree = (props) => {
     const frameLate = 1
     let TimeOut = new Set()
 
-    const [ResultOnPopUp , setResult] = useState({
-        text : "",
-        result : 0
-    })
-
     useEffect(()=>{
         Frame.current.style.width = `${props.detailBody.current.clientWidth * 0.8}px`
         Frame.current.style.height = `${props.detailBody.current.clientWidth * 0.8}px`
@@ -314,7 +309,7 @@ const StepThree = (props) => {
         console.log(props.detailBody.current.clientWidth)
         ImageCurrent.current.style.transform = `translate(${CurrentP.x}px , ${CurrentP.y}px)`
         props.confirm.current.addEventListener("click" , confirmData)
-        props.feed(<></>)
+        props.previewData(<></>)
         return () => {
             props.confirm.current.removeEventListener("click" , confirmData)
         }
@@ -510,32 +505,7 @@ const StepThree = (props) => {
                 "Img" : props.data.get("Image"),                
             }
             if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img) {
-                props.feed(<PopupAlert result={ResultOnPopUp}/>)
-                clientMo.post("/api/farmer/signup" , data).then((result)=>{
-                    console.log(result)
-                    if(result === "insert complete"){
-                        setResult({
-                            text : "" ,
-                            result : 1
-                        })
-                    } else if (result === "search") {
-                        setResult({
-                            text : "บัญชีรอการตรวจสอบ" ,
-                            result : 2
-                        })
-                        console.log(result)
-                    } else if (result === "error") {
-                        setResult({
-                            text : "SERVER ERROR" ,
-                            result : 2
-                        })
-                    } else {
-                        setResult({
-                            text : "ข้อผิดพลาดการดึงข้อมูล" ,
-                            result : 2
-                        })
-                    }
-                })
+                props.previewData(<PopUpPreview data={data} previewData={props.previewData}/>)
             }
         }
     } 
@@ -563,6 +533,93 @@ const StepThree = (props) => {
             <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
             {/* <span ref={ControlImage}></span> */}
         </div>
+    )
+}
+
+const PopUpPreview = (props) => {
+    const Control = useRef()
+    const Content = useRef()
+    const [Feedback , setFeed] = useState(<></>)
+
+    const [TextData , setText] = useState("")
+    const [Result , setResult] = useState(0)
+    const [OpenPop , setOpenPop] = useState(false)
+
+    let loadNum = 0
+
+    const ConfirmSave = () => {
+        setOpenPop(true)
+        clientMo.post("/api/farmer/signup" , props.data).then((result)=>{
+            if(result === "insert complete"){
+                setText("")
+            } else if (result === "search") {
+                setText("บัญชีรอการตรวจสอบ")
+                setResult(2)
+            } else if (result === "error") {
+                setText("SERVER ERROR")
+            } else {
+                setText("ข้อผิดพลาดการดึงข้อมูล")
+            }
+        })
+    }
+
+    const LoadContent = () => {
+        loadNum++
+        if(loadNum == 2) {
+            Content.current.style.opacity = "1"
+            Content.current.style.visibility = "visible"
+            loadNum = 0
+        }
+    }
+
+    const LoadBackground = () => {
+        Control.current.style.opacity = "1"
+        Control.current.style.visibility = "visible"
+    }
+
+    return (
+        <section onLoad={LoadBackground} className="popUpPreview" ref={Control}>
+            {<PopupAlert liff={props.liff} textData={TextData} result={Result} open={OpenPop}/>}
+            <div onLoad={LoadContent} className="content" ref={Content}>
+                <div className="head">เช็คข้อมูล</div>
+                <div className="body">
+                    <div className="detail">
+                        <div className="firstname">
+                            <div>ชื่อ</div>
+                            <input readOnly value={props.data['firstname']}></input>
+                        </div>
+                        <div className="lastname">
+                            <div>นามสกุล</div>
+                            <input readOnly value={props.data['lastname']}></input>
+                        </div>
+                        <div className="password">
+                            <div>รหัสผ่าน</div>
+                            <input readOnly value={props.data['password']}></input>
+                        </div>
+                        <div className="oldID">
+                            <div>รหัสประจำตัว</div>
+                            <input readOnly value={props.data['oldID'] ?? "ไม่ระบุ"}></input>
+                        </div>
+                        <div className="station">
+                            <div>ศูนย์ที่อยู่ในการดูแล</div>
+                            <input readOnly value={props.data['station']}></input>
+                        </div>
+                    </div>
+                    <div className="detail-other">
+                        <div className="google-map">
+                            <MapsJSX w={"100%"} lat={props.data['lat']} lng={props.data['lng']}/>
+                        </div>
+                        <div className="frame-image">
+                            <img width={"100%"} src={props.data['Img']}></img>
+                        </div>
+                    </div>
+                </div>
+                <div className="action">
+                    <div onClick={()=>props.previewData(<></>)}>ยกเลิก</div>
+                    <div onClick={ConfirmSave}>ยืนยัน</div>
+                </div>
+            </div>
+        </section>
     )
 }
 

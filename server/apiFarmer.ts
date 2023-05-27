@@ -1,8 +1,30 @@
 require('dotenv').config().parsed
 export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any) {
     app.post('/api/farmer/sign' , (req:any , res:any)=>{
-        req.session.uid = req.body['uid']
-        res.send("")
+        if(req.body['uid'] && req.hostname == HOST_CHECK) {
+            req.session.uid = req.body['uid']
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)` , 
+                    [req.body['uid']] ,
+                    (err:any , result:any)=>{
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("query");
+                            return 0
+                        }
+                        con.end()
+                        if(result[0]) res.send("search")
+                        else res.send("no")
+                })
+            })
+        } else res.send("error auth")
     })
 
     app.post('/api/farmer/listStation' , (req:any , res:any)=>{
@@ -77,14 +99,176 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 return 0;
                             }
                             console.log(result)
-                            res.send("insert complete")
                             con.end()
+                            res.send("insert complete")
                         })
                     } else {
+                        con.end()
                         res.send("search")
                     }
                 })
             })
         } else res.send("")
     })
+
+    app.post('/api/farmer/selectfarmhouse' , (req:any , res:any)=>{
+        if(req.session.uid == req.body['uid'] && req.hostname == HOST_CHECK) {
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                con.query(`
+                            SELECT id_farmHouse FROM housefarm , 
+                                (
+                                    SELECT uid_line FROM acc_farmer 
+                                    WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)
+                                    GROUP BY uid_line
+                                ) as farmer 
+                            WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
+                        ` , [
+                                req.body['uid'] , req.body['id_farmhouse']
+                            ] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select house");
+                                return 0;
+                            }
+
+                            con.end()
+                            if(result[0]) res.send("access")
+                            else res.send("not")
+                        })
+                // auth(req.body['uid'] , con , dbpacket , res).then((result)=>{
+                //     if(req.body['uid'] == result) {
+                //         con.query(`SELECT id_farmHouse FROM housefarm WHERE `)
+                //     }
+                // })
+            })
+        } else res.send("error auth")
+    })
+
+    app.post('/api/farmer/formplant' , (req:any , res:any)=>{
+        if(req.session.uid == req.body['uid'] && req.hostname == HOST_CHECK) {
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                const where = (req.body['id_formplant']) ? 
+                                `&& formplant.id_plant = "${req.body['id_formplant']}"` :
+                                ""
+
+                const select = (req.body['id_formplant']) ? 
+                                    `formplant.*` :
+                                    `formplant.id_plant , formplant.type_plant , formplant.submit_plant , 
+                                        formplant.date_plant , formplant.generation , formplant.qty_plant`
+                con.query(`
+                            SELECT ${select}
+                            FROM formplant , 
+                                (
+                                    SELECT id_farmHouse FROM housefarm , 
+                                        (
+                                            SELECT uid_line FROM acc_farmer 
+                                            WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)
+                                            GROUP BY uid_line
+                                        ) as farmer 
+                                    WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
+                                ) as houseFarm
+                            WHERE formplant.id_farmHouse = houseFarm.id_farmHouse ${where}
+                        ` , 
+                        [
+                            req.body['uid'] , req.body['id_farmhouse']
+                        ] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select listform");
+                                return 0;
+                            }
+
+                            con.end()
+                            res.send(result)
+                        })
+            })
+        } else res.send("error auth")
+    })
+
+
+    app.post('/api/farmer/factor' , (req:any , res:any)=>{
+        if(req.session.uid && req.hostname == HOST_CHECK) {
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                const where = (req.body['id_factor']) ? 
+                                `&& ${req.body['type']}.id = "${req.body['id_factor']}"` :
+                                ""
+
+                con.query(`
+                            SELECT ${req.body['type']}.* 
+                            FROM ${req.body['type']} , 
+                                (
+                                    SELECT formplant.id_plant
+                                    FROM formplant , 
+                                        (
+                                            SELECT id_farmHouse FROM housefarm , 
+                                                (
+                                                    SELECT uid_line FROM acc_farmer 
+                                                    WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)
+                                                    GROUP BY uid_line
+                                                ) as farmer 
+                                            WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
+                                        ) as houseFarm
+                                    WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id_plant = ?
+                                ) as formPlant
+                            WHERE ${req.body['type']}.id_plant = formPlant.id_plant ${where}
+                            ORDER BY ${req.body['order']} ASC
+                        ` , 
+                        [
+                            req.body['uid'] , 
+                            req.body['id_farmhouse'] , 
+                            req.body['id_plant']
+                        ] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select listform");
+                                return 0;
+                            }
+
+                            con.end()
+                            res.send(result)
+                        })
+            })
+        } else res.send("error auth")
+    })
+
 }
+
+// const auth = (uid : any , con : any , dbpacket : any , res : any) => {
+//     return new Promise((resole : any , reject : any)=>
+//         con.query(`SELECT uid_line FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)` , 
+//             [uid] , (err : any, result : any )=>{
+//                 if (err) {
+//                     dbpacket.dbErrorReturn(con, err, res);
+//                     console.log("select account");
+//                     return 0;
+//                 }
+
+//                 if(result[0]) resole(result['uid_line'])
+//                 else resole("")
+//             })
+//     )
+// }

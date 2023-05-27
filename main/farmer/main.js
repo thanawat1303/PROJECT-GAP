@@ -22,8 +22,12 @@ const MainFarmer = (props) => {
                         // สมัครเข้าต้องค้นหาบัญชีโดยไม่ตรง status ยกเลิกบัญชี
                         if(profile.userId) {
                             // clientMo.post("/api/farmer/check" , {profile:profile})
-                            clientMo.post("/api/farmer/sign" , {uid:profile.userId}).then(()=>{
-                                setBody(<SignUp profile={profile} liff={liff}/>)
+                            clientMo.post("/api/farmer/sign" , {uid:profile.userId}).then((result)=>{
+                                if(result === "no") setBody(<SignUp profile={profile} liff={liff}/>)
+                                else if (result === "search") {
+                                    setBody(<>บัญชีลงทะเบียนแล้ว</>)
+                                }
+                                else if (result === "error auth") setBody(<>auth error</>)
                             })
                         }
                     })
@@ -31,8 +35,10 @@ const MainFarmer = (props) => {
                     liff.login()
                 }
             } else {
-                clientMo.post("/api/farmer/sign" , {uid:"TEST"}).then(()=>{
-                    setBody(<SignUp />)
+                clientMo.post("/api/farmer/sign" , {uid:"TEST"}).then((result)=>{
+                    if(result === "no") setBody(<SignUp />)
+                    else if (result === "search") setBody(<>บัญชีลงทะเบียนแล้ว</>)
+                    else if (result === "error auth") setBody(<>auth error</>)
                 })
                 // setBody(<NonLine />)
             }

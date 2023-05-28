@@ -1,7 +1,9 @@
 require('dotenv').config().parsed
-export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any) {
+import line from "./configLine";
+export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any , LINE = line) {
+
     app.post('/api/farmer/sign' , (req:any , res:any)=>{
-        if(req.body['uid'] && req.hostname == HOST_CHECK) {
+        if(req.body['uid'] && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             req.session.uid = req.body['uid']
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
@@ -11,7 +13,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                     return 0;
                 }
 
-                con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)` , 
+                con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)` , 
                     [req.body['uid']] ,
                     (err:any , result:any)=>{
                         if (err) {
@@ -28,7 +30,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
     })
 
     app.post('/api/farmer/listStation' , (req:any , res:any)=>{
-        if(req.session.uid && req.hostname == HOST_CHECK) {
+        if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
                 if (err) {
@@ -52,7 +54,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
     })
 
     app.post('/api/farmer/signup' , (req : any , res : any)=>{
-        if(req.session.uid && req.hostname == HOST_CHECK) {
+        if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
                 if (err) {
@@ -98,9 +100,12 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 console.log("insert");
                                 return 0;
                             }
-                            console.log(result)
-                            con.end()
-                            res.send("insert complete")
+                            if(result.affectedRows > 0) {
+                                if(result.affectedRows > 1) console.log(result)
+                                con.end()
+                                LINE.linkRichMenuToUser(req.session.uid , "")
+                                res.send("insert complete")
+                            }
                         })
                     } else {
                         con.end()
@@ -112,7 +117,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
     })
 
     app.post('/api/farmer/selectfarmhouse' , (req:any , res:any)=>{
-        if(req.session.uid == req.body['uid'] && req.hostname == HOST_CHECK) {
+        if(req.session.uid == req.body['uid'] && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
                 if (err) {
@@ -125,7 +130,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             SELECT id_farmHouse FROM housefarm , 
                                 (
                                     SELECT uid_line FROM acc_farmer 
-                                    WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)
+                                    WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
                                     GROUP BY uid_line
                                 ) as farmer 
                             WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
@@ -152,8 +157,68 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
+    app.post('/api/farmer/insertformplant' , (req:any , res:any)=>{
+        if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                con.query(`
+                            SELECT id_farmHouse FROM housefarm , 
+                                (
+                                    SELECT uid_line FROM acc_farmer 
+                                    WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
+                                    GROUP BY uid_line
+                                ) as farmer 
+                            WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
+                        ` , [
+                                req.body['uid'] , req.body['id_farmhouse']
+                            ] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select house");
+                                return 0;
+                            }
+
+                            if(result[0]) {
+                                con.query(`INSERT INTO formplant 
+                                            ( 
+                                                id_farmHouse , type_plant , generation_plant , qty_plant , 
+                                                space_plant , date_harvest , system_plant , water_plant ,
+                                                water_flow_plant , history_plant , submit_plant , id_farmer
+                                            ) VALUES (
+                                                ? , ? , ? , ? , 
+                                                ? , ? , ? , ? ,
+                                                ? , ? , ? , ""
+                                            );
+                                            ` , 
+                                            [
+                                                req.body['id_farmhouse'] , req.body['type_plant'] , req.body['generation'] , req.body['qty'] ,
+                                                req.body['space'] , req.body['date_hervest'] , req.body['system'] , req.body['water'] ,
+                                                req.body['water_flow'] , req.body['history'] , 0 
+                                            ] ,
+                                            (err : any , insert : any)=>{
+                                                console.log(insert)
+                                                con.end()
+                                                res.send("insert")
+                                            })
+                            }
+                            else {
+                                con.end()
+                                res.send("not")
+                            }
+                        })
+            })
+        } else res.send("error auth")
+    })
+
     app.post('/api/farmer/formplant' , (req:any , res:any)=>{
-        if(req.session.uid == req.body['uid'] && req.hostname == HOST_CHECK) {
+        if(req.session.uid == req.body['uid'] && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
                 if (err) {
@@ -163,7 +228,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 }
 
                 const where = (req.body['id_formplant']) ? 
-                                `&& formplant.id_plant = "${req.body['id_formplant']}"` :
+                                `and formplant.id_plant = "${req.body['id_formplant']}"` :
                                 ""
 
                 const select = (req.body['id_formplant']) ? 
@@ -177,7 +242,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                     SELECT id_farmHouse FROM housefarm , 
                                         (
                                             SELECT uid_line FROM acc_farmer 
-                                            WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)
+                                            WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
                                             GROUP BY uid_line
                                         ) as farmer 
                                     WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
@@ -193,7 +258,6 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 console.log("select listform");
                                 return 0;
                             }
-
                             con.end()
                             res.send(result)
                         })
@@ -201,9 +265,84 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
+    app.post('/api/farmer/editformplant' , (req:any , res:any)=>{
+        if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                con.query(`
+                            SELECT formplant.id_plant
+                            FROM formplant , 
+                                (
+                                    SELECT id_farmHouse FROM housefarm , 
+                                        (
+                                            SELECT uid_line FROM acc_farmer 
+                                            WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
+                                            GROUP BY uid_line
+                                        ) as farmer 
+                                    WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
+                                ) as houseFarm
+                            WHERE formplant.id_farmHouse = houseFarm.id_farmHouse and formplant.id_plant = ?
+                        ` , 
+                        [
+                            req.body['uid'] , req.body['id_farmhouse'] , req.body['id_formplant']
+                        ] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select listform");
+                                return 0;
+                            }
+
+                            if(result[0]) {
+                                // req.body['old_content'] คือ ค่าที่ถูกแก้ไข
+                                con.query(`
+                                    INSERT INTO editformplant 
+                                        (id_form_edit , subject_form , content_edit , because_edit , 
+                                            id_doctor_scan , note_edit)
+                                        VALUES (? , ? , ? , ? ,  , "" , "")
+                                        `[
+                                            req.body['id_formplant'] , 
+                                            req.body['subject'] , 
+                                            req.body['old_content'] ,
+                                            req.body['because']
+                                        ] , (err : any , correct : any)=>{
+                                            if (err) {
+                                                dbpacket.dbErrorReturn(con, err, res);
+                                                console.log("insert edit");
+                                                return 0;
+                                            }
+
+                                            con.query(
+                                                `
+                                                    UPDATE formplant SET ? = ? 
+                                                    WHERE id_plant = ? 
+                                                ` , [
+                                                        req.body['subject'],
+                                                        req.body['new_content'],
+                                                        req.body['id_formplant']
+                                                    ] , (err : any , complete : any)=>{
+                                                        con.end()
+                                                        if(complete.changeRow == 1) res.send("133")
+                                                        else res.send("130")
+                                                    })
+                                        })
+                            } else {
+                                con.end()
+                                res.send("not found")
+                            }
+                        })
+            })
+        } else res.send("error auth")
+    })
 
     app.post('/api/farmer/factor' , (req:any , res:any)=>{
-        if(req.session.uid && req.hostname == HOST_CHECK) {
+        if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
                 if (err) {
@@ -213,7 +352,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 }
 
                 const where = (req.body['id_factor']) ? 
-                                `&& ${req.body['type']}.id = "${req.body['id_factor']}"` :
+                                `and ${req.body['type']}.id = "${req.body['id_factor']}"` :
                                 ""
 
                 con.query(`
@@ -226,7 +365,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                             SELECT id_farmHouse FROM housefarm , 
                                                 (
                                                     SELECT uid_line FROM acc_farmer 
-                                                    WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)
+                                                    WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
                                                     GROUP BY uid_line
                                                 ) as farmer 
                                             WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
@@ -255,11 +394,13 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
+
+
 }
 
 // const auth = (uid : any , con : any , dbpacket : any , res : any) => {
 //     return new Promise((resole : any , reject : any)=>
-//         con.query(`SELECT uid_line FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)` , 
+//         con.query(`SELECT uid_line FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)` , 
 //             [uid] , (err : any, result : any )=>{
 //                 if (err) {
 //                     dbpacket.dbErrorReturn(con, err, res);

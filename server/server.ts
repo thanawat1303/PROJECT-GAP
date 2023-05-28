@@ -40,7 +40,7 @@ if(!username && !password) {
                     con.end()
 
                     const app = appConfig(username , password)
-                    app.listen(process.env.PORT , "0.0.0.0" , function () {
+                    app.listen(parseInt(process.env.PORT ?? "80") , "0.0.0.0" , undefined , function () {
                         console.log('Start on port '+process.env.PORT+'!\n');
                     });
                 };
@@ -49,7 +49,7 @@ if(!username && !password) {
     });
 } else {
     const app = appConfig(username , password)
-    app.listen(process.env.PORT , "0.0.0.0" , function () {
+    app.listen(parseInt(process.env.PORT ?? "80") , "0.0.0.0" , undefined , function () {
         console.log('Start on port '+process.env.PORT+'!\n');
     });
 }

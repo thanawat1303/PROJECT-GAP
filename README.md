@@ -16,6 +16,8 @@
       ```
       npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session helmet mysql uuid react react-dom resize-observer-polyfill sass-loader sass css-loader style-loader @pmmmwh/react-refresh-webpack-plugin react-refresh webpack-hot-middleware webpack webpack-cli webpack-dev-server html-webpack-plugin babel-loader @babel/preset-env @babel/core @babel/plugin-transform-runtime @babel/preset-react babel-eslint @babel/runtime pm2
 
+      npm install multer
+
       npm i @line/bot-sdk #api line
       npm i @line/liff
 
@@ -27,9 +29,10 @@
 
       npm i typescript
 
-      npm i --save-dev @types/mysql @types/react @types/webpack-hot-middleware @types/webpack
-
       npm install exifr
+
+      npm i --save-dev @types/mysql @types/react @types/webpack-hot-middleware @types/webpack @types/cookie-parser @types/express-session @types/multer
+
       ```
 
 ### Build Project

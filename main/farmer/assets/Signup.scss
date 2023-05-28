@@ -39,6 +39,24 @@
             }
         }
     }
+    .title {
+        .title-form {
+            text-align: center;
+            font-family: TH-font;
+            font-size: 10vw;
+            font-weight: 900;
+            padding-top: 7px;
+            background-color: rgb(115, 213, 115);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-family: TH-font;
+            font-size: 9vw;
+            font-weight: 900;
+            padding-top: 10px;
+        }
+    }
     .form-sigup {
         display: flex;
         justify-content: center;
@@ -51,15 +69,55 @@
             .step-one {
                 display: flex;
                 flex-direction: column;
+                padding: 0px 5px;
+                .head-step {
+                    text-align: center;
+                    font-size: 9vw;
+                    font-family: TH-font;
+                    padding: 5px 0px;
+                    padding-top: 9px;
+                    background-color: green;
+                    border-radius: 25px;
+                    color: white;
+                }
                 .detail-farmer {
+                    margin-top: 15px;
+                    padding: 0px 10px;
                     label {
                         display: flex;
+                        justify-content: center;
+                        align-items: center;
                         flex-direction: column;
+                        margin-top: 8px;
+                        span {
+                            font-size: 8vw;
+                            font-family: TH-font;
+                            width: 100%;
+                            text-align: start;
+
+                            .dot {
+                                font-family: TH-font;
+                                color: red;
+                                font-weight: 800;
+                                margin-left: 10px;
+                            }
+                        }
+                        input {
+                            border-radius: 5px;
+                            border: 0px;
+                            background-color: rgb(179, 229, 179);
+                            font-size: 6vw;
+                            padding: 5px 8px;
+                            width: 90%;
+                        }
                     }
                 }
             }
 
             .step-two {
+                display: flex;
+                flex-direction: column;
+                padding: 0px 5px;
                 .detail-farmer {
                     .location {
                         .map-genarate {
@@ -140,7 +198,7 @@
         flex-direction: row;
         padding: 20px 0px;
         .back , .next , .confirm {
-            width: 45px;
+            width: 15vw;
             fill: black !important;
         }
 
@@ -164,8 +222,8 @@
             align-items: center;
 
             span {
-                width: 15px;
-                height: 15px;
+                width: 7vw;
+                height: 7vw;
                 border-radius: 50%;
                 background-color: greenyellow;
                 transition: 0.5s background-color;

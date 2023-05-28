@@ -5,6 +5,8 @@ import {useLiff} from "../../src/assets/js/module";
 import {NonLine} from "./nonLine";
 import {SignUp} from "./Signup";
 
+import MenuMain from "./menuMain";
+
 // import Login from "./Login";
 // import Doctor from "./Doctor";
 
@@ -21,11 +23,15 @@ const MainFarmer = (props) => {
                     liff.getProfile().then((profile)=>{
                         // สมัครเข้าต้องค้นหาบัญชีโดยไม่ตรง status ยกเลิกบัญชี
                         if(profile.userId) {
-                            // clientMo.post("/api/farmer/check" , {profile:profile})
                             clientMo.post("/api/farmer/sign" , {uid:profile.userId}).then((result)=>{
                                 if(result === "no") setBody(<SignUp profile={profile} liff={liff}/>)
                                 else if (result === "search") {
-                                    setBody(<>บัญชีลงทะเบียนแล้ว</>)
+                                    const auth = window.location.href.split("?")[1]
+                                    if(auth) {
+                                        const path = new Map([...auth.split("&").map((val)=>val.split("="))])
+                                        setBody(<MenuMain path={path} liff={liff}/>)
+                                    }
+                                    else setBody(<>บัญชีลงทะเบียนแล้ว</>)
                                 }
                                 else if (result === "error auth") setBody(<>auth error</>)
                             })
@@ -35,9 +41,16 @@ const MainFarmer = (props) => {
                     liff.login()
                 }
             } else {
-                clientMo.post("/api/farmer/sign" , {uid:"TEST"}).then((result)=>{
+                clientMo.post("/api/farmer/sign" , {uid:"1111"}).then((result)=>{
                     if(result === "no") setBody(<SignUp />)
-                    else if (result === "search") setBody(<>บัญชีลงทะเบียนแล้ว</>)
+                    else if (result === "search") {
+                        const auth = window.location.href.split("?")[1]
+                        if(auth) {
+                            const path = new Map([...auth.split("&").map((val)=>val.split("="))])
+                            setBody(<MenuMain path={path}/>)
+                        }
+                        else setBody(<>บัญชีลงทะเบียนแล้ว</>)
+                    }
                     else if (result === "error auth") setBody(<>auth error</>)
                 })
                 // setBody(<NonLine />)
@@ -54,35 +67,3 @@ const MainFarmer = (props) => {
 }
 
 export {MainFarmer}
-// export default class MainFaemer extends Component {
-//     constructor(){
-//         super();
-//         this.state={
-//             body : <div></div>
-//         }
-//     }
-
-//     componentDidMount() {
-
-//         clientMo.post('/api/doctor/check').then((context)=>{
-//             console.log(context)
-//             // if(context) 
-//             //     this.setState({
-//             //         body : <Doctor main={this} socket={this.props.socket}/>
-//             //     })
-//             // else 
-//             //     this.setState({
-//             //         body : <Login socket={this.props.socket} main={this}/>
-//             //     }) 
-            
-//             clientMo.addAction('#loading' , 'hide' , 1000)
-//         })
-        
-//     }
-
-//     render() {
-//         return (
-//             this.state.body
-//         )
-//     }
-// }

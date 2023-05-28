@@ -1,8 +1,8 @@
 import React , { useEffect , useRef, useState } from "react";
-import { Camera, MapsJSX } from "../../src/assets/js/module";
+import { Camera, MapsJSX, ResizeImg } from "../../src/assets/js/module";
 
 import './assets/Signup.scss'
-import { clientMo } from "../../src/assets/js/moduleClient";
+import {clientMo}  from "../../src/assets/js/moduleClient";
 import { PopupAlert } from "./PopupAlert";
 
 const SignUp = ({liff}) => {
@@ -21,6 +21,7 @@ const SignUp = ({liff}) => {
 
     useEffect(()=>{
         selectStep(stepApprov)
+        document.title = "ลงทะเบียนเกษตรกร"
     } , [])
 
     const changeStep = (type) => {
@@ -74,8 +75,8 @@ const SignUp = ({liff}) => {
         <section id="content-signup-farmer">
             {PreviewData}
             <div className="title">
-                <p className="title-form">ทะเบียนเกษตรกร</p>
-                <p className="subtitle">สมัครบัญชี</p>
+                <div className="title-form">ทะเบียนเกษตรกร</div>
+                <div className="subtitle">สมัครบัญชี</div>
             </div>
             <div className="form-sigup">
                 <div className="detail-profile" ref={DetailProfile}>
@@ -143,20 +144,28 @@ const StepOne = (props) => {
             </div>
             <div className="detail-farmer">
                 <label className="fullname">
-                    <span>ชื่อ</span>
-                    <input defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
+                    <span>
+                        <span>ชื่อ</span><span className="dot">*</span>
+                    </span>
+                    <input autoComplete="false" defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
                 </label>
                 <label className="fullname">
-                    <span>นามสกุล</span>
-                    <input defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
+                    <span>
+                        <span>นามสกุล</span><span className="dot">*</span>
+                    </span>
+                    <input autoComplete="false" defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
                 </label>
                 <label className="password">
-                    <span>รหัสผ่าน</span>
-                    <input defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password} data="password"></input> 
+                    <span>
+                        <span>รหัสผ่าน</span><span className="dot">*</span>
+                    </span>
+                    <input autoComplete="false" defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password} data="password"></input> 
                 </label>
                 <label className="select-remember">
-                    <span>รหัสประจำตัว * หากมีหรือจำได้</span>
-                    <input defaultValue={props.profile.get("oldID")} onChange={checkData} type="text" ref={OldID} data="oldID"></input>
+                    <span>
+                        <span>รหัสประจำตัว</span><span className="dot">* หากมีหรือจำได้</span>
+                    </span>
+                    <input autoComplete="false" defaultValue={props.profile.get("oldID")} onChange={checkData} type="text" ref={OldID} data="oldID"></input>
                 </label>
             </div>
         </section>
@@ -239,7 +248,7 @@ const StepTwo = (props) => {
         <section className="step-two">
             <div className="detail-farmer">
                 <label className="location">
-                    ตำแหน่งแปลงที่ทำการเกษตร
+                    <div className="head-map">ตำแหน่งแปลงที่ทำการเกษตร</div>
                     <div className="warnning">* เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่ทำการเกษตรกรของท่าน</div>
                     <div className="map-genarate">
                         <div ref={MapEle} className="map">
@@ -322,25 +331,37 @@ const StepThree = (props) => {
         props.data.delete("xImgState")
         props.data.delete("yImgState")
         if(file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                if(
-                    // new Date().getTime() - file.lastModified < 1000
-                    true
-                    ) {
-                    setPreview(e.target.result)
-
-                    props.data.set("dataImgState" , e.target.result)
+            // const reader = new FileReader()
+            // reader.onload = (e) => {
+            //     if(new Date().getTime() - file.lastModified < 1000) {
+            //         setPreview(e.target.result)
+            //         props.data.set("dataImgState" , e.target.result)
+            //         props.data.set("xImgState" , 0)
+            //         props.data.set("yImgState" , 0)
+            //         updateData()
+            //     } 
+            //     else {
+            //         setLoading(true)
+            //         alert('โปรดใช้รูปถ่ายปัจจุบัน')
+            //         setPreview("/icons8-camera.svg")
+            //     }
+            // }
+            // reader.readAsDataURL(file)
+            if(new Date().getTime() - file.lastModified < 1000
+                ) {
+                ResizeImg(file , 300).then((imageResult)=>{
+                    setPreview(imageResult)
+                    props.data.set("dataImgState" , imageResult)
                     props.data.set("xImgState" , 0)
                     props.data.set("yImgState" , 0)
                     updateData()
-                } 
-                else {
-                    alert('โปรดใช้รูปถ่ายปัจจุบัน')
-                    setPreview("/icons8-camera.svg")
-                }
+                })
+            } 
+            else {
+                setLoading(true)
+                alert('โปรดใช้รูปถ่ายปัจจุบัน')
+                setPreview("/icons8-camera.svg")
             }
-            reader.readAsDataURL(file)
         } else {
             setPreview("/icons8-camera.svg")
         }
@@ -472,6 +493,7 @@ const StepThree = (props) => {
             const scaleW = sizeImgW / Img.width
             const scaleH = sizeImgH / Img.height
 
+            console.log(sizeImgW , sizeImgH)
             context.drawImage(
                 Img,
                 ((FrameIn.offsetLeft - Img.offsetLeft) * scaleW) - (Pox * scaleW),
@@ -505,7 +527,7 @@ const StepThree = (props) => {
                 "Img" : props.data.get("Image"),                
             }
             if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img) {
-                props.previewData(<PopUpPreview data={data} previewData={props.previewData}/>)
+                props.previewData(<PopUpPreview data={data} previewData={props.previewData} liff={props.liff}/>)
             }
         }
     } 
@@ -549,16 +571,19 @@ const PopUpPreview = (props) => {
 
     const ConfirmSave = () => {
         setOpenPop(true)
-        clientMo.post("/api/farmer/signup" , props.data).then((result)=>{
+        clientMo.postForm("/api/farmer/signup" , props.data).then((result)=>{
             if(result === "insert complete"){
-                setText("")
+                setText("เพิ่มสำเร็จ")
+                setResult(1)
             } else if (result === "search") {
                 setText("บัญชีรอการตรวจสอบ")
                 setResult(2)
             } else if (result === "error") {
                 setText("SERVER ERROR")
+                setResult(3)
             } else {
                 setText("ข้อผิดพลาดการดึงข้อมูล")
+                setResult(4)
             }
         })
     }

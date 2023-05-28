@@ -9,8 +9,8 @@ const PopupAlert = ({textData , result , open , liff}) => {
     // } , [])
 
     const confirm = () => {
-        if(result == 1) {
-            props.liff.closeWindow()
+        if(result == 1 || result == 2) {
+            liff.closeWindow()
         } else {
             alert("error")
         }

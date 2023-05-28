@@ -83,7 +83,7 @@ const RichMenu = {
 
 }
 
-RichMenu.DeleteRichMenu.All()
+RichMenu.GetRichMenu()
 
 // const createRichLogin = () => {
   // const jsonLogin = 

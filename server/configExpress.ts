@@ -8,25 +8,23 @@ import apifunc from './apifunc';
 import LINE from "./configLine";
 import WebSocket from './webSocket';
 
+import express from 'express';
+import helmat from 'helmet';
+import multer from 'multer';
+import * as http from 'http';
+import db from 'mysql';
+import cookieParser from 'cookie-parser';
+import sessions from 'express-session';
 export function appConfig(username: any , password: any) {
     require('dotenv').config().parsed
 
-    const helmat = require('helmet')
-    const express = require('express');
-
-    const http = require('http')
-
-    const db = require('mysql')
-
-    const cookieParser = require('cookie-parser');
-    const sessions = require('express-session');
     const app = express();
+    const upload = multer()
     const server = http.createServer(app)
     // set Server
-    
 
     const listDB = dbpacket.listConfig(username , password)
-    const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV
+    const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : ""
     
     // protocal websocket
     WebSocket(server)
@@ -42,7 +40,7 @@ export function appConfig(username: any , password: any) {
     if(process.argv[2] != process.env.BUILD) reactServ(app)
 
     app.use(sessions({
-        secret : process.env.KEY_SESSION,
+        secret : process.env.KEY_SESSION ?? "",
         saveUninitialized: true,
         cookie: {
             // maxAge: parseInt(process.env.TIME_COKKIE),
@@ -54,6 +52,7 @@ export function appConfig(username: any , password: any) {
     // config environment
     app.use(express.json())
     app.use(cookieParser())
+    app.use(upload.any())
     app.use(express.static('src/assets/style'))
     app.use(express.static('src/assets/font'))
     app.use(express.static('src/assets/img'))
@@ -64,7 +63,7 @@ export function appConfig(username: any , password: any) {
     router(app)
     apiAdmin(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
     apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
-    apiFarmer(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
+    apiFarmer(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE)
 
     return server
 }

@@ -140,6 +140,41 @@ const Camera = (props) => { // ยังไม่เสร็จ
     )
 }
 
+const ResizeImg = (file , MaxSize) => {
+    return new Promise((resole , reject)=>{
+        const image = new Image();
+
+        image.onload = function () {
+            let width = image.width;
+            let height = image.height;
+
+            
+            if(width > MaxSize || height > MaxSize) {
+                if(width < height) {
+                    height = (MaxSize / width) * height;
+                    width = MaxSize;
+                } else if(width > height) {
+                    width = (MaxSize / height) * width
+                    height = MaxSize
+                }
+            }
+            console.log(width , height)
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, width, height);
+
+            console.log(canvas.toDataURL('image/jpeg').length)
+            resole(canvas.toDataURL('image/jpeg'))
+        };
+
+        image.src = URL.createObjectURL(file);
+    })
+}
+
 // const useAPI = (props) => {
 //     const [ Data , SetURL ] = useState(null)
 //     const [ Error , SetError] = useState(null)
@@ -165,4 +200,4 @@ const Camera = (props) => { // ยังไม่เสร็จ
 //     })
 // }
 
-export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera}
+export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg}

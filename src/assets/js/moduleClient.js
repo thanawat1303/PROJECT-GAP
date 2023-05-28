@@ -9,6 +9,16 @@ class moduleClient {
                 body: JSON.stringify(data)
             }).then((e)=>e.text().then((context)=>context))
         },
+        this.postForm = async (url = "" , data={}) => {
+            const formData = new FormData();
+            for(const key in data){
+                formData.append(key , data[key])
+            }
+            return fetch(url, {
+                method: 'POST',
+                body: formData
+            }).then((e)=>e.text().then((context)=>context))
+        },
         this.get = async (url = "") => {
             return fetch(url, {
                 headers: {

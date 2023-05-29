@@ -19,26 +19,142 @@
         .content {
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
             width: 95%;
             height: 95%;
             opacity : 0;
             visibility : hidden;
             transition : 0.5s opacity , 0.5s visibility;
-            background-color: white;
-            box-shadow: 0px 0px 8px wheat;
-            padding: 10px;
             border-radius: 5px;
             .head {
-                width: 100%;
                 text-align: center;
+                background-color: #abffb4;
+                border-radius: 50px;
+                font-family: TH-font;
+                font-size: 30px;
+                font-weight: 900;
+                padding: 0px 20px;
+                padding-top: 4px;
+                box-shadow: 0px 4px 4px #00000040 , inset 0px 4px 4px #00000040;
+                z-index: 5;
             }
 
             .body {
-                overflow: scroll;
-                margin: 5px 0px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin: -15px 0px;
+                background-color: #e0fbe3;
+                box-shadow: 0px 4px 4px gray;
+                // border: 10px solid #e0fbe3;
+                // border-top: 20px solid #e0fbe3;
+                border-radius: 20px;
+                padding: 10px;
+                padding-top: 30px;
+                height: 80%;
+
+                .frame-body {
+                    border-radius: 20px;
+                    .detail {
+                        margin-bottom: 20px;
+                        .frame-image {
+                            width: 50%;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 0px auto;
+                            border-radius: 15px;
+                            overflow: hidden;
+                        }
+                        .text-detail {
+                            margin-top: 10px;
+                            
+                            div , input {
+                                font-family: TH-font;
+                                font-size: 25px;
+                                font-weight: 900;
+                            }
+                            input {
+                                background-color: #abffb4;
+                                border: 0;
+                                border-radius: 15px;
+                                padding: 0px 10px;
+                                padding-top: 2px;
+                                margin: 0px auto;
+                            }
+                            .firstname , .lastname , .password , .oldID , .station {
+                                display: flex;
+                                flex-direction: column;
+                                padding: 0px 10px;
+                                margin-top: 5px;
+                            }
+                        }
+                    }
+                    .google-map {
+                        width: 95%;
+                        display: flex;
+                        margin:  10px auto;
+                        border-radius: 0px 0px 10px 10px;
+                        overflow: hidden;
+                    }
+                }
+            }
+
+            .action {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                width: 100%;
+                height: 5%;
+                margin-top: 30px;
+
+                .submit , .cancel {
+                    width: 80px;
+                    padding-top: 2px;
+                    border-radius: 15px;
+                    font-family: TH-font;
+                    font-size: 30px;
+                    font-weight: 900;
+                    text-align: center;
+                    box-shadow: 0px 4px 4px #00000040 , inset 0px 4px 4px #00000040;
+                }
+
+                .cancel {
+                    background-color: red;
+                    color: white;
+                }
+
+                .submit {
+                    background-color: green;
+                    color: white;
+                }
+
+
             }
         }
     }
+    .Loading-preview {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 20;
+        background-color: transparent;
+        backdrop-filter: blur(8px);
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.5s opacity , 0.5s visibility;
+    }
+
+    .Loading-preview[show=""] {
+        opacity: 1;
+        visibility: visible;
+    }
+
     .title {
         .title-form {
             text-align: center;
@@ -70,6 +186,7 @@
                 display: flex;
                 flex-direction: column;
                 padding: 0px 5px;
+                overflow-y: scroll;
                 .head-step {
                     text-align: center;
                     font-size: 9vw;
@@ -118,14 +235,42 @@
                 display: flex;
                 flex-direction: column;
                 padding: 0px 5px;
+                overflow-y: scroll;
+                .head-step {
+                    text-align: center;
+                    font-size: 9vw;
+                    font-family: TH-font;
+                    padding: 5px 0px;
+                    padding-top: 9px;
+                    background-color: green;
+                    border-radius: 25px;
+                    color: white;
+                }
                 .detail-farmer {
+                    margin-top: 15px;
+                    padding: 0px 10px;
                     .location {
+                        .head-map {
+                            font-size: 8vw;
+                            font-family: TH-font;
+                            width: 100%;
+                            text-align: start;
+                        }
+                        .warning {
+                            font-size: 6vw;
+                            font-weight: 900;
+                            color: red;
+                            line-height: 27px;
+                            font-family: TH-font;
+                            padding: 0px 5px;
+                        }
                         .map-genarate {
                             display: flex;
                             justify-content: center;
                             align-items: center;
                             width: 100%;
-                            height: 200px;
+                            height: 160px;
+                            padding: 0px 5px;
         
                             .map {
                                 opacity: 0;
@@ -146,15 +291,86 @@
                                 visibility: hidden;
                             }
                         }
+
+                        .box-bt {
+                            display: flex;
+                            justify-content: end;
+                            align-items: center;
+                            margin-top: 5px;
+                            .bt-map-reload {
+                                font-family: TH-font;
+                                font-size: 6vw;
+                                font-weight: 900;
+                                background-color: rgb(131, 224, 131);
+                                border-radius: 10px;
+                                border: 0px;
+                                padding: 0px 15px;
+                                padding-top: 5px;
+                            }
+                        }
+                    }
+                    .station {
+                        .content-station {
+                            padding-top: 5px;
+                            margin-top: 10px;
+                            border-top: 2px solid green;
+                            .head-station {
+                                font-size: 8vw;
+                                font-family: TH-font;
+                                width: 100%;
+                                text-align: start;
+                            }
+    
+                            .content-select {
+                                margin: 1px 5px;
+                                // padding: 0px 5px;
+                                select {
+                                    font-family: TH-font;
+                                    font-size: 20px;
+                                    font-weight: 900;
+                                    width: 100%;
+                                    padding: 0px 3px;
+                                    border-radius: 10px;
+                                    border: 2px solid green;
+                                    background-color: rgb(179, 229, 179);
+                                    height: 34.6px;
+                                }
+                            }
+    
+                            .loading-content {
+                                display: flex;
+                                justify-content: start;
+                                align-items: center;
+                                margin: 1px 5px;
+                                // height: 31.4px;
+                                span {
+                                    font-family: TH-font;
+                                    font-size: 22px;
+                                    margin-left: 8px;
+                                    padding-top: 5px;
+                                }
+                            }
+                        }
                     }
                 }
             }
 
             .step-three {
                 display: flex;
-                justify-content: center;
-                align-items: center;
                 flex-direction: column;
+                justify-content: center;
+                padding: 0px 5px;
+
+                .head-step {
+                    text-align: center;
+                    font-size: 9vw;
+                    font-family: TH-font;
+                    padding: 5px 0px;
+                    padding-top: 9px;
+                    background-color: green;
+                    border-radius: 25px;
+                    color: white;
+                }
 
                 .frame-picture {
                     display: flex;
@@ -162,6 +378,7 @@
                     align-items: center;
                     flex-direction: column;
                     overflow: hidden;
+                    margin: 15px auto;
 
                     .Loading-img {
                         position: absolute;
@@ -185,6 +402,18 @@
                     img[size="h"] {
                         width: auto;
                         height: 100%;
+                    }
+                }
+                .content-bt {
+                    .bt-upload {
+                        text-align: center;
+                        font-family: TH-font;
+                        font-size: 10vw;
+                        font-weight: 900;
+                        background-color: rgb(131, 224, 131);
+                        border-radius: 10px;
+                        padding: 0px 15px;
+                        padding-top: 6px;
                     }
                 }
             }

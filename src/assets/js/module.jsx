@@ -175,6 +175,26 @@ const ResizeImg = (file , MaxSize) => {
     })
 }
 
+const Loading = ({size , border}) => {
+    return (
+        <div style={{
+            width : `${size}px`,
+            height : `${size}px`
+        }} className="Loading">
+            <div className="curcle"
+                style={{
+                    border: `${border}px solid green`,
+                    borderLeft : `${border}px solid transparent`,
+                    borderRadius : "50%",
+                    width : "100%",
+                    height : "100%",
+                    animation : "rotate-curcle 2s cubic-bezier(0, 0, 0, 0) 0s infinite"
+                }}
+            ></div>
+        </div>
+    )
+}
+
 // const useAPI = (props) => {
 //     const [ Data , SetURL ] = useState(null)
 //     const [ Error , SetError] = useState(null)
@@ -200,4 +220,4 @@ const ResizeImg = (file , MaxSize) => {
 //     })
 // }
 
-export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg}
+export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading}

@@ -1,5 +1,5 @@
 import React , { useEffect , useRef, useState } from "react";
-import { Camera, MapsJSX, ResizeImg } from "../../src/assets/js/module";
+import { Loading, MapsJSX, ResizeImg } from "../../src/assets/js/module";
 
 import './assets/Signup.scss'
 import {clientMo}  from "../../src/assets/js/moduleClient";
@@ -18,6 +18,7 @@ const SignUp = ({liff}) => {
     const next = useRef()
     const confirm = useRef()
     const DetailProfile = useRef()
+    const LoadingPreview = useRef()
 
     useEffect(()=>{
         selectStep(stepApprov)
@@ -66,7 +67,7 @@ const SignUp = ({liff}) => {
                 setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
             case 3 :
-                setStep(<StepThree liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepThree LoadingPreview={LoadingPreview} liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
         }
     }
@@ -74,6 +75,9 @@ const SignUp = ({liff}) => {
     return (
         <section id="content-signup-farmer">
             {PreviewData}
+            <div className="Loading-preview" ref={LoadingPreview}>
+                <Loading size={80} border={8}/>
+            </div>
             <div className="title">
                 <div className="title-form">ทะเบียนเกษตรกร</div>
                 <div className="subtitle">สมัครบัญชี</div>
@@ -184,6 +188,8 @@ const StepTwo = (props) => {
     const [Listready , setReady] = useState(false)
     const [Selected , setSelected] = useState(props.profile.get("station"))
 
+    const [LoadingState , setLoading] = useState(<></>)
+    
     useEffect(()=>{
         props.stepAp(2)
         PullMap()
@@ -200,12 +206,12 @@ const StepTwo = (props) => {
 
     const PullMap = () => {
         LoadingMap.current.removeAttribute('hide','')
+        setLoading(<Loading size={50} border={8}/>)
         MapEle.current.removeAttribute('show','')
         setCurrent(<></>)
         timeOutLoad = setTimeout(
             ()=>{
                 navigator.geolocation.getCurrentPosition((location)=>{
-                    LoadingMap.current.setAttribute('hide','')
                     MapEle.current.setAttribute('show','')
                     props.data.set("latitude" , location.coords.latitude)
                     props.data.set("longitude" , location.coords.longitude)
@@ -226,7 +232,7 @@ const StepTwo = (props) => {
             setSelected(e.target.value)
         }
 
-        props.data.set("station" , Station.current.value)
+        if(Station.current) props.data.set("station" , Station.current.value)
         props.update(new Map([
             ...props.profile , 
             ...props.data
@@ -244,38 +250,55 @@ const StepTwo = (props) => {
         }
     }
 
+    const MapLoad = () => {
+        LoadingMap.current.setAttribute('hide','')
+        setLoading(<></>)
+    }
+
     return (
         <section className="step-two">
+            <div className="head-step">
+                ตำแหน่ง
+            </div>
             <div className="detail-farmer">
                 <label className="location">
-                    <div className="head-map">ตำแหน่งแปลงที่ทำการเกษตร</div>
-                    <div className="warnning">* เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่ทำการเกษตรกรของท่าน</div>
+                    <div className="head-map">ตำแหน่งแปลงที่อยู่</div>
+                    <div className="warning">* เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่ทำการเกษตรกรของท่าน</div>
                     <div className="map-genarate">
-                        <div ref={MapEle} className="map">
+                        <div onLoad={MapLoad} ref={MapEle} className="map">
                             {LocationCurrent}
                         </div>
                         <div ref={LoadingMap} className="loading-map">
-                            LOADIND
+                            {LoadingState}
                         </div>
                     </div>
-                    <div onClick={reloadMap}>โหลดแผนที่ใหม่</div>
+                    <div className="box-bt">
+                        <button className="bt-map-reload" onClick={reloadMap}>โหลดแผนที่ใหม่</button>
+                    </div>
                 </label>
                 <label className="station">
-                    ศูนย์ที่เกษตรกรอยู่ในการดูแล
-                    {(Listready) ?
-                        <select value={Selected ?? ""} ref={Station} onChange={CheckData}>
-                            <option value="" disabled>
-                                เลือกศูนย์
-                            </option>
-                            {
-                            (Listready) ? 
-                                ListStation.map((val , index)=>
-                                    <option key={index} value={val['id_station']}>{val['name_station']}</option>
-                                )
-                                : <></>
-                            }
-                        </select> 
-                        : "กำลังโหลด"}
+                    <div className="content-station">
+                        <div className="head-station">ศูนย์ที่เกษตรกรอยู่ในการดูแล</div>
+                        {(Listready) ?
+                            <div className="content-select">
+                                <select value={Selected ?? ""} ref={Station} onChange={CheckData}>
+                                    <option value="" disabled>
+                                        เลือกศูนย์
+                                    </option>
+                                    {
+                                    (Listready) ? 
+                                        ListStation.map((val , index)=>
+                                            <option key={index} value={val['id_station']}>{val['name_station']}</option>
+                                        )
+                                        : <></>
+                                    }
+                                </select> 
+                            </div>
+                            : 
+                            <div className="loading-content">
+                                <Loading size={25} border={4}/><span>โหลดตัวเลือกศูนย์</span>  
+                            </div>}
+                    </div>
                 </label>
             </div>
         </section>
@@ -287,7 +310,7 @@ const StepThree = (props) => {
     const [PreviewImage , setPreview] = useState(props.profile.get('dataImgState') ?? "/icons8-camera.svg")
     const ControlImage = useRef()
     const Frame = useRef()
-    const Loading = useRef()
+    const LoadingEle = useRef()
     const CropImg = useRef()
 
     const [PositionMouse,setPosition] = useState(0)
@@ -311,8 +334,8 @@ const StepThree = (props) => {
     useEffect(()=>{
         Frame.current.style.width = `${props.detailBody.current.clientWidth * 0.8}px`
         Frame.current.style.height = `${props.detailBody.current.clientWidth * 0.8}px`
-        Loading.current.style.width = `${props.detailBody.current.clientWidth * 0.8}px`
-        Loading.current.style.height = `${props.detailBody.current.clientWidth * 0.8}px`
+        LoadingEle.current.style.width = `${props.detailBody.current.clientWidth * 0.8}px`
+        LoadingEle.current.style.height = `${props.detailBody.current.clientWidth * 0.8}px`
 
         props.stepAp(3)
         console.log(props.detailBody.current.clientWidth)
@@ -330,23 +353,14 @@ const StepThree = (props) => {
         props.data.delete("dataImgState")
         props.data.delete("xImgState")
         props.data.delete("yImgState")
+
+        ImageCurrent.current.removeAttribute("style")
+        ImageCurrent.current.removeAttribute("size")
+        setCurrentP({
+            x : 0,
+            y : 0
+        })
         if(file) {
-            // const reader = new FileReader()
-            // reader.onload = (e) => {
-            //     if(new Date().getTime() - file.lastModified < 1000) {
-            //         setPreview(e.target.result)
-            //         props.data.set("dataImgState" , e.target.result)
-            //         props.data.set("xImgState" , 0)
-            //         props.data.set("yImgState" , 0)
-            //         updateData()
-            //     } 
-            //     else {
-            //         setLoading(true)
-            //         alert('โปรดใช้รูปถ่ายปัจจุบัน')
-            //         setPreview("/icons8-camera.svg")
-            //     }
-            // }
-            // reader.readAsDataURL(file)
             if(new Date().getTime() - file.lastModified < 1000
                 ) {
                 ResizeImg(file , 300).then((imageResult)=>{
@@ -359,18 +373,13 @@ const StepThree = (props) => {
             } 
             else {
                 setLoading(true)
-                alert('โปรดใช้รูปถ่ายปัจจุบัน')
                 setPreview("/icons8-camera.svg")
+                ImageCurrent.current.setAttribute("size" , "w")
+                alert('โปรดใช้รูปถ่ายปัจจุบัน')
             }
         } else {
             setPreview("/icons8-camera.svg")
         }
-        ImageCurrent.current.removeAttribute("style")
-        ImageCurrent.current.removeAttribute("size")
-        setCurrentP({
-            x : 0,
-            y : 0
-        })
     }
 
     const movePicture = (e = document.getElementById("")) => {
@@ -459,7 +468,6 @@ const StepThree = (props) => {
     const LoadPic = (e) => {
         setWidthImg(ImageCurrent.current.width)
         setHeightImg(ImageCurrent.current.height)
-        
         if(ImageCurrent.current.width > ImageCurrent.current.height) {
             CropImg.current.width = ImageCurrent.current.height
             CropImg.current.height = ImageCurrent.current.height
@@ -471,12 +479,6 @@ const StepThree = (props) => {
         }
         
         setLoading(true); 
-        // TimeOut.add(
-        //     setTimeout(()=>{
-        //         (e.target.width > e.target.height) ?
-        //             e.target.setAttribute("size" , "h") : e.target.setAttribute("size" , "w")
-        //     } , 100)
-        // )
     }
 
     const CropImageToData = () => {
@@ -511,6 +513,7 @@ const StepThree = (props) => {
     }
 
     const confirmData = () => {
+        props.LoadingPreview.current.setAttribute("show" , "")
         if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
             let CropImage = CropImageToData()
             props.data.set("Image" , CropImage)
@@ -527,7 +530,9 @@ const StepThree = (props) => {
                 "Img" : props.data.get("Image"),                
             }
             if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img) {
-                props.previewData(<PopUpPreview data={data} previewData={props.previewData} liff={props.liff}/>)
+                props.previewData(<PopUpPreview LoadingPreview={props.LoadingPreview} data={data} previewData={props.previewData} liff={props.liff}/>)
+            } else {
+                props.LoadingPreview.current.removeAttribute("show")
             }
         }
     } 
@@ -541,19 +546,24 @@ const StepThree = (props) => {
 
     return (
         <div className="step-three">
-            {/* <Camera control={ControlImage} img={Image}/> */}
+            <div className="head-step">
+                รูปประจำตัว
+            </div>
             <div onLoad={LoadPic} ref={Frame} className="frame-picture">
                 {(LoadingImg) ? 
-                    <div ref={Loading}></div>
+                    <div ref={LoadingEle}></div>
                     :
-                    <div ref={Loading} className="Loading-img">LOAD</div>
+                    <div ref={LoadingEle} className="Loading-img">
+                        <Loading size={70} border={8}/>
+                    </div>
                 }
                 <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
             </div>
+            <div className="content-bt">
+                <div onClick={()=>ControlImage.current.click()} className="bt-upload">อัปโหลด</div>
+            </div>
             <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input>
-            <div onClick={()=>ControlImage.current.click()} className="bt-upload">อัปโหลด</div>
             <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
-            {/* <span ref={ControlImage}></span> */}
         </div>
     )
 }
@@ -561,6 +571,7 @@ const StepThree = (props) => {
 const PopUpPreview = (props) => {
     const Control = useRef()
     const Content = useRef()
+    const FrameBody = useRef()
     const [Feedback , setFeed] = useState(<></>)
 
     const [TextData , setText] = useState("")
@@ -588,60 +599,62 @@ const PopUpPreview = (props) => {
         })
     }
 
-    const LoadContent = () => {
+    const LoadContent = (e) => {
         loadNum++
         if(loadNum == 2) {
+            FrameBody.current.style.overflow = "scroll"
+            Control.current.style.opacity = "1"
+            Control.current.style.visibility = "visible"
             Content.current.style.opacity = "1"
             Content.current.style.visibility = "visible"
+            props.LoadingPreview.current.removeAttribute("show")
             loadNum = 0
         }
-    }
-
-    const LoadBackground = () => {
-        Control.current.style.opacity = "1"
-        Control.current.style.visibility = "visible"
+        console.log(e)
     }
 
     return (
-        <section onLoad={LoadBackground} className="popUpPreview" ref={Control}>
+        <section onLoad={LoadContent} className="popUpPreview" ref={Control}>
             {<PopupAlert liff={props.liff} textData={TextData} result={Result} open={OpenPop}/>}
-            <div onLoad={LoadContent} className="content" ref={Content}>
+            <div className="content" ref={Content}>
                 <div className="head">เช็คข้อมูล</div>
                 <div className="body">
-                    <div className="detail">
-                        <div className="firstname">
-                            <div>ชื่อ</div>
-                            <input readOnly value={props.data['firstname']}></input>
+                    <div ref={FrameBody} className="frame-body">
+                        <div className="detail">
+                            <div className="frame-image">
+                                <img width={"100%"} src={props.data['Img']}></img>
+                            </div>
+                            <div className="text-detail">
+                                <div className="firstname">
+                                    <div>ชื่อ</div>
+                                    <input readOnly value={props.data['firstname']}></input>
+                                </div>
+                                <div className="lastname">
+                                    <div>นามสกุล</div>
+                                    <input readOnly value={props.data['lastname']}></input>
+                                </div>
+                                <div className="password">
+                                    <div>รหัสผ่าน</div>
+                                    <input type="password" readOnly value={props.data['password']}></input>
+                                </div>
+                                <div className="oldID">
+                                    <div>รหัสประจำตัว</div>
+                                    <input readOnly value={(props.data['oldID']) ? props.data['oldID'] : "ไม่ระบุ"}></input>
+                                </div>
+                                <div className="station">
+                                    <div>ศูนย์ที่อยู่ในการดูแล</div>
+                                    <input readOnly value={props.data['station']}></input>
+                                </div>
+                            </div>
                         </div>
-                        <div className="lastname">
-                            <div>นามสกุล</div>
-                            <input readOnly value={props.data['lastname']}></input>
-                        </div>
-                        <div className="password">
-                            <div>รหัสผ่าน</div>
-                            <input readOnly value={props.data['password']}></input>
-                        </div>
-                        <div className="oldID">
-                            <div>รหัสประจำตัว</div>
-                            <input readOnly value={props.data['oldID'] ?? "ไม่ระบุ"}></input>
-                        </div>
-                        <div className="station">
-                            <div>ศูนย์ที่อยู่ในการดูแล</div>
-                            <input readOnly value={props.data['station']}></input>
-                        </div>
-                    </div>
-                    <div className="detail-other">
                         <div className="google-map">
                             <MapsJSX w={"100%"} lat={props.data['lat']} lng={props.data['lng']}/>
-                        </div>
-                        <div className="frame-image">
-                            <img width={"100%"} src={props.data['Img']}></img>
                         </div>
                     </div>
                 </div>
                 <div className="action">
-                    <div onClick={()=>props.previewData(<></>)}>ยกเลิก</div>
-                    <div onClick={ConfirmSave}>ยืนยัน</div>
+                    <div className="cancel" onClick={()=>props.previewData(<></>)}>ยกเลิก</div>
+                    <div className="submit" onClick={ConfirmSave}>ยืนยัน</div>
                 </div>
             </div>
         </section>

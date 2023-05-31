@@ -1,0 +1,114 @@
+.house-add {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: scroll;
+    // .head {
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    // }
+    .loading-show {
+        position: fixed;
+        
+    }
+    .content {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        height: 75%;
+        .name-farmhouse {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            input {
+                font-family: TH-font;
+                font-size: 7vw;
+                padding: 0px 10px;
+                padding-top: 5px;
+                text-align: center;
+                border: 0;
+                box-shadow: inset 0px 0px 5px green;
+                border-radius: 18px;
+            }
+        }
+        .box-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin:0px auto;
+            .frame-picture {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                overflow: hidden;
+                margin: 20px auto;
+                margin-bottom: 0px;
+                border-radius: 15px;
+        
+                .Loading-img {
+                    position: absolute;
+                    background-color: white;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10;
+                }
+        
+                img {
+                    transform: translate(0,0);
+                    // transition: 0.5s;
+                }
+                
+                img[size="w"] {
+                    width: 100%;
+                    height: auto;
+                }
+        
+                img[size="h"] {
+                    width: auto;
+                    height: 100%;
+                }
+            }
+    
+            .content-bt {
+                .bt-upload {
+                    background-color: black;
+                    padding: 0px 15px;
+                    padding-top: 3px;
+                    font-family: TH-font;
+                    border-radius: 15px;
+                    font-size: 7vw;
+                    color: white;
+                }
+            }
+    
+        }
+    }
+    
+
+    .content-bt {
+        height: 25%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .bt-submit {
+            // margin-top: 70px;
+            border-radius: 50%;
+            width: 20vw;
+            height: 20vw;
+            padding-top: 2vw;
+            background-color: green;
+            border: 0;
+            font-family: TH-font;
+            font-size: 10vw;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0px 3px 4px gray;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 import db from 'mysql'
-import {appConfig} from './configExpress'
+import appRun from './appRun'
 require('dotenv').config().parsed
 
 let username = process.env.USER_DBDEV ?? ""
@@ -39,17 +39,11 @@ if(!username && !password) {
                     state = 2
                     con.end()
 
-                    const app = appConfig(username , password)
-                    app.listen(parseInt(process.env.PORT ?? "80") , "0.0.0.0" , undefined , function () {
-                        console.log('Start on port '+process.env.PORT+'!\n');
-                    });
+                    appRun(username , password)
                 };
             })
         }
     });
 } else {
-    const app = appConfig(username , password)
-    app.listen(parseInt(process.env.PORT ?? "80") , "0.0.0.0" , undefined , function () {
-        console.log('Start on port '+process.env.PORT+'!\n');
-    });
+    appRun(username , password)
 }

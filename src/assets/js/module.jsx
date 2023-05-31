@@ -147,7 +147,6 @@ const ResizeImg = (file , MaxSize) => {
         image.onload = function () {
             let width = image.width;
             let height = image.height;
-
             
             if(width > MaxSize || height > MaxSize) {
                 if(width < height) {
@@ -158,16 +157,16 @@ const ResizeImg = (file , MaxSize) => {
                     height = MaxSize
                 }
             }
-            console.log(width , height)
-
+            
             const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
 
             const ctx = canvas.getContext('2d');
+            // ctx.imageSmoothingEnabled = false
+            // ctx.imageSmoothingQuality = true
             ctx.drawImage(image, 0, 0, width, height);
 
-            console.log(canvas.toDataURL('image/jpeg').length)
             resole(canvas.toDataURL('image/jpeg'))
         };
 

@@ -206,7 +206,7 @@ const StepTwo = (props) => {
     useEffect(()=>{
         props.stepAp(2)
         PullMap()
-        clientMo.post("/api/farmer/listStation").then((list)=>{
+        clientMo.post("/api/farmer/station/list").then((list)=>{
             setStation(JSON.parse(list))
             setReady(true)
             // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
@@ -376,7 +376,7 @@ const StepThree = (props) => {
         if(file) {
             if(new Date().getTime() - file.lastModified < 1000
                 ) {
-                ResizeImg(file , 300).then((imageResult)=>{
+                ResizeImg(file , 600).then((imageResult)=>{
                     setPreview(imageResult)
                     props.data.set("dataImgState" , imageResult)
                     props.data.set("xImgState" , 0)
@@ -391,6 +391,7 @@ const StepThree = (props) => {
                 alert('โปรดใช้รูปถ่ายปัจจุบัน')
             }
         } else {
+            setLoading(true)
             setPreview("/icons8-camera.svg")
         }
     }
@@ -633,7 +634,8 @@ const PopUpPreview = (props) => {
 
     return (
         <section onLoad={LoadContent} className="popUpPreview" ref={Control}>
-            {<PopupAlert liff={props.liff} textData={TextData} result={Result} open={OpenPop}/>}
+            {<PopupAlert liff={props.liff} textData={TextData} result={Result} open={OpenPop} 
+                setOpen={setOpenPop} setResult={setResult} setText={setText}/>}
             <div className="content" ref={Content}>
                 <div className="head">เช็คข้อมูล</div>
                 <div className="body">

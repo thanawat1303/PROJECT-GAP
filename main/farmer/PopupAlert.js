@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {Loading} from "../../src/assets/js/module"
-const PopupAlert = ({textData , result , open , liff}) => {
+const PopupAlert = ({textData , setText , result , setResult , open , setOpen , liff}) => {
     const Control = useRef()
 
     const [state , setstate] = useState(false)
@@ -11,10 +11,14 @@ const PopupAlert = ({textData , result , open , liff}) => {
     // } , [])
 
     const confirm = () => {
-        if(result == 1 || result == 2) {
-            liff.closeWindow()
-        } else {
-            alert("error")
+        if(result != 0) {
+            if(result == 1 || result == 2) {
+                liff.closeWindow()
+            } else {
+                setText("")
+                setResult(0)
+                setOpen(0)
+            }
         }
     }
 
@@ -51,7 +55,12 @@ const PopupAlert = ({textData , result , open , liff}) => {
                     marginBottom : "10px",
                     fontFamily : "TH-font",
                     fontSize : "25px",
-                    fontWeight : "900"
+                    fontWeight : "900",
+                    backgroundColor : "white",
+                    paddingLeft : "10px",
+                    paddingRight : "10px",
+                    paddingTop : "6px",
+                    borderRadius : "20px"
                 }}>
                     {textData ? state ? textData : "กำลังตรวจสอบ" : "กำลังตรวจสอบ"}
                 </div>
@@ -64,7 +73,10 @@ const PopupAlert = ({textData , result , open , liff}) => {
                                     width : "90px",
                                     opacity : state ? 1 : "0",
                                     visibility : state ? "visible" : "hidden",
-                                    transition : "0.5s opacity , 0.5s visibility"
+                                    transition : "0.5s opacity , 0.5s visibility",
+                                    backgroundColor : "transparent",
+                                    backdropFilter : "blur(8px)",
+                                    borderRadius : "50%"
                                 }} src="/correct-icon-green.svg"></img> 
                                 :
                                 <img style={{
@@ -85,7 +97,7 @@ const PopupAlert = ({textData , result , open , liff}) => {
                     </div>
                 </div>
                 <div style={{
-                    marginTop : "20px"
+                    marginTop : "10px"
                 }}>
                     <button
                         style={{
@@ -98,6 +110,9 @@ const PopupAlert = ({textData , result , open , liff}) => {
                             fontSize : "30px",
                             fontWeight : "900",
                             color : "white",
+                            opacity : (result == 0) ? 0 : 1,
+                            visibility : (result == 0) ? "hidden" : "visible",
+                            transition : "0.5s opacity , 0.5s visibility"
                         }}
                         onClick={confirm}>ตกลง</button>
                 </div>

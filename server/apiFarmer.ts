@@ -30,7 +30,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
-    app.post('/api/farmer/listStation' , (req:any , res:any)=>{
+    app.post('/api/farmer/station/list' , (req:any , res:any)=>{
         if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
@@ -120,7 +120,56 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("")
     })
 
-    app.post('/api/farmer/selectfarmhouse' , (req:any , res:any)=>{
+    app.post('/api/farmer/farmhouse/add' , (req:any , res:any)=>{
+        if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+            
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)` , 
+                    [req.session.uid] ,
+                    (err:any , result:any)=>{
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("query");
+                            return 0
+                        }
+                        
+                        if(result[0]) {
+                            con.query(`INSERT INTO housefarm (uid_line , name_house , img_house)
+                                        VALUES (? , ? , ?)` , 
+                                        [
+                                            req.session.uid , req.body['name'] , req.body['img'] 
+                                        ] , (err : any , insert : any)=>{
+                                            if (err) {
+                                                dbpacket.dbErrorReturn(con, err, res);
+                                                console.log(`insert farmhouse ${req.session.uid}`);
+                                                return 0
+                                            }
+
+                                            con.end()
+                                            console.log(insert)
+                                            if(insert.affectedRows > 0) {
+                                                if(insert.affectedRows > 1) console.log(insert)
+                                                res.send("133")
+                                            } else {
+                                                res.send("130")
+                                            }
+                                        })
+                        }
+                        else res.send("no")
+                })
+            })
+
+        } else res.send("error auth")
+    })
+
+    app.post('/api/farmer/farmhouse/select' , (req:any , res:any)=>{
         if(req.session.uid == req.body['uid'] && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
@@ -161,7 +210,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
-    app.post('/api/farmer/insertformplant' , (req:any , res:any)=>{
+    app.post('/api/farmer/formplant/insert' , (req:any , res:any)=>{
         if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
@@ -269,7 +318,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
-    app.post('/api/farmer/editformplant' , (req:any , res:any)=>{
+    app.post('/api/farmer/formplant/edit' , (req:any , res:any)=>{
         if(req.session.uid && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{

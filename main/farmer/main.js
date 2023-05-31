@@ -31,10 +31,10 @@ const MainFarmer = (props) => {
                                     const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
                                     if(auth) {
                                         const path = new Map([...auth.split("&").map((val)=>val.split("="))])
-                                        setBody(<MenuMain path={path} liff={liff}/>)
+                                        if(path.get("farm")) setBody(<MenuMain path={path} liff={liff} uid={profile.userId}/>)
                                     }
                                     else if (house == "house") {
-                                        setBody(<House/>)
+                                        setBody(<House liff={liff}/>)
                                     }
                                     else {
                                         clientMo.addAction('#loading' , 'hide' , 1000)
@@ -53,12 +53,18 @@ const MainFarmer = (props) => {
                     if(result === "no") setBody(<SignUp />)
                     else if (result === "search") {
                         const auth = window.location.href.split("?")[1]
-                        console.log(auth)
+                        const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
                         if(auth) {
                             const path = new Map([...auth.split("&").map((val)=>val.split("="))])
                             setBody(<MenuMain path={path}/>)
                         }
-                        else setBody(<>บัญชีลงทะเบียนแล้ว</>)
+                        else if (house == "house") {
+                            setBody(<House/>)
+                        }
+                        else {
+                            clientMo.addAction('#loading' , 'hide' , 1000)
+                            setBody(<>บัญชีลงทะเบียนแล้ว {house}</>)
+                        }
                     }
                     else if (result === "error auth") setBody(<>auth error</>)
                 })

@@ -16,7 +16,7 @@ import * as http from 'http';
 import db from 'mysql';
 import cookieParser from 'cookie-parser';
 import sessions from 'express-session';
-export function appConfig(username: any , password: any) {
+export default function appConfig(username: any , password: any , UrlNgrok : any) {
     require('dotenv').config().parsed
 
     const app = express();
@@ -65,7 +65,7 @@ export function appConfig(username: any , password: any) {
     apiAdmin(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
     apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
     apiFarmer(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE)
-    message(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE)
+    message(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE , UrlNgrok)
 
     return server
 }

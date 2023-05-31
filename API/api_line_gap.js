@@ -48,12 +48,61 @@ const RichMenu = {
     }
     
     richmenu.createRichMenu(jsonLogin).then((RichID)=>{
-      let pathImage = "API/assets/menu-first.png"
-      richmenu.setRichMenuImage(RichID , fs.readFileSync(pathImage) , "image/png").then(()=>{
-        richmenu.setDefaultRichMenu(RichID).then(()=>console.log(`Rich menu ID : ${RichID} is Run`))
-      })
+      let pathImage = "API/assets/Menu.png"
+      richmenu.setRichMenuImage(RichID , fs.readFileSync(pathImage) , "image/png")
     })
 
+  },
+
+  createRichAddFarm : () => {
+    const jsonHouse = 
+    {
+      "size": {
+        "width": 2500,
+        "height": 843
+      },
+      "selected": true,
+      "name": "house",
+      "chatBarText": "โรงเรือน",
+      "areas": [
+        {
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 1250,
+            "height": 843
+          },
+          "action": {
+            "type": "uri",
+            "uri": "https://liff.line.me/1661049098-A9PON7LB/house"
+          }
+        },
+        {
+          "bounds": {
+            "x": 1250,
+            "y": 0,
+            "width": 1250,
+            "height": 843
+          },
+          "action": {
+            "type": "postback",
+            "text": "",
+            "data": "house_add"
+          }
+        }
+      ]
+    }
+    
+    richmenu.createRichMenu(jsonHouse).then((RichID)=>{
+      let pathImage = "API/assets/Group1.png"
+      richmenu.setRichMenuImage(RichID , fs.readFileSync(pathImage) , "image/png")
+    })
+
+  },
+  setDefault : (RichID) => {
+    richmenu.deleteDefaultRichMenu().then(()=>{
+      richmenu.setDefaultRichMenu(RichID).then(()=>console.log(`Rich menu ID : ${RichID} is Run`))
+    })
   },
   
   DeleteRichMenu : {
@@ -83,7 +132,7 @@ const RichMenu = {
 
 }
 
-RichMenu.GetRichMenu()
+// richmenu.linkRichMenuToUser("Uceb5937bcd2edc0de5341022f8d59e9f" , "richmenu-e27bfb6f25e7ba8daa207df690e18489")
 
 // const createRichLogin = () => {
   // const jsonLogin = 

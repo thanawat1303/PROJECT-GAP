@@ -1,5 +1,6 @@
 require('dotenv').config().parsed
 import line from "./configLine";
+import * as fs from "fs"
 export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any , LINE = line) {
 
     app.post('/api/farmer/sign' , (req:any , res:any)=>{
@@ -103,7 +104,10 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             if(result.affectedRows > 0) {
                                 if(result.affectedRows > 1) console.log(result)
                                 con.end()
-                                LINE.linkRichMenuToUser(req.session.uid , "")
+                                try {LINE.linkRichMenuToUser(req.session.uid , "richmenu-e27bfb6f25e7ba8daa207df690e18489")} 
+                                catch (e) {
+                                    fs.appendFileSync(__dirname.replace('\server' , '/logs/errorfile.json') , `richMenuAddFarm : {id:${req.session.uid} , date : ${new Date().getTime}}`)
+                                }
                                 res.send("insert complete")
                             }
                         })

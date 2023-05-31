@@ -42,6 +42,10 @@ export default function router(app : any) {
     app.get('/farmer' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
+    app.get('/farmer/house' , function(req:any, res:any) {
+        // console.log(req)
+        res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
+    });
 
     // page error 404
     app.get('/' , function(req:any, res:any) {

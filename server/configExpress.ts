@@ -3,6 +3,7 @@ import reactServ from './reactServ';
 import apiAdmin from './apiAdmin';
 import apiDoctor from './apiDoctor';
 import apiFarmer from './apiFarmer';
+import message from './apiMessaging';
 import dbpacket from './dbConfig';
 import apifunc from './apifunc';
 import LINE from "./configLine";
@@ -64,6 +65,7 @@ export function appConfig(username: any , password: any) {
     apiAdmin(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
     apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
     apiFarmer(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE)
+    message(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE)
 
     return server
 }

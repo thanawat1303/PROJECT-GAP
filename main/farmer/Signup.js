@@ -72,8 +72,12 @@ const SignUp = ({liff}) => {
         }
     }
 
+    const LoadPage = (e) => {
+        clientMo.addAction('#loading' , 'hide' , 1000)
+    }
+
     return (
-        <section id="content-signup-farmer">
+        <section id="content-signup-farmer" onLoad={LoadPage}>
             {PreviewData}
             <div className="Loading-preview" ref={LoadingPreview}>
                 <Loading size={80} border={8}/>
@@ -95,7 +99,16 @@ const SignUp = ({liff}) => {
                     <span></span>
                 </div>
                 <div>
-                    <img ref={confirm} className="confirm" src="/confirm-sf-svgrepo-com.svg"></img>
+                    <svg ref={confirm} className="confirm" viewBox="0 0 32.00 32.00" xmlns="http://www.w3.org/2000/svg" strokeWidth="0.00032">
+                        <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
+                        <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" stroke="#CCCCCC" strokeWidth="0.192"/>
+                        <g id="SVGRepo_iconCarrier">
+                            <path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm5.7279221 11-7.0710679 7.0710678-4.2426406-4.2426407-1.4142136 1.4142136 5.6568542 5.6568542 8.4852814-8.4852813z" 
+                                fillRule="evenodd"/>
+                        </g>    
+                    </svg>
+                    {/* fill="#009919" */}
+                    {/* <img src="/confirm-sf-svgrepo-com.svg"></img> */}
                     <img ref={next} onClick={()=>changeStep(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next"></img>
                 </div>
             </div>
@@ -383,7 +396,7 @@ const StepThree = (props) => {
     }
 
     const movePicture = (e = document.getElementById("")) => {
-        if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
+        if(PreviewImage != "/icons8-camera.svg") {
             const P = PositionMouse
 
             let x = xM + ((e.touches[0].clientX - P.x) / frameLate) // ค่าที่เลื่อนรูปบนแกน x
@@ -398,7 +411,7 @@ const StepThree = (props) => {
     }
 
     const setStartMove = (e) => {
-        if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
+        if(PreviewImage != "/icons8-camera.svg") {
             let frame = Frame.current
 
             let oldX = e.target.offsetLeft // ระยะขอบซ้ายรูปกับระยะขอบซ้ายหน้าจอ เพื่อหาตำแหน่งของรูปบนหน้าจอ
@@ -427,7 +440,7 @@ const StepThree = (props) => {
     }
 
     const setCurrent = (e) => {
-        if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
+        if(PreviewImage != "/icons8-camera.svg") {
             const P = PositionMouse
             let x = 0
             let y = 0
@@ -477,12 +490,14 @@ const StepThree = (props) => {
             CropImg.current.height = ImageCurrent.current.width
             ImageCurrent.current.setAttribute("size" , "w")
         }
-        
+    
+        if(PreviewImage != "/icons8-camera.svg") props.confirm.current.style.fill = "#009919"
+        else props.confirm.current.style.fill = "#5b896eb5"
         setLoading(true); 
     }
 
     const CropImageToData = () => {
-        if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
+        if(ImageCurrent.current.src != "/icons8-camera.svg") {
             const context = CropImg.current.getContext('2d')
             const FrameIn = Frame.current
             const Img = ImageCurrent.current
@@ -514,7 +529,7 @@ const StepThree = (props) => {
 
     const confirmData = () => {
         props.LoadingPreview.current.setAttribute("show" , "")
-        if(ImageCurrent.current.getAttribute("src") != "/icons8-camera.svg") {
+        if(ImageCurrent.current.src != "/icons8-camera.svg") {
             let CropImage = CropImageToData()
             props.data.set("Image" , CropImage)
             updateData()
@@ -529,11 +544,14 @@ const StepThree = (props) => {
                 "station" : props.profile.get("station"),                
                 "Img" : props.data.get("Image"),                
             }
+
             if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img) {
                 props.previewData(<PopUpPreview LoadingPreview={props.LoadingPreview} data={data} previewData={props.previewData} liff={props.liff}/>)
             } else {
                 props.LoadingPreview.current.removeAttribute("show")
             }
+        } else {
+            props.LoadingPreview.current.removeAttribute("show")
         }
     } 
 
@@ -554,7 +572,7 @@ const StepThree = (props) => {
                     <div ref={LoadingEle}></div>
                     :
                     <div ref={LoadingEle} className="Loading-img">
-                        <Loading size={70} border={8}/>
+                        <Loading size={70} border={8} color="green"/>
                     </div>
                 }
                 <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>

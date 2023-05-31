@@ -1,6 +1,9 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 const NonLine = () => {
+    useEffect(()=>{
+        clientMo.addAction('#loading' , 'hide' , 1000)
+    })
     return(
         <section id="not-online">
             โปรดเข้าช่องทางแอปพลิเคชันไลน์นะครับ

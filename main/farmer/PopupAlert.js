@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-
+import {Loading} from "../../src/assets/js/module"
 const PopupAlert = ({textData , result , open , liff}) => {
     const Control = useRef()
+
+    const [state , setstate] = useState(false)
 
     // useEffect(()=>{
     //     Control.current.style.opacity = "1"
@@ -14,6 +16,10 @@ const PopupAlert = ({textData , result , open , liff}) => {
         } else {
             alert("error")
         }
+    }
+
+    const ShowStatus = () => {
+        setstate(true)
     }
     return (
         <section ref={Control} style={{
@@ -36,16 +42,64 @@ const PopupAlert = ({textData , result , open , liff}) => {
                 justifyContent : "center",
                 alignItems:"center",
                 flexDirection : "column" ,
-                backgroundColor: "white",
-                padding : "10px" ,
-                borderRadius : "10px" ,
-                boxShadow : "0px 0px 15px green"
+                backgroundColor: "transparent",
+                padding : "15px 30px" ,
+                borderRadius : "15px" ,
+                // boxShadow : "0px 0px 15px green",
             }}>
-                {textData}
                 <div style={{
-                    marginTop : "10px"
+                    marginBottom : "10px",
+                    fontFamily : "TH-font",
+                    fontSize : "25px",
+                    fontWeight : "900"
                 }}>
-                    <button onClick={confirm}>ตกลง</button>
+                    {textData ? state ? textData : "กำลังตรวจสอบ" : "กำลังตรวจสอบ"}
+                </div>
+                <div onLoad={ShowStatus}>
+                    {
+                        result ? 
+                            (result == 1) ? 
+                                <img style={{
+                                    position : "absolute",
+                                    width : "90px",
+                                    opacity : state ? 1 : "0",
+                                    visibility : state ? "visible" : "hidden",
+                                    transition : "0.5s opacity , 0.5s visibility"
+                                }} src="/correct-icon-green.svg"></img> 
+                                :
+                                <img style={{
+                                    position : "absolute",
+                                    width : "90px",
+                                    opacity : state ? 1 : "0",
+                                    visibility : state ? "visible" : "hidden",
+                                    transition : "0.5s opacity , 0.5s visibility"
+                                }} src="/error-cross-svgrepo-com.svg"></img>
+                        : <></>
+                    }
+                    <div style={{
+                        opacity : !state ? 1 : "0",
+                        visibility : !state ? "visible" : "hidden",
+                        transition : "0.5s opacity , 0.5s visibility"
+                    }}>
+                        <Loading size={90} border={10} color="white" />
+                    </div>
+                </div>
+                <div style={{
+                    marginTop : "20px"
+                }}>
+                    <button
+                        style={{
+                            backgroundColor : "green",
+                            border : "0",
+                            borderRadius : "15px",
+                            padding : "0px 25px",
+                            paddingTop : "2px",
+                            fontFamily : "TH-font",
+                            fontSize : "30px",
+                            fontWeight : "900",
+                            color : "white",
+                        }}
+                        onClick={confirm}>ตกลง</button>
                 </div>
             </div>
         </section>

@@ -175,7 +175,7 @@ const ResizeImg = (file , MaxSize) => {
     })
 }
 
-const Loading = ({size , border}) => {
+const Loading = ({size , border , color="green"}) => {
     return (
         <div style={{
             width : `${size}px`,
@@ -183,7 +183,7 @@ const Loading = ({size , border}) => {
         }} className="Loading">
             <div className="curcle"
                 style={{
-                    border: `${border}px solid green`,
+                    border: `${border}px solid ${color}`,
                     borderLeft : `${border}px solid transparent`,
                     borderRadius : "50%",
                     width : "100%",

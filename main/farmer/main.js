@@ -5,7 +5,7 @@ import {useLiff} from "../../src/assets/js/module";
 import {NonLine} from "./nonLine";
 import {SignUp} from "./Signup";
 
-import MenuMain from "./menuMain";
+import MenuMain from "./content/mainFarmHouse";
 import House from "./House";
 
 // import Login from "./Login";
@@ -16,6 +16,7 @@ import House from "./House";
 const MainFarmer = (props) => {
     const [body , setBody] = useState(<></>)
     const [init , liff] = useLiff("1661049098-A9PON7LB")
+    let UID = ""
 
     useEffect(()=>{
         init.then(()=>{
@@ -24,56 +25,69 @@ const MainFarmer = (props) => {
                     liff.getProfile().then((profile)=>{
                         // สมัครเข้าต้องค้นหาบัญชีโดยไม่ตรง status ยกเลิกบัญชี
                         if(profile.userId) {
-                            clientMo.post("/api/farmer/sign" , {uid:profile.userId}).then((result)=>{
-                                if(result === "no") setBody(<SignUp profile={profile} liff={liff}/>)
-                                else if (result === "search") {
-                                    const auth = window.location.href.split("?")[1]
-                                    const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
-                                    if(auth) {
-                                        const path = new Map([...auth.split("&").map((val)=>val.split("="))])
-                                        if(path.get("farm")) setBody(<MenuMain path={path} liff={liff} uid={profile.userId}/>)
-                                    }
-                                    else if (house == "house") {
-                                        setBody(<House liff={liff}/>)
-                                    }
-                                    else {
-                                        clientMo.addAction('#loading' , 'hide' , 1000)
-                                        setBody(<>บัญชีลงทะเบียนแล้ว {house}</>)
-                                    }
-                                }
-                                else if (result === "error auth") setBody(<>auth error</>)
-                            })
+                            UID = profile.userId
+                            LoadPage("" , profile.userId)
                         }
                     })
                 } else {
                     liff.login()
                 }
             } else {
-                clientMo.post("/api/farmer/sign" , {uid:"1111"}).then((result)=>{
-                    if(result === "no") setBody(<SignUp />)
-                    else if (result === "search") {
-                        const auth = window.location.href.split("?")[1]
-                        const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
-                        if(auth) {
-                            const path = new Map([...auth.split("&").map((val)=>val.split("="))])
-                            setBody(<MenuMain path={path}/>)
-                        }
-                        else if (house == "house") {
-                            setBody(<House/>)
-                        }
-                        else {
-                            clientMo.addAction('#loading' , 'hide' , 1000)
-                            setBody(<>บัญชีลงทะเบียนแล้ว {house}</>)
-                        }
-                    }
-                    else if (result === "error auth") setBody(<>auth error</>)
-                })
+                UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
+                LoadPage("" , "Uceb5937bcd2edc0de5341022f8d59e9f")
+                // clientMo.post("/api/farmer/sign" , {uid:"Uceb5937bcd2edc0de5341022f8d59e9f"}).then((result)=>{
+                //     if(result === "no") setBody(<SignUp />)
+                //     else if (result === "search") {
+                //         const auth = window.location.href.split("?")[1]
+                //         const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
+                //         if(auth) {
+                //             const path = new Map([...auth.split("&").map((val)=>val.split("="))])
+                //             if(path.get("farm")) setBody(<MenuMain path={path} uid={"Uceb5937bcd2edc0de5341022f8d59e9f"}/>)
+                //         }
+                //         else if (house == "house") {
+                //             setBody(<House/>)
+                //         }
+                //         else {
+                //             clientMo.addAction('#loading' , 'hide' , 1000)
+                //             setBody(<>บัญชีลงทะเบียนแล้ว {house}</>)
+                //         }
+                //     }
+                //     else if (result === "error auth") setBody(<>auth error</>)
+                // })
                 // setBody(<NonLine />)
             }
         }).catch(err=>{
             console.log(err)
         })
+
+        // window.addEventListener('popstate' , LoadPage)
+
+        // return () => {
+        //     window.removeEventListener('popstate' , LoadPage)
+        // }
     } , [])
+
+    const LoadPage = (e , uid = UID) => {
+        clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
+            if(result === "no") setBody(<SignUp profile={profile} liff={liff}/>)
+            else if (result === "search") {
+                const auth = window.location.href.split("?")[1]
+                const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
+                if(auth) {
+                    const path = new Map([...auth.split("&").map((val)=>val.split("="))])
+                    if(path.get("farm")) setBody(<MenuMain path={path} liff={liff} uid={uid}/>)
+                }
+                else if (house == "house") {
+                    setBody(<House liff={liff}/>)
+                }
+                else {
+                    clientMo.addAction('#loading' , 'hide' , 1000)
+                    setBody(<>บัญชีลงทะเบียนแล้ว {house}</>)
+                }
+            }
+            else if (result === "error auth") setBody(<>auth error</>)
+        })
+    }
 
     return(
         body

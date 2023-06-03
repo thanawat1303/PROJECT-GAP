@@ -36,7 +36,7 @@ const ShowDetailFarmer = (props) => {
 
         return () => {
             document.getElementById('popup-detail-farmer').removeEventListener('click' , ClosePage)
-            clientMo.post('/api/doctor/listForm')
+            clientMo.post('/api/doctor/list/form')
         }
     } , [])
 
@@ -62,7 +62,7 @@ const ShowDetailFarmer = (props) => {
     }
 
     const showDoctor = (id_doctor) => {
-        clientMo.post('/api/doctor/approverFm' , {id:id_doctor}).then((profile)=>{
+        clientMo.post('/api/doctor/farmer/approv' , {id:id_doctor}).then((profile)=>{
             setDoctor(<ShowDetailDoctor doctor={profile} id={id_doctor}/>)
         })
     } 

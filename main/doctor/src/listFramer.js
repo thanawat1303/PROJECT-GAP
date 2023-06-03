@@ -58,7 +58,7 @@ export default class List extends Component {
     }
 
     ShowDetail = async (id , status) => {
-        const result = await clientMo.post('/api/doctor/listFarmer' , {
+        const result = await clientMo.post('/api/doctor/farmer/list' , {
             type:'profile',
             farmer : id
         })

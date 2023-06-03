@@ -33,7 +33,7 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         let username = req.body['username'] ?? '';
         let password = req.body['password'] ?? '';
     
-        if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -89,7 +89,7 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         let username = req.session.user_doctor ?? req.body['username'] ?? '';
         let password = req.session.pass_doctor ?? req.body['password'] ?? '';
     
-        if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -126,11 +126,11 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
     })
     
     // req manager farmer
-    app.post('/api/doctor/approverFm' , (req:any , res:any)=>{
+    app.post('/api/doctor/farmer/approv' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -160,11 +160,11 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         })
     })
     
-    app.post('/api/doctor/listFarmer' , (req:any , res:any)=>{
+    app.post('/api/doctor/farmer/list' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -224,7 +224,7 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -233,7 +233,13 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
-                con.query('SELECT fullname , id_farmer , id_doctor , img , location , station , date_register , uid_line FROM acc_farmer WHERE id_table=? and register_auth = ? ORDER BY date_register DESC' , 
+                con.query(
+                    `
+                    SELECT fullname , id_farmer , id_doctor , img , location , station , date_register , uid_line 
+                    FROM acc_farmer 
+                    WHERE id_table=? and register_auth = ? 
+                    ORDER BY date_register DESC
+                    ` , 
                 [req.body['id'] , (req.body['type']) ? 1 : 0] , (err:any , resul:any)=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
@@ -266,11 +272,11 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         // })
     })
     
-    app.post('/doctor/api/doctor/confirmFm' , (req:any , res:any)=>{
+    app.post('/doctor/api/doctor/farmer/confirm' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.body['password']
     
-        if(username === '' || req.hostname !== HOST_CHECK) {
+        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -444,11 +450,11 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         })
     })
     
-    app.post('/api/doctor/listForm' , (req:any , res:any)=>{
+    app.post('/api/doctor/list/form' , (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -459,13 +465,18 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             if(result['result'] === "pass") {
                 con.query(`
                         SELECT formplant.id_plant , formplant.type_plant , formplant.date_plant , 
-                        acc_farmer.id_farmer , acc_farmer.fullname   
+                        House.id_farmer , House.fullname   
                         FROM formplant , 
                             (
-                                SELECT id_farmer , uid_line , fullname FROM acc_farmer 
-                                WHERE station = ? and register_auth = ?
-                            ) AS acc_farmer
-                        WHERE ((formplant.id_uid_line = acc_farmer.uid_line) or (formplant.id_farmer = acc_farmer.id_farmer)) and formplant.submit_plant=?
+                                SELECT id_farmHouse , acc_farmer.id_farmer , acc_farmer.fullname 
+                                FROM housefarm , 
+                                    (
+                                        SELECT id_farmer , uid_line , fullname FROM acc_farmer 
+                                        WHERE station = ? and register_auth = ?
+                                    ) AS acc_farmer
+                                WHERE (housefarm.uid_line = acc_farmer.uid_line) or (housefarm.id_farmer = acc_farmer.id_farmer)
+                            ) as House
+                        WHERE House.id_farmHouse = formplant.id_farmHouse and formplant.submit_plant=?
                         ORDER BY date_plant 
                         LIMIT 30;
                         ` , 

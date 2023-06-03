@@ -22,7 +22,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -101,7 +101,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     let username = req.session.user_admin ?? '';
     let password = req.body['password'] ?? '';
   
-    if(username === '' || req.hostname !== HOST_CHECK) {
+    if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -218,7 +218,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -249,7 +249,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -337,7 +337,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     let username = req.session.user_admin ?? req.body['username'] ?? '';
     let password = req.session.pass_admin ?? req.body['password'] ?? '';
   
-    if(username === '' || password === '' || req.hostname !== HOST_CHECK) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }

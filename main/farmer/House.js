@@ -37,13 +37,13 @@ const House = ({liff}) => {
     const frameLate = 1
 
     useEffect(()=>{
+        bodySection.current.style.width = `${window.innerWidth}px`
+        bodySection.current.style.height = `${window.innerHeight}px`
+
         Frame.current.style.width = `${window.innerWidth * 0.8}px`
         Frame.current.style.height = `${window.innerWidth * 0.8}px`
         LoadingEle.current.style.width = `${window.innerWidth * 0.8}px`
         LoadingEle.current.style.height = `${window.innerWidth * 0.8}px`
-
-        bodySection.current.style.width = `${window.innerWidth}px`
-        bodySection.current.style.height = `${window.innerHeight}px`
         
         document.title = "เพิ่มโรงเรือน"
         ImageCurrent.current.style.transform = `translate(${CurrentP.x}px , ${CurrentP.y}px)`
@@ -166,7 +166,7 @@ const House = ({liff}) => {
     }
 
     const CropImageToData = () => {
-        if(ImageCurrent.current.src != "/icons8-camera.svg") {
+        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
             const context = CropImg.current.getContext('2d')
             const FrameIn = Frame.current
             const Img = ImageCurrent.current
@@ -197,7 +197,7 @@ const House = ({liff}) => {
 
     const confirmData = () => {
         setOpen(1)
-        if(ImageCurrent.current.src != "/icons8-camera.svg") {
+        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
             let CropImage = CropImageToData()
     
             let data = {
@@ -242,7 +242,8 @@ const House = ({liff}) => {
             {/* <div className="loading-show" ref={LoadingPreview}>
 
             </div> */}
-            <PopupAlert  textData={Textdata} open={OpenPop} result={ResultPop} liff={liff}/>
+            <PopupAlert  textData={Textdata} open={OpenPop} result={ResultPop} liff={liff}
+                setText={setText} setOpen={setOpen} setResult={setResult}/>
             <div className="content">
                 <div className="name-farmhouse">
                     <input type="text" ref={namefarm} placeholder="ชื่อโรงเรือน"></input>

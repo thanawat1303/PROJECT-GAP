@@ -52,5 +52,10 @@
       npm run server
       ```
 
+   - on Ngrok
+     ```
+     npm run server-ngrok
+     ```
+
 # React
    - Class Componant and Funtion Componant เวลา setState จะแตกต่างกัน

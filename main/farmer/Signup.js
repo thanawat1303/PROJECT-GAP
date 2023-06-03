@@ -374,7 +374,8 @@ const StepThree = (props) => {
             y : 0
         })
         if(file) {
-            if(new Date().getTime() - file.lastModified < 1000
+            if(true
+                // new Date().getTime() - file.lastModified < 1000
                 ) {
                 ResizeImg(file , 600).then((imageResult)=>{
                     setPreview(imageResult)
@@ -498,7 +499,7 @@ const StepThree = (props) => {
     }
 
     const CropImageToData = () => {
-        if(ImageCurrent.current.src != "/icons8-camera.svg") {
+        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
             const context = CropImg.current.getContext('2d')
             const FrameIn = Frame.current
             const Img = ImageCurrent.current
@@ -511,7 +512,9 @@ const StepThree = (props) => {
             const scaleW = sizeImgW / Img.width
             const scaleH = sizeImgH / Img.height
 
-            console.log(sizeImgW , sizeImgH)
+            console.log(scaleH)
+            console.log(((FrameIn.offsetTop - Img.offsetTop) * scaleH) - (Poy * scaleH))
+
             context.drawImage(
                 Img,
                 ((FrameIn.offsetLeft - Img.offsetLeft) * scaleW) - (Pox * scaleW),
@@ -530,7 +533,7 @@ const StepThree = (props) => {
 
     const confirmData = () => {
         props.LoadingPreview.current.setAttribute("show" , "")
-        if(ImageCurrent.current.src != "/icons8-camera.svg") {
+        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
             let CropImage = CropImageToData()
             props.data.set("Image" , CropImage)
             updateData()

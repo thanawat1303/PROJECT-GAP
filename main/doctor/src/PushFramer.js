@@ -141,7 +141,7 @@ class DetailConfirm extends Component {
                         </div>
                     </>,
         })
-        // clientMo.post('/api/doctor/listFarmer' , {type : 'list'}).then((farmer)=>{
+        // clientMo.post('/api/doctor/farmer/list' , {type : 'list'}).then((farmer)=>{
         //     this.setState({
         //         listAll: <ListProfileShow farmer={JSON.parse(farmer)} DetailConfirm={this}/>
         //     })
@@ -171,7 +171,7 @@ class DetailConfirm extends Component {
         let ansConfirm = (ansIn) ? id_farmer.value && passwordDoctor.value : passwordDoctor.value
         console.log(profile['date_register'])
         if(ansConfirm) {
-            const result = await clientMo.post('/doctor/api/doctor/confirmFm' , {
+            const result = await clientMo.post('/doctor/api/doctor/farmer/confirm' , {
                 id : this.props.id,
                 farmer : id_farmer.value,
                 password : passwordDoctor.value,

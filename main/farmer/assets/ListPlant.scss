@@ -248,9 +248,117 @@
         .list-plant {
             display: flex;
             flex-direction: column;
-            justify-content: space-evenly;
+            justify-content: start;
+            align-items: center;
             height: 100%;
             overflow: scroll;
+
+            .plant-content {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 95%;
+                background-color: #daf1ee;
+                border-radius: 15px;
+                padding: 5px 5px;
+                margin-bottom: 10px;
+                
+                .top {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+
+                    .type-main {
+                        width: 28%;
+                        input {
+                            width: 100%;
+                            font-size: 6vw;
+                            font-weight: 900;
+                        }
+                    }
+
+                    .date {
+                        display: flex;
+                        justify-content: center;
+                        background-color: white;
+                        border-radius: 0px 15px 0px 15px;
+                        padding-right: 10px;
+                        padding-top: 2px;
+                        span {
+                            display: flex;
+                            flex-direction: column;
+                            text-align: end;
+                            font-size: 3vw;
+                            input {
+                                text-align: end;
+                                font-size: 3vw;
+                            }
+                        }
+                    }
+                }
+
+                .body {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+                    margin: 2px 0px;
+                    padding-left: 15px;
+                    .content {
+                        display: flex;
+                        span {
+                            font-size: 5vw;
+                        }
+
+                        input {
+                            text-align: end;
+                            font-size: 4vw;
+                            width: 100%;
+                        }
+                    }
+                }
+
+                .bottom {
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding-left: 15px;
+                    .content {
+                        span {
+                            font-size: 5vw;
+                        }
+                    }
+
+                    .bt {
+                        display: flex;
+                        justify-content: space-between;
+                        width: 180px;
+                        button {
+                            font-size: 4vw;
+                            font-family: Sans-font;
+                            border: 0;
+                            border-radius: 15px;
+                            padding: 0px 18px;
+                            font-weight: 900;
+                            background-color: rgb(251, 186, 186);
+                            box-shadow: 2px 2px 2px gray;
+                        }
+                    }
+                }
+
+                input {
+                    border: 0;
+                    background-color: transparent;
+                    outline: 0;
+                    font-family: Sans-font;
+                }
+                span {
+                    font-family: Sans-font;
+                }
+            }
         }
     }
 }

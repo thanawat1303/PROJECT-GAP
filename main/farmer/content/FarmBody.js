@@ -17,8 +17,6 @@ const FarmBody = ({path , liff , uid}) => {
     useEffect(()=>{
         setBody(<NavFirst setPage={setPage} setBody={setBody} path={path} uid={uid} liff={liff}/>)
         
-        // console.log(HeadNav.current.clientHeight)
-        HeadNavMini.current.style.height = `${HeadNav.current.clientHeight}px`
         window.addEventListener('popstate' , checkPage)
 
         return ()=>{
@@ -41,16 +39,16 @@ const FarmBody = ({path , liff , uid}) => {
         const authClick = window.location.href.split("?")[1]
         const pathClick = new Map([...authClick.split("&").map((val)=>val.split("="))])
         if(pathClick.size === 1 && pathClick.has("farm"))
-            clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
+            clientMo.post("/api/farmer/sign" , {uid:uid , page : `authplant`}).then((result)=>{
                 if(result === "search") {
                     setBody(<NavFirst setBody={setBody} setPage={setPage} path={pathClick} uid={uid} liff={liff}/>)
                 }
             })
 
         else if(pathClick.size === 2 && pathClick.has("farm") && pathClick.has("page"))
-            clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
+            clientMo.post("/api/farmer/sign" , {uid:uid , page : `authplant`}).then((result)=>{
                 if(result === "search") {
-                    setBody(<ListPlant path={pathClick} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={0}/>)
+                    setBody(<ListPlant path={pathClick} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={0} namePage={pathClick.get("page")}/>)
                 }
             })
     }
@@ -59,11 +57,15 @@ const FarmBody = ({path , liff , uid}) => {
         if(e.target === Nav.current) Nav.current.removeAttribute("show")
     }
 
+    const Load = () => {
+        HeadNavMini.current.style.height = `${HeadNav.current.clientHeight}px`        
+    }
+
     return (
         <section className="farm">
             <div className="farm-body">
-                <div ref={HeadNav} className="head-nav">
-                    <div className="logo" onClick={HomeClick}>
+                <div className="head-nav" ref={HeadNav}>
+                    <div onLoad={Load} className="logo" onClick={HomeClick}>
                         <img src="/logo2.png"></img>
                         <span>GAP</span>
                     </div>

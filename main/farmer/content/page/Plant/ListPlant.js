@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
 import "../../../assets/ListPlant.scss"
-const ListPlant = ({setBody , setPage , path , liff , uid , type}) => {
+import { DAYUTC } from "../../../../../src/assets/js/module";
+const ListPlant = ({setBody , setPage , path , liff , uid , type , namePage}) => {
     const [BodyList , setBodyList] = useState(<></>)
     const [Loading , setLoading] = useState(false)
     const [PopupAdd , setPopupAdd] = useState(<></>)
@@ -10,9 +11,9 @@ const ListPlant = ({setBody , setPage , path , liff , uid , type}) => {
     const PopupRef = useRef()
     
     useEffect(()=>{
-        setPage("Plant")
+        setPage(namePage)
 
-        if(type === 1) window.history.pushState({} , null , `/farmer?farm=${path.get("farm")}&page=plant`)
+        if(type === 1) window.history.pushState({} , null , `/farmer?farm=${path.get("farm")}&page=${namePage}`)
 
         if(path.has("list")) SelectList(path.get("list"))
         else {
@@ -28,11 +29,40 @@ const ListPlant = ({setBody , setPage , path , liff , uid , type}) => {
                 id_farmhouse : path.get("farm")
             }).then((list)=>{
                 setLoading(true)
-                if(list !== '[]'){
-                    console.log(list)
+                console.log(list)
+                if(list !== 'error auth'){
                     setBodyList(JSON.parse(list).map((val , key)=>
-                        <div key={key} className="plant-someone">
-
+                        <div key={key} className="plant-content">
+                            <div className="top">
+                                <div className="type-main">
+                                    <input readOnly value={val.type_main}></input>
+                                </div>
+                                <div className="date">
+                                    <span>วันที่ปลูก <DAYUTC DATE={val.date_plant} TYPE="short"/></span>
+                                </div>
+                            </div>
+                            <div className="body">
+                                <div className="content">
+                                    <span>{val.type}</span>
+                                </div>
+                                <div className="content">
+                                    <input readOnly value={`จำนวน ${val.qty} ต้น`}></input>
+                                </div>
+                                
+                            </div>
+                            <div className="bottom">
+                                <div className="content">
+                                    <span>{`รุ่นที่ ${val.generation}`}</span>
+                                </div>
+                                {
+                                    namePage === "plant" ? 
+                                    <div className="bt">
+                                        <button>แก้ไข</button>
+                                        <button>รายละเอียด</button>
+                                    </div>
+                                    : <></>
+                                }
+                            </div>
                         </div>
                     ))
                 } else {
@@ -54,7 +84,7 @@ const ListPlant = ({setBody , setPage , path , liff , uid , type}) => {
     }
 
     const popupShow = () => {
-        setPopupAdd(<Popup setPopup={setPopupAdd} RefPop={PopupRef} uid={uid} path={path}/>)
+        setPopupAdd(<Popup setLoading={setLoading} setBodyList={setBodyList} setPopup={setPopupAdd} RefPop={PopupRef} uid={uid} path={path}/>)
     }
 
     return (
@@ -65,22 +95,31 @@ const ListPlant = ({setBody , setPage , path , liff , uid , type}) => {
             <div className="content-body">
                 <div className="head">
                     <div className="title">แบบบันทึกเกษตรกร</div>
+                    {namePage === "plant" ? 
                     <div onClick={popupShow} className="frame-menu">
                         <div className="img">
                             <img src="/ปลูก.jpg"></img>
                         </div>
                         <span>เพิ่มการบันทึก</span>
+                    </div> 
+                    : 
+                    <div className="frame-menu">
+                        <div className="img">
+                            <img src="/ปลูก.jpg"></img>
+                        </div>
                     </div>
+                    }
                 </div>
                 <div className="list-plant">
                     {BodyList}
+                    {Loading}
                 </div>
             </div>
         </section>
     )
 }
 
-const Popup = ({setPopup , RefPop , uid , path}) =>{
+const Popup = ({setPopup , RefPop , uid , path , setBodyList , setLoading}) =>{
     const TypePlantRefOne = useRef()
     const TypePlantRefTwo = useRef()
     const TypePlant = useRef()
@@ -155,7 +194,55 @@ const Popup = ({setPopup , RefPop , uid , path}) =>{
                 }
                 
                 clientMo.post("/api/farmer/formplant/insert" , data).then((result)=>{
-                    if(result === "insert") cancel()
+                    if(result === "insert") {
+                        setLoading(1)
+                        cancel()
+                        clientMo.post("/api/farmer/sign" , {uid:uid}).then((auth)=>{
+                            if(auth === "search") {
+                                clientMo.post('/api/farmer/formplant/select' , {
+                                    uid : uid,
+                                    id_farmhouse : path.get("farm")
+                                }).then((list)=>{
+                                    setLoading(true)
+                                    if(list !== '[]'){
+                                        setBodyList(JSON.parse(list).map((val , key)=>
+                                            <div key={key} className="plant-content">
+                                                <div className="top">
+                                                    <div className="type-main">
+                                                        <input readOnly value={val.type_main}></input>
+                                                    </div>
+                                                    <div className="date">
+                                                        <span>วันที่ปลูก <DAYUTC DATE={val.date_plant} TYPE="short"/></span>
+                                                    </div>
+                                                </div>
+                                                <div className="body">
+                                                    <div className="content">
+                                                        <span>{val.type}</span>
+                                                    </div>
+                                                    <div className="content">
+                                                        <input readOnly value={`จำนวน ${val.qty} ต้น`}></input>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div className="bottom">
+                                                    <div className="content">
+                                                        <span>{`รุ่นที่ ${val.generation}`}</span>
+                                                    </div>
+                                                    <div className="bt">
+                                                        <button>แก้ไข</button>
+                                                        <button>รายละเอียด</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    } else {
+                                        setBodyList(<div></div>)
+                                    }
+                                })
+                            }
+                        })
+                        
+                    }
                 })
         } else {
             let RefObject = [

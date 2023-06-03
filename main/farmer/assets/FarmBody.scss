@@ -12,6 +12,7 @@
             background-color: #daf1ee;
             display: flex;
             justify-content: space-between;
+            // max-height: 60px;
             .logo { 
                 display: flex;
                 justify-content: space-between;
@@ -24,11 +25,11 @@
     
                 span {
                     color: #379b7a;
-                    font-size: 25px;
+                    font-size: 9vw;
                     font-family: Sans-font;
                     font-weight: 900;
-                    padding-top: 6px;
                     margin-left: 5px;
+                    height: 12.5vw;
                 }
             }
     

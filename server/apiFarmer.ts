@@ -305,6 +305,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 (req.hostname == HOST_CHECK || !HOST_CHECK) && 
                 req.session.page === "authplant") {
             let con = Database.createConnection(listDB)
+            delete req.session.page
             con.connect(( err:any )=>{
                 if (err) {
                     dbpacket.dbErrorReturn(con, err, res);

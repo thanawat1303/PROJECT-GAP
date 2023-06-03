@@ -16,14 +16,15 @@ const MapsJSX = (props) => {
     )
 }
 
-const DAYUTC = (props) => {
+const DAYUTC = ({DATE , TYPE = "full"}) => {
     const [DateOut , setDATE] = useState("")
     const DayWeek = [ 'วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'] 
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"] 
 
     useEffect(()=>{
-        const DateIn = new Date(props.date)
-        setDATE(`${DayWeek[DateIn.getUTCDay()]} ที่ ${DateIn.getUTCDate()} ${Mount[DateIn.getUTCMonth()]} ปี พ.ศ. ${DateIn.getUTCFullYear() + 543}`)
+        const DateIn = new Date(DATE)
+        if(TYPE === "full") setDATE(`${DayWeek[DateIn.getUTCDay()]} ที่ ${DateIn.getUTCDate()} ${Mount[DateIn.getUTCMonth()]} ปี พ.ศ. ${DateIn.getUTCFullYear() + 543}`)
+        else setDATE(`วันที่ ${DateIn.getUTCDate()} ${Mount[DateIn.getUTCMonth()]} ${DateIn.getUTCFullYear() + 543}`)
     })
 
     return (<input readOnly value={DateOut}></input>)

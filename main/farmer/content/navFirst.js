@@ -24,10 +24,10 @@ const NavFirst = ({ setBody , path , liff , uid , setPage}) => {
     const Page = (page , type = 0) => {
         clientMo.post("/api/farmer/sign" , {
             uid : uid,
-            page : `auth${page}`
+            page : `authplant`
         }).then((val)=>{
             if(val === "search") {
-                if(page === "plant") setBody(<ListPlant path={path} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={type}/>)
+                setBody(<ListPlant path={path} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={type} namePage={page}/>)
             }
         })
     }

@@ -35,6 +35,22 @@ class moduleClient {
             setTimeout(()=>{
                 document.querySelector(el).classList.remove(action)
             } , deley)
+        },
+        this.LoadingPage = () => {
+            let Load = document.getElementById("loading")
+            Load.removeAttribute("style")
+            setTimeout(()=>{
+                Load.classList.remove('hide')
+            } , 1)
+        },
+        this.unLoadingPage = () => {
+            let Load = document.getElementById("loading")
+            setTimeout(()=>{
+                Load.classList.add('hide')
+                setTimeout(()=>{
+                    Load.setAttribute("style" , "display: none; animation: none;")
+                } , 1100)
+            } , 1000)
         }
     }
 }

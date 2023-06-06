@@ -5,7 +5,6 @@ import Admin from "./Admin";
 
 import './assets/style/main.scss'
 
-
 const MainAdmin = () => {
     const [body , setBody] = useState(<></>)
 
@@ -13,8 +12,6 @@ const MainAdmin = () => {
         clientMo.post('/api/admin/check').then((context)=>{
             if(context) setBody(<Admin main={this}/>)
             else setBody(<Login setMain={this}/>)
-            
-            clientMo.addAction('#loading' , 'hide' , 1000)
         })
     },[])
 

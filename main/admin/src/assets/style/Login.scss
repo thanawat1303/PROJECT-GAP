@@ -1,7 +1,18 @@
+.login-admin * {
+    -webkit-user-drag: none;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 .login-admin {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     height: 100%;
     width: 100%;
 
@@ -11,13 +22,14 @@
         justify-content: center;
         align-items: center;
         background-color: white;
-        padding: 20px 40px;
+        padding: 20px 50px;
         border-radius: 30px;
 
         .Logo-App {
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 18px;
             img {
                 width: 80px;
             }
@@ -28,30 +40,51 @@
                 font-weight: 900;
                 margin-left: 15px;
                 padding-top: 8px;
+                letter-spacing: 3px;
                 color: #379B7A;
             }
         }
 
         label {
-            margin: 5px 0px;
             display: flex;
-            justify-content: end;
-
+            justify-content: center;
+            align-items: center;
+            background-color: #F3F3F3;
+            border-radius: 10px;
+            margin: 8px 0px;
+            padding: 0px 0px;
+            width: 292.4px;
+            height: 52.4px;
+            outline: 2px solid transparent;
             span {
-                
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0px 10px;
+                svg {
+                    color: #22C7A9;
+                    font-size: 30px;
+                }
+
+                svg[emply=""] {
+                    animation: emplyInput 0.5s 0s alternate;
+                }
             }
 
             input {
-                border-radius: 12px;
-                border: 0.5px solid greenyellow;
-                border-bottom: 4px solid greenyellow;
-                box-shadow: 0px 0px 2.5px greenyellow;
-                outline: 0px;
-                padding: 3px 10px;
+                display: flex;
+                border: 0;
+                padding-right: 10px;
                 width: 100%;
-                font-family: main-font;
+                height: 100%;
+                font-family: Sans-font;
+                font-size: 20px;
+                background-color: transparent;
+                outline: 0;
                 font-weight: 900;
-                font-size: 16pt;
+            }
+            input[change=""] {
+                font-family: main-font;
             }
         }
 
@@ -78,24 +111,26 @@
 }
 
 .error-login {
-    color: red;
-    font-family: main-font;
+    color: white;
+    position: absolute;
+    font-family: Sans-font;
     font-weight: 900;
-    font-size: 14px;
+    font-size: 18px;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    background-color: transparent;
+    backdrop-filter: blur(8px);
+    padding: 5px 10px;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: 0.5s opacity , 0.5s visibility;
+    box-shadow: 0px 4px 4px rgba(255, 0, 0, 0.829);
 }
 
-.Logo-App {
-    transition: 0.3s;
-    margin-bottom: 18px;
-
-    -webkit-user-drag: none;
-
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+.error-login[show=""] {
+    opacity: 1;
+    visibility: visible;
 }
 
 // responsive computer
@@ -107,6 +142,18 @@
         button:hover {
             box-shadow: 0px 0px 10px green;
         }
+    }
+}
+
+@keyframes emplyInput {
+    0% {
+        transform: rotate(20deg);
+    }
+    50% {
+        transform: rotate(-20deg);
+    }
+    100% {
+        transform: rotate(0deg);
     }
 }
 

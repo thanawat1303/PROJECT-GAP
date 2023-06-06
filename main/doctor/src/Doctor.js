@@ -1,154 +1,213 @@
-import React , {Component} from "react";
+import React , {Component, useEffect, useRef, useState} from "react";
 import { clientMo } from "../../../src/assets/js/moduleClient";
 import Login from "./Login";
 
-import NavDoctor from "./navDoctor";
+// import NavDoctor from "./navDoctor";
+import NavFirst from "./navFirst";
 
-import './assets/style/doctor.scss'
+import "./assets/style/doctorMain.scss"
+// import './assets/style/doctor.scss'
+import DesktopNev from "./navTop/desktop";
+import SessionOut from "./sesionOut";
+import PageForm from "./page/form/PageForm";
+import FormList from "./page/form/formList";
+import PageExport from "./page/export/PageExport";
 
-export default class Doctor extends Component {
-    constructor(){
-        super();
-        this.state={
-            nav: <div></div> ,
-            body: <div></div>,
-            session: <div></div>,
-            timeOld : 0
+const Doctor = ({main , socket , type = 0}) => {
+    const [body , setBody] = useState(<div></div>)
+    const [session , setSession] = useState(<div></div>)
+    const [TextPage , setTextPage] = useState([])
+
+    const ImageCover = useRef()
+    const BodyRef = useRef()
+    // constructor(){
+    //     super();
+    //     this.state={
+    //         // nav: <div></div> ,
+    //         body: ,
+    //         session: ,
+    //         // timeOld : 0
+    //     }
+    // }
+
+    useEffect(()=>{
+        if(type === 1) window.history.replaceState({} , "" , "/doctor")
+        
+        ChkPath()
+        window.addEventListener("popstate" , ChkPath)
+
+        return() => {
+            window.removeEventListener("popstate" , ChkPath)
         }
-    }
+    } , [])
 
-    componentDidMount() {
-        this.setState({
-            nav : <NavDoctor bodyDoctor={this} main={this.props.main} socket={this.props.socket}/>
+
+    const ChkPath = () => {
+        clientMo.post('/api/doctor/check').then((context)=>{
+            if(context) {
+                let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
+                if(path.length === 1 && path[0] === "doctor") setBody(<NavFirst main={main} setdoctor={setBody} setSession={sessionoff} socket={socket} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                else if(path.length >= 2 && path[0] === "doctor") {
+                    if(path[1].indexOf("form") >= 0){
+                        if(path[1] === "form") setBody(<PageForm main={main} socket={socket} setBodyDoctor={setBody} session={sessionoff} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                        else if(path[1].indexOf("form?ap") >= 0 || path[1].indexOf("form?wt") >= 0) {
+                            if(path[1].indexOf("form?ap") >= 0) {
+                                setBody(<FormList main={main} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={"ap"} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                            }
+                            else if(path[1].indexOf("form?wt") >= 0) {
+                                setBody(<FormList main={main} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={"wt"} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                            }
+                        }
+                    } else if(false) {
+
+                    } else if(path[1].indexOf("export") >= 0) {
+                        setBody(<PageExport main={main} 
+                                    socket={socket} setBodyDoctor={setBody} session={sessionoff}
+                                    eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    }
+                    
+                } else {
+                    console.log(15)
+                }
+            }
+            else sessionoff()
         })
-        window.addEventListener('resize' , this.checkSize)
     }
+    // componentDidMount() {
+    //     this.setState({
+    //         body : 
+    //         // <NavDoctor bodyDoctor={this} main={this.props.main} socket={this.props.socket}/>
+    //     })
+    //     // window.addEventListener('resize' , this.checkSize)
+    // }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize' , this.checkSize)
-    }
+    // componentWillUnmount() {
+    //     window.removeEventListener('resize' , this.checkSize)
+    // }
 
-    checkSize = () => {
-        // e.target.innerHeight 
-        let list = document.querySelectorAll('.nav-menu .list-menu-nav')
-        // console.log(window.innerWidth)
-        if(window.innerWidth <= 500) {
-            list.forEach((el) => {
-                el.setAttribute('mini-nav' , '')
-                el.setAttribute('mini-nav-action' , '')
+    // checkSize = () => {
+    //     // e.target.innerHeight 
+    //     let list = document.querySelectorAll('.nav-menu .list-menu-nav')
+    //     // console.log(window.innerWidth)
+    //     if(window.innerWidth <= 500) {
+    //         list.forEach((el) => {
+    //             el.setAttribute('mini-nav' , '')
+    //             el.setAttribute('mini-nav-action' , '')
+    //         })
+    //     } else {
+    //         list.forEach((el) => {
+    //             el.removeAttribute('mini-nav')
+    //             el.removeAttribute('mini-nav-action')
+    //         })
+    //     }
+    // }
+
+    // Logout = (e) => {
+    //     e.target.parentElement.classList.toggle('hide')
+    //     clientMo.rmAction('#loading' , 'hide' , 0)
+    //     setTimeout(()=>{
+    //         clientMo.get('/api/logout').then(()=>{
+    //             this.props.main.setState({
+    //                 body : <Login socket={this.props.socket} main={this.props.main} state={true}/>
+    //             })
+    //             clientMo.addAction('#loading' , 'hide' , 1500)
+    //         })
+    //     } , 2000)
+    // }
+
+    // Menu = () => {
+    //     let list = document.querySelectorAll('.nav-menu .list-menu-nav')
+    //     let time = new Date()
+
+    //     if (time.getTime() - this.state.timeOld > 500) {
+    //         this.state.timeOld = time.getTime()
+    //         list.forEach((el , index) => {
+            
+    //             if(el.getAttribute('mini-nav') == '') {
+    //                 el.removeAttribute('mini-nav')
+    //                 setTimeout(()=>{el.removeAttribute('mini-nav-action')}, 300)
+    //             }
+    //             else {
+    //                 el.setAttribute('mini-nav' , '')
+    //                 setTimeout(()=>{el.setAttribute('mini-nav-action' , '')}, 300)
+    //             }
+                
+    //         })
+            
+    //     }
+    // }
+
+    // showOption = () => {
+    //     document.getElementById('profile-otion').classList.toggle('display')
+    //     document.querySelector('.profile-icon').classList.toggle('select')
+    // }
+
+    // hidePopUp = (e) => {
+    //     if(document.querySelector('#profile-otion.display')) {
+    //         let hide = true 
+    //         if(e.target == document.querySelector('.profile-icon #icon')) hide = false
+    //         if(e.target == document.querySelector('.profile-icon')) hide = false
+    //         if(e.target == document.querySelector('#profile-otion')) hide = false            
+    //         if(e.target == document.querySelector('#profile-otion #icon')) hide = false            
+
+    //         if(hide) {
+    //             document.querySelector('#profile-otion').classList.remove('display')
+    //             document.querySelector('.profile-icon').classList.remove('select')
+    //         }
+    //     }  
+    // }
+
+    const sessionoff = (type = false) => {
+        if(type) {
+            main.setState({
+                body : <Login main={main} state={true}/>
             })
         } else {
-            list.forEach((el) => {
-                el.removeAttribute('mini-nav')
-                el.removeAttribute('mini-nav-action')
-            })
+            setSession(<SessionOut main={main}/>)
+            document.getElementById('session').setAttribute('show' , '')
         }
-    }
+    } 
 
-    Logout = (e) => {
-        e.target.parentElement.classList.toggle('hide')
-        clientMo.rmAction('#loading' , 'hide' , 0)
-        setTimeout(()=>{
-            clientMo.get('/api/logout').then(()=>{
-                this.props.main.setState({
-                    body : <Login socket={this.props.socket} main={this.props.main} state={true}/>
-                })
-                clientMo.addAction('#loading' , 'hide' , 1500)
-            })
-        } , 2000)
-    }
-
-    Menu = () => {
-        let list = document.querySelectorAll('.nav-menu .list-menu-nav')
-        let time = new Date()
-
-        if (time.getTime() - this.state.timeOld > 500) {
-            this.state.timeOld = time.getTime()
-            list.forEach((el , index) => {
-            
-                if(el.getAttribute('mini-nav') == '') {
-                    el.removeAttribute('mini-nav')
-                    setTimeout(()=>{el.removeAttribute('mini-nav-action')}, 300)
-                }
-                else {
-                    el.setAttribute('mini-nav' , '')
-                    setTimeout(()=>{el.setAttribute('mini-nav-action' , '')}, 300)
-                }
-                
-            })
-            
-        }
-    }
-
-    showOption = () => {
-        document.getElementById('profile-otion').classList.toggle('display')
-        document.querySelector('.profile-icon').classList.toggle('select')
-    }
-
-    hidePopUp = (e) => {
-        if(document.querySelector('#profile-otion.display')) {
-            let hide = true 
-            if(e.target == document.querySelector('.profile-icon #icon')) hide = false
-            if(e.target == document.querySelector('.profile-icon')) hide = false
-            if(e.target == document.querySelector('#profile-otion')) hide = false            
-            if(e.target == document.querySelector('#profile-otion #icon')) hide = false            
-
-            if(hide) {
-                document.querySelector('#profile-otion').classList.remove('display')
-                document.querySelector('.profile-icon').classList.remove('select')
-            }
-        }  
-    }
-
-    render() {
-        return (
-            <div className="doctor" onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}>
-                <section className="tab-bar">
-                    <span className="pg-action">
-                        <span className="nav-menu">
-                            <span onClick={this.Menu} className="bg-icon">
-                                <img src="/menu-1-svgrepo-com-green.svg"></img>
-                            </span>
-                        </span>
-                        <a className="Logo" href="/" title="หมอพืช">
-                            หมอพืช
-                            <img  src="/logo2.png"></img>
-                        </a>
-                    </span>
-                    <span className="bt-action">
-                        <a className="alarm">
-                            <img src="/alarm-svgrepo-com.svg"></img>
-                        </a>
-                        <section className="profile">
-                            <a onClick={this.showOption} className="profile-icon">
-                                <img id="icon" src="/profile-svgrepo-com-white.svg"></img>
-                            </a>
-                            <div id="profile-otion">
-                                <a id="account-profile">
-                                    ข้อมูลส่วนตัว
-                                </a>
-                                <a onClick={this.Logout} id="logout">
-                                    ออกจากระบบ
-                                </a>
-                            </div>
-                        </section>
-                    </span>
-                </section>
-                <section className="container-body-doctor">
-                    <div onLoad={this.checkSize}>
-                        {this.state.nav}
+    return (
+        <div className="doctor" 
+        // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
+        >
+            <DesktopNev main={main} socket={socket} setSession={sessionoff} setBody={setBody} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>
+            <section ref={ImageCover} className="image-cover">
+                <div className="text-cover">
+                    <div className="icon">
+                        <span>ยินดีต้อนรับ</span>
+                        <img src="/Logo-white.png"></img>
                     </div>
-                    <bot-main>
-                        <bot-content>
-                            {this.state.body}
-                        </bot-content>
-                    </bot-main>
-                </section>
-                {/* feedBack */}
-                <section id="session">
-                    {this.state.session}
-                </section>
-            </div>
-        )
-    }
+                    <div className="status">
+                        {TextPage.map((val , index)=>(
+                            <div className="box-status" key={index}>
+                                <span>{val}</span>
+                                {TextPage.length - 1 > index ? <img src={"/arrow.png"}></img> : <></>}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="frame">
+                    <img src="/cover-2-3.png"></img>
+                </div>
+            </section>
+            <section ref={BodyRef} className="container-body-doctor">
+                {/* <div onLoad={this.checkSize}>
+                    {this.state.nav}
+                </div> */}
+                <bot-main>
+                    <bot-content>
+                        {body}
+                    </bot-content>
+                </bot-main>
+            </section>
+            {/* feedBack */}
+            <section id="session">
+                {session}
+            </section>
+        </div>
+    )
 }
+
+export default Doctor

@@ -224,16 +224,44 @@ const StepTwo = (props) => {
         setCurrent(<></>)
         timeOutLoad = setTimeout(
             ()=>{
-                navigator.geolocation.getCurrentPosition((location)=>{
-                    MapEle.current.setAttribute('show','')
-                    props.data.set("latitude" , location.coords.latitude)
-                    props.data.set("longitude" , location.coords.longitude)
-                    CheckData()
-                    setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
-                } , null , {
-                    enableHighAccuracy: true
-                })
+                pullMapEJS()
+                // if ('geolocation' in navigator) {
+                //     navigator.permissions.query({ name: 'geolocation' })
+                //         .then(permissionStatus => {
+                //             if (permissionStatus.state === 'granted') {
+                //                 pullMapEJS()
+                //             } else if (permissionStatus.state === 'prompt') {
+                //                 permissionStatus.onchange = () => {
+                //                     if (permissionStatus.state === 'granted') {
+                //                         pullMapEJS()
+                //                     } else {
+                                        
+                //                     }
+                //                 };
+                //             } else {
+                                
+                //             }
+                //         })
+                //         .catch(error => {
+                            
+                //         });
+                // } else {
+                    
+                // }
             } , 1000)
+    }
+
+    const pullMapEJS = () => {
+        navigator.geolocation.getCurrentPosition((location)=>{
+            MapEle.current.setAttribute('show','')
+            
+            props.data.set("latitude" , location.coords.latitude)
+            props.data.set("longitude" , location.coords.longitude)
+            CheckData()
+            setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
+        } , null , {
+            enableHighAccuracy: true
+        })
     }
 
     const reloadMap = () => {
@@ -286,7 +314,7 @@ const StepTwo = (props) => {
                         </div>
                     </div>
                     <div className="box-bt">
-                        <button className="bt-map-reload" onClick={reloadMap}>โหลดแผนที่ใหม่</button>
+                        <button className="bt-map-reload" onClick={reloadMap}>โหลดตำแหน่ง</button>
                     </div>
                 </label>
                 <label className="station">
@@ -374,8 +402,7 @@ const StepThree = (props) => {
             y : 0
         })
         if(file) {
-            if(true
-                // new Date().getTime() - file.lastModified < 1000
+            if(new Date().getTime() - file.lastModified < 1000
                 ) {
                 ResizeImg(file , 600).then((imageResult)=>{
                     setPreview(imageResult)

@@ -252,7 +252,6 @@ class Confirm extends Component {
                     document.getElementById('feedback').setAttribute('show' , '')
                     clientMo.post('/api/admin/add' , data).then((feedback)=>{
                         // feedback complete add doctor
-
                         if(feedback == '1') {
                             document.getElementById('img-feedback-correct').setAttribute('show' , '')
 

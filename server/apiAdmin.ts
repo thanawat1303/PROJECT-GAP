@@ -121,7 +121,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
         };
     
         if(result[0]){
-          console.log(req.session.checkAction)
+          console.log(req.session.checkADD)
           if(req.body['type'] == "add") 
               req.session.checkADD = 
                     {
@@ -149,7 +149,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     if(req.body['ID'] && req.body['passwordDT'] && 
         req.session.checkADD['value'] === process.env.KEY_SESSION + "add" && 
         new Date().getTime() - req.session.checkADD['time'] <= timeoutSession &&
-        req.hostname === HOST_CHECK) {
+        (req.hostname == HOST_CHECK || !HOST_CHECK)) {
       
       delete req.session.checkADD
   
@@ -289,7 +289,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     if(req.body['ID'] &&
         req.session.checkDelete['value'] === process.env.KEY_SESSION + "delete" && 
         new Date().getTime() - req.session.checkDelete['time'] <= timeoutSession &&
-        req.hostname === HOST_CHECK) {
+        (req.hostname == HOST_CHECK || !HOST_CHECK)) {
       
       delete req.session.checkDelete
   

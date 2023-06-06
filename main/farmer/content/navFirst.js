@@ -2,19 +2,27 @@ import React, { useEffect, useRef } from "react";
 
 import "../assets/NavFirst.scss"
 import { clientMo } from "../../../src/assets/js/moduleClient";
-import ListPlant from "./page/Plant/ListPlant";
+import ListPlant from "./page/ListPlant";
 
 
-const NavFirst = ({ setBody , path , liff , uid , setPage}) => {
+const NavFirst = ({ setBody , path , liff , uid , setPage , isClick = 0}) => {
     const NavBody = useRef()
 
     useEffect(()=>{
         setPage("HOME")
-        if(path.has("page")) Page(path.get("page"))
-        else {
-            if(document.getElementById("loading").classList[0] !== "hide")
-                clientMo.addAction('#loading' , 'hide' , 1000)
-        }
+        if(isClick === 1) window.history.pushState({} , null , `/farmer?farm=${path.get("farm")}`)
+
+        if(document.getElementById("loading").classList[0] !== "hide")
+            clientMo.addAction('#loading' , 'hide' , 1000)
+        
+        // if(path.size == 2){
+        //     if(path.has("page")) Page(path.get("page"))
+        //     else if(path.has("formferti")) Factor(path.get("formferti") , "formferti")  
+        //     else if(path.has("formcremi")) Factor(path.get("formcremi") , "formcremi")
+        // }       
+        // else {
+            
+        // }
     } , [])
 
     const selectMenu = (page) => {
@@ -27,10 +35,21 @@ const NavFirst = ({ setBody , path , liff , uid , setPage}) => {
             page : `authplant`
         }).then((val)=>{
             if(val === "search") {
-                setBody(<ListPlant path={path} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={type} namePage={page}/>)
+                setBody(<ListPlant path={path} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={type} valuePage={page} typePath={"page"}/>)
             }
         })
     }
+
+    // const Factor = (page , typePath , type = 0) => {
+    //     clientMo.post("/api/farmer/sign" , {
+    //         uid : uid,
+    //         page : `authFactor`
+    //     }).then((val)=>{
+    //         if(val === "search") {
+    //             setBody(<ListPlant path={path} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={type} valuePage={page} typePath={typePath}/>)
+    //         }
+    //     })
+    // }
 
     return (
         <section ref={NavBody} className="nav-first">

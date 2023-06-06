@@ -32,6 +32,7 @@ export default class NavDoctor extends Component {
                 if(list) {
                     this.props.bodyDoctor.setState({body : <List socket={this.props.socket} status={statusLoad} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
+                        
                     document.getElementById('account').setAttribute('nav-select' , '')
                 } else this.sessionoff(true)
 

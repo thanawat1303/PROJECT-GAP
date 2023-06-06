@@ -1,47 +1,47 @@
-.box-login-admin {
-
+.login-admin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
+    width: 100%;
 
-    .content-login {
+    form {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        height: 100%;
-        width: 50%;
-        max-width: 300px;
-        text-align: center;
-        margin: auto auto;
+        align-items: center;
+        background-color: white;
+        padding: 20px 40px;
+        border-radius: 30px;
 
-        button {
-            margin-top: 15px;
-            border-radius: 12px;
-            padding: 5px 0px;
-            
-            font-family: main-font;
-            font-size: 16pt;
-        }
+        .Logo-App {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            img {
+                width: 80px;
+            }
 
-        .content-pw {
-            transition: 0.25s;
+            span {
+                font-size: 30px;
+                font-family: main-font;
+                font-weight: 900;
+                margin-left: 15px;
+                padding-top: 8px;
+                color: #379B7A;
+            }
         }
 
         label {
-
             margin: 5px 0px;
             display: flex;
             justify-content: end;
 
-            .label-login {
-                position: absolute;
-                transition: 0.3s;
-                transform: translate( -5px , 0px );
-                font-family: main-font;
-                font-size: 19px;
-                font-weight: 900;
-                z-index: -1;
+            span {
+                
             }
 
-            .inputForm {
+            input {
                 border-radius: 12px;
                 border: 0.5px solid greenyellow;
                 border-bottom: 4px solid greenyellow;
@@ -53,6 +53,18 @@
                 font-weight: 900;
                 font-size: 16pt;
             }
+        }
+
+        button {
+            margin-top: 15px;
+            border-radius: 50px;
+            padding: 2px 55px;
+            background-color: #379B7A;
+            font-family: Sans-font;
+            border: 0;
+            color: white;
+            font-weight: 900;
+            font-size: 15pt;
         }
     }
 }
@@ -87,15 +99,13 @@
 }
 
 // responsive computer
-@media only screen and (min-width: 1280px) and  (min-height: 720px) and (max-width: 1920px) and (max-height: 1080px) {
-    .box-login-admin {
-        .content-login {
-            button {
-                cursor: pointer;
-            }
-            button:hover {
-                box-shadow: 0px 0px 10px green;
-            }
+.login-admin[computer=""] {
+    .content-login {
+        button {
+            cursor: pointer;
+        }
+        button:hover {
+            box-shadow: 0px 0px 10px green;
         }
     }
 }

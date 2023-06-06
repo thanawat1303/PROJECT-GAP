@@ -28,13 +28,20 @@ export default function router(app : any) {
     app.get('/doctor/push' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
-    app.get('/doctor/listformfarm' , function(req:any, res:any) {
+    app.get('/doctor/form' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
+    app.get('/doctor/export' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+
     app.get('/doctor/listformfarm/approve' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
     app.get('/doctor/listformfarm/wait' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/logout' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
 

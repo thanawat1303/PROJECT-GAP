@@ -116,13 +116,35 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             con.end()
         }).catch((err:any)=>{
             if(err == "not pass") {
-            res.redirect('/api/logout')
-            con.end()
+                con.end()
+                res.redirect('/api/logout')
             } else if( err == "connect" ) {
-            res.redirect('/api/logout')
+                res.redirect('/api/logout')
             }
         })
     
+    })
+
+    app.post('/api/doctor/station/list' , (req:any , res:any)=>{
+        let con = Database.createConnection(listDB)
+        con.connect(( err:any )=>{
+            if (err) {
+                dbpacket.dbErrorReturn(con, err, res);
+                console.log("connect");
+                return 0;
+            }
+
+            con.query(`SELECT * FROM station_list` , (err:any , result:any)=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("query");
+                    return 0
+                }
+                con.end()
+                res.send(result)
+                
+            })
+        })
     })
     
     // req manager farmer
@@ -463,22 +485,38 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
+
+                // select out table
                 con.query(`
-                        SELECT formplant.id_plant , formplant.type_plant , formplant.date_plant , 
-                        House.id_farmer , House.fullname   
-                        FROM formplant , 
-                            (
-                                SELECT id_farmHouse , acc_farmer.id_farmer , acc_farmer.fullname 
-                                FROM housefarm , 
-                                    (
-                                        SELECT id_farmer , uid_line , fullname FROM acc_farmer 
-                                        WHERE station = ? and register_auth = ?
-                                    ) AS acc_farmer
-                                WHERE (housefarm.uid_line = acc_farmer.uid_line) or (housefarm.id_farmer = acc_farmer.id_farmer)
-                            ) as House
-                        WHERE House.id_farmHouse = formplant.id_farmHouse and formplant.submit_plant=?
-                        ORDER BY date_plant 
-                        LIMIT 30;
+                        SELECT 
+                        (
+                            SELECT COUNT(formfertilizer.id_plant)
+                            FROM formfertilizer
+                            WHERE form.id = formfertilizer.id_plant
+                        ) as ctFer , 
+                        (
+                            SELECT COUNT(formchemical.id_plant)
+                            FROM formchemical
+                            WHERE form.id = formchemical.id_plant
+                        ) as Ctche , 
+                        form.*
+                        FROM 
+                        (
+                            SELECT formplant.* , House.id_farmer , House.fullname   
+                            FROM formplant , 
+                                (
+                                    SELECT id_farmHouse , acc_farmer.id_farmer , acc_farmer.fullname 
+                                    FROM housefarm , 
+                                        (
+                                            SELECT id_farmer , uid_line , fullname FROM acc_farmer 
+                                            WHERE station = ? and register_auth = ?
+                                        ) AS acc_farmer
+                                    WHERE (housefarm.uid_line = acc_farmer.uid_line) or (housefarm.id_farmer = acc_farmer.id_farmer)
+                                ) as House
+                            WHERE House.id_farmHouse = formplant.id_farmHouse and formplant.submit=?
+                            ORDER BY date_plant 
+                            LIMIT 30
+                        ) as form
                         ` , 
                         [ result['data']['station_doctor'] , req.body['approve'] , req.body['type']] , (err:any , listFarm:any)=>{
                             if (err) {
@@ -487,6 +525,133 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                             }
                             con.end()
                             res.send(listFarm)
+                        })
+            }
+        }).catch((err:any)=>{
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        })
+    })
+
+    app.post('/api/doctor/export' , (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
+            if(result['result'] === "pass") {
+
+                // select out table
+                let Req = req.body
+                let WHERE = new Array()
+                let WhereFarmer = ""
+                if(Req.submit !== undefined) WHERE.push(`submit = ${Req.submit}`)
+                if(Req.dateStart !== undefined && Req.dateEnd !== undefined) {
+                    WHERE.push(`UNIX_TIMESTAMP("${Req.dateStart}") <= UNIX_TIMESTAMP(date_plant) 
+                                and UNIX_TIMESTAMP(date_plant) <= UNIX_TIMESTAMP("${Req.dateEnd}")`)
+                }
+
+                if(Req.register !== undefined) WhereFarmer = `and register_auth = ${Req.register}`
+                else WhereFarmer = ` and (register_auth = 0 or register_auth = 0)`
+
+                let where = WHERE.join(" and ")
+
+                con.query(`
+                        SELECT
+                            (
+                                SELECT COUNT(formfertilizer.id_plant)
+                                FROM formfertilizer
+                                WHERE formplant.id = formfertilizer.id_plant
+                            ) as ctFer , 
+                            (
+                                SELECT COUNT(formchemical.id_plant)
+                                FROM formchemical
+                                WHERE formplant.id = formchemical.id_plant
+                            ) as Ctche , 
+                            formplant.* , House.id_farmer , House.fullname
+                        FROM formplant ,
+                            (
+                                SELECT id_farmHouse , acc_farmer.id_farmer , acc_farmer.fullname 
+                                FROM housefarm , 
+                                    (
+                                        SELECT id_farmer , uid_line , fullname FROM acc_farmer 
+                                        WHERE station = ? ${WhereFarmer}
+                                    ) AS acc_farmer
+                                WHERE (housefarm.uid_line = acc_farmer.uid_line) or (housefarm.id_farmer = acc_farmer.id_farmer)
+                            ) as House
+                        WHERE House.id_farmHouse = formplant.id_farmHouse ${where ? `and ${where}` : ""}
+                        ORDER BY date_plant
+                        ` , 
+                        [result['data']['station_doctor']] , (err:any , listForm:any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("query");
+                            }
+
+                            let qtyReq = listForm.length ** 2
+                            let num = 0
+                            let Form = new Map()
+                            listForm.map((val : any , key : any)=>{
+                                let fertiliMap = {}
+                                let chemiMap = {}
+                                con.query(
+                                            `
+                                                SELECT formfertilizer.*
+                                                FROM formfertilizer
+                                                WHERE formfertilizer.id_plant = ?
+                                                ORDER BY id
+                                            `
+                                        , [val.id] , (err : any , fertili : any)=>{
+                                            if (err) {
+                                                dbpacket.dbErrorReturn(con, err, res);
+                                                console.log("fertili");
+                                            }
+                                            num++
+                                            if(fertili[0]) {
+                                                fertiliMap = fertili
+                                                Form.set(val.id , {"data" : listForm[key] , "chemi" : chemiMap , "ferti" : fertiliMap})
+                                            }
+                                            if(num == qtyReq) {
+                                                const DataArr = Array.from(Form);
+                                                const JsonOb = Object.fromEntries(DataArr);
+                                                con.end()
+                                                res.send(JsonOb)
+                                            }
+                                        })
+                                con.query(
+                                            `
+                                                SELECT formchemical.*
+                                                FROM formchemical
+                                                WHERE formchemical.id_plant = ?
+                                                ORDER BY id
+                                            `
+                                        , [val.id] , (err : any , chemi : any)=>{
+                                            if (err) {
+                                                dbpacket.dbErrorReturn(con, err, res);
+                                                console.log("chemical");
+                                            }
+                                            num++
+                                            if(chemi[0]) {
+                                                chemiMap = chemi
+                                                Form.set(val.id , {"data" : listForm[key] , "chemi" : chemiMap , "ferti" : fertiliMap})
+                                            }
+
+                                            if(num == qtyReq) {
+                                                const DataArr = Array.from(Form);
+                                                const JsonOb = Object.fromEntries(DataArr);
+                                                con.end()
+                                                res.send(JsonOb)
+                                            }
+                                        })
+                            })
                         })
             }
         }).catch((err:any)=>{

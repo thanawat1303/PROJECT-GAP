@@ -16,7 +16,7 @@ const MapsJSX = (props) => {
     )
 }
 
-const DAYUTC = ({DATE , TYPE = "full"}) => {
+const DAYUTC = ({REF , DATE , TYPE = "full"}) => {
     const [DateOut , setDATE] = useState("")
     const DayWeek = [ 'วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'] 
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"] 
@@ -27,7 +27,7 @@ const DAYUTC = ({DATE , TYPE = "full"}) => {
         else setDATE(`วันที่ ${DateIn.getUTCDate()} ${Mount[DateIn.getUTCMonth()]} ${DateIn.getUTCFullYear() + 543}`)
     })
 
-    return (<input readOnly value={DateOut}></input>)
+    return (<input ref={REF} readOnly value={DateOut}></input>)
 }
 
 const TIMEUTC = (props) => {
@@ -195,6 +195,36 @@ const Loading = ({size , border , color="green"}) => {
     )
 }
 
+import * as FileSaver from "file-saver"
+import XLSX from "sheetjs-style"
+
+const ExportExcel = ({ excelData , fileName , nameBT}) => {
+    const filetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    const fileExtension = ".xlsx"
+
+    const exportToExcel = async () => {
+        const DataExport = new Map()
+        const NameSheet = new Array()
+        for(let key in excelData){
+            let ws = XLSX.utils.json_to_sheet(excelData[key])
+            NameSheet.push(key)
+            DataExport.set(key , ws)
+        }
+
+        const JsonExport = Object.fromEntries(Array.from(DataExport));
+        const wb = {Sheets : JsonExport , SheetNames : NameSheet}
+        const excelBuffer = XLSX.write(wb , {bookType : "xlsx" , type : "array"})
+
+        
+        const data = new Blob([excelBuffer] , {type : filetype})
+        FileSaver.saveAs(data , fileName , fileExtension)
+    }
+
+    return (
+        <button onClick={(e)=>exportToExcel(fileName)}>{nameBT}</button>
+    )
+}
+
 // const useAPI = (props) => {
 //     const [ Data , SetURL ] = useState(null)
 //     const [ Error , SetError] = useState(null)
@@ -220,4 +250,4 @@ const Loading = ({size , border , color="green"}) => {
 //     })
 // }
 
-export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading}
+export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel}

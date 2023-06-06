@@ -16,20 +16,29 @@ export default class MainDoctor extends Component {
 
     componentDidMount() {
 
-        clientMo.post('/api/doctor/check').then((context)=>{
-            console.log(context)
-            if(context) 
-                this.setState({
-                    body : <Doctor main={this} socket={this.props.socket}/>
-                })
-            else 
+        if(window.location.href.indexOf("/doctor/logout") >= 0) {
+            window.history.replaceState({} , "" , "/doctor")
+            clientMo.get('/api/logout').then(()=>{
                 this.setState({
                     body : <Login socket={this.props.socket} main={this}/>
                 }) 
-            
-            clientMo.addAction('#loading' , 'hide' , 1000)
-        })
-        
+                clientMo.addAction('#loading' , 'hide' , 1500)
+            })
+        } else {
+            clientMo.post('/api/doctor/check').then((context)=>{
+                console.log(context)
+                if(context) 
+                    this.setState({
+                        body : <Doctor main={this} socket={this.props.socket}/>
+                    })
+                else 
+                    this.setState({
+                        body : <Login socket={this.props.socket} main={this}/>
+                    }) 
+                
+                clientMo.addAction('#loading' , 'hide' , 1000)
+            })
+        }
     }
 
     render() {

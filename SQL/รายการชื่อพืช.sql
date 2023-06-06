@@ -1,0 +1,4 @@
+CREATE TABLE plant_type (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    namePlant VARCHAR(50) NOT NULL
+);

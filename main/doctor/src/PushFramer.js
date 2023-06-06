@@ -21,18 +21,28 @@ export default class Push extends Component {
         
         this.props.socket.emit("open PagePush")
         this.props.socket.on('push list' , this.checkSocket)
-
         this.setState({
-            body : JSON.parse(this.props.list).map((listFm , index) =>
-                        <div key={index} className="container-push" id={`container-push-${listFm['id_table']}`} onClick={(e)=>this.showDetail(listFm['id_table'] , e , listFm['countID'])}>
-                            <img className="img-doctor" src={(listFm['img']['data'] != '') ? listFm['img']['data'] : '/farmer-svgrepo-com.svg'}></img>
-                            <div className="detail-content-fm">
-                                <div className="name-fm"><input readOnly value={`ชื่อเกษตรกร ${listFm['fullname']}`}></input></div>
-                                <div className="date-fm"><DAYUTC date={listFm['date_register']}/></div>
-                                <div className="date-fm"><TIMEUTC time={listFm['date_register']}/></div>
-                            </div>
+            body : JSON.parse(this.props.list).map((listFm , index) =>{
+                const buffer = new Uint8Array(listFm.img.data)
+                const blob = new Blob([buffer])
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const result = event.target.result;
+
+                    document.querySelector(`#container-push-${listFm['id_table']} img`).setAttribute("src" , result)
+                }
+                reader.readAsText(blob)
+                return (
+                    <div key={index} className="container-push" id={`container-push-${listFm['id_table']}`} onClick={(e)=>this.showDetail(listFm['id_table'] , e , listFm['countID'])}>
+                        <img className="img-doctor" src={'/farmer-svgrepo-com.svg'}></img>
+                        <div className="detail-content-fm">
+                            <div className="name-fm"><input readOnly value={`ชื่อเกษตรกร ${listFm['fullname']}`}></input></div>
+                            <div className="date-fm"><DAYUTC DATE={listFm['date_register']}/></div>
+                            <div className="date-fm"><TIMEUTC time={listFm['date_register']}/></div>
                         </div>
-                    ) // use map is create element object
+                    </div>
+                )
+            }) // use map is create element object
         })
     }
 

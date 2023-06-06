@@ -17,7 +17,7 @@ export default class Login extends Component {
     }
 
     componentDidMount() {
-
+        let pathcheck = window.location.pathname.split("/").filter((val , index)=>(val != ""))
         liff.init({
             liffId : "1661049098-dorebKYg"
         }).then(()=>{
@@ -30,7 +30,10 @@ export default class Login extends Component {
             }
         }).catch((err)=>console.log(err))
 
-        if(this.props.state) {
+        if(this.props.state && pathcheck[0] === "doctor" && pathcheck.length == 1) {
+            window.history.replaceState({} , null , '/doctor')
+        }
+        else {
             window.history.pushState({} , null , '/doctor')
         }
 
@@ -54,7 +57,7 @@ export default class Login extends Component {
                     errorLogin.innerHTML = ""
                     if(context == "pass") {
                         this.props.main.setState({
-                            body : <Doctor socket={this.props.socket} main={this.props.main}/>
+                            body : <Doctor type={1} socket={this.props.socket} main={this.props.main}/>
                         })
                         
                     } else if (context == "account") {
@@ -78,7 +81,7 @@ export default class Login extends Component {
                             e.target[x].value = ''
                         }
                         this.setState({
-                            formPersonal : <FormPersonal id={id[1]} ele={this} main={this.props.main}/>
+                            formPersonal : <FormPersonal id={id[1]} ele={this} main={this.props.main} socket={this.props.socket}/>
                         })
                     }
                     else {
@@ -153,8 +156,19 @@ class FormPersonal extends Component {
     constructor(){
         super();
         this.state = {
-            error : <></>
+            error : <></>,
+            ListStation : <></>
         }
+    }
+
+    componentDidMount(){
+        clientMo.post("/api/doctor/station/list").then((val)=>{
+            this.setState({
+                ListStation : JSON.parse(val).map((val , key)=>(
+                    <option key={key} value={val.id_station}>{val.name_station}</option>
+                ))
+            })
+        })
     }
 
     confirm = () => {
@@ -178,7 +192,7 @@ class FormPersonal extends Component {
                 }).then((result)=>{
                     if(result === "pass"){
                         this.props.main.setState({
-                            body : <Doctor main={this.props.main}/>
+                            body : <Doctor type={1} main={this.props.main} socket={this.props.socket}/>
                         })
                     } else if(result === "password") {
                         password.setAttribute('error' , "")
@@ -235,7 +249,11 @@ class FormPersonal extends Component {
                     </div>
                     <div id="station-farm">
                         <span>ศูนย์ปฏิบัติหน้าที่</span>
-                        <input type="text" id="station" className="field-personal"></input>
+                        <select id="station" className="field-personal" defaultValue={0}>
+                            <option value={0}>เลือกศูนย์</option>
+                            {this.state.ListStation}
+                        </select>
+                        {/* <input type="text" id="station" className="field-personal"></input> */}
                     </div>
                 </div>
                 <div id="field-password">

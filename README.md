@@ -34,6 +34,8 @@
       npm i --save-dev @types/mysql @types/react @types/webpack-hot-middleware @types/webpack @types/cookie-parser @types/express-session @types/multer
 
       npm i ngrok
+
+      npm i file-saver sheetjs-style
       ```
 
 ### Build Project

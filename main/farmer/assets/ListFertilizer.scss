@@ -1,0 +1,165 @@
+$FontText : 5vw;
+.plant {
+    .popup-add{
+        .popup-content-fertilizer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+
+            .head {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 8vw;
+                font-weight: 900;
+                font-family: Sans-font;
+                height: 10%;
+                background-color: white;
+                border-radius: 15px;
+                box-shadow: 0px 0px 50px white;
+                padding: 0px 15px;
+            }
+
+            .form {
+                display: flex;
+                flex-direction: column;
+                // justify-content: space-evenly;
+                height: auto;
+                width: 100%;
+                .head-form {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 5;
+                    span {
+                        background-color: #ffe5a1;
+                        border-radius: 15px;
+                        padding: 5px 15px;
+                        font-family: Sans-font;
+                        font-weight: 900;
+                        font-size: 6vw;
+                    }
+                }
+
+                .body-content {
+                    background-color: #DAF1EE;
+                    border-radius: 18px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 10px 10px;
+                    padding-top: 40px;
+                    width: 95%;
+                    height: 85%;
+                    margin: -25px auto;
+                    margin-bottom: 0px;
+
+                    .frame-content {
+                        overflow-y: scroll;
+                        font-family: Sans-font;
+
+                        .content {
+                            .step {
+                                display: flex;
+                                width: 100%;
+                                margin-bottom: 5px;
+                                .num {
+                                    font-size: $FontText;
+                                    margin-right: 5px;
+                                }
+
+                                .body {
+                                    width: 100%;
+                                    .row {
+                                        display: flex;
+
+                                        .frame-textbox {
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            width: 100%;
+                                            margin-bottom: 10px;
+                                            padding-bottom: 10px;
+                                            border-bottom:1px solid green ;
+
+                                            span {
+                                                font-size: $FontText;
+                                                width: 40%;
+                                            }
+                                            input , select , textarea {
+                                                margin-left: 2px;
+                                                font-size: $FontText;
+                                                font-family: Sans-font;
+                                                text-align: center;
+                                                border: 0;
+                                                border-radius: 8px;
+                                                width: 50%;
+                                                border: 2px solid transparent;
+                                            }
+
+                                            textarea {
+                                                text-align: center;
+                                            }
+
+                                            .full {
+                                                width: 100%;
+                                                display: flex;
+                                            }
+
+                                            .choose {
+                                                display: flex;
+                                                padding-left: 5px;
+                                                width: 100%;
+                                                label {
+                                                    width: 100%;
+
+                                                    input {
+                                                        margin:0px 5px;
+                                                        width: 100%;
+                                                    }
+                                                }
+                                            }
+
+                                            .select-content {
+                                                display: flex;
+                                                justify-content: end;
+                                                align-items: center;
+                                                width: 100%;
+                                                margin-top: 10px;
+                                            }
+                                        }
+
+                                        .colume {
+                                            flex-direction: column;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .bt-form {
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    margin-top: 5%;
+                    height: 100%;
+                    button {
+                        background-color: #FF8484;
+                        border-radius: 5px;
+                        border: 0;
+                        width: 30vw;
+                        font-weight: 900;
+                        font-size: 6vw;
+                        font-family: Sans-font;
+                        padding: 3px 0px;
+                    }
+                }
+            }
+        }
+    }
+}

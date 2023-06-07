@@ -1,12 +1,12 @@
 import React , {Component} from "react";
-import { clientMo } from "../../../src/assets/js/moduleClient";
+import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-import Login from "./Login";
+import Login from "../Login";
 
 import List from "./listFramer";
 import Push from "./PushFramer";
 
-import SessionOut from "./sesionOut";
+import SessionOut from "../sesionOut";
 import { ListFormFarm } from "./ListForm";
 
 export default class NavDoctor extends Component {

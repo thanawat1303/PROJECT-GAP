@@ -1,6 +1,6 @@
 import React , {Component} from "react";
-import { clientMo } from "../../../src/assets/js/moduleClient";
-import { MapsJSX , DAYUTC, TIMEUTC} from "../../../src/assets/js/module";
+import { clientMo } from "../../../../src/assets/js/moduleClient";
+import { MapsJSX , DAYUTC, TIMEUTC} from "../../../../src/assets/js/module";
 
 import "./assets/style/Push.scss"
 

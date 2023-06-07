@@ -1,6 +1,6 @@
 import React , {Component, useEffect, useState} from "react";
-import { clientMo } from "../../../src/assets/js/moduleClient";
-import { ClosePopUp } from "../../../src/assets/js/module";
+import { clientMo } from "../../../../src/assets/js/moduleClient";
+import { ClosePopUp } from "../../../../src/assets/js/module";
 
 import './assets/style/ListFarmer.scss'
 import { ShowDetailFarmer } from "./DetailFarmer";

@@ -1,8 +1,8 @@
 import React , {Component} from "react";
-import { clientMo } from "../../../src/assets/js/moduleClient";
+import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-import SessionOut from "./sesionOut";
-import Feedback from "./Feedback";
+import SessionOut from "../sesionOut";
+import Feedback from "../Feedback";
 
 import './assets/style/Plus.scss'
 

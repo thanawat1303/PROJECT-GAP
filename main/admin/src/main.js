@@ -5,13 +5,13 @@ import Admin from "./Admin";
 
 import './assets/style/main.scss'
 
-const MainAdmin = () => {
+const MainAdmin = ({socket}) => {
     const [body , setBody] = useState(<></>)
 
     useEffect(()=>{
         clientMo.post('/api/admin/check').then((context)=>{
-            if(context) setBody(<Admin main={this}/>)
-            else setBody(<Login setMain={this}/>)
+            if(context) setBody(<Admin setBodyFileMain={setBody} socket={socket}/>)
+            else setBody(<Login setBodyFileMain={setBody} socket={socket}/>)
         })
     },[])
 

@@ -1,0 +1,47 @@
+$ColorGreen : #22C7A9;
+.tab-bar-desktop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 6px 10px;
+    .pg-action {
+        .Logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img {
+                width: 60px;
+            }
+            span {
+                color: $ColorGreen;
+                font-family: Sans-font;
+                font-size: 30px;
+                padding-top: 5px;
+                margin-left: 5px;
+                font-weight: 900;
+            }
+        }
+    }
+
+    .bt-action {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        a {
+            margin: 0px 20px;
+            padding: 2px 20px;
+            font-family: Sans-font;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 20px;
+            color: $ColorGreen;
+        }
+
+        a.logout {
+            margin-right: 0px;
+            background-color: $ColorGreen;
+            color: black;
+        }
+    }
+}

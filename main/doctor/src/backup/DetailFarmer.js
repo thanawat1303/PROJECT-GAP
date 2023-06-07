@@ -1,6 +1,6 @@
 import React , {useState , useEffect} from "react"
-import { clientMo } from "../../../src/assets/js/moduleClient"
-import { DAYUTC , TIMEUTC , MapsJSX , ClosePopUp } from "../../../src/assets/js/module"
+import { clientMo } from "../../../../src/assets/js/moduleClient"
+import { DAYUTC , TIMEUTC , MapsJSX , ClosePopUp } from "../../../../src/assets/js/module"
 import { ShowDetailDoctor } from "./DetailDoctor";
 
 const ShowDetailFarmer = (props) => {

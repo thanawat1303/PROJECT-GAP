@@ -4,7 +4,7 @@ import './assets/style/Login.scss'
 
 import Admin from "./Admin";
 
-const Login = ({setMain , state = false}) => {
+const Login = ({setBodyFileMain , state = false , socket}) => {
 // this.props.main == Main app
     // const [body , setBody] = useState(<></>)
     const Body = useRef()
@@ -18,7 +18,8 @@ const Login = ({setMain , state = false}) => {
     let timeoutEmply = 0
 
     useEffect(()=>{
-        if(state) window.history.pushState({} , null , '/admin')
+        let path = window.location.pathname.split("/").filter((path)=>path)
+        if(state && path[0] !== "admin" && path.length === 1) window.history.pushState({} , null , '/admin')
         
         // Body.current.style.backgroundImage = ""
         if(navigator.platform === "Win32") {
@@ -42,10 +43,7 @@ const Login = ({setMain , state = false}) => {
             setTimeout(()=>{
                 clientMo.post('/api/admin/auth' , formData).then((context)=>{
                     if(context) {
-                        this.props.main.setState({
-                            body : <Admin />
-                        })
-                        
+                        setBodyFileMain(<Admin setBodyFileMain={setBodyFileMain} socket={socket}/>)
                     } else {
                         ErrorLogin.current.setAttribute("show" , "")
                         for(let x = 0; x < e.target.length-1; x++) {
@@ -87,7 +85,7 @@ const Login = ({setMain , state = false}) => {
     }
 
     return (
-        <div onLoad={LoadingPage} ref={Body} className="login-admin">
+        <div style={{backgroundImage : "url('/ดอย.jpg')"}} onLoad={LoadingPage} ref={Body} className="login-admin">
             <form ref={Form} autoComplete="off" onSubmit={submitFrom}>
                 <div className="Logo-App">
                     <img src="/logo2.png"></img>

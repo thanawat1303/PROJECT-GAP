@@ -1,11 +1,11 @@
 import React , {Component} from "react";
 import ResizeObserver from "resize-observer-polyfill";
-import {clientMo}  from "../../../src/assets/js/moduleClient";
+import {clientMo}  from "../../../../src/assets/js/moduleClient";
 
 import './assets/style/List.scss'
 
-import SessionOut from "./sesionOut";
-import Feedback from "./Feedback";
+import SessionOut from "../sesionOut";
+import Feedback from "../Feedback";
 
 
 export default class List extends Component {

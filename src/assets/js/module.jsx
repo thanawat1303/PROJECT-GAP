@@ -238,7 +238,7 @@ const ButtonMenu = ({type , textRow1 , textRow2 , action}) => {
     )
 }
 
-const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , sizeLoad , BorderLoad , color}) => {
+const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , sizeLoad , BorderLoad , color , action = null}) => {
     const Control = useRef()
 
     const [state , setstate] = useState(false)
@@ -336,7 +336,7 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
                             visibility : (Status == 0) ? "hidden" : "visible",
                             transition : "0.5s opacity , 0.5s visibility"
                         }}
-                        onClick={confirm}>ตกลง</button>
+                        onClick={action ?? confirm}>ตกลง</button>
                 </BoxButton-Report>
             </Body-Report>
         </Report-Dom>

@@ -166,43 +166,100 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   })
   
 
-  app.post('/api/admin/manage/doctor' , (req:any,res:any)=>{
+  app.post('/api/admin/manage/doctor' , async (req:any,res:any)=>{
     let username = req.session.user_admin
-    let password = req.session.pass_admin
+    let password = req.body['password']
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
   
     let con = Database.createConnection(listDB)
   
-    apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
-      if(result['result'] === "pass") {
-        if(req.body['ID'] && req.body['status'] != undefined) {
-          con.query(`UPDATE acc_doctor SET status_account = ? WHERE id_doctor = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err:any,result:any)=>{
-            if(err) {
-              dbpacket.dbErrorReturn(con , err , res)
-              return 0
-            }
-  
-            con.end()
-  
-            // console.log(result)
-            if(result.changedRows == 1) res.send('1')
-            else res.send('error')
-          })
+    try {
+      const auth = await apifunc.auth(con , username , password , res , "admin")
+      if(auth['result'] === "pass") {
+        if(req.body['id_table'] != undefined && (req.body['status'] === 1 || req.body['status'] === 0) && req.body['type_status']) {
+          const type_status = req.body['type_status'] === "status_account" ? "status" : 
+                              req.body['type_status'] === "status_delete" ? "delete" : "";
+          
+          console.log(type_status)
+            if(type_status) {
+            con.query(
+              `
+                INSERT INTO because_${type_status} 
+                (id_table_doctor , id_admin , because_text , date) VALUES 
+                (? , ? , ? , ?);
+              ` , [ req.body['id_table'] , username , req.body['because'] , new Date()] ,
+              (err : any , resultBecause : any) => {
+                if(err) {
+                  dbpacket.dbErrorReturn(con , err , res)
+                  console.log("insert change status doctor")
+                  return 0
+                }
+                if(resultBecause.affectedRows === 1) {
+                  con.query(`
+                      UPDATE acc_doctor 
+                      SET ${req.body['type_status']} = ? 
+                      WHERE id_table_doctor = ? and status_delete = 0;` , 
+                    [req.body['status'] , req.body['id_table']] , 
+                    (err:any,result:any)=>{
+                      if(err) {
+                        dbpacket.dbErrorReturn(con , err , res)
+                        return 0
+                      }
+            
+                      con.end()
+            
+                      // console.log(result)
+                      res.send('133')
+                    })
+                } else {
+                  con.end()
+                  res.send("because")
+                }
+              }
+            )
+            
+          }
         } else {
           con.end()
           res.send('error ID or status')
         }
       }
-    }).catch((err:any)=>{
+    }catch(err : any) {
       con.end()
       if(err == "not pass") {
-        res.redirect('/api/logout')
+        res.send("password")
       }
-    })
+    }
+    // apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
+      // if(result['result'] === "pass") {
+      //   if(req.body['ID'] && req.body['status'] != undefined) {
+      //     con.query(`UPDATE acc_doctor SET status_account = ? WHERE id_doctor = ?;` , [(req.body['status'] == 1) ? 0 : 1 , req.body['ID']] , (err:any,result:any)=>{
+      //       if(err) {
+      //         dbpacket.dbErrorReturn(con , err , res)
+      //         return 0
+      //       }
+  
+      //       con.end()
+  
+      //       // console.log(result)
+      //       if(result.changedRows == 1) res.send('1')
+      //       else res.send('error')
+      //     })
+      //   } else {
+      //     con.end()
+      //     res.send('error ID or status')
+      //   }
+      // }
+    // }).catch((err:any)=>{
+      // con.end()
+      // if(err == "not pass") {
+      //   res.redirect('/api/logout')
+      // }
+    // })
   })
   
   app.post('/api/admin/delete' , (req:any , res:any)=>{

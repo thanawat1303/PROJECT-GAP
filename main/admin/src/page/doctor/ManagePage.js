@@ -2,12 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
 import "../../assets/style/page/doctor/Manage.scss"
-import { Loading } from "../../../../../src/assets/js/module";
+import { Loading, ReportAction } from "../../../../../src/assets/js/module";
 const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
     const [ScreenH , setScreenH] = useState(window.innerHeight)
+
+    const [Open , setOpen] = useState(0)
+    const [Text , setText] = useState("")
+    const [Status , setStatus] = useState(0)
 
     const BecauseRef = useRef()
     const PasswordRef = useRef()
@@ -66,13 +70,54 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
         setScreenH(window.innerHeight)
     }
 
-    const Submit = () => {
+    const Submit = async () => {
         if(BecauseRef.current.value && PasswordRef.current.value) {
-            console.log(type)
+            const data = {
+                id_table : Profile.id_table,
+                type_status : type,
+                status : type === "status_account" ? status ? 0 : 1 : 1,
+                because : BecauseRef.current.value,
+                password : PasswordRef.current.value,
+            }
+
+            setOpen(1)
+            const result = await clientMo.post("/api/admin/manage/doctor" , data)
+            if(result === "133") {
+                setText(`${type === "status_account" ? status ? "ปิดบัญชี" : "เปิดบัญชี" : "ลบบัญชี"}สำเร็จ`)
+                setStatus(1)
+            } else if(result === "because") {
+                setText("เกิดปัญหาทางเซิร์ฟเวอร์")
+                setStatus(2)
+            } else if(result === "password") {
+                setText("รหัสผ่านไม่ถูกต้อง")
+                setStatus(2)
+                PasswordRef.current.value = ""
+            }
+            console.log(result)
+        }
+    }
+
+    let Time = 0
+    const AfterConfirm = () => {
+        if(Status === 1) close()  
+        else {
+            if(Status != 0) {
+                setOpen(0)
+                Time = setTimeout(()=>{
+                    setText("")
+                    setStatus(0)
+                } , 500)
+            }
         }
     }
 
     return (
+        <>
+        <ReportAction Open={Open} Text={Text} Status={Status} 
+                        setOpen={setOpen} setText={setText} setStatus={setStatus}
+                        sizeLoad={6/100 * ScreenW >= 60 ? 6/100 * ScreenW : 60}
+                        BorderLoad={0.8/100 * ScreenW >= 10 ? 0.8/100 * ScreenW : 10}
+                        color="#1CFFF1" action={AfterConfirm}/>
         <div className="manage-page">
             <div className="head-page">
                 {type === "status_account" ? status ? "เหตุผลการปิดบัญชี" : "เหตุผลการเปิดบัญชี" : "เหตุผลการลบบัญชี"}
@@ -124,6 +169,7 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
                 </div>
             </div>
         </div>
+        </>
     )
 }
 

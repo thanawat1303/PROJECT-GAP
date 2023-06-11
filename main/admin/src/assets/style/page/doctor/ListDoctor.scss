@@ -289,10 +289,10 @@
                             }
                         }
 
-                        .frame[status="on"] {
+                        .frame[status="1"] {
                             background-color: #48CC5D;
                         }
-                        .frame[status="off"] {
+                        .frame[status="0"] {
                             transform: translateX(-2.929vw);
                             background-color: #FF5D5D;
                         }

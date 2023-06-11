@@ -65,7 +65,6 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
     }
 
     const setSizeScreen = (e) => {
-        console.log(e)
         setScreenW(window.innerWidth)
         setScreenH(window.innerHeight)
     }
@@ -93,13 +92,18 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
                 setStatus(2)
                 PasswordRef.current.value = ""
             }
-            console.log(result)
         }
     }
 
     let Time = 0
     const AfterConfirm = () => {
-        if(Status === 1) close()  
+        if(Status === 1) {
+            if(type === "status_account") {
+                document.querySelector(`#doctor-list-${id_table} Action-bt Bt-status .frame`)
+                    .setAttribute("status" , status ? 0 : 1)
+            }
+            close()  
+        }
         else {
             if(Status != 0) {
                 setOpen(0)

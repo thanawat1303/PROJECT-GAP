@@ -5,7 +5,7 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
 
-const DesktopNev = ({setBodyFileMain , socket , setSession , setBodyFileAdmin , modify}) => {
+const DesktopNev = ({setBodyFileMain , socket , setSession , setBodyFileAdmin , modify , TabOn}) => {
     useEffect(()=>{
         
     } , [])
@@ -23,9 +23,12 @@ const DesktopNev = ({setBodyFileMain , socket , setSession , setBodyFileAdmin , 
 
     const Home = (e) => {
         e.preventDefault()
+
+        TabOn.start()
         clientMo.post('/api/admin/check').then((context)=>{
+            TabOn.addTimeOut(TabOn.end())
             if(context) 
-                setBodyFileAdmin(<NavFirst setBodyFileAdmin={setBodyFileAdmin} setSession={setSession} socket={socket} modify={modify} type={1}/>)
+                setBodyFileAdmin(<NavFirst setBodyFileAdmin={setBodyFileAdmin} setSession={setSession} socket={socket} modify={modify} type={1} TabOn={TabOn}/>)
             else setSession()
         })
     }

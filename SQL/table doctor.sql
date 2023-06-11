@@ -1,6 +1,7 @@
 DROP TABLE line_chat_gap.acc_doctor;
 CREATE TABLE line_chat_gap.acc_doctor (
-    id_doctor varchar(10) NOT NULL PRIMARY KEY,
+    id_table_doctor INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id_doctor varchar(10) NOT NULL,
     uid_line_doctor varchar(50) NOT NULL,
     password_doctor varchar(256) NOT NULL,
     fullname_doctor varchar(50) NOT NULL,

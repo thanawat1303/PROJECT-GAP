@@ -2,29 +2,33 @@ import React, { useEffect } from "react"
 
 import "./assets/style/Navfirst.scss"
 import { clientMo } from "../../../src/assets/js/moduleClient"
-import { ButtonMenu } from "./page/modules"
-const NavFirst = ({setBodyFileAdmin , setSession , socket , modify , type = 0}) => {
+import { ButtonMenu } from "../../../src/assets/js/module"
+
+import PageManageDoctor from "./page/doctor/PageManageDoctor"
+
+const NavFirst = ({setBodyFileAdmin , setSession , socket , modify , type = 0 , TabOn}) => {
     useEffect(()=>{
         let path = window.location.pathname.split("/").filter((path)=>path)
-        if(type === 1 && path[0] !== "admin" && path.length === 1) window.history.pushState({} , "" , "/admin")
+        if(type === 1 && path.length !== 1) window.history.pushState({} , "" , "/admin")
 
         modify(50 , 50 , [])
     } , [])
 
     const doctor = () => {
+        TabOn.start()
         clientMo.post('/api/admin/check').then((context)=>{
             if(context) 
-                setBodyFileAdmin(<></>)
+                setBodyFileAdmin(<PageManageDoctor socket={socket} setSession={setSession} addHref={true} modify={modify} TabOn={TabOn}/>)
             else setSession()
         })
     }
 
     const data = () => {
-        clientMo.post('/api/admin/check').then((context)=>{
-            if(context) 
-                setBodyFileAdmin(<></>)
-            else setSession()
-        })
+        // clientMo.post('/api/admin/check').then((context)=>{
+        //     if(context) 
+        //         setBodyFileAdmin(<></>)
+        //     else setSession()
+        // })
     }
 
     return (

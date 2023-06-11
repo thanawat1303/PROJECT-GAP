@@ -83,7 +83,10 @@
                 outline: 0;
                 font-weight: 900;
             }
-            input[change=""] {
+            input[type="password"]::placeholder {
+                font-family: Sans-font;
+            }
+            input[type="password"] {
                 font-family: main-font;
             }
         }

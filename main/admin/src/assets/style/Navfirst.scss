@@ -3,10 +3,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+    padding: 0.3vw 0px;
     height: 100%;
     width: 100%;
     .head {
-        font-size: 30px;
+        font-size: 2vw;
         font-family: Sans-font;
         font-weight: 900;
     }
@@ -22,33 +23,33 @@
             justify-content: center;
             align-items: center;
             border-radius: 18px;
-            padding: 13px 0px;
-            width: 205px;
+            padding: 0.846vw 0px;
+            width: 13.34vw;
             font-family: Sans-font;
             font-weight: 900;
             box-shadow: 0px 4px 4px #00000040;
             cursor: pointer;
 
             img {
-                width: 101px;
-                height: 90px;
+                width: 6.575vw;
+                height: 5.859vw;
             }
 
             .text-one {
                 display: flex;
-                height: 40px;
-                font-size: 30px;
+                height: 2.604vw;
+                font-size: 1.9536vw;
             }
             .text-two {
-                font-size: 20px;
+                font-size: 1.302vw;
             }
 
             .action {
-                margin-top: 5px;
+                margin-top: 0.325vw;
                 button {
                     font-family: Sans-font;
-                    font-size: 18px;
-                    padding: 0px 30px;
+                    font-size: 1.171vw;
+                    padding: 0px 1.953vw;
                     border-radius: 50px;
                     border: 0;
                     background: linear-gradient(90deg , #C2FAC1 , #25983E, );

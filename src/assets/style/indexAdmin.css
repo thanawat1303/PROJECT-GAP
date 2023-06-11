@@ -1,6 +1,8 @@
 body , html , #loading {
-    height: 745px;
-    width: 1536px;
+    height: 100vh;
+    width: 100vw;
+    /* height: 745px;
+    width: 1536px; */
 }
 
 #loading {

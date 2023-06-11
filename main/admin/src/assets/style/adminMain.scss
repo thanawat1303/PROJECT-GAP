@@ -22,14 +22,34 @@ a {
     display: flex;
     flex-direction: column;
     height: 100%;
+    .status-loadPage {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        width: 100%;
+        height: 2px;
+        z-index: 999;
+        background-color: transparent;
+
+        .tab-load {
+            display: none;
+            height: 100%;
+            width: 0%;
+            background-color: #22C7A9;
+            transition: 0.5s width;
+        }
+    }
     .image-cover {
         display: flex;
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        position: relative;
         width: 100%;
         height: 50%;
         transition: 0.5s height;
+        margin-top: 4.8vw;
 
         .text-cover {
             display: flex;
@@ -37,18 +57,17 @@ a {
             align-items: center;
             flex-direction: column;
             position: absolute;
-            width: 800px;
             z-index: 10;
             .icon {
                 display: flex;
                 justify-content: center;
                 align-items: start;
                 span {
-                    font-size: 80px;
+                    font-size: 5.5vw;
                     font-family: Sans-font;
                     font-weight: 900;
                     color: white;
-                    margin-top: 20px;
+                    margin-top: 2%;
                     letter-spacing: 10px;
                 }
     
@@ -70,14 +89,14 @@ a {
                     span {
                         color: black;
                         font-family: Sans-font;
-                        font-size: 18px;
+                        font-size: 1.2vw;
                         font-weight: 900;
                         padding: 0px 15px;
                         border-radius: 20px;
                         background-color: white;
                     }
                     img {
-                        width: 15px;
+                        width: 12%;
                         margin: 0px 5px;
                     }
                 }
@@ -88,12 +107,12 @@ a {
             justify-content: center;
             align-items: center;
             // transform: translateY(0px);
-            width: 100%;
-            height: 1080px;
+            width: 1600px;
+            height: 849px;
             img {
-                transform: translateY(120px);
-                width: 100%;
-                height: 100%;
+                transform: translateY(4.55vw);
+                width: 1600px;
+                height: 849px;
             }
         }
     }
@@ -103,7 +122,8 @@ a {
         justify-content: center;
         align-items: center;
         width: 100%;
-        height: 40vh;
+        overflow: hidden;
+        z-index: 99;
         bot-main {
             display: flex;
             justify-content: center;

@@ -25,7 +25,7 @@ export default class NavAdmin extends Component {
         let path = window.location.pathname.split('/');
         if(path[1] == 'list' || path[1] == '')
         {
-            clientMo.post('/api/admin/listDoctor').then((list)=>{
+            clientMo.post('/api/admin/doctor/list').then((list)=>{
                 if(list) {
                     this.props.bodyAdmin.setState({body : <List status={statusLoad} main={this.props.main} bodyAdmin={this.props.bodyAdmin} list={list}/>})
                     if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -67,7 +67,7 @@ export default class NavAdmin extends Component {
         e.preventDefault()
 
         if(ele == 'account') {
-            clientMo.post('/api/admin/listDoctor').then((list)=>{
+            clientMo.post('/api/admin/doctor/list').then((list)=>{
                 if(list) {
                     this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin} list={list}/>})
                     document.querySelector('a[nav-select=""]').removeAttribute('nav-select')

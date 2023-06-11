@@ -175,7 +175,7 @@ const ResizeImg = (file , MaxSize) => {
     })
 }
 
-const Loading = ({size , border , color="green"}) => {
+const Loading = ({size , border , color="green" , animetion = false}) => {
     return (
         <div style={{
             width : `${size}px`,
@@ -188,7 +188,7 @@ const Loading = ({size , border , color="green"}) => {
                     borderRadius : "50%",
                     width : "100%",
                     height : "100%",
-                    animation : "rotate-curcle 2s cubic-bezier(0, 0, 0, 0) 0s infinite"
+                    animation : animetion ? "rotate-curcle 2s cubic-bezier(0, 0, 0, 0) 0s infinite" : "none"
                 }}
             ></div>
         </div>
@@ -225,6 +225,158 @@ const ExportExcel = ({ excelData , fileName , nameBT}) => {
     )
 }
 
+const ButtonMenu = ({type , textRow1 , textRow2 , action}) => {
+    return(
+        <div onClick={action} className={`bt-menu-frame ${type}`}>
+            <img src={`/iconBt/icon-bt-${type}.png`}></img>
+            <div className="text-one">{textRow1}</div>
+            <div className="text-two">{textRow2}</div>
+            <div className="action">
+                <button>คลิก</button>
+            </div>
+        </div>
+    )
+}
+
+const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , sizeLoad , BorderLoad , color}) => {
+    const Control = useRef()
+
+    const [state , setstate] = useState(false)
+
+    let Time = 0
+
+    useEffect(()=>{
+        clearTimeout(Time)
+        if(Open) {
+            setstate(false) 
+        }
+    } , [Open])
+
+    const confirm = () => {
+        if(Status != 0) {
+            setOpen(0)
+            Time = setTimeout(()=>{
+                setText("")
+                setStatus(0)
+            } , 500)
+        }
+    }
+
+    const ShowStatus = () => {
+        setstate(true)
+    }
+    return (
+        <Report-Dom ref={Control} style={{
+            display: "flex" ,
+            justifyContent : "center",
+            alignItems:"center",
+            flexDirection : "column" ,
+            zIndex : Open ? "15" : -10 ,
+            width : "100%",
+            height : "100%",
+            position : "absolute" ,
+            backgroundColor : "transparent" ,
+            backdropFilter : "blur(8px)" ,
+            opacity : Open ? "1" : "0" ,
+            visibility : Open ? "visible" : "hidden",
+            transition : "0.5s opacity , 0.5s visibility , 0.5s z-index"
+        }}>
+            <Body-Report style={{
+                display: "flex" ,
+                justifyContent : "center",
+                alignItems:"center",
+                flexDirection : "column" ,
+                backgroundColor: "transparent",
+                // boxShadow : "0px 0px 15px green",
+            }}>
+                <Text-Report>
+                    {Text ? state ? Text : "กำลังตรวจสอบ" : "กำลังตรวจสอบ"}
+                </Text-Report>
+                <Status-Report style={{
+                    display : "flex",
+                    justifyContent : "center",
+                    alignItems:"center",
+                }} onLoad={ShowStatus}>
+                    {
+                        Status ? 
+                            (Status == 1) ? 
+                                <img style={{
+                                    position : "absolute",
+                                    opacity : state ? 1 : "0",
+                                    width : sizeLoad ,
+                                    visibility : state ? "visible" : "hidden",
+                                    transition : "0.5s opacity , 0.5s visibility",
+                                    backgroundColor : "transparent",
+                                    backdropFilter : "blur(8px)",
+                                    borderRadius : "50%"
+                                }} src="/correct-icon-green.svg"></img> 
+                                :
+                                <img style={{
+                                    position : "absolute",
+                                    width : sizeLoad ,
+                                    opacity : state ? 1 : "0",
+                                    visibility : state ? "visible" : "hidden",
+                                    transition : "0.5s opacity , 0.5s visibility"
+                                }} src="/error-cross-svgrepo-com.svg"></img>
+                        : <></>
+                    }
+                    <div style={{
+                        opacity : !state ? 1 : "0",
+                        visibility : !state ? "visible" : "hidden",
+                        transition : "0.5s opacity , 0.5s visibility"
+                    }}>
+                        <Loading size={sizeLoad} border={BorderLoad} color={color} animetion={Open}/>
+                    </div>
+                </Status-Report>
+                <BoxButton-Report>
+                    <button
+                        style={{
+                            border : "0",
+                            opacity : (Status == 0) ? 0 : 1,
+                            visibility : (Status == 0) ? "hidden" : "visible",
+                            transition : "0.5s opacity , 0.5s visibility"
+                        }}
+                        onClick={confirm}>ตกลง</button>
+                </BoxButton-Report>
+            </Body-Report>
+        </Report-Dom>
+    )
+}
+
+class TabLoad {
+    constructor(Ref) {
+        this.timeOut = new Array();
+        this.TabRef = Ref
+    }
+
+    start() {
+        this.timeOut.forEach(val=>{
+            clearTimeout(val)
+        })
+
+        const num = Math.random()
+        this.TabRef.current.removeAttribute("style")
+        this.TabRef.current.style.display = `flex`
+        this.TabRef.current.style.width = `${20 + (num * 40)}%`
+    }
+
+    end() {
+        this.TabRef.current.style.width = `100%`
+        return setTimeout(()=>{
+            this.TabRef.current.removeAttribute("style")
+            this.TabRef.current.style.display = `none`
+        } , 500)
+    }
+
+    addTimeOut(id) {
+        this.timeOut.push(id)
+    }
+
+    getTime() {
+        return this.timeOut
+    }
+}
+
 // const useAPI = (props) => {
 //     const [ Data , SetURL ] = useState(null)
 //     const [ Error , SetError] = useState(null)
@@ -250,4 +402,4 @@ const ExportExcel = ({ excelData , fileName , nameBT}) => {
 //     })
 // }
 
-export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel}
+export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , TabLoad}

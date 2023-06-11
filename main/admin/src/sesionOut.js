@@ -8,7 +8,7 @@ const SessionOut = ({setBodyFileMain , sessionEle}) => {
     }
 
     useEffect(()=>{
-        sessionEle.setAttribute('show' , '')
+        sessionEle.current.setAttribute('show' , '')
     })
 
     return(

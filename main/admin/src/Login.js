@@ -19,7 +19,7 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
 
     useEffect(()=>{
         let path = window.location.pathname.split("/").filter((path)=>path)
-        if(state && path[0] !== "admin" && path.length === 1) window.history.pushState({} , null , '/admin')
+        if(state && path.length !== 1) window.history.pushState({} , null , '/admin')
         
         // Body.current.style.backgroundImage = ""
         if(navigator.platform === "Win32") {
@@ -51,7 +51,6 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
                             prevent.classList.remove('empty');
                             e.target[x].value = ''
                         }
-                        pw.current.removeAttribute("change")
                     }
                     clientMo.unLoadingPage()
                 })
@@ -73,11 +72,6 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
             } , 400)
         }
         e.preventDefault()
-    }
-
-    const isValuePw = (e) => {
-        if(e.target.value) e.target.setAttribute("change" , "")
-        else e.target.removeAttribute("change")
     }
 
     const LoadingPage = () => {
@@ -105,7 +99,7 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
                             <path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/>
                         </svg>
                     </span>
-                    <input ref={pw} onInput={isValuePw} autoComplete="off" type="password" name="password" placeholder="รหัสผ่าน"/>
+                    <input ref={pw} autoComplete="off" type="password" name="password" placeholder="รหัสผ่าน"/>
                 </label>
                 <button type="submit" className="bt-submit-form">เข้าสู่ระบบ</button>
             </form>

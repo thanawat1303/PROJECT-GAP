@@ -7,16 +7,16 @@ export default function router(app : any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
     });
     // plus
-    app.get('/admin/plus' , function(req:any, res:any) {
-        res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
-    });
-    app.get('/admin/plus/confirm' , function(req:any, res:any) {
-        res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
-    });
-    // plus
-    app.get('/admin/doctor' , function(req:any, res:any) {
-        res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
-    });
+    // app.get('/admin/plus' , function(req:any, res:any) {
+    //     res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
+    // });
+    // app.get('/admin/plus/confirm' , function(req:any, res:any) {
+    //     res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
+    // });
+    // // plus
+    // app.get('/admin/doctor' , function(req:any, res:any) {
+    //     res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
+    // });
 
     // router doctor
     app.get('/doctor' , function(req:any, res:any) {

@@ -180,7 +180,7 @@ const Loading = ({size , border , color="green" , animetion = false}) => {
         <div style={{
             width : `${size}px`,
             height : `${size}px`
-        }} className="Loading">
+        }}>
             <div className="curcle"
                 style={{
                     border: `${border}px solid ${color}`,

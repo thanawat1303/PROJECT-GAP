@@ -16,8 +16,8 @@ const ListDoctor = ({status , PageAddRef}) => {
         fetchDataList()
     } , [status])
 
-    const OpenConfirmPage = (id_table_doctor , typeStatus) => {
-        setBecause(<ManagePage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} setBecause={setBecause}/>)
+    const OpenConfirmPage = (id_table_doctor , typeStatus , status = 0) => {
+        setBecause(<ManagePage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} setBecause={setBecause}/>)
     }
 
     const fetchDataList = async () => {
@@ -60,7 +60,7 @@ const ListDoctor = ({status , PageAddRef}) => {
                                         </Detail-data>
                                     </Detail-doctor>
                                     <Action-bt>
-                                        <Bt-status onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_account")}>
+                                        <Bt-status onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_account" , data.status_account)}>
                                             <div className="frame" status={data.status_account ? "on" : "off"}>
                                                 <span>ON</span>
                                                 <span className="dot"></span>

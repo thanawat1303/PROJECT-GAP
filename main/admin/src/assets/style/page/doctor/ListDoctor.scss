@@ -327,6 +327,7 @@
         position: fixed;
         opacity: 0;
         visibility: hidden;
+        transition: 0.5s opacity , 0.5s visibility;
         background-color: transparent;
         backdrop-filter: blur(8px);
         width: 100%;
@@ -334,6 +335,11 @@
         top: 4.8vw;
         left: 0;
         z-index: 999;
+        overflow-y: scroll;
+    }
+
+    .page-because-popup::-webkit-scrollbar {
+        width: 0;
     }
 }
 

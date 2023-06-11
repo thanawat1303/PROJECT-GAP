@@ -166,7 +166,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   })
   
 
-  app.post('/api/admin/changeState' , (req:any,res:any)=>{
+  app.post('/api/admin/manage/doctor' , (req:any,res:any)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   

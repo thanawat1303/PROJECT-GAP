@@ -14,5 +14,6 @@ CREATE TABLE line_chat_gap.because_status (
     id_table_doctor varchar(50) NOT NULL ,
     id_admin varchar(50) NOT NULL ,
     because_text longtext NOT NULL ,
-    date varchar(50) NOT NULL
+    date varchar(50) NOT NULL , 
+    type_status BOOLEAN NOT NULL
 );

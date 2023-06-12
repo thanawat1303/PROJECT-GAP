@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import '../../assets/style/page/doctor/PageManageDoctor.scss'
 import ListDoctor from "./ListDoctor";
-const PageManageDoctor = ({socket , addHref = false , statusStart = "default" , modify , setSession , TabOn}) => {
+const PageManageDoctor = ({socket , addHref = false , hrefDataPage , modify , auth , TabOn}) => {
     const [StatusPage , setStatus] = useState({
-        status : statusStart,
+        status : (hrefDataPage === "default" || hrefDataPage === "main") ? "default" : hrefDataPage,
         changePath : addHref
     }) 
 
@@ -14,28 +14,26 @@ const PageManageDoctor = ({socket , addHref = false , statusStart = "default" , 
         modify(70 , 30 , ["หน้าแรก" , "บัญชีเจ้าหน้าที่ส่งเสริม"])
 
         TabOn.addTimeOut(TabOn.end())
+        state((hrefDataPage === "default" || hrefDataPage === "main") ? "default" : hrefDataPage)
 
-        window.addEventListener("popstate" , popstate)
-        return() => {
-            window.removeEventListener("popstate" , popstate)
-        }
-     } , [])
+     } , [hrefDataPage])
 
-    const popstate = () => {
-        if(window.history.state != null) {
-            setStatus({
-                status : window.history.state.status, //ใช้ภายในหน้าได้
-                changePath : false
-            })
-        }
+    const state = (status) => {
+        setStatus({
+            status : status, //ใช้ภายในหน้าได้
+            changePath : false
+        })
     }
 
     const ChangeStatus = (statusClick) => {
         if(statusClick != StatusPage.status) {
-            setStatus({
-                status : statusClick,
-                changePath : true
-            })
+            const method = () => {
+                setStatus({
+                    status : statusClick,
+                    changePath : true
+                })
+            }
+            auth(method , true)
         }
     }
 
@@ -65,7 +63,7 @@ const PageManageDoctor = ({socket , addHref = false , statusStart = "default" , 
                 </div>
             </div>
             <div className="list-doctor">
-                <ListDoctor status={StatusPage} PageAddRef={PageAddRef}/>
+                <ListDoctor status={StatusPage} PageAddRef={PageAddRef} auth={auth} TabOn={TabOn}/>
             </div>
         </section>
     )

@@ -29,6 +29,7 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
         RefOnPage.current.style.opacity = "1"
         RefOnPage.current.style.visibility = "visible"
 
+        window.removeEventListener("resize" , setSizeScreen)
         window.addEventListener("resize" , setSizeScreen)
 
         FecthProfile()
@@ -99,8 +100,10 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
     const AfterConfirm = () => {
         if(Status === 1) {
             if(type === "status_account") {
-                document.querySelector(`#doctor-list-${id_table} Action-bt Bt-status .frame`)
+                document.querySelector(`#doctor-list-${id_table} Action-bt content-status Bt-status .frame`)
                     .setAttribute("status" , status ? 0 : 1)
+                // document.querySelector(`#doctor-list-${id_table} Action-bt content-status bt-because`).innerHTML = `<button onclick=\"()=>${methodOpenManage(2 , 'status_account')}\">เหตุผล</button>`
+                    // <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
             }
             close()  
         }

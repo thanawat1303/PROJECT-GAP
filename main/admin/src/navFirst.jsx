@@ -6,21 +6,21 @@ import { ButtonMenu } from "../../../src/assets/js/module"
 
 import PageManageDoctor from "./page/doctor/PageManageDoctor"
 
-const NavFirst = ({setBodyFileAdmin , setSession , socket , modify , type = 0 , TabOn}) => {
+const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn , selectPage}) => {
     useEffect(()=>{
         let path = window.location.pathname.split("/").filter((path)=>path)
         if(type === 1 && path.length !== 1) window.history.pushState({} , "" , "/admin")
 
+        TabOn.addTimeOut(TabOn.end())
+
         modify(50 , 50 , [])
-    } , [])
+    } , [selectPage])
 
     const doctor = () => {
-        TabOn.start()
-        clientMo.post('/api/admin/check').then((context)=>{
-            if(context) 
-                setBodyFileAdmin(<PageManageDoctor socket={socket} setSession={setSession} addHref={true} modify={modify} TabOn={TabOn}/>)
-            else setSession()
-        })
+        const method = () => {
+            setBodyFileAdmin(<PageManageDoctor socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} hrefDataPage={"default"}/>)
+        }
+        auth(method , true)
     }
 
     const data = () => {

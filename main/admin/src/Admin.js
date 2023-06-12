@@ -27,7 +27,7 @@ const Admin = ({setBodyFileMain , socket , type = 0}) => {
 
     useEffect(()=>{
         ChkPath()
-        setTabMenu(<DesktopNev setBodyFileMain={setBodyFileMain} socket={socket} setSession={sessionoff} setBodyFileAdmin={setBody} modify={modifyMainPage} TabOn={TabOn}/>)
+        setTabMenu(<DesktopNev setBodyFileMain={setBodyFileMain} socket={socket} auth={Auth} setBodyFileAdmin={setBody} modify={modifyMainPage} TabOn={TabOn}/>)
         window.addEventListener("popstate" , ChkPath)
 
         return() => {
@@ -43,31 +43,37 @@ const Admin = ({setBodyFileMain , socket , type = 0}) => {
 
 
     const ChkPath = () => {
-        clientMo.post('/api/admin/check').then((context)=>{
-            if(context) {
-                let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
+        const method = () => {
+            let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
+            if(path.length === 1 && path[0] === "admin") 
+                setBody(<NavFirst setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn}/>)
+            else if(path.length >= 2 && path[0] === "admin") {
 
-                if(path.length === 1 && path[0] === "admin") 
-                    setBody(<NavFirst setBodyFileAdmin={setBody} setSession={sessionoff} socket={socket} modify={modifyMainPage} TabOn={TabOn}/>)
-                else if(path.length >= 2 && path[0] === "admin") {
+                let seconPath = path[1].split("?")
 
-                    let seconPath = path[1].split("?")
-
-                    if(seconPath[0] === "list"){
-                        let query = seconPath[1]
-                        if(query.indexOf("default") == 0) 
-                            setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} setSession={sessionoff}/>)
-                        else if (query.indexOf("delete") == 0) 
-                            setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} setSession={sessionoff} statusStart="delete"/>)
-                    }
-                    
-                    // other path
-                } else {
-                    console.log(15)
+                if(seconPath[0] === "list"){
+                    let query = seconPath[1]
+                    if(query.indexOf("default") == 0) 
+                        setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage="main"/>)
+                    else if (query.indexOf("delete") == 0) 
+                        setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage="delete"/>)
                 }
+                
+                // other path
+            } else {
+                console.log(15)
             }
-            else sessionoff()
-        })
+        }
+        Auth(method , true)
+    }
+
+    const Auth = async (medthod , tebLoadOn = false) => {
+        if(tebLoadOn) TabOn.start()
+        const result = await clientMo.post('/api/admin/check')
+        if(result) {
+            medthod()
+        }
+        else sessionoff()
     }
 
     const sessionoff = (type = false) => {

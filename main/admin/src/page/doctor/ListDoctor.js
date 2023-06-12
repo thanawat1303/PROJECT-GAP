@@ -4,32 +4,76 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/doctor/ListDoctor.scss"
 import { ReportAction } from "../../../../../src/assets/js/module";
 import ManagePage from "./ManagePage";
-const ListDoctor = ({status , PageAddRef}) => {
+const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
     const [Body , setBody] = useState(<></>)
     const [List , setList] = useState(<></>)
     const [Because , setBecause] = useState(<></>)
 
+    const ListRef = useRef()
     const RefBe = useRef()
+    const ShowBecause = useRef()
 
     useEffect(()=>{
-        if(status.changePath) window.history.pushState({status : status.status} , "" , `/admin/list?${status.status}`)
-        fetchDataList()
+        if(status.changePath) window.history.pushState({} , "" , `/admin/list?${status.status}`)
+
+        TabOn.addTimeOut(TabOn.end())
+
+        setList(<></>)
+        LoadPageData()
+
+        window.removeEventListener("resize" , sizeScreen)
+        window.addEventListener("resize" , sizeScreen)
+
+        return() => {
+            window.removeEventListener("resize" , sizeScreen)
+        }
     } , [status])
 
-    const OpenConfirmPage = (id_table_doctor , typeStatus) => {
-        const status = parseInt(document.querySelector(`#doctor-list-${id_table_doctor} Action-bt Bt-status .frame`).getAttribute("status"))
-        setBecause(<ManagePage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} setBecause={setBecause}/>)
+    const OpenConfirmPage = async (id_table_doctor , typeStatus) => {
+        const method = () => {
+            const status = parseInt(document.querySelector(`#doctor-list-${id_table_doctor} Action-bt Bt-status .frame`).getAttribute("status"))
+            setBecause(<ManagePage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} setBecause={setBecause}/>)
+        }
+        auth(method)
     }
 
-    const fetchDataList = async () => {
+    const OpenDetailManage = async (id_table_doctor , typeStatus) => {
+        const method = () => {
+
+        }
+        auth(method)
+    }
+
+    const sizeScreen = () => {
+        console.log(111)
+        const count = ListRef.current.getAttribute("count")
+        if(window.innerWidth < 1100 && count != 2) {
+            fetchDataList(2)
+        } else if (window.innerWidth >= 1100 && count != 3) {
+            fetchDataList(3)
+        }
+    }
+    const LoadPageData = () => {
+        if(window.innerWidth < 1100) {
+            fetchDataList(2)
+        } else if (window.innerWidth >= 1100) {
+            fetchDataList(3)
+        }
+    }
+
+    const fetchDataList = async (maxColumn) => {
         const ObjectData = await clientMo.post("/api/admin/doctor/list" , {typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1)})
         const List = JSON.parse(ObjectData)
         const ListExport = new Array()
-        const max = 3
+        const max = maxColumn
+
+        ListRef.current.setAttribute("count" , max)
+
         for(let x=0; x<=List.length ;x += max) {
             const account = JSON.parse(ObjectData)
             ListExport.push(account.splice(x , x+max))
         }
+
         const doctorList = 
             ListExport.map((row , key)=>{
                 while(row.length < max) row.push({data : "null"})
@@ -51,7 +95,7 @@ const ListDoctor = ({status , PageAddRef}) => {
                                             <Detail-in>
                                                 <span className="head-data">รหัสประจำตัว</span>
                                                 <span>:</span>
-                                                <input value={data.id_doctor} readOnly></input>
+                                                <input className="input-id" value={data.id_doctor} readOnly></input>
                                             </Detail-in>
                                             <Detail-in>
                                                 <span className="head-data station">ศูนย์</span> 
@@ -61,16 +105,18 @@ const ListDoctor = ({status , PageAddRef}) => {
                                         </Detail-data>
                                     </Detail-doctor>
                                     <Action-bt>
-                                        <bt-because>
-
-                                        </bt-because>
-                                        <Bt-status onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_account")}>
-                                            <div className="frame" status={data.status_account ? "1" : "0"}>
-                                                <span>ON</span>
-                                                <span className="dot"></span>
-                                                <span>OFF</span>
-                                            </div>
-                                        </Bt-status>
+                                        <content-status because={1}>
+                                            <bt-because>
+                                                <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
+                                            </bt-because>
+                                            <Bt-status onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_account")}>
+                                                <div className="frame" status={data.status_account ? "1" : "0"}>
+                                                    <span>ON</span>
+                                                    <span className="dot"></span>
+                                                    <span>OFF</span>
+                                                </div>
+                                            </Bt-status>
+                                        </content-status>
                                         <bt-delete>
                                             <button onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
                                         </bt-delete>
@@ -96,14 +142,16 @@ const ListDoctor = ({status , PageAddRef}) => {
             {
                 status.status === "default" ? <InsertPage PageAddRef={PageAddRef}/> : <></>
             }
-            <div className="List-doctor">
+            <div className="List-doctor" ref={ListRef}>
                 {List}
             </div>
             <div ref={RefBe} className="page-because-popup">
                 {Because}
             </div>
+            <div ref={ShowBecause} className="page-because-popup"></div>
         </section>
     )
+
 }
 
 const InsertPage = ({PageAddRef}) => {

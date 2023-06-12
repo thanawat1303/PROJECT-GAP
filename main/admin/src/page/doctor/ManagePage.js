@@ -3,7 +3,7 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
 import "../../assets/style/page/doctor/Manage.scss"
 import { Loading, ReportAction } from "../../../../../src/assets/js/module";
-const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
+const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn}) => {
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
@@ -29,11 +29,12 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause}) => {
         RefOnPage.current.style.opacity = "1"
         RefOnPage.current.style.visibility = "visible"
 
-        window.removeEventListener("resize" , setSizeScreen)
-        window.addEventListener("resize" , setSizeScreen)
+        TabOn.addTimeOut(TabOn.end())
 
         FecthProfile()
 
+        window.removeEventListener("resize" , setSizeScreen)
+        window.addEventListener("resize" , setSizeScreen)
         return()=>{
             window.removeEventListener("resize" , setSizeScreen)
         }

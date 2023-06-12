@@ -4,7 +4,10 @@ import '../../assets/style/page/doctor/PageManageDoctor.scss'
 import ListDoctor from "./ListDoctor";
 const PageManageDoctor = ({socket , addHref = false , hrefDataPage , modify , auth , TabOn}) => {
     const [StatusPage , setStatus] = useState({
-        status : (hrefDataPage === "default" || hrefDataPage === "main") ? "default" : hrefDataPage,
+        status : 
+                (hrefDataPage === "pop-default" || hrefDataPage === "main-default") ? "default" : 
+                (hrefDataPage === "pop-delete" || hrefDataPage === "main-delete") ? "delete" : 
+                hrefDataPage,
         changePath : addHref
     }) 
 
@@ -14,26 +17,24 @@ const PageManageDoctor = ({socket , addHref = false , hrefDataPage , modify , au
         modify(70 , 30 , ["หน้าแรก" , "บัญชีเจ้าหน้าที่ส่งเสริม"])
 
         TabOn.addTimeOut(TabOn.end())
-        state((hrefDataPage === "default" || hrefDataPage === "main") ? "default" : hrefDataPage)
+        state()
+        console.log(hrefDataPage)
 
      } , [hrefDataPage])
 
-    const state = (status) => {
+    const state = () => {
+        const status = (hrefDataPage === "pop-default" || hrefDataPage === "main-default") ? "default" : 
+                        (hrefDataPage === "pop-delete" || hrefDataPage === "main-delete") ? "delete" : 
+                        hrefDataPage
         setStatus({
             status : status, //ใช้ภายในหน้าได้
             changePath : false
         })
     }
 
-    const ChangeStatus = (statusClick) => {
+    const ChangeStatus = async (statusClick) => {
         if(statusClick != StatusPage.status) {
-            const method = () => {
-                setStatus({
-                    status : statusClick,
-                    changePath : true
-                })
-            }
-            auth(method , true)
+            if(auth(true)) setStatus({status : statusClick , changePath : true})
         }
     }
 

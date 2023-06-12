@@ -7,9 +7,6 @@ import NavFirst from "../navFirst";
 
 const DesktopNev = ({setBodyFileMain , socket , auth , setBodyFileAdmin , modify , TabOn}) => {
     let selectPage = true
-    useEffect(()=>{
-        
-    } , [])
 
     const Logout = (e) => {
         clientMo.LoadingPage()
@@ -22,26 +19,30 @@ const DesktopNev = ({setBodyFileMain , socket , auth , setBodyFileAdmin , modify
         } , 2000)
     }
 
-    const Home = (e) => {
+    const clickMenu = async (e , OpenPage) => {
         e.preventDefault()
-        const medthod = () => {
-            selectPage = !selectPage
-            setBodyFileAdmin(<NavFirst setBodyFileAdmin={setBodyFileAdmin} socket={socket} auth={auth} modify={modify} type={1} 
-                                TabOn={TabOn} selectPage={selectPage}/>)
+        const result = await auth(true)
+        if(result) {
+            if(OpenPage === "HOME") navOpen()
         }
-        auth(medthod , true)
+    }
+
+    const navOpen = () => {
+        selectPage = !selectPage
+        setBodyFileAdmin(<NavFirst setBodyFileAdmin={setBodyFileAdmin} socket={socket} auth={auth} modify={modify} type={1} 
+                            TabOn={TabOn} selectPage={selectPage}/>)
     }
 
     return(
         <section className="tab-bar-desktop">
             <span className="pg-action">
-                <a onClick={Home} className="Logo" href="/admin" title="หมอพืช">
+                <a onClick={(e)=>clickMenu(e , "HOME")} className="Logo" href="/admin" title="หมอพืช">
                     <img src="/logo2.png"></img>
                     <span>Admin</span>
                 </a>
             </span>
             <span className="bt-action">
-                <a onClick={Home} title="หน้าแรก" href="/admin">หน้าแรก</a>
+                <a onClick={(e)=>clickMenu(e , "HOME")} title="หน้าแรก" href="/admin">หน้าแรก</a>
                 <a title="เมนู" href="/admin">เมนู</a>
                 <a title="การแจ้งเตือน" href="/admin">การแจ้งเตือน</a>
                 <a title="โปรไฟล์" href="/admin">โปรไฟล์</a>

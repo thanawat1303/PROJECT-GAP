@@ -1,0 +1,102 @@
+.show-because {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 0px 4px 4px rgba(191, 191, 191, 0.495);
+    border-radius: 2vw;
+    width: 40vw;
+    // overflow: hidden;
+
+    .head {
+        font-family: Sans-font;
+        font-size: 2vw;
+        background-color: #1CFFF1;
+        width: 100%;
+        text-align: center;
+        border-radius: 1.5vw;
+        box-shadow: 0px 4px 4px rgba(182, 182, 182, 0.59);
+        padding: 0.5vw 0px;
+    }
+
+    .content {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        height: 20vw;
+        width: 100%;
+        overflow: hidden;
+
+        table {
+            width: 90%;
+            // height: 10vw;
+            margin-top: 0.4vw;
+            font-family: Sans-font;
+            border-radius: 1.5vw;
+            overflow: hidden;
+
+            thead {
+                display: table;
+                table-layout: fixed;
+                width: 100%;
+                font-size: 1.3vw;
+                background-color: #1CFFF1;
+
+                tr {
+                    td {
+                        outline: 0.2vw solid white;
+                    }
+                }
+            }
+            tbody::-webkit-scrollbar {
+                width: 0px;
+            }
+
+            tbody {
+                display: flex;
+                flex-direction: column;
+                overflow-y: scroll;
+                background-color: #bdebe7;
+                height: 16vw;
+                
+                tr {
+                    display: table;
+                    table-layout: fixed;
+                    width: 100%;
+                    td {
+                        padding: 0.2vw 0px;
+                        font-size: 1.1vw;
+                        outline: 0.2vw solid white;
+                        div {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            padding-left :0.5vw;
+                            padding-right: 0.2vw;
+                            
+                            span{
+                                width: 100%;
+                            }
+    
+                            span.date {
+                                text-align: end;
+                                input {
+                                    border: 0;
+                                    background-color: transparent;
+                                    width: 100%;
+                                    text-align: end;
+                                    font-family: Sans-font;
+                                    padding: 0;
+                                    font-size: 0.8vw;
+                                    padding-right: 0.2vw;
+                                    border-radius: 0px 0px 0px 50px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

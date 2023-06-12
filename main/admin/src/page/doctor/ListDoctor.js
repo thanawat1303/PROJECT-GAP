@@ -4,14 +4,16 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/doctor/ListDoctor.scss"
 import { ReportAction } from "../../../../../src/assets/js/module";
 import ManagePage from "./ManagePage";
+import ShowBecause from "./ShowBecause";
 const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
     const [Body , setBody] = useState(<></>)
     const [List , setList] = useState(<></>)
     const [Because , setBecause] = useState(<></>)
+    // const [ShBecause , setShBecause] = useState(<></>)
 
     const ListRef = useRef()
     const RefBe = useRef()
-    const ShowBecause = useRef()
+    // const ShowBecause = useRef()
 
     useEffect(()=>{
         if(status.changePath) window.history.pushState({} , "" , `/admin/list?${status.status}`)
@@ -20,6 +22,7 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
 
         setList(<></>)
         LoadPageData()
+        removePopup()
 
         window.removeEventListener("resize" , sizeScreen)
         window.addEventListener("resize" , sizeScreen)
@@ -29,23 +32,29 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
         }
     } , [status])
 
-    const OpenConfirmPage = async (id_table_doctor , typeStatus) => {
-        const method = () => {
-            const status = parseInt(document.querySelector(`#doctor-list-${id_table_doctor} Action-bt Bt-status .frame`).getAttribute("status"))
-            setBecause(<ManagePage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} setBecause={setBecause}/>)
+    const removePopup = () => {
+        if(RefBe.current) {
+            RefBe.current.removeAttribute("style")
+            setTimeout(()=>{
+                setBecause(<></>)
+            } , 500)
         }
-        auth(method)
+    }
+
+    const OpenConfirmPage = async (id_table_doctor , typeStatus) => {
+        if(await auth(true)) {
+            const status = parseInt(document.querySelector(`#doctor-list-${id_table_doctor} Action-bt Bt-status .frame`).getAttribute("status"))
+            setBecause(<ManagePage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} setBecause={setBecause} TabOn={TabOn}/>)
+        }
     }
 
     const OpenDetailManage = async (id_table_doctor , typeStatus) => {
-        const method = () => {
-
+        if(await auth(true)) {
+            setBecause(<ShowBecause RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} TabOn={TabOn}/>)
         }
-        auth(method)
     }
 
     const sizeScreen = () => {
-        console.log(111)
         const count = ListRef.current.getAttribute("count")
         if(window.innerWidth < 1100 && count != 2) {
             fetchDataList(2)
@@ -148,7 +157,6 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
             <div ref={RefBe} className="page-because-popup">
                 {Because}
             </div>
-            <div ref={ShowBecause} className="page-because-popup"></div>
         </section>
     )
 

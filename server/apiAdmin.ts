@@ -105,7 +105,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     let con = Database.createConnection(listDB)
   
     try {
-      const auth = apifunc.auth(con , username , password , res , "admin")
+      const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
         const type_status = data.type_status === "status_account" ? "status" : 
@@ -116,7 +116,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
               SELECT * 
               FROM because_${type_status}
               WHERE id_table_doctor=?
-              ORDER BY date;
+              ORDER BY date DESC;
             ` 
           , 
           [data.id_table] ,

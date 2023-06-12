@@ -16,11 +16,9 @@ const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn 
         modify(50 , 50 , [])
     } , [selectPage])
 
-    const doctor = () => {
-        const method = () => {
+    const doctor = async () => {
+        if(await auth(true))
             setBodyFileAdmin(<PageManageDoctor socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} hrefDataPage={"default"}/>)
-        }
-        auth(method , true)
     }
 
     const data = () => {

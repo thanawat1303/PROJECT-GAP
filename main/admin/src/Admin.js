@@ -11,7 +11,7 @@ import SessionOut from "./sesionOut";
 import PageManageDoctor from "./page/doctor/PageManageDoctor";
 import { TabLoad } from "../../../src/assets/js/module";
 
-const Admin = ({setBodyFileMain , socket , type = 0}) => {
+const Admin = ({setBodyFileMain , socket}) => {
     const [body , setBody] = useState(<div></div>)
     const [TabMenuTop , setTabMenu] = useState(<></>)
     const [session , setSession] = useState(<div></div>)
@@ -26,53 +26,46 @@ const Admin = ({setBodyFileMain , socket , type = 0}) => {
     const TabOn = new TabLoad(Tabbar)
 
     useEffect(()=>{
-        ChkPath()
-        setTabMenu(<DesktopNev setBodyFileMain={setBodyFileMain} socket={socket} auth={Auth} setBodyFileAdmin={setBody} modify={modifyMainPage} TabOn={TabOn}/>)
-        window.addEventListener("popstate" , ChkPath)
 
+        ChkPath(null , "main")
+        setTabMenu(<DesktopNev setBodyFileMain={setBodyFileMain} socket={socket} auth={Auth} setBodyFileAdmin={setBody} modify={modifyMainPage} TabOn={TabOn}/>)
+        
+        window.addEventListener("popstate" , ChkPath)
         return() => {
             window.removeEventListener("popstate" , ChkPath)
         }
     } , [])
 
-    const modifyMainPage = (heigthBody , heightCover , ArrtextPage) => {
-        setTextPage(ArrtextPage)
-        ImageCover.current.style.height = `${heightCover}%`
-        BodyRef.current.style.height = `${heigthBody}%`
+    const ChkPath = async (e , type = "pop") => {
+        if(await Auth(true)) method(type)
     }
 
+    const method = (typeLoad) => {
+        let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
+        if(path.length === 1 && path[0] === "admin") 
+            setBody(<NavFirst setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn}/>)
+        else if(path.length >= 2 && path[0] === "admin") {
 
-    const ChkPath = () => {
-        const method = () => {
-            let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
-            if(path.length === 1 && path[0] === "admin") 
-                setBody(<NavFirst setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn}/>)
-            else if(path.length >= 2 && path[0] === "admin") {
+            let seconPath = path[1].split("?")
 
-                let seconPath = path[1].split("?")
-
-                if(seconPath[0] === "list"){
-                    let query = seconPath[1]
-                    if(query.indexOf("default") == 0) 
-                        setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage="main"/>)
-                    else if (query.indexOf("delete") == 0) 
-                        setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage="delete"/>)
-                }
-                
-                // other path
-            } else {
-                console.log(15)
+            if(seconPath[0] === "list"){
+                let query = seconPath[1]
+                if(query.indexOf("default") == 0) 
+                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage={`${typeLoad}-default`}/>)
+                else if (query.indexOf("delete") == 0) 
+                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage={`${typeLoad}-delete`}/>)
             }
+            
+            // other path
+        } else {
+            console.log(15)
         }
-        Auth(method , true)
     }
 
-    const Auth = async (medthod , tebLoadOn = false) => {
+    const Auth = async (tebLoadOn = false) => {
         if(tebLoadOn) TabOn.start()
         const result = await clientMo.post('/api/admin/check')
-        if(result) {
-            medthod()
-        }
+        if(result) return true;
         else sessionoff()
     }
 
@@ -84,12 +77,14 @@ const Admin = ({setBodyFileMain , socket , type = 0}) => {
         }
     } 
 
-    const LoadingPage = () => {
-        clientMo.unLoadingPage()
+    const modifyMainPage = (heigthBody , heightCover , ArrtextPage) => {
+        setTextPage(ArrtextPage)
+        ImageCover.current.style.height = `${heightCover}%`
+        BodyRef.current.style.height = `${heigthBody}%`
     }
 
     return (
-        <div onLoad={LoadingPage} className="admin" 
+        <div onLoad={()=>clientMo.unLoadingPage()} className="admin" 
         // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
         >
             {TabMenuTop}

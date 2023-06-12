@@ -21,7 +21,6 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
         let path = window.location.pathname.split("/").filter((path)=>path)
         if(state && path.length !== 1) window.history.pushState({} , null , '/admin')
         
-        // Body.current.style.backgroundImage = ""
         if(navigator.platform === "Win32") {
             Body.current.setAttribute("computer" , "")
         } else {
@@ -74,12 +73,8 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
         e.preventDefault()
     }
 
-    const LoadingPage = () => {
-        clientMo.unLoadingPage()
-    }
-
     return (
-        <div style={{backgroundImage : "url('/ดอย.jpg')"}} onLoad={LoadingPage} ref={Body} className="login-admin">
+        <div style={{backgroundImage : "url('/ดอย.jpg')"}} onLoad={()=>clientMo.unLoadingPage()} ref={Body} className="login-admin">
             <form ref={Form} autoComplete="off" onSubmit={submitFrom}>
                 <div className="Logo-App">
                     <img src="/logo2.png"></img>

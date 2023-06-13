@@ -1,4 +1,4 @@
-.page-manage-doctor-account {
+.page-manage {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -12,7 +12,7 @@
         min-height: 36.73px;
         padding: 0.651vw;
         padding-right: 1.302vw;
-        .bt-add-doctor {
+        .bt-add {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -42,11 +42,11 @@
             cursor: pointer;
         }
 
-        button.use {
+        button.bt-one {
             background-color: #FAC1C1;
         }
 
-        button.delete {
+        button.bt-two {
             background-color: #52d8bf80;
         }
 
@@ -70,16 +70,16 @@
         }
     }
 
-    .list-doctor {
+    .list-manage {
         height: 100%;
         overflow-y: scroll;
     }
 }
 
 @media screen and (max-width: 1025px) {
-    .page-manage-doctor-account{
+    .page-manage{
         .menu-page{
-            .bt-add-doctor {
+            .bt-add {
                 svg {
                     font-size: 23.41px;
                 }

@@ -5,6 +5,7 @@ import { clientMo } from "../../../src/assets/js/moduleClient"
 import { ButtonMenu } from "../../../src/assets/js/module"
 
 import PageManageDoctor from "./page/doctor/PageManageDoctor"
+import PageData from "./page/data/PageManageData"
 
 const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn , selectPage , HrefData}) => {
     useEffect(()=>{
@@ -27,7 +28,7 @@ const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn 
     const data = async () => {
         if(await auth(true)) {
             HrefData.set("data?default")
-            // setBodyFileAdmin(<PageManageDoctor socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
+            setBodyFileAdmin(<PageData socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
         }
     }
 

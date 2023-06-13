@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { clientMo } from "../../../../../src/assets/js/moduleClient";
-import '../../assets/style/page/doctor/PageManageDoctor.scss'
+import '../../assets/style/page/PageManage.scss'
 import ListDoctor from "./ListDoctor";
+
 const PageManageDoctor = ({socket , addHref = false , HrefData , modify , auth , TabOn}) => {
     const [StatusPage , setStatus] = useState({
         status :    HrefData.get() === "list?default" ? "default" : 
@@ -39,17 +39,17 @@ const PageManageDoctor = ({socket , addHref = false , HrefData , modify , auth ,
     }
 
     return (
-        <section className="page-manage-doctor-account">
+        <section className="page-manage">
             <div className="menu-page">
                 {StatusPage.status === "default" ?
-                <div className="bt-add-doctor">
+                <div className="bt-add">
                     <svg onClick={()=>PageAddRef.current.toggleAttribute("show")} xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32"><path fill="currentColor" d="M16 2A14.172 14.172 0 0 0 2 16a14.172 14.172 0 0 0 14 14a14.172 14.172 0 0 0 14-14A14.172 14.172 0 0 0 16 2Zm8 15h-7v7h-2v-7H8v-2h7V8h2v7h7Z"/><path fill="none" d="M24 17h-7v7h-2v-7H8v-2h7V8h2v7h7v2z"/></svg>
                 </div>
                 : <></>
                 }
                 {StatusPage.status === "default" ? 
-                    <button className="use" onClick={()=>ChangeStatus("delete")}>แสดงบัญชีที่ถูกลบ</button> : 
-                    <button className="delete" onClick={()=>ChangeStatus("default")}>แสดงบัญชีที่ยังไม่ถูกลบ</button>
+                    <button className="bt-one" onClick={()=>ChangeStatus("delete")}>แสดงบัญชีที่ถูกลบ</button> : 
+                    <button className="bt-two" onClick={()=>ChangeStatus("default")}>แสดงบัญชีที่ยังไม่ถูกลบ</button>
                 }
                 <div className="search">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
@@ -63,7 +63,7 @@ const PageManageDoctor = ({socket , addHref = false , HrefData , modify , auth ,
                     </svg>
                 </div>
             </div>
-            <div className="list-doctor">
+            <div className="list-manage">
                 <ListDoctor status={StatusPage} PageAddRef={PageAddRef} auth={auth} TabOn={TabOn}/>
             </div>
         </section>

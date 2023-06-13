@@ -377,6 +377,20 @@ class TabLoad {
     }
 }
 
+class HrefData {
+    constructor(start) {
+        this.Href = start;
+    }
+
+    get() {
+        return this.Href
+    }
+
+    set(href) {
+        this.Href = href
+    }
+}
+
 // const useAPI = (props) => {
 //     const [ Data , SetURL ] = useState(null)
 //     const [ Error , SetError] = useState(null)
@@ -402,4 +416,4 @@ class TabLoad {
 //     })
 // }
 
-export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , TabLoad}
+export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , TabLoad , HrefData}

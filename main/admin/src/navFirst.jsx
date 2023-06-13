@@ -6,27 +6,29 @@ import { ButtonMenu } from "../../../src/assets/js/module"
 
 import PageManageDoctor from "./page/doctor/PageManageDoctor"
 
-const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn , selectPage}) => {
+const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn , selectPage , HrefData}) => {
     useEffect(()=>{
-        let path = window.location.pathname.split("/").filter((path)=>path)
-        if(type === 1 && path.length !== 1) window.history.pushState({} , "" , "/admin")
+        if(type === 1 && HrefData.get() !== "HOME") window.history.pushState({} , "" , "/admin")
 
         TabOn.addTimeOut(TabOn.end())
+
+        HrefData.set("HOME")
 
         modify(50 , 50 , [])
     } , [selectPage])
 
     const doctor = async () => {
-        if(await auth(true))
-            setBodyFileAdmin(<PageManageDoctor socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} hrefDataPage={"default"}/>)
+        if(await auth(true)) {
+            HrefData.set("list?default")
+            setBodyFileAdmin(<PageManageDoctor socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
+        }
     }
 
-    const data = () => {
-        // clientMo.post('/api/admin/check').then((context)=>{
-        //     if(context) 
-        //         setBodyFileAdmin(<></>)
-        //     else setSession()
-        // })
+    const data = async () => {
+        if(await auth(true)) {
+            HrefData.set("data?default")
+            // setBodyFileAdmin(<PageManageDoctor socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
+        }
     }
 
     return (

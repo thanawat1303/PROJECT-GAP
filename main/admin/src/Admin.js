@@ -9,7 +9,7 @@ import "./assets/style/adminMain.scss"
 import DesktopNev from "./navTop/desktop";
 import SessionOut from "./sesionOut";
 import PageManageDoctor from "./page/doctor/PageManageDoctor";
-import { TabLoad } from "../../../src/assets/js/module";
+import { HrefData, TabLoad } from "../../../src/assets/js/module";
 
 const Admin = ({setBodyFileMain , socket}) => {
     const [body , setBody] = useState(<div></div>)
@@ -24,11 +24,13 @@ const Admin = ({setBodyFileMain , socket}) => {
     const sessionRef = useRef()
 
     const TabOn = new TabLoad(Tabbar)
+    const Href = new HrefData("HOME") 
 
     useEffect(()=>{
 
-        ChkPath(null , "main")
-        setTabMenu(<DesktopNev setBodyFileMain={setBodyFileMain} socket={socket} auth={Auth} setBodyFileAdmin={setBody} modify={modifyMainPage} TabOn={TabOn}/>)
+        ChkPath("")
+        setTabMenu(<DesktopNev setBodyFileMain={setBodyFileMain} setBodyFileAdmin={setBody} socket={socket} 
+                        auth={Auth} modify={modifyMainPage} TabOn={TabOn} HrefData={Href}/>)
         
         window.addEventListener("popstate" , ChkPath)
         return() => {
@@ -36,24 +38,29 @@ const Admin = ({setBodyFileMain , socket}) => {
         }
     } , [])
 
-    const ChkPath = async (e , type = "pop") => {
-        if(await Auth(true)) method(type)
+    const ChkPath = async (e) => {
+        if(await Auth(true)) method(e)
     }
 
-    const method = (typeLoad) => {
+    const method = (e) => {
         let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
+        const type = e ? "=pop" : ''
         if(path.length === 1 && path[0] === "admin") 
-            setBody(<NavFirst setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn}/>)
+            setBody(<NavFirst setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn} HrefData={Href}/>)
         else if(path.length >= 2 && path[0] === "admin") {
 
             let seconPath = path[1].split("?")
 
             if(seconPath[0] === "list"){
                 let query = seconPath[1]
-                if(query.indexOf("default") == 0) 
-                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage={`${typeLoad}-default`}/>)
-                else if (query.indexOf("delete") == 0) 
-                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} hrefDataPage={`${typeLoad}-delete`}/>)
+                if(query.indexOf("default") == 0) {
+                    Href.set(`list?default${type}`)
+                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                } 
+                else if (query.indexOf("delete") == 0) {
+                    Href.set(`list?delete${type}`)
+                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                }
             }
             
             // other path

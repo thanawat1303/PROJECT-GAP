@@ -105,8 +105,17 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
                     .setAttribute("status" , status ? 0 : 1)
                 // document.querySelector(`#doctor-list-${id_table} Action-bt content-status bt-because`).innerHTML = `<button onclick=\"()=>${methodOpenManage(2 , 'status_account')}\">เหตุผล</button>`
                     // <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
+            } else if (type === "status_delete") {
+                const block = document.getElementById(`doctor-list-${id_table}`)
+                block.setAttribute("remove" , "")
+                setTimeout(()=>{
+                    const Emply = document.createElement("List-Doctor-null")
+                    const parent = block.parentElement
+                    block.remove()
+                    parent.appendChild(Emply)
+                } , 600)
             }
-            close()  
+            close()
         }
         else {
             if(Status != 0) {

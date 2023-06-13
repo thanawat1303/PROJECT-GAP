@@ -5,7 +5,7 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
 
-const DesktopNev = ({setBodyFileMain , socket , auth , setBodyFileAdmin , modify , TabOn}) => {
+const DesktopNev = ({setBodyFileMain , socket , auth , setBodyFileAdmin , modify , TabOn , HrefData}) => {
     let selectPage = true
 
     const Logout = (e) => {
@@ -30,7 +30,7 @@ const DesktopNev = ({setBodyFileMain , socket , auth , setBodyFileAdmin , modify
     const navOpen = () => {
         selectPage = !selectPage
         setBodyFileAdmin(<NavFirst setBodyFileAdmin={setBodyFileAdmin} socket={socket} auth={auth} modify={modify} type={1} 
-                            TabOn={TabOn} selectPage={selectPage}/>)
+                            TabOn={TabOn} selectPage={selectPage} HrefData={HrefData}/>)
     }
 
     return(

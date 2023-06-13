@@ -3,7 +3,7 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import { DAYUTC, Loading } from "../../../../../src/assets/js/module";
 
 import "../../assets/style/page/doctor/Because.scss"
-const ShowBecause = ({RefOnPage , id_table , type , TabOn}) => {
+const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
     const [LoadingState , setLoading] = useState(false)
     const [ListBecause , setList] = useState(<></>)
 
@@ -28,29 +28,56 @@ const ShowBecause = ({RefOnPage , id_table , type , TabOn}) => {
         const data = await clientMo.post("/api/admin/doctor/because/get" , {id_table : id_table , type_status : type})
         const List = JSON.parse(data).map((value , key)=>
             <tr key={key}>
-                <td style={{
-                    textAlign : 'center' , 
-                    fontSize : "2vw",
-                    fontWeight : "900",
-                    color : value.type_status ? "green" : "red",
-                    width : "20%"
-                }}>{value.type_status ? "ON" : "OFF" }</td>
-                <td style={{width : "60%"}}>
-                    <div>
-                        <span className="date">
-                            <DAYUTC DATE={value.date} TYPE="normal"/>
-                        </span>
-                        <span>
-                            {value.because_text}
-                        </span>
-                    </div>
-                </td>
-                <td style={{textAlign : 'center' , width : "20%"}}>{value.id_admin}</td>
+                { type === "status_account" ?
+                    <>
+                    <td style={{
+                        textAlign : 'center' , 
+                        fontSize : "2vw",
+                        fontWeight : "900",
+                        color : value.type_status ? "green" : "red",
+                        width : "20%",
+                        // outlineLeft : "0px",
+                    }}>{value.type_status ? "ON" : "OFF" }</td>
+                    <td style={{width : "60%"}}>
+                        <div>
+                            <span className="date">
+                                <DAYUTC DATE={value.date} TYPE="normal"/>
+                            </span>
+                            <span>
+                                {value.because_text}
+                            </span>
+                        </div>
+                    </td>
+                    <td style={{textAlign : 'center' , width : "20%"}}>{value.id_admin}</td>
+                    </> : 
+                    type === "status_delete" ?
+                    <>
+                    <td style={{width : "80%"}}>
+                        <div>
+                            <span className="date">
+                                <DAYUTC DATE={value.date} TYPE="normal"/>
+                            </span>
+                            <span>
+                                {value.because_text}
+                            </span>
+                        </div>
+                    </td>
+                    <td style={{textAlign : 'center' , width : "20%"}}>{value.id_admin}</td>
+                    </> : <></>
+                }
             </tr>
         )
         
         setList(List)
         setLoading(true)
+    }
+
+    const close = () => {
+        RefOnPage.current.removeAttribute("style")
+        // window.removeEventListener("resize" , setSizeScreen)
+        setTimeout(()=>{
+            setBecause(<></>)
+        } , 500)
     }
 
     const ResizeScreen = () => {
@@ -61,16 +88,28 @@ const ShowBecause = ({RefOnPage , id_table , type , TabOn}) => {
     return(
         <section className="show-because">
             <div className="head">
-                {type === "status_account" ? "ประวัติและเหตุผลการเปิด/ปิดบัญชี" : type === "status_delete" ? "ประวัติและเหตุผลการลบบัญชี" : ""}
+                <div className="head-text">
+                    {type === "status_account" ? "ประวัติและเหตุผลการเปิด/ปิดบัญชี" : type === "status_delete" ? "ประวัติและเหตุผลการลบบัญชี" : ""}
+                </div>    
+                <img onClick={close} src="/close.svg"></img>            
             </div>
             <div className="content">
                 {LoadingState ? 
                 <table>
                     <thead>
                         <tr>
-                            <td style={{ textAlign: "center" , width : "20%"}}>ประเภท</td>
-                            <td style={{ textAlign: "center" , width : "60%"}}>เหตุผล</td>
-                            <td style={{ textAlign: "center" , width : "20%"}}>ผู้จัดการ</td>
+                            { type === "status_account" ? 
+                                <>
+                                <td style={{ textAlign: "center" , width : "20%"}}>ประเภท</td> 
+                                <td style={{ textAlign: "center" , width : "60%"}}>เหตุผล</td>
+                                <td style={{ textAlign: "center" , width : "20%"}}>ผู้จัดการ</td>
+                                </>
+                                : type === "status_delete" ? 
+                                <>
+                                <td style={{ textAlign: "center" , width : "80%"}}>เหตุผล</td>
+                                <td style={{ textAlign: "center" , width : "20%"}}>ผู้จัดการ</td>
+                                </> : <></>
+                            }
                         </tr>
                     </thead>
                     <tbody>

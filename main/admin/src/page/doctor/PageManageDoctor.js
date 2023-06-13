@@ -2,12 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import '../../assets/style/page/doctor/PageManageDoctor.scss'
 import ListDoctor from "./ListDoctor";
-const PageManageDoctor = ({socket , addHref = false , hrefDataPage , modify , auth , TabOn}) => {
+const PageManageDoctor = ({socket , addHref = false , HrefData , modify , auth , TabOn}) => {
     const [StatusPage , setStatus] = useState({
-        status : 
-                (hrefDataPage === "pop-default" || hrefDataPage === "main-default") ? "default" : 
-                (hrefDataPage === "pop-delete" || hrefDataPage === "main-delete") ? "delete" : 
-                hrefDataPage,
+        status :    HrefData.get() === "list?default" ? "default" : 
+                    HrefData.get() === "list?delete" ? "delete" : "",
         changePath : addHref
     }) 
 
@@ -16,16 +14,15 @@ const PageManageDoctor = ({socket , addHref = false , hrefDataPage , modify , au
     useEffect(()=>{
         modify(70 , 30 , ["หน้าแรก" , "บัญชีเจ้าหน้าที่ส่งเสริม"])
 
-        TabOn.addTimeOut(TabOn.end())
-        state()
-        console.log(hrefDataPage)
+        if(HrefData.get().split("=")[1] === "pop") {
+            state()
+        }
 
-     } , [hrefDataPage])
+     } , [HrefData.get()])
 
     const state = () => {
-        const status = (hrefDataPage === "pop-default" || hrefDataPage === "main-default") ? "default" : 
-                        (hrefDataPage === "pop-delete" || hrefDataPage === "main-delete") ? "delete" : 
-                        hrefDataPage
+        const status =  HrefData.get() === "list?default=pop" ? "default" : 
+                        HrefData.get() === "list?delete=pop" ? "delete" : ""
         setStatus({
             status : status, //ใช้ภายในหน้าได้
             changePath : false
@@ -34,7 +31,10 @@ const PageManageDoctor = ({socket , addHref = false , hrefDataPage , modify , au
 
     const ChangeStatus = async (statusClick) => {
         if(statusClick != StatusPage.status) {
-            if(auth(true)) setStatus({status : statusClick , changePath : true})
+            if(auth(true)) {
+                setStatus({status : statusClick , changePath : true})
+                HrefData.set(`list?${statusClick}=c`)
+            }
         }
     }
 

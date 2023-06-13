@@ -10,14 +10,27 @@
     // overflow: hidden;
 
     .head {
-        font-family: Sans-font;
-        font-size: 2vw;
-        background-color: #1CFFF1;
+        display: flex;
+        align-items: center;
         width: 100%;
-        text-align: center;
+        background-color: #1CFFF1;
+        padding: 0.5vw 0px;
         border-radius: 1.5vw;
         box-shadow: 0px 4px 4px rgba(182, 182, 182, 0.59);
-        padding: 0.5vw 0px;
+        .head-text {
+            font-family: Sans-font;
+            font-size: 2vw;
+            width: 100%;
+            text-align: center;
+        }
+
+        img {
+            // position: absolute;
+            margin-left: -3.75vw;
+            margin-right: 1.25vw;
+            width: 2.5vw;
+            cursor: pointer;
+        }
     }
 
     .content {
@@ -58,7 +71,7 @@
                 flex-direction: column;
                 overflow-y: scroll;
                 background-color: #bdebe7;
-                height: 16vw;
+                max-height: 16vw;
                 
                 tr {
                     display: table;

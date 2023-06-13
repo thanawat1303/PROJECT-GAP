@@ -18,11 +18,11 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
     useEffect(()=>{
         if(status.changePath) window.history.pushState({} , "" , `/admin/list?${status.status}`)
 
-        TabOn.addTimeOut(TabOn.end())
-
         setList(<></>)
         LoadPageData()
         removePopup()
+
+        console.log(status.status)
 
         window.removeEventListener("resize" , sizeScreen)
         window.addEventListener("resize" , sizeScreen)
@@ -50,7 +50,7 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
 
     const OpenDetailManage = async (id_table_doctor , typeStatus) => {
         if(await auth(true)) {
-            setBecause(<ShowBecause RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} TabOn={TabOn}/>)
+            setBecause(<ShowBecause RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} TabOn={TabOn} setBecause={setBecause}/>)
         }
     }
 
@@ -92,7 +92,7 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
                         row.map((data , key)=>{
                             if(!data.data) 
                                 return(
-                                <List-Doctor-dody key={key} id={`doctor-list-${data.id_table_doctor}`}>
+                                <List-Doctor-dody key={key} id={`doctor-list-${data.id_table_doctor}`} status={status.status}>
                                     <Detail-doctor>
                                         <Detail-Image>
                                             <img src="/doctor-svgrepo-com.svg"></img>
@@ -114,21 +114,31 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
                                         </Detail-data>
                                     </Detail-doctor>
                                     <Action-bt>
-                                        <content-status because={1}>
-                                            <bt-because>
-                                                <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
-                                            </bt-because>
-                                            <Bt-status onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_account")}>
-                                                <div className="frame" status={data.status_account ? "1" : "0"}>
-                                                    <span>ON</span>
-                                                    <span className="dot"></span>
-                                                    <span>OFF</span>
-                                                </div>
-                                            </Bt-status>
-                                        </content-status>
-                                        <bt-delete>
-                                            <button onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
-                                        </bt-delete>
+                                        { status.status === "default" ? 
+                                            <>
+                                            <content-status because={1}>
+                                                <bt-because>
+                                                    <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
+                                                </bt-because>
+                                                <Bt-status onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_account")}>
+                                                    <div className="frame" status={data.status_account ? "1" : "0"}>
+                                                        <span>ON</span>
+                                                        <span className="dot"></span>
+                                                        <span>OFF</span>
+                                                    </div>
+                                                </Bt-status>
+                                            </content-status>
+                                            <bt-delete>
+                                                <button onClick={()=>OpenConfirmPage(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
+                                            </bt-delete>
+                                            </> : 
+                                            status.status === "delete" ?
+                                            <content-status because={0} delete="">
+                                                <bt-because>
+                                                    <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_delete")}>เหตุผล</button>
+                                                </bt-because>
+                                            </content-status> : <></>
+                                        }
                                     </Action-bt>
                                 </List-Doctor-dody>
                                 )
@@ -142,7 +152,7 @@ const ListDoctor = ({status , PageAddRef , auth , TabOn}) => {
                 </Row-List>
                 )
             })
-                        
+        TabOn.addTimeOut(TabOn.end())    
         setList(doctorList)
     }
 

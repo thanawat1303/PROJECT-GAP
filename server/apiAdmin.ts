@@ -24,7 +24,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           `
             SELECT 
             (
-              SELECT name_station FROM station_list WHERE acc_doctor.station_doctor=station_list.id
+              SELECT name FROM station_list WHERE acc_doctor.station_doctor=station_list.id
             ) as station
             , id_table_doctor , fullname_doctor , id_doctor , img_doctor ${select}
             FROM acc_doctor
@@ -69,7 +69,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           `
             SELECT 
             (
-                SELECT name_station FROM station_list WHERE acc_doctor.station_doctor=station_list.id
+                SELECT name FROM station_list WHERE acc_doctor.station_doctor=station_list.id
             ) as station , id_table_doctor , fullname_doctor , id_doctor , img_doctor , status_account , status_delete
             FROM acc_doctor
             WHERE id_table_doctor=? LIMIT 25;
@@ -194,7 +194,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
                     return 0
                   }
                   con.end()
-                  res.send(result.affectedRows)
+                  res.send(result.affectedRows.toString())
               })
             }
           })   
@@ -311,7 +311,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
         let data = req.body
         con.query(
           `
-          SELECT * FROM ${data.type}_list;
+          SELECT * FROM ${data.type}_list LIMIT 25;
           `
          , (err : any , result : any)=>{
           if(err) {
@@ -331,7 +331,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
 
-  app.post('/api/admin/data/insert' , async (req:any , res:any)=>{
+  app.post('/api/admin/data/get' , async (req:any , res:any)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -341,44 +341,108 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   
     let con = Database.createConnection(listDB)
+  
     try {
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
         con.query(
           `
-          SELECT * FROM ${data.type}_list WHERE name_${data.type}=?;
-          `
-          ,[ data.name ], (err : any , result : any)=>{
-          if(err) {
+            SELECT * FROM ${data.type}_list WHERE id=?
+          ` 
+        , 
+        [data.id] ,
+        (err:any , result:any)=>{
+          if (err){
             dbpacket.dbErrorReturn(con , err , res)
-            console.log(`select ${data.type} err`)
             return 0
-          }
-
-          if(!result.length) {
-            con.query(`INSERT INTO ${data.type}_list (name_${data.type} , is_use) VALUES (? , 1)` , 
-            [ data.name ] , (err : any , insert : any)=>{
-              if(err) {
-                dbpacket.dbErrorReturn(con , err , res)
-                console.log(`insert ${data.type} err`)
-                return 0
-              }
-              
-              con.end()
-              res.send(insert.affectedRows)
-            })
-          } else {
-            con.end()
-            res.send("found")
-          }
-         })
+          };
+  
+          con.end()
+          res.send(result)
+        })
       }
     } catch (err : any) {
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
       }
+    }
+  })
+
+  app.post('/api/admin/data/insert' , async (req:any , res:any)=>{
+    if(req.body.passwordAd && req.body.type && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        
+      let username = req.session.user_admin
+      let password = req.body.passwordAd
+  
+      if(username === '') {
+        res.redirect('/api/logout')
+        return 0
+      }
+  
+      let con = Database.createConnection(listDB)
+  
+      try {
+        let auth = await apifunc.auth(con , username , password , res , "admin")
+        if(auth['result'] === "pass") {
+          let data = req.body
+          con.query(
+            `
+            SELECT * FROM ${data.type}_list WHERE name=?;
+            `
+            ,[ data.name ], (err : any , result : any)=>{
+            if(err) {
+              dbpacket.dbErrorReturn(con , err , res)
+              console.log(`select ${data.type} err`)
+              return 0
+            }
+
+            if(!result.length) {
+              con.query(`
+                          INSERT INTO ${data.type}_list 
+                          (
+                            name , 
+                            is_use 
+                            ${
+                              data.type === "plant" ? ", type_plant" : 
+                              data.type === "station" ? ", location" : ""
+                            }
+                          ) 
+                          VALUES 
+                          (
+                            ? , 
+                            1 
+                            ${
+                              data.type === "plant" ? `, '${data.type_plant}'` :
+                              data.type === "station" ? `, POINT(${data.lati},${data.longi})` : ""
+                            }
+                          )` , 
+              [ data.name ] , (err : any , insert : any)=>{
+                if(err) {
+                  dbpacket.dbErrorReturn(con , err , res)
+                  console.log(`insert ${data.type} err`)
+                  return 0
+                }
+                
+                con.end()
+                res.send(insert.affectedRows.toString())
+              })
+            } else {
+              con.end()
+              res.send("overflow")
+            }
+          })  
+        }
+      } catch (err : any) {
+        if(err == "not pass") {
+          con.end()
+          res.send("incorrect")
+        }
+      }
+    }
+    else {
+      res.send('error session')
     }
   })
 
@@ -397,25 +461,26 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
-        con.query(
-          `
-          UPDATE ${data.type}_list SET is_use = ? WHERE id = ?;
-          `
-          , [ data.state_use , data.type_id] , (err : any , result : any)=>{
-          if(err) {
-            dbpacket.dbErrorReturn(con , err , res)
-            console.log(`change ${data.type} err`)
-            return 0
-          }
-          con.end()
-          res.send(result.affectedRows)
-
-         })
+        if(data.type === "station" || data.type === "plant") {
+          con.query(
+            `
+            UPDATE ${data.type}_list SET is_use = ? WHERE id = ?;
+            `
+            , [ data.state_use , data.id_table] , (err : any , result : any)=>{
+            if(err) {
+              dbpacket.dbErrorReturn(con , err , res)
+              console.log(`change ${data.type} err`)
+              return 0
+            }
+            con.end()
+            res.send("133")
+          })
+        }
       }
     } catch (err : any) {
       con.end()
       if(err == "not pass") {
-        res.redirect('/api/logout')
+        res.send("password")
       }
     }
   })

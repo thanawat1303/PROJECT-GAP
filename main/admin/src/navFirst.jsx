@@ -1,11 +1,9 @@
 import React, { useEffect } from "react"
 
 import "./assets/style/Navfirst.scss"
-import { clientMo } from "../../../src/assets/js/moduleClient"
 import { ButtonMenu } from "../../../src/assets/js/module"
 
-import PageManageDoctor from "./page/doctor/PageManageDoctor"
-import PageData from "./page/data/PageManageData"
+import PageTemplate from "./page/PageTemplate"
 
 const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn , selectPage , HrefData}) => {
     useEffect(()=>{
@@ -21,14 +19,14 @@ const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn 
     const doctor = async () => {
         if(await auth(true)) {
             HrefData.set("list?default")
-            setBodyFileAdmin(<PageManageDoctor socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
+            setBodyFileAdmin(<PageTemplate socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
         }
     }
 
     const data = async () => {
         if(await auth(true)) {
-            HrefData.set("data?default")
-            setBodyFileAdmin(<PageData socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
+            HrefData.set("data?plant")
+            setBodyFileAdmin(<PageTemplate socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
         }
     }
 

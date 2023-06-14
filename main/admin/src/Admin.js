@@ -8,7 +8,7 @@ import "./assets/style/adminMain.scss"
 
 import DesktopNev from "./navTop/desktop";
 import SessionOut from "./sesionOut";
-import PageManageDoctor from "./page/doctor/PageManageDoctor";
+import PageTemplate from "./page/PageTemplate";
 import { HrefData, TabLoad } from "../../../src/assets/js/module";
 
 const Admin = ({setBodyFileMain , socket}) => {
@@ -55,11 +55,23 @@ const Admin = ({setBodyFileMain , socket}) => {
                 let query = seconPath[1]
                 if(query.indexOf("default") == 0) {
                     Href.set(`list?default${type}`)
-                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
                 } 
                 else if (query.indexOf("delete") == 0) {
                     Href.set(`list?delete${type}`)
-                    setBody(<PageManageDoctor TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                }
+            }
+
+            else if(seconPath[0] === "data"){
+                let query = seconPath[1]
+                if(query.indexOf("plant") == 0) {
+                    Href.set(`data?plant${type}`)
+                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                } 
+                else if (query.indexOf("station") == 0) {
+                    Href.set(`data?station${type}`)
+                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
                 }
             }
             
@@ -84,8 +96,8 @@ const Admin = ({setBodyFileMain , socket}) => {
         }
     } 
 
-    const modifyMainPage = (heigthBody , heightCover , ArrtextPage) => {
-        setTextPage(ArrtextPage)
+    const modifyMainPage = (heigthBody , heightCover , ArrtextPage = new Array) => {
+        setTextPage(ArrtextPage.filter((val)=>val != ""))
         ImageCover.current.style.height = `${heightCover}%`
         BodyRef.current.style.height = `${heigthBody}%`
     }

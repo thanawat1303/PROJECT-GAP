@@ -30,7 +30,7 @@ const MainAdmin = ({socket}) => {
     }
 
     return (
-        <div axial={Reponsive} style={{
+        <div axial={Reponsive} id="rule-admin" style={{
             height : "100%",
             width : "100%"
         }}>

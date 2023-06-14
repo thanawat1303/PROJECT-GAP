@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
-import "../../assets/style/page/doctor/Manage.scss"
+import "../../assets/style/page/Manage.scss"
 import { Loading, ReportAction } from "../../../../../src/assets/js/module";
-const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn}) => {
+const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , TabOn}) => {
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
@@ -12,8 +12,6 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
     const [Open , setOpen] = useState(0)
     const [Text , setText] = useState("")
     const [Status , setStatus] = useState(0)
-
-    const [statusCheck , setStatusChk] = useState(0)
 
     const BecauseRef = useRef()
     const PasswordRef = useRef()
@@ -106,18 +104,18 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
     const AfterConfirm = () => {
         if(Status === 1 || Status === 2) {
             if(type === "status_delete" || Status === 2) {
-                const block = document.getElementById(`doctor-list-${id_table}`)
+                const block = document.getElementById(`data-list-content-${id_table}`)
                 block.setAttribute("remove" , "")
                 setTimeout(()=>{
-                    const Emply = document.createElement("List-Doctor-null")
+                    const Emply = document.createElement("List-Data-null")
                     const parent = block.parentElement
                     block.remove()
                     parent.appendChild(Emply)
                 } , 600)
-                // document.querySelector(`#doctor-list-${id_table} Action-bt content-status bt-because`).innerHTML = `<button onclick=\"()=>${methodOpenManage(2 , 'status_account')}\">เหตุผล</button>`
+                // document.querySelector(`#data-list-content-${id_table} Action-bt content-status bt-because`).innerHTML = `<button onclick=\"()=>${methodOpenManage(2 , 'status_account')}\">เหตุผล</button>`
                     // <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
             } else if (type === "status_account") {
-                document.querySelector(`#doctor-list-${id_table} Action-bt content-status Bt-status .frame`)
+                document.querySelector(`#data-list-content-${id_table} Action-bt content-status Bt-status .frame`)
                     .setAttribute("status" , status ? 0 : 1)
             }
             close()
@@ -152,7 +150,7 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
                     </div>
                     : <></>
                 }
-                <div onLoad={OnLoad} className="detail-doctor">
+                <div onLoad={OnLoad} className="detail-data-report">
                     {Profile.isdelete ? 
                     <div className="data-delete">
                         <img src="/error-cross-svgrepo-com.svg"></img>
@@ -218,4 +216,4 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
     )
 }
 
-export default ManagePage
+export default ManageDoctorPage

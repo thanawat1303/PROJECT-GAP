@@ -6,6 +6,9 @@ export default function router(app : any) {
     app.get('/admin/list' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
     });
+    app.get('/admin/data' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
+    });
     // plus
     // app.get('/admin/plus' , function(req:any, res:any) {
     //     res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));

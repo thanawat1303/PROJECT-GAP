@@ -329,7 +329,7 @@ const StepTwo = (props) => {
                                     {
                                     (Listready) ? 
                                         ListStation.map((val , index)=>
-                                            <option key={index} value={val['id_station']}>{val['name_station']}</option>
+                                            <option key={index} value={val['id']}>{val['name_station']}</option>
                                         )
                                         : <></>
                                     }

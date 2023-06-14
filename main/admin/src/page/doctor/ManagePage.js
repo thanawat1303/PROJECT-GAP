@@ -13,6 +13,8 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
     const [Text , setText] = useState("")
     const [Status , setStatus] = useState(0)
 
+    const [statusCheck , setStatusChk] = useState(0)
+
     const BecauseRef = useRef()
     const PasswordRef = useRef()
 
@@ -22,7 +24,7 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
         fullname : "",
         img : "",
         station : "",
-        isdelete : false
+        isdelete : true
     })
 
     useEffect(()=>{
@@ -86,12 +88,15 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
             if(result === "133") {
                 setText(`${type === "status_account" ? status ? "ปิดบัญชี" : "เปิดบัญชี" : "ลบบัญชี"}สำเร็จ`)
                 setStatus(1)
+            } else if(result === "delete") {
+                setText("บัญชีนี้ถูกลบไปแล้ว")
+                setStatus(2)
             } else if(result === "because") {
                 setText("เกิดปัญหาทางเซิร์ฟเวอร์")
-                setStatus(2)
+                setStatus(3)
             } else if(result === "password") {
                 setText("รหัสผ่านไม่ถูกต้อง")
-                setStatus(2)
+                setStatus(3)
                 PasswordRef.current.value = ""
             }
         }
@@ -99,13 +104,8 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
 
     let Time = 0
     const AfterConfirm = () => {
-        if(Status === 1) {
-            if(type === "status_account") {
-                document.querySelector(`#doctor-list-${id_table} Action-bt content-status Bt-status .frame`)
-                    .setAttribute("status" , status ? 0 : 1)
-                // document.querySelector(`#doctor-list-${id_table} Action-bt content-status bt-because`).innerHTML = `<button onclick=\"()=>${methodOpenManage(2 , 'status_account')}\">เหตุผล</button>`
-                    // <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
-            } else if (type === "status_delete") {
+        if(Status === 1 || Status === 2) {
+            if(type === "status_delete" || Status === 2) {
                 const block = document.getElementById(`doctor-list-${id_table}`)
                 block.setAttribute("remove" , "")
                 setTimeout(()=>{
@@ -114,6 +114,11 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
                     block.remove()
                     parent.appendChild(Emply)
                 } , 600)
+                // document.querySelector(`#doctor-list-${id_table} Action-bt content-status bt-because`).innerHTML = `<button onclick=\"()=>${methodOpenManage(2 , 'status_account')}\">เหตุผล</button>`
+                    // <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
+            } else if (type === "status_account") {
+                document.querySelector(`#doctor-list-${id_table} Action-bt content-status Bt-status .frame`)
+                    .setAttribute("status" , status ? 0 : 1)
             }
             close()
         }
@@ -148,6 +153,12 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
                     : <></>
                 }
                 <div onLoad={OnLoad} className="detail-doctor">
+                    {Profile.isdelete ? 
+                    <div className="data-delete">
+                        <img src="/error-cross-svgrepo-com.svg"></img>
+                        <div>บัญชีนี้ถูกลบไปแล้ว</div>
+                    </div>
+                    :<>
                     <div className="img">
                         <img src={Profile.img}></img>
                     </div>
@@ -166,23 +177,40 @@ const ManagePage = ({RefOnPage , id_table , type , status , setBecause , TabOn})
                             <input value={Profile.station ? Profile.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"} readOnly></input>
                         </div>
                     </div>
+                    </>
+                    }
                 </div>
             </div>
             <div className="form-manage">
                 <label className="column">
                     <span>เหตุผล</span>
-                    <textarea ref={BecauseRef} className="input-text" style={{
-                        width : `${22.786/100 * ScreenW >= 175 ? 22.786/100 * ScreenW : 175}px`,
-                        height : `${8.463/100 * ScreenW >= 60 ? 8.463/100 * ScreenW : 60}px`
-                    }}></textarea>
+                    { Profile.isdelete ? 
+                        <textarea readOnly ref={BecauseRef} className="input-text" style={{
+                            width : `${22.786/100 * ScreenW >= 175 ? 22.786/100 * ScreenW : 175}px`,
+                            height : `${8.463/100 * ScreenW >= 60 ? 8.463/100 * ScreenW : 60}px`
+                        }}></textarea>
+                        :
+                        <textarea ref={BecauseRef} className="input-text" style={{
+                            width : `${22.786/100 * ScreenW >= 175 ? 22.786/100 * ScreenW : 175}px`,
+                            height : `${8.463/100 * ScreenW >= 60 ? 8.463/100 * ScreenW : 60}px`
+                        }}></textarea>
+                    }
                 </label>
                 <label>
                     <span>รหัสผ่านผู้ดูแล</span>
-                    <input ref={PasswordRef} type="password" className="input-text"></input>
+                    { Profile.isdelete ? 
+                        <input readOnly ref={PasswordRef} type="password" className="input-text"></input>
+                        : 
+                        <input ref={PasswordRef} type="password" className="input-text"></input>
+                    }
                 </label>
                 <div className="bt-manage">
                     <button onClick={close} className="close">ยกเลิก</button>
-                    <button onClick={Submit} className="submit">ยืนยัน</button>
+                    { Profile.isdelete ?
+                        <></>
+                        : 
+                        <button onClick={Submit} className="submit">ยืนยัน</button>
+                    }
                 </div>
             </div>
         </div>

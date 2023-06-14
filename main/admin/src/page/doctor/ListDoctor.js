@@ -203,14 +203,14 @@ const InsertPage = ({PageAddRef}) => {
             setText("")
             setStatus(0)
             let result = await clientMo.post("/api/admin/add" , data)
-            if(result === "correct") {
+            if(result === "1") {
                 setText("เพิ่มบัญชีผู้ส่งเสริมสำเร็จ")
                 setStatus(1)
                 Udoctor.value = ""
                 PWdoctor.value = ""
                 PWadmin.value = ""
             }
-            else if(result === "incorrect") {
+            else if(result === "0") {
                 setText("รหัสผู้ดูแลไม่ถูกต้อง")
                 setStatus(2)
                 PWadmin.value = ""

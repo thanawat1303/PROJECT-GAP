@@ -165,7 +165,7 @@ class FormPersonal extends Component {
         clientMo.post("/api/doctor/station/list").then((val)=>{
             this.setState({
                 ListStation : JSON.parse(val).map((val , key)=>(
-                    <option key={key} value={val.id_station}>{val.name_station}</option>
+                    <option key={key} value={val.id}>{val.name_station}</option>
                 ))
             })
         })

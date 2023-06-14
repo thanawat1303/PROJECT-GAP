@@ -77,6 +77,24 @@
                     margin-left: 1vw;
                 }
             }
+
+            .data-delete {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 26.165vw;
+                height: 6.595vw;
+
+                img {
+                    height: 70%;
+                }
+
+                div {
+                    font-family: Sans-font;
+                    font-weight: 900;
+                }
+            }
     
             .detail-doctor {
                 display: flex;
@@ -150,6 +168,11 @@
             justify-content: center;
             align-items: center;
             width: 100%;
+
+            input[readOnly=""] , textarea[readOnly=""] {
+                background-color: rgba(177, 177, 177, 0.304) !important;
+                backdrop-filter: blur(8px);
+            }
     
             label {
                 display: flex;

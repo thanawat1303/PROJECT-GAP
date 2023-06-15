@@ -389,7 +389,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           let data = req.body
           con.query(
             `
-            SELECT * FROM ${data.type}_list WHERE name=?;
+            SELECT * FROM ${data.type}_list WHERE name=? and is_use = 1;
             `
             ,[ data.name ], (err : any , result : any)=>{
             if(err) {
@@ -415,7 +415,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
                             1 
                             ${
                               data.type === "plant" ? `, '${data.type_plant}'` :
-                              data.type === "station" ? `, POINT(${data.lati},${data.longi})` : ""
+                              data.type === "station" ? `, POINT(${data.lat},${data.lng})` : ""
                             }
                           )` , 
               [ data.name ] , (err : any , insert : any)=>{
@@ -448,9 +448,9 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
 
   app.post('/api/admin/data/change' , async (req:any , res:any)=>{
     let username = req.session.user_admin
-    let password = req.session.pass_admin
+    let password = req.body['password']
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -475,7 +475,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
             con.end()
             res.send("133")
           })
-        }
+        } else res.send("no")
       }
     } catch (err : any) {
       con.end()

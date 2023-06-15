@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import '../assets/style/page/templatePage.scss'
+import "../assets/style/page/List.scss"
 
 import ListData from "./ListData";
 

@@ -107,7 +107,8 @@
                 // border-bottom: 0.2vw solid #22C7A9;
                 box-shadow: 0px 4px 4px rgba(185, 185, 185, 0.566);
                 border-radius: 1.302vw;
-                padding-bottom: 0.3vw;
+                padding: 0.3vw 0px;
+                overflow: hidden;
                 width: 100%;
                 .img {
                     display: flex;
@@ -152,7 +153,7 @@
                             border: 0;
                             outline: 0;
                             padding: 0;
-                            width: 100%;
+                            width: 100% !important;
                             min-height: 16px;
                             background-color: transparent;
                         }
@@ -160,6 +161,94 @@
                         .head-data.id {
                             width: 8.2vw;
                             min-width: 52px;
+                        }
+                    }
+                }
+
+                .data-popup {
+                    display: flex;
+                }
+
+                .data-popup[flex="station"]{
+                    flex-direction: column;
+                    padding: 0;
+                }
+                .data-popup[flex="plant"]{
+                    flex-direction: row;
+                    padding: 0px 1vw;
+                    padding-top: 1vw;
+                }
+
+                .data-popup[maxsize=""] {
+                    width: 100%;
+                    justify-content: center;
+                    align-items: center;
+                    .name[w="plant"] {
+                        width: 50%;
+
+                        input {
+                            margin-left: 1vw;
+                        }
+                    }
+                    .name[w="station"] {
+                        width: 100%;
+
+                        input {
+                            text-align: center;
+                        }
+                    }
+                    .name {
+                        display: flex;
+                        span {
+                            font-weight: 900;
+                            font-size: 1.2vw;
+                            font-family: Sans-font;
+                        }
+                        span.plant {
+                            display: flex;
+                            width: 35%;
+                        }
+
+                        span.station {
+                            display: flex;
+                            width: 30vw;
+                        }
+
+                        input {
+                            border: 0;
+                            outline: 0;
+                            font-size: 1.2vw;
+                            font-family: Sans-font;
+                            width: 100% !important;
+                        }
+                    }
+
+                    .type_plant {
+                        display: flex;
+                        width: 50%;
+                        span {
+                            font-weight: 900;
+                            font-size: 1.2vw;
+                            font-family: Sans-font;
+                            width: 6vw;
+                        }
+
+                        input {
+                            width: 100% !important;
+                            border: 0;
+                            outline: 0;
+                            margin-left: 1vw;
+                            font-size: 1.2vw;
+                            font-family: Sans-font;
+                        }
+                    }
+
+                    .location {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        iframe {
+                            border-radius: 1vw;
                         }
                     }
                 }

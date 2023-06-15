@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
-import "../../assets/style/page/Manage.scss"
+import "../../assets/style/page/PopupManage.scss"
 import { Loading, ReportAction } from "../../../../../src/assets/js/module";
 const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , TabOn}) => {
     const [LoadingStatus , setLoading] = useState(true)

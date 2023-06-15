@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import liff from "@line/liff"
 
-const MapsJSX = (props) => {
+const MapsJSX = ({lat , lng , w , h}) => {
     const [latitude , setLag] = useState(0)
     const [longtitude , setLng] = useState(0)
 
     useEffect(()=>{
-        setLag(props.lat)
-        setLng(props.lng)
-    } , [])
+        setLag(lat)
+        setLng(lng)
+    } , [lat , lng])
     return(
         <iframe src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_API_KEY}&q=${latitude},${longtitude}&zoom=18&maptype=satellite`} 
-           frameBorder={0} width={props.w} height={props.h} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+           frameBorder={0} width={w} height={h} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
     )
 }

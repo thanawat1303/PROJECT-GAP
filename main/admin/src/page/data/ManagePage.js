@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
-import "../../assets/style/page/Manage.scss"
-import { Loading, ReportAction } from "../../../../../src/assets/js/module";
+import "../../assets/style/page/PopupManage.scss"
+import { Loading, MapsJSX, ReportAction } from "../../../../../src/assets/js/module";
 const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , TabOn}) => {
     const [LoadingStatus , setLoading] = useState(true)
 
@@ -39,12 +39,12 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
     const FecthData = async () => {
         let data = await clientMo.post("/api/admin/data/get" , {id : id_table , type : type})
         data = JSON.parse(data).map((val)=>val)[0]
-        setLoading(false)
         setData({
             id : data.id,
             name : data.name,
             dataOther : type === "plant" ? data.type_plant : type === "station" ? data.location : ""
         })
+        setLoading(false)
     }
 
     const close = () => {
@@ -66,6 +66,7 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
                 id_table : Data.id,
                 state_use : status == 1 ? 0 : 1,
                 password : PasswordRef.current.value,
+                type : type
             }
 
             setOpen(1)
@@ -122,7 +123,23 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
                     : <></>
                 }
                 <div className="detail-data-report">
-                    
+                    <div className="data-popup" maxsize="" flex={type}>
+                        <div className="name" w={type}>
+                            {type === "plant" ? <span className={type}>ชื่อพืช</span> : <></>}
+                            <input readOnly value={Data.name}></input>
+                        </div>
+                        <div className={type === "plant" ? "type_plant" : "location"}>
+                            {
+                                type === "plant" ? <span>ชนิดพืช</span> : <></>
+                            }
+                            {
+                                type === "plant" ? <input readOnly value={Data.dataOther}></input> :
+                                Data.dataOther ? 
+                                    <MapsJSX lat={Data.dataOther.x} lng={Data.dataOther.y} w={"300vw"} h={"80vw"}/> : 
+                                    ""
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="form-manage">

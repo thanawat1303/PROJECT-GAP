@@ -41,15 +41,16 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "https://liff.line.me/1661049098-A9PON7LB"
+            "uri": "https://liff.line.me/1661049098-A9PON7LB/signup"
           }
         }
       ]
     }
     
-    richmenu.createRichMenu(jsonLogin).then((RichID)=>{
+    richmenu.createRichMenu(jsonLogin).then( async (RichID)=>{
       let pathImage = "API/assets/Menu.png"
-      richmenu.setRichMenuImage(RichID , fs.readFileSync(pathImage) , "image/png")
+      await richmenu.setRichMenuImage(RichID , fs.readFileSync(pathImage) , "image/png")
+      richmenu.setDefaultRichMenu(RichID)
     })
 
   },
@@ -74,7 +75,7 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "https://liff.line.me/1661049098-Zwq0pgJP"
+            "uri": "https://liff.line.me/1661049098-A9PON7LB/house"
           }
         },
         {
@@ -131,6 +132,10 @@ const RichMenu = {
   }
 
 }
+
+RichMenu.DeleteRichMenu.All()
+RichMenu.createRichLogin()
+RichMenu.createRichAddFarm()
 
 // RichMenu.setDefault("richmenu-29008f2338b228f0e50630151d38c29e")
 

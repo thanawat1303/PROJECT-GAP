@@ -50,15 +50,15 @@ export default function router(app : any) {
 
     // Farmer
     app.get('/farmer/signup' , function(req:any, res:any) {
-        res.sendFile(__dirname.replace('\server' , '/public/farmer/index_farmer_signup.html'));
+        res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
     app.get('/farmer/house' , function(req:any, res:any) {
         // console.log(req)
-        res.sendFile(__dirname.replace('\server' , '/public/farmer/index_farmer_house.html'));
+        res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
     app.get('/farmer/farm' , function(req:any, res:any) {
         // console.log(req)
-        res.sendFile(__dirname.replace('\server' , '/public/farmer/index_farmer.html'));
+        res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
 
     // page error 404

@@ -12,7 +12,7 @@ import House from "./houseFile/House";
 
 // import './assets/style/main.scss'
 
-const MainFarmer = (props) => {
+const MainFarmer = ({socket}) => {
     const [body , setBody] = useState(<></>)
     const [init , liff] = useLiff("1661049098-A9PON7LB")
 
@@ -41,7 +41,9 @@ const MainFarmer = (props) => {
 
     const LoadPage = (uid) => {
         clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
-            if(result === "no") setBody(<>ไม่พบบัญชี</>)
+            let Path = window.location.pathname.split("/").reverse()[0]
+            if(Path === "signup")
+            if(result === "no" || result === "no account") setBody(<>ไม่พบบัญชี</>)
             else if (result === "search") {
                 const auth = window.location.href.split("?")[1]
                 const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
@@ -62,4 +64,4 @@ const MainFarmer = (props) => {
     )
 }
 
-export {MainFarmer}
+export default MainFarmer

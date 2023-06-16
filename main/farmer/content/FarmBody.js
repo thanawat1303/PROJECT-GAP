@@ -4,6 +4,7 @@ import { clientMo } from "../../../src/assets/js/moduleClient";
 import "../assets/FarmBody.scss"
 import NavFirst from "./navFirst";
 import ListPlant from "./page/ListPlant";
+import { HrefData } from "../../../src/assets/js/module";
 
 const FarmBody = ({path , liff , uid}) => {
     const [Body , setBody] = useState(<></>)
@@ -15,6 +16,8 @@ const FarmBody = ({path , liff , uid}) => {
     const HeadNavMini = useRef()
     const BodyMain = useRef()
     const Nav = useRef()
+
+    const HrafData = new HrefData("HOME")
 
     useEffect(()=>{
         // setBody(<NavFirst setPage={setPage} setBody={setBody} path={path} uid={uid} liff={liff}/>)
@@ -73,9 +76,6 @@ const FarmBody = ({path , liff , uid}) => {
             }
             
         }
-            
-
-        
 
         else if(pathClick.size === 2 && pathClick.has("farm") && pathClick.has("page"))
             clientMo.post("/api/farmer/sign" , {uid:uid , page : `authplant`}).then((result)=>{

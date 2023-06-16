@@ -93,9 +93,9 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
 
         ListRef.current.setAttribute("count" , max)
 
-        for(let x=0; x<=List.length ;x += max) {
+        for(let x=0;x<List.length;x += max) {
             const account = JSON.parse(ObjectData)
-            ListExport.push(account.splice(x , x+max))
+            ListExport.push(account.splice(x , max))
         }
 
         const doctorList = 
@@ -255,6 +255,8 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
 
     useEffect(()=>{
         setSize(PageAddRef.current.clientHeight * 0.3)
+
+        if(type === "station") GenerateMapAuto()
     } , [])
 
     const ClickAdd = async (e) => {
@@ -375,13 +377,45 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
     }
 
     const GenerateMap = (e) => {
-        let Location = e.target.value.split("/").filter((val)=>val.indexOf("@") >= 0)
+        let Location = e.target.value.split("/").filter((val)=>val.indexOf("data") >= 0)
         if(Location[0]) {
-            Location = Location[0].replace("@" , "").split(",")
+            Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
         }
-        console.log(Location)
-        setLag(Location[0])
-        setLng(Location[1])
+        if(Location.length == 2) {
+            let lag = Location[1].split(".")
+            lag[0] = lag[0].replace("3d" , "")
+            for(let x=7; x>=4 ; x--) {
+                lag[1] = lag[1].slice(0 , x)
+                if(!isNaN(lag[1])) break
+            }
+
+            let lng = Location[0].split(".")
+            lng[0] = lng[0].replace("4d" , "")
+            for(let x=7; x>=4 ; x--) {
+                lng[1] = lng[1].slice(0 , x)
+                if(!isNaN(lng[1])) break
+            }
+
+            const Lagitude = lag.join(".")
+            const Longitude = lng.join(".")
+            if(!isNaN(Lagitude) && !isNaN(Longitude)) {
+                setLag(Lagitude)
+                setLng(Longitude)
+            }
+        }
+    }
+
+    const GenerateMapAuto = () => {
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position)=>{
+                setLag(0)
+                setLng(0)
+                setTimeout(()=>{
+                    setLag(position.coords.latitude)
+                    setLng(position.coords.longitude)
+                } , 1000)
+            })
+        }
     }
 
     return(
@@ -429,24 +463,23 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                         type === "station" ?
                             <>
                             <label>
-                            <svg fill="white" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
-                            // xmlns:xlink="http://www.w3.org/1999/xlink" 
-                                width="1em" height="1em" viewBox="0 0 395.71 395.71"
-                                // xml:space="preserve"
-                                >
-                                <g>
-                                    <path d="M197.849,0C122.131,0,60.531,61.609,60.531,137.329c0,72.887,124.591,243.177,129.896,250.388l4.951,6.738
-                                        c0.579,0.792,1.501,1.255,2.471,1.255c0.985,0,1.901-0.463,2.486-1.255l4.948-6.738c5.308-7.211,129.896-177.501,129.896-250.388
-                                        C335.179,61.609,273.569,0,197.849,0z M197.849,88.138c27.13,0,49.191,22.062,49.191,49.191c0,27.115-22.062,49.191-49.191,49.191
-                                        c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
-                                </g>
-                            </svg>
-                                <input ref={InputMap} placeholder="ลิ้งค์ที่อยู่จาก Google Map" type="text" onInput={GenerateMap}></input>
+                                <svg fill="white" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
+                                    width="1em" height="1em" viewBox="0 0 395.71 395.71"
+                                    >
+                                    <g>
+                                        <path d="M197.849,0C122.131,0,60.531,61.609,60.531,137.329c0,72.887,124.591,243.177,129.896,250.388l4.951,6.738
+                                            c0.579,0.792,1.501,1.255,2.471,1.255c0.985,0,1.901-0.463,2.486-1.255l4.948-6.738c5.308-7.211,129.896-177.501,129.896-250.388
+                                            C335.179,61.609,273.569,0,197.849,0z M197.849,88.138c27.13,0,49.191,22.062,49.191,49.191c0,27.115-22.062,49.191-49.191,49.191
+                                            c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
+                                    </g>
+                                </svg>
+                                <input ref={InputMap} placeholder="ลิ้งค์ปักหมุดจาก Google Map" type="text" onInput={GenerateMap}></input>
                             </label>
-                            <label>
-                                <input style={{display : "none"}} ref={RefData.Data2} value={Lag}></input>
-                                <input style={{display : "none"}} ref={RefData.Data3} value={Lng}></input>
-                                <MapsJSX lat={Lag} lng={Lng} h={"80vw"}/>
+                            <label className="station">
+                                <input style={{display : "none"}} readOnly ref={RefData.Data2} value={Lag}></input>
+                                <input style={{display : "none"}} readOnly ref={RefData.Data3} value={Lng}></input>
+                                <MapsJSX lat={Lag} lng={Lng}/>
+                                <button onClick={GenerateMapAuto}>รีโหลดพิกัด</button>
                             </label>
                             </> :
                             <></>

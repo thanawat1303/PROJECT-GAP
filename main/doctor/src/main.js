@@ -36,7 +36,7 @@ export default class MainDoctor extends Component {
                         body : <Login socket={this.props.socket} main={this}/>
                     }) 
                 
-                clientMo.addAction('#loading' , 'hide' , 1000)
+                clientMo.unLoadingPage()
             })
         }
     }

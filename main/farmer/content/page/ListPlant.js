@@ -26,7 +26,7 @@ const ListPlant = ({setBody , setPage , path , liff , uid , type , valuePage , t
             
         // }
         if(document.getElementById("loading").classList[0] !== "hide")
-            clientMo.addAction('#loading' , 'hide' , 1000)
+            clientMo.unLoadingPage()
 
         if(typePath === "page") ListPlantForm()
         else if (typePath === "formferti") ListFerti()

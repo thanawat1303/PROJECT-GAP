@@ -3,7 +3,7 @@ import { clientMo } from "../../src/assets/js/moduleClient"
 
 const NonLine = () => {
     useEffect(()=>{
-        clientMo.addAction('#loading' , 'hide' , 1000)
+        clientMo.unLoadingPage()
     })
     return(
         <section id="not-online">

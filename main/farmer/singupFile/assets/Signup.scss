@@ -16,6 +16,42 @@
         opacity: 0;
         visibility: hidden;
         transition: 0.5s opacity , 0.5s visibility;
+        Report-Dom {
+            Body-Report {
+                padding: 15px 30px;
+                border-radius: 15px;
+
+                Text-Report {
+                    margin-bottom: 10px;
+                    font-family: TH-font;
+                    font-size: 25px;
+                    font-weight: 900;
+                    background-color: white;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    padding-top: 6px;
+                    border-radius: 20px;
+                    box-shadow: 0px 2px 2px gray;
+                }
+
+                BoxButton-Report {
+                    margin-top: 10px;
+
+                    button {
+                        background-color: #00b412;
+                        border-radius: 15px;
+                        border-radius: 15px;
+                        padding: 0px 25px;
+                        padding-top: 2px;
+                        font-family: TH-font;
+                        font-size: 30px;
+                        font-weight: 900;
+                        color: white;
+                        box-shadow: 0px 2px 2px gray;
+                    }
+                }
+            }
+        }
         .content {
             display: flex;
             flex-direction: column;
@@ -176,9 +212,10 @@
     .form-sigup {
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: start;
         width: 100%;
         height: 100%;
+        // margin: calc(7.5vw + 15px) 0px; 
         .detail-profile {
             width: 100%;
             padding: 0px 10px;
@@ -193,9 +230,10 @@
                     font-family: TH-font;
                     padding: 5px 0px;
                     padding-top: 9px;
-                    background-color: green;
+                    // background-color: green;
                     border-radius: 25px;
-                    color: white;
+                    font-weight: 900;
+                    color: #00b412;
                 }
                 .detail-farmer {
                     margin-top: 15px;
@@ -251,9 +289,10 @@
                     font-family: TH-font;
                     padding: 5px 0px;
                     padding-top: 9px;
-                    background-color: green;
+                    // background-color: green;
                     border-radius: 25px;
-                    color: white;
+                    font-weight: 900;
+                    color: #00b412;
                 }
                 .detail-farmer {
                     margin-top: 15px;
@@ -311,7 +350,8 @@
                                 font-size: 6vw;
                                 font-weight: 900;
                                 background-color: rgb(131, 224, 131);
-                                border-radius: 10px;
+                                border-radius: 15px;
+                                box-shadow: 0px 2px 2px gray;
                                 border: 0px;
                                 padding: 0px 15px;
                                 padding-top: 5px;
@@ -385,9 +425,10 @@
                     font-family: TH-font;
                     padding: 5px 0px;
                     padding-top: 9px;
-                    background-color: green;
+                    // background-color: green;
                     border-radius: 25px;
-                    color: white;
+                    font-weight: 900;
+                    color: #00b412;
                 }
 
                 .frame-picture {
@@ -421,6 +462,10 @@
                         width: auto;
                         height: 100%;
                     }
+
+                    img[src="/view-preview-img.svg"] {
+                        opacity: 0.3;
+                    }
                 }
                 .content-bt {
                     .bt-upload {
@@ -449,10 +494,12 @@
 
     .button-step {
         display: flex;
+        position: fixed;
         justify-content: space-evenly;
         align-items: center;
         flex-direction: row;
         padding: 20px 0px;
+        width: 100%;
         .back , .next , .confirm {
             width: 15vw;
         }

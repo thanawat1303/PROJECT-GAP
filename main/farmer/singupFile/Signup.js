@@ -1,9 +1,9 @@
 import React , { useEffect , useRef, useState } from "react";
-import { Loading, MapsJSX, ResizeImg } from "../../src/assets/js/module";
+import { Loading, MapsJSX, ReportAction, ResizeImg } from "../../../src/assets/js/module";
 
 import './assets/Signup.scss'
-import {clientMo}  from "../../src/assets/js/moduleClient";
-import { PopupAlert } from "./PopupAlert";
+import {clientMo}  from "../../../src/assets/js/moduleClient";
+import { PopupAlert } from "../PopupAlert";
 
 const SignUp = ({liff}) => {
     const [step , setStep] = useState(1)
@@ -19,6 +19,9 @@ const SignUp = ({liff}) => {
     const confirm = useRef()
     const DetailProfile = useRef()
     const LoadingPreview = useRef()
+
+    const [PositionBt , setBt] = useState(window.innerHeight - ((window.innerHeight * 15/100) + 20))
+    const [animetion , setAnimetion] = useState(false)
 
     useEffect(()=>{
         selectStep(stepApprov)
@@ -67,20 +70,20 @@ const SignUp = ({liff}) => {
                 setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
             case 3 :
-                setStep(<StepThree LoadingPreview={LoadingPreview} liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepThree setAnimetion={setAnimetion} LoadingPreview={LoadingPreview} liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
                 break;
         }
     }
 
     const LoadPage = (e) => {
-        clientMo.addAction('#loading' , 'hide' , 1000)
+        clientMo.unLoadingPage()
     }
 
     return (
         <section id="content-signup-farmer" onLoad={LoadPage}>
             {PreviewData}
             <div className="Loading-preview" ref={LoadingPreview}>
-                <Loading size={80} border={8}/>
+                <Loading size={80} border={8} animetion={animetion}/>
             </div>
             <div className="title">
                 <div className="title-form">ทะเบียนเกษตรกร</div>
@@ -91,7 +94,9 @@ const SignUp = ({liff}) => {
                     {step}
                 </div>
             </div>
-            <div className="button-step">
+            <div className="button-step" style={{
+                top : `${PositionBt}px`
+            }}>
                 <img ref={back} hide="" onClick={()=>changeStep(false)} className="back" src="/caret-back-circle-svgrepo-com.svg"></img>
                 <div className="status-step">
                     <span select=""></span>
@@ -206,11 +211,6 @@ const StepTwo = (props) => {
     useEffect(()=>{
         props.stepAp(2)
         PullMap()
-        clientMo.post("/api/farmer/station/list").then((list)=>{
-            setStation(JSON.parse(list))
-            setReady(true)
-            // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
-        })
 
         return () => {
             clearTimeout(timeOutLoad)
@@ -219,7 +219,7 @@ const StepTwo = (props) => {
 
     const PullMap = () => {
         LoadingMap.current.removeAttribute('hide','')
-        setLoading(<Loading size={50} border={8}/>)
+        setLoading(<Loading size={50} border={8} animetion={true}/>)
         MapEle.current.removeAttribute('show','')
         setCurrent(<></>)
         timeOutLoad = setTimeout(
@@ -257,6 +257,20 @@ const StepTwo = (props) => {
             
             props.data.set("latitude" , location.coords.latitude)
             props.data.set("longitude" , location.coords.longitude)
+            clientMo.post("/api/farmer/station/search").then((list)=>{
+
+                const search = new Array
+                const sortMap = new Map
+                JSON.parse(list).map(val=>{
+                    let lag = Math.abs(location.coords.latitude - val.location.x)
+                    let lng = Math.abs(location.coords.longitude - val.location.y)
+                    search.push({id : val.id , name : val.name , dist : lag + lng})
+                })
+                
+                setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
+                setReady(true)
+                // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
+            })
             CheckData()
             setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
         } , null , {
@@ -274,6 +288,7 @@ const StepTwo = (props) => {
         }
 
         if(Station.current) props.data.set("station" , Station.current.value)
+        else props.data.set("station" , props.profile.get("station"))
         props.update(new Map([
             ...props.profile , 
             ...props.data
@@ -314,7 +329,7 @@ const StepTwo = (props) => {
                         </div>
                     </div>
                     <div className="box-bt">
-                        <button className="bt-map-reload" onClick={reloadMap}>โหลดตำแหน่ง</button>
+                        <button className="bt-map-reload" onClick={reloadMap}>โหลดพิกัด</button>
                     </div>
                 </label>
                 <label className="station">
@@ -329,7 +344,7 @@ const StepTwo = (props) => {
                                     {
                                     (Listready) ? 
                                         ListStation.map((val , index)=>
-                                            <option key={index} value={val['id']}>{val['name_station']}</option>
+                                            <option key={index} value={val['id']}>{val['name']}</option>
                                         )
                                         : <></>
                                     }
@@ -337,7 +352,7 @@ const StepTwo = (props) => {
                             </div>
                             : 
                             <div className="loading-content">
-                                <Loading size={25} border={4}/><span>โหลดตัวเลือกศูนย์</span>  
+                                <Loading size={25} border={4} animetion={true}/><span>โหลดตัวเลือกศูนย์</span>  
                             </div>}
                     </div>
                 </label>
@@ -348,7 +363,7 @@ const StepTwo = (props) => {
 
 const StepThree = (props) => {
     const ImageCurrent = useRef()
-    const [PreviewImage , setPreview] = useState(props.profile.get('dataImgState') ?? "/icons8-camera.svg")
+    const [PreviewImage , setPreview] = useState(props.profile.get('dataImgState') ?? "/view-preview-img.svg")
     const ControlImage = useRef()
     const Frame = useRef()
     const LoadingEle = useRef()
@@ -414,18 +429,18 @@ const StepThree = (props) => {
             } 
             else {
                 setLoading(true)
-                setPreview("/icons8-camera.svg")
+                setPreview("/view-preview-img.svg")
                 ImageCurrent.current.setAttribute("size" , "w")
                 alert('โปรดใช้รูปถ่ายปัจจุบัน')
             }
         } else {
             setLoading(true)
-            setPreview("/icons8-camera.svg")
+            setPreview("/view-preview-img.svg")
         }
     }
 
     const movePicture = (e = document.getElementById("")) => {
-        if(PreviewImage != "/icons8-camera.svg") {
+        if(PreviewImage != "/view-preview-img.svg") {
             const P = PositionMouse
 
             let x = xM + ((e.touches[0].clientX - P.x) / frameLate) // ค่าที่เลื่อนรูปบนแกน x
@@ -440,7 +455,7 @@ const StepThree = (props) => {
     }
 
     const setStartMove = (e) => {
-        if(PreviewImage != "/icons8-camera.svg") {
+        if(PreviewImage != "/view-preview-img.svg") {
             let frame = Frame.current
 
             let oldX = e.target.offsetLeft // ระยะขอบซ้ายรูปกับระยะขอบซ้ายหน้าจอ เพื่อหาตำแหน่งของรูปบนหน้าจอ
@@ -469,7 +484,7 @@ const StepThree = (props) => {
     }
 
     const setCurrent = (e) => {
-        if(PreviewImage != "/icons8-camera.svg") {
+        if(PreviewImage != "/view-preview-img.svg") {
             const P = PositionMouse
             let x = 0
             let y = 0
@@ -520,13 +535,13 @@ const StepThree = (props) => {
             ImageCurrent.current.setAttribute("size" , "w")
         }
     
-        if(PreviewImage != "/icons8-camera.svg") props.confirm.current.style.fill = "#009919"
+        if(PreviewImage != "/view-preview-img.svg") props.confirm.current.style.fill = "#009919"
         else props.confirm.current.style.fill = "#5b896eb5"
         setLoading(true); 
     }
 
     const CropImageToData = () => {
-        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
+        if(ImageCurrent.current.src.indexOf("/view-preview-img.svg") < 0) {
             const context = CropImg.current.getContext('2d')
             const FrameIn = Frame.current
             const Img = ImageCurrent.current
@@ -560,7 +575,8 @@ const StepThree = (props) => {
 
     const confirmData = () => {
         props.LoadingPreview.current.setAttribute("show" , "")
-        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
+        props.setAnimetion(true)
+        if(ImageCurrent.current.src.indexOf("/view-preview-img.svg") < 0) {
             let CropImage = CropImageToData()
             props.data.set("Image" , CropImage)
             updateData()
@@ -577,7 +593,7 @@ const StepThree = (props) => {
             }
 
             if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img) {
-                props.previewData(<PopUpPreview LoadingPreview={props.LoadingPreview} data={data} previewData={props.previewData} liff={props.liff}/>)
+                props.previewData(<PopUpPreview setAnimetion={props.setAnimetion} LoadingPreview={props.LoadingPreview} data={data} previewData={props.previewData} liff={props.liff}/>)
             } else {
                 props.LoadingPreview.current.removeAttribute("show")
             }
@@ -609,7 +625,7 @@ const StepThree = (props) => {
                 <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
             </div>
             <div className="content-bt">
-                <div onClick={()=>ControlImage.current.click()} className="bt-upload">อัปโหลด</div>
+                <div onClick={()=>ControlImage.current.click()} className="bt-upload">ถ่ายรูป</div>
             </div>
             <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input>
             <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
@@ -622,6 +638,8 @@ const PopUpPreview = (props) => {
     const Content = useRef()
     const FrameBody = useRef()
     const [Feedback , setFeed] = useState(<></>)
+
+    const [Station , setStation] = useState("")
 
     const [TextData , setText] = useState("")
     const [Result , setResult] = useState(0)
@@ -648,24 +666,45 @@ const PopUpPreview = (props) => {
         })
     }
 
-    const LoadContent = (e) => {
+    const LoadContent = async (e) => {
         loadNum++
         if(loadNum == 2) {
+            const name = JSON.parse(await clientMo.post("/api/farmer/station/get" , {id_station : props.data['station']}))[0].name
+
             FrameBody.current.style.overflow = "scroll"
             Control.current.style.opacity = "1"
             Control.current.style.visibility = "visible"
             Content.current.style.opacity = "1"
             Content.current.style.visibility = "visible"
+            setStation(name)
             props.LoadingPreview.current.removeAttribute("show")
+            setTimeout(()=>{
+                props.setAnimetion(false)
+            } , 500)
             loadNum = 0
         }
         console.log(e)
     }
 
+    const confirmArert = () => {
+        if(Result != 0) {
+            if(Result == 1 || Result == 2) {
+                props.liff.closeWindow()
+            } else {
+                setText("")
+                setResult(0)
+                setOpenPop(0)
+            }
+        }
+    }
+
     return (
         <section onLoad={LoadContent} className="popUpPreview" ref={Control}>
-            {<PopupAlert liff={props.liff} textData={TextData} result={Result} open={OpenPop} 
-                setOpen={setOpenPop} setResult={setResult} setText={setText}/>}
+            {/* {<PopupAlert liff={props.liff} textData={TextData} result={Result} open={OpenPop} 
+                setOpen={setOpenPop} setResult={setResult} setText={setText}/>} */}
+            <ReportAction Open={OpenPop} Text={TextData} Status={Result}
+                            setOpen={setOpenPop} setText={setText} setStatus={setResult} 
+                            sizeLoad={90} BorderLoad={10} color="white" action={confirmArert}/>
             <div className="content" ref={Content}>
                 <div className="head">เช็คข้อมูล</div>
                 <div className="body">
@@ -693,7 +732,7 @@ const PopUpPreview = (props) => {
                                 </div>
                                 <div className="station">
                                     <div>ศูนย์ที่อยู่ในการดูแล</div>
-                                    <input readOnly value={props.data['station']}></input>
+                                    <input readOnly value={Station}></input>
                                 </div>
                             </div>
                         </div>

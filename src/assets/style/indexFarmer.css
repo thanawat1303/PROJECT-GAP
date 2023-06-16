@@ -1,4 +1,24 @@
-body , html {
-    height: calc(100vw * 2.184115523465704);
+body , html , #loading {
+    height: 100%;
+    /* calc(100vw * 2.184115523465704); */
     width: 100%;
+}
+
+#loading {
+    background-image: url("/ดอย.jpg");
+}
+
+#loading img {
+    width: 250px;
+}
+
+#loading div {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    border: 8px solid white;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-radius: 50%;
+    animation: rotate-curcle 0.5s cubic-bezier(0, 0, 0, 0) 0s infinite;
 }

@@ -206,7 +206,7 @@ class FormPersonal extends Component {
                         })
                     }
     
-                    clientMo.addAction('#loading' , 'hide' , 1000)
+                    clientMo.unLoadingPage()
                 })
             } , 1500)
         } else {

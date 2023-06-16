@@ -19,7 +19,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                     return 0;
                 }
 
-                con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)` , 
+                con.query(`SELECT id_table , register_auth FROM acc_farmer WHERE uid_line = ?` , 
                     [req.body['uid']] ,
                     (err:any , result:any)=>{
                         if (err) {
@@ -29,16 +29,34 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                         }
                         con.end()
                         if(result[0]) {
-                            if(req.body['page']) req.session.page = req.body['page']
-                            res.send("search")
+                            if(result[0].register_auth == 0 || result[0].register_auth == 1) {
+                                if(req.body['page'] === "signup") {
+                                    try {
+                                        LINE.linkRichMenuToUser(req.body['uid'] , "richmenu-1a986abf1bce4343ceb3f9f7fed17f30")
+                                    } catch (e) {
+                                        console.log(e)
+                                    }
+                                    // req.session.page = req.body['page']
+                                }
+                                res.send("search")
+                            } else {
+                                try {
+                                    LINE.linkRichMenuToUser(req.body['uid'] , "richmenu-29008f2338b228f0e50630151d38c29e")
+                                } catch (e) {
+                                    console.log(e)
+                                }
+                                res.send("no")
+                            }
                         }
-                        else res.send("no")
+                        else {
+                            res.send("no account")
+                        }
                 })
             })
         } else res.send("error auth")
     })
 
-    app.post('/api/farmer/station/list' , (req:any , res:any)=>{
+    app.post('/api/farmer/station/search' , (req:any , res:any)=>{
         if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
@@ -49,6 +67,30 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 }
 
                 con.query(`SELECT * FROM station_list` , (err:any , result:any)=>{
+                    if (err) {
+                        dbpacket.dbErrorReturn(con, err, res);
+                        console.log("query");
+                        return 0
+                    }
+                    con.end()
+                    res.send(result)
+                    
+                })
+            })
+        } else res.send("")
+    })
+
+    app.post('/api/farmer/station/get' , (req:any , res:any)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+            con.connect(( err:any )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+
+                con.query(`SELECT name FROM station_list WHERE id=?`, [req.body.id_station] , (err:any , result:any)=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
                         console.log("query");
@@ -112,7 +154,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             if(result.affectedRows > 0) {
                                 if(result.affectedRows > 1) console.log(result)
                                 con.end()
-                                try {LINE.linkRichMenuToUser(req.session.uidFarmer , "richmenu-e27bfb6f25e7ba8daa207df690e18489")} 
+                                try {LINE.linkRichMenuToUser(req.session.uidFarmer , "richmenu-1a986abf1bce4343ceb3f9f7fed17f30")} 
                                 catch (e) {
                                     fs.appendFileSync(__dirname.replace('\server' , '/logs/errorfile.json') , `richMenuAddFarm : {id:${req.session.uidFarmer} , date : ${new Date().getTime}}`)
                                 }
@@ -127,6 +169,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
             })
         } else res.send("")
     })
+    
 
     app.post('/api/farmer/farmhouse/add' , (req:any , res:any)=>{
         if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
@@ -171,21 +214,6 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 }).catch((err : any)=>{
                     res.send("no")
                 })
-
-                // con.query(`SELECT id_table , id_farmer FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)` , 
-                //     [req.session.uidFarmer] ,
-                //     (err:any , result:any)=>{
-                //         if (err) {
-                //             dbpacket.dbErrorReturn(con, err, res);
-                //             console.log("query");
-                //             return 0
-                //         }
-                        
-                //         if(result[0]) {
-                            
-                //         }
-                //         else res.send("no")
-                // })
             })
 
         } else res.send("error auth")

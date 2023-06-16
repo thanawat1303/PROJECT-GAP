@@ -74,7 +74,7 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "https://liff.line.me/1661049098-A9PON7LB/house"
+            "uri": "https://liff.line.me/1661049098-Zwq0pgJP"
           }
         },
         {
@@ -131,6 +131,8 @@ const RichMenu = {
   }
 
 }
+
+// RichMenu.setDefault("richmenu-29008f2338b228f0e50630151d38c29e")
 
 // richmenu.linkRichMenuToUser("Uceb5937bcd2edc0de5341022f8d59e9f" , "richmenu-e27bfb6f25e7ba8daa207df690e18489")
 

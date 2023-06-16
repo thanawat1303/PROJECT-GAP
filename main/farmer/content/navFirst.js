@@ -13,7 +13,7 @@ const NavFirst = ({ setBody , path , liff , uid , setPage , isClick = 0}) => {
         if(isClick === 1) window.history.pushState({} , null , `/farmer?farm=${path.get("farm")}`)
 
         if(document.getElementById("loading").classList[0] !== "hide")
-            clientMo.addAction('#loading' , 'hide' , 1000)
+            clientMo.unLoadingPage()
         
         // if(path.size == 2){
         //     if(path.has("page")) Page(path.get("page"))
@@ -51,6 +51,7 @@ const NavFirst = ({ setBody , path , liff , uid , setPage , isClick = 0}) => {
     //     })
     // }
 
+    // แก้เมนูให้มีปค่2เมนู พืช กับ ดูคำแนะนำ ไล่ทำการลิ้งค์หน้าใหม่ ทำการสร้าง funtion การจัดการ path
     return (
         <section ref={NavBody} className="nav-first">
             <div className="all-menu">

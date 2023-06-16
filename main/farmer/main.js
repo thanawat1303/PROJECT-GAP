@@ -3,10 +3,9 @@ import {clientMo}  from "../../src/assets/js/moduleClient";
 import {useLiff} from "../../src/assets/js/module";
 
 import {NonLine} from "./nonLine";
-import {SignUp} from "./Signup";
 
 import MenuMain from "./content/mainFarmHouse";
-import House from "./House";
+import House from "./houseFile/House";
 
 // import Login from "./Login";
 // import Doctor from "./Doctor";
@@ -42,7 +41,7 @@ const MainFarmer = (props) => {
 
     const LoadPage = (uid) => {
         clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
-            if(result === "no") setBody(<SignUp liff={liff}/>)
+            if(result === "no") setBody(<>ไม่พบบัญชี</>)
             else if (result === "search") {
                 const auth = window.location.href.split("?")[1]
                 const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
@@ -52,10 +51,6 @@ const MainFarmer = (props) => {
                 }
                 else if (house == "house") {
                     setBody(<House liff={liff}/>)
-                }
-                else {
-                    clientMo.addAction('#loading' , 'hide' , 1000)
-                    setBody(<>บัญชีลงทะเบียนแล้ว {house}</>)
                 }
             }
             else if (result === "error auth") setBody(<>auth error</>)

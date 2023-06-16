@@ -1,12 +1,12 @@
 import React, { useEffect , useRef , useState } from "react";
-import { clientMo } from "../../src/assets/js/moduleClient";
-import { Loading , ResizeImg } from "../../src/assets/js/module";
+import { clientMo } from "../../../src/assets/js/moduleClient";
+import { Loading , ReportAction, ResizeImg } from "../../../src/assets/js/module";
 
 import "./assets/House.scss"
-import { PopupAlert } from "./PopupAlert";
+
 const House = ({liff}) => {
     const ImageCurrent = useRef()
-    const [PreviewImage , setPreview] = useState("/icons8-camera.svg")
+    const [PreviewImage , setPreview] = useState("/view-preview-img.svg")
     const ControlImage = useRef()
     const Frame = useRef()
     const LoadingEle = useRef()
@@ -31,7 +31,7 @@ const House = ({liff}) => {
     const [sizeHeightImg , setHeightImg] = useState(0)
 
     const [Textdata , setText] = useState("")
-    const [OpenPop , setOpen] = useState(0)
+    const [OpenPop , setOpen] = useState(1)
     const [ResultPop , setResult] = useState(0)
 
     const frameLate = 1
@@ -65,12 +65,12 @@ const House = ({liff}) => {
             })
         } else {
             setLoading(true); 
-            setPreview("/icons8-camera.svg")
+            setPreview("/view-preview-img.svg")
         }
     }
 
     const movePicture = (e = document.getElementById("")) => {
-        if(PreviewImage != "/icons8-camera.svg") {
+        if(PreviewImage != "/view-preview-img.svg") {
             const P = PositionMouse
 
             let x = xM + ((e.touches[0].clientX - P.x) / frameLate) // ค่าที่เลื่อนรูปบนแกน x
@@ -85,7 +85,7 @@ const House = ({liff}) => {
     }
 
     const setStartMove = (e) => {
-        if(PreviewImage != "/icons8-camera.svg") {
+        if(PreviewImage != "/view-preview-img.svg") {
             let frame = Frame.current
 
             let oldX = e.target.offsetLeft // ระยะขอบซ้ายรูปกับระยะขอบซ้ายหน้าจอ เพื่อหาตำแหน่งของรูปบนหน้าจอ
@@ -114,7 +114,7 @@ const House = ({liff}) => {
     }
 
     const setCurrent = (e) => {
-        if(PreviewImage != "/icons8-camera.svg") {
+        if(PreviewImage != "/view-preview-img.svg") {
             const P = PositionMouse
             let x = 0
             let y = 0
@@ -166,7 +166,7 @@ const House = ({liff}) => {
     }
 
     const CropImageToData = () => {
-        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
+        if(ImageCurrent.current.src.indexOf("/view-preview-img.svg") < 0) {
             const context = CropImg.current.getContext('2d')
             const FrameIn = Frame.current
             const Img = ImageCurrent.current
@@ -197,7 +197,7 @@ const House = ({liff}) => {
 
     const confirmData = () => {
         setOpen(1)
-        if(ImageCurrent.current.src.indexOf("/icons8-camera.svg") < 0) {
+        if(ImageCurrent.current.src.indexOf("/view-preview-img.svg") < 0) {
             let CropImage = CropImageToData()
     
             let data = {
@@ -232,8 +232,20 @@ const House = ({liff}) => {
     let loadnum = true
     const LoadOn = () => {
         if(loadnum) {
-            clientMo.addAction('#loading' , 'hide' , 1000)
+            clientMo.unLoadingPage()
             loadnum = false
+        }
+    }
+
+    const actionArert = () => {
+        if(Result != 0) {
+            if(Result == 1 || Result == 2) {
+                liff.closeWindow()
+            } else {
+                setText("")
+                setResult(0)
+                setOpen(0)
+            }
         }
     }
 
@@ -242,8 +254,11 @@ const House = ({liff}) => {
             {/* <div className="loading-show" ref={LoadingPreview}>
 
             </div> */}
-            <PopupAlert  textData={Textdata} open={OpenPop} result={ResultPop} liff={liff}
-                setText={setText} setOpen={setOpen} setResult={setResult}/>
+            {/* <PopupAlert  textData={Textdata} open={OpenPop} result={ResultPop} liff={liff}
+                setText={setText} setOpen={setOpen} setResult={setResult}/> */}
+            <ReportAction Open={OpenPop} Text={Textdata} Status={ResultPop}
+                            setOpen={setOpen} setText={setText} setStatus={setResult}
+                            sizeLoad={90} BorderLoad={10} color="green" action={actionArert}/>
             <div className="content">
                 <div className="name-farmhouse">
                     <input type="text" ref={namefarm} placeholder="ชื่อโรงเรือน"></input>

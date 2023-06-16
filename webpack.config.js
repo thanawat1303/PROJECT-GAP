@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   entry: {
     admin : "./index_jsx/admin.js" , 
-    doctor : "./index_jsx/doctor.js" , 
+    doctor : "./index_jsx/doctor.js" ,
     farmer : "./index_jsx/farmer.js",
   },
   output: {

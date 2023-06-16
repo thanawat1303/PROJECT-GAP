@@ -8,6 +8,7 @@
             position: fixed;
             background-color: white;
             border-radius: 20px 0px 0px 20px;
+            z-index: 1;
             // right: 0;
             transition: 0.5s transform;
             left: 100%;
@@ -84,6 +85,7 @@
                             font-size: 1.171vw;
                             background-color: transparent;
                             color: white;
+                            width: 100%;
                         }
 
                         select {
@@ -93,6 +95,31 @@
     
                         input::placeholder {
                             color: white;
+                        }
+                    }
+
+                    label.station {
+                        position: relative;
+
+                        iframe {
+                            width: 18vw;
+                            height: 5em;
+                        }
+
+                        button {
+                            bottom: 0.5em;
+                            right: 0.5em;
+                            border-radius: 1vw;
+                            border: 0;
+                            outline: 0;
+                            font-family: Sans-font;
+                            font-weight: 900;
+                            position: absolute;
+                            box-shadow: 0px 4px 2px rgb(108, 108, 108);
+                            background-color: #EB7878;
+                            color: white;
+                            letter-spacing: 1px;
+                            cursor: pointer;
                         }
                     }
                 }
@@ -358,7 +385,7 @@
                         justify-content: end;
                         align-items: center;
                         margin-top: 0.1vw;
-                        width: 100;
+                        width: 100%;
     
                         content-status[because="1"] {
                             background-color: #64ffe3b3;

@@ -26,7 +26,7 @@ export default class MainApp extends Component {
                     body : <Login main={this}/>
                 }) 
             
-            clientMo.addAction('#loading' , 'hide' , 1000)
+            clientMo.unLoadingPage()
         })
         
     }

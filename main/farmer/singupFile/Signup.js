@@ -3,7 +3,6 @@ import { Loading, MapsJSX, ReportAction, ResizeImg } from "../../../src/assets/j
 
 import './assets/Signup.scss'
 import {clientMo}  from "../../../src/assets/js/moduleClient";
-import { PopupAlert } from "../PopupAlert";
 
 const SignUp = ({liff}) => {
     const [step , setStep] = useState(1)
@@ -619,7 +618,7 @@ const StepThree = (props) => {
                     <div ref={LoadingEle}></div>
                     :
                     <div ref={LoadingEle} className="Loading-img">
-                        <Loading size={70} border={8} color="green"/>
+                        <Loading size={70} border={8} color="green" animetion={true}/>
                     </div>
                 }
                 <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
@@ -750,4 +749,4 @@ const PopUpPreview = (props) => {
     )
 }
 
-export {SignUp}
+export default SignUp

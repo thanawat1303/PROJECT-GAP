@@ -2,7 +2,7 @@ import React, { useRef , useEffect} from "react";
 import "../../assets/ListFertilizer.scss"
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-const PopupInsertFertilizer = ({setPopup , RefPop , uid , path , setBodyList , setLoading}) => {
+const PopupInsertFertilizer = ({setPopup , RefPop , uid , id , ReloadData}) => {
     const DateUse = useRef()
     const FormulaName = useRef()
     const NameFertilizer = useRef()
@@ -26,8 +26,8 @@ const PopupInsertFertilizer = ({setPopup , RefPop , uid , path , setBodyList , s
             ) {
                 let data = {
                     uid : uid,
-                    id_farmhouse : path.get("farm"),
-                    id : path.get("formferti"),
+                    id_farmhouse : id.id_house,
+                    id : id.id_form,
                     date : dateUse.value,
                     formula_name : formula_name.value,
                     name : Name.value,
@@ -38,54 +38,8 @@ const PopupInsertFertilizer = ({setPopup , RefPop , uid , path , setBodyList , s
                 
                 clientMo.post("/api/farmer/factor/fertilizer/insert" , data).then((result)=>{
                     if(result === "133") {
-                        setLoading(1)
-
                         cancel()
-                        // clientMo.post("/api/farmer/sign" ,{uid:uid , page : `authplant`}).then((auth)=>{
-                        //     if(auth === "search") {
-                        //         clientMo.post('/api/farmer/formplant/select' , {
-                        //             uid : uid,
-                        //             id_farmhouse : path.get("farm")
-                        //         }).then((list)=>{
-                        //             setLoading(true)
-                        //             if(list !== '[]'){
-                        //                 setBodyList(JSON.parse(list).map((val , key)=>
-                        //                     <div key={key} className="plant-content">
-                        //                         <div className="top">
-                        //                             <div className="type-main">
-                        //                                 <input readOnly value={val.type_main}></input>
-                        //                             </div>
-                        //                             <div className="date">
-                        //                                 <span>วันที่ปลูก <DAYUTC DATE={val.date_plant} TYPE="short"/></span>
-                        //                             </div>
-                        //                         </div>
-                        //                         <div className="body">
-                        //                             <div className="content">
-                        //                                 <span>{val.type}</span>
-                        //                             </div>
-                        //                             <div className="content">
-                        //                                 <input readOnly value={`จำนวน ${val.qty} ต้น`}></input>
-                        //                             </div>
-                                                    
-                        //                         </div>
-                        //                         <div className="bottom">
-                        //                             <div className="content">
-                        //                                 <span>{`รุ่นที่ ${val.generation}`}</span>
-                        //                             </div>
-                        //                             <div className="bt">
-                        //                                 <button>แก้ไข</button>
-                        //                                 <button>รายละเอียด</button>
-                        //                             </div>
-                        //                         </div>
-                        //                     </div>
-                        //                 ))
-                        //             } else {
-                        //                 setBodyList(<div></div>)
-                        //             }
-                        //         })
-                        //     }
-                        // })
-                        
+                        ReloadData()
                     } else {
                         
                     }

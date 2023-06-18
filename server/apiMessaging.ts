@@ -21,7 +21,8 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                                         (
                                             SELECT uid_line FROM acc_farmer 
                                             WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
-                                            GROUP BY uid_line
+                                            ORDER BY date_register DESC
+                                            LIMIT 1
                                         ) as farmer 
                                     WHERE housefarm.uid_line = farmer.uid_line
                                     ` , 
@@ -43,7 +44,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                                                     action : {
                                                         type : "uri",
                                                         label : `${result[key]["name_house"]}`,
-                                                        uri : `https://liff.line.me/1661049098-A9PON7LB?farm=${result[key]["id_farmHouse"]}`
+                                                        uri : `https://liff.line.me/1661049098-GVZzbm5q?f=${result[key]["id_farmHouse"]}`
                                                     }
                                                 }
                                         )

@@ -41,7 +41,7 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "https://liff.line.me/1661049098-A9PON7LB/signup"
+            "uri": "https://liff.line.me/1661049098-A9PON7LB"
           }
         }
       ]
@@ -75,7 +75,7 @@ const RichMenu = {
           },
           "action": {
             "type": "uri",
-            "uri": "https://liff.line.me/1661049098-A9PON7LB/house"
+            "uri": "https://liff.line.me/1661049098-Lm7mZW32"
           }
         },
         {
@@ -133,9 +133,10 @@ const RichMenu = {
 
 }
 
-RichMenu.DeleteRichMenu.All()
-RichMenu.createRichLogin()
-RichMenu.createRichAddFarm()
+// RichMenu.DeleteRichMenu.All()
+// RichMenu.createRichLogin()
+// RichMenu.createRichAddFarm()
+// RichMenu.GetRichMenu()
 
 // RichMenu.setDefault("richmenu-29008f2338b228f0e50630151d38c29e")
 

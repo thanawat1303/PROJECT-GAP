@@ -178,13 +178,13 @@ const ResizeImg = (file , MaxSize) => {
 const Loading = ({size , border , color="green" , animetion = false}) => {
     return (
         <div style={{
-            width : `${size}px`,
-            height : `${size}px`
+            width : isNaN(size) ? size : `${size}px`,
+            height : isNaN(size) ? size : `${size}px`
         }}>
             <div className="curcle"
                 style={{
-                    border: `${border}px solid ${color}`,
-                    borderLeft : `${border}px solid transparent`,
+                    border: `${isNaN(border) ? border : `${border}px`} solid ${color}`,
+                    borderLeft : `${isNaN(border) ? border : `${border}px`} solid transparent`,
                     borderRadius : "50%",
                     width : "100%",
                     height : "100%",

@@ -31,7 +31,7 @@ const House = ({liff}) => {
     const [sizeHeightImg , setHeightImg] = useState(0)
 
     const [Textdata , setText] = useState("")
-    const [OpenPop , setOpen] = useState(1)
+    const [OpenPop , setOpen] = useState(0)
     const [ResultPop , setResult] = useState(0)
 
     const frameLate = 1
@@ -238,8 +238,8 @@ const House = ({liff}) => {
     }
 
     const actionArert = () => {
-        if(Result != 0) {
-            if(Result == 1 || Result == 2) {
+        if(ResultPop != 0) {
+            if(ResultPop == 1 || ResultPop == 2) {
                 liff.closeWindow()
             } else {
                 setText("")
@@ -269,7 +269,7 @@ const House = ({liff}) => {
                             <div ref={LoadingEle}></div>
                             :
                             <div ref={LoadingEle} className="Loading-img">
-                                <Loading size={70} border={8} color="green"/>
+                                <Loading size={70} border={8} color="green" animetion={true}/>
                             </div>
                         }
                         <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>

@@ -5,16 +5,14 @@ import {useLiff} from "../../src/assets/js/module";
 import {NonLine} from "./nonLine";
 
 import MenuMain from "./content/mainFarmHouse";
+
 import House from "./houseFile/House";
+import Signup from "./singupFile/Signup"
+import ErrorPage from "./ErrorPage"
 
-// import Login from "./Login";
-// import Doctor from "./Doctor";
-
-// import './assets/style/main.scss'
-
-const MainFarmer = ({socket}) => {
+const MainFarmer = ({socket , idLiff , Path}) => {
     const [body , setBody] = useState(<></>)
-    const [init , liff] = useLiff("1661049098-A9PON7LB")
+    const [init , liff] = useLiff(idLiff)
 
     useEffect(()=>{
         init.then(()=>{
@@ -23,7 +21,7 @@ const MainFarmer = ({socket}) => {
                     liff.getProfile().then((profile)=>{
                         // สมัครเข้าต้องค้นหาบัญชีโดยไม่ตรง status ยกเลิกบัญชี
                         if(profile.userId) {
-                            LoadPage(profile.userId)
+                            LoadPage(profile.userId , liff)
                         }
                     })
                 } else {
@@ -39,28 +37,81 @@ const MainFarmer = ({socket}) => {
 
     } , [])
 
-    const LoadPage = (uid) => {
-        clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
-            let Path = window.location.pathname.split("/").reverse()[0]
-            if(Path === "signup")
-            if(result === "no" || result === "no account") setBody(<>ไม่พบบัญชี</>)
-            else if (result === "search") {
+    const LoadPage = (uid , liff) => {
+        clientMo.post("/api/farmer/sign" , {uid:uid , page : Path}).then((result)=>{
+
+            if(Path === "signup" && result !== "error auth") {
+                if(result === "no" || result === "no account") setBody(<Signup liff={liff}/>)
+                else if (result === "search") setBody(<ErrorPage text={"บัญชีลงทะเบียนแล้ว"}/>)
+
+            } else if (Path === "house" && result !== "error auth") {
+                if(result === "no" || result === "no account") setBody(<ErrorPage text={"ไม่พบบัญชี"}/>)
+                else if (result === "search") setBody(<House liff={liff}/>)
+
+            } else if (Path === "form" && result !== "error auth") {
                 const auth = window.location.href.split("?")[1]
-                const house = window.location.href.split("/")[window.location.href.split("/").length - 1]
                 if(auth) {
-                    const path = new Map([...auth.split("&").map((val)=>val.split("="))])
-                    if(path.get("farm")) setBody(<MenuMain path={path} liff={liff} uid={uid}/>)
-                }
-                else if (house == "house") {
-                    setBody(<House liff={liff}/>)
+                    setBody(<MenuMain liff={liff} uid={uid}/>)
+                } else {
+                    setBody(<ErrorPage text={"ไม่พบฟาร์ม"}/>)
                 }
             }
-            else if (result === "error auth") setBody(<>auth error</>)
+            else if (result === "error auth") setBody(<ErrorPage text={"ERR"}/>)
+
         })
     }
 
+    const Close = () => {
+        liff.closeWindow()
+    }
+
     return(
-        body
+        <>
+            {body}
+            <section style={{
+                display : "flex",
+                position : "fixed",
+                justifyContent : "center",
+                alignItems : "center",
+                top : "0",
+                left : "0",
+                width : "100vw",
+                height : "100vh",
+                backgroundColor : "transparent",
+                backdropFilter : "blur(8px)",
+                opacity : "0",
+                visibility : "hidden",
+                transition : "0.5s opacity , 0.5s visibility"
+            }} id="session-farmer">
+                <div className="body" style={{
+                    display : "flex",
+                    justifyContent : "center",
+                    alignItems : "center",
+                    flexDirection : "column",
+                    backgroundColor : "white",
+                    boxShadow : "0px 4px 4px gray",
+                    borderRadius : "18px",
+                    padding : "2vw 5vw"
+                }}>
+                    <div id="session-text" style={{
+                        fontFamily : "Sans-font",
+                        fontSize : "7vw",
+                        marginBottom : "4vw"
+                    }}>เซสซั่นหมดอายุ</div>
+                    <button onClick={Close} style={{
+                        fontFamily : "Sans-font",
+                        fontSize : "7vw",
+                        borderRadius : "18px",
+                        border : "0",
+                        outline : "0",
+                        padding : "0 5vw",
+                        backgroundColor : "red",
+                        fontWeight : "900",
+                        color : "white"
+                    }}>ตกลง</button>
+                </div>
+            </section>
+        </>
     )
 }
 

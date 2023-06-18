@@ -61,6 +61,7 @@
                     background-color: #DAF1EE;
                     border-radius: 18px;
                     display: flex;
+                    position: relative;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
@@ -71,6 +72,20 @@
                     margin: -15px auto;
                     margin-bottom: 0px;
 
+                    .block-wait {
+                        background-color: rgba(128, 128, 128, 0.584);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        position: absolute;
+                        width: 100%;
+                        height: 26.3em;
+                        top: 3.7em;
+                        border-radius:0px 0px 18px 18px;
+                    }
+                    .frame-content[over=""] {
+                        overflow-y: hidden;
+                    }
                     .frame-content {
                         overflow-y: scroll;
                         font-family: Sans-font;
@@ -186,7 +201,7 @@
 
                     height: 100%;
                     button {
-                        background-color: #FF8484;
+                        background-color: #23dd36;
                         border-radius: 5px;
                         border: 0;
                         width: 30vw;
@@ -194,6 +209,11 @@
                         font-size: 6vw;
                         font-family: Sans-font;
                         padding: 3px 0px;
+                    }
+
+                    button[no=""] {
+                        background-color: #ACFFB4;
+                        color: rgba(16, 16, 16, 0.3);
                     }
                 }
             }
@@ -337,7 +357,7 @@
 
                     .bt {
                         display: flex;
-                        justify-content: space-between;
+                        justify-content: end;
                         width: 180px;
                         button {
                             font-size: 4vw;

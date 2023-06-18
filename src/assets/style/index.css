@@ -42,6 +42,10 @@ body , html {
 #root {
     height: 100%;
 }
+
+#farmer {
+    height: 100%;
+}
 /* 
 .bt-submit-form {
     outline: 0px;

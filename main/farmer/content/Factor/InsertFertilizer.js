@@ -1,8 +1,9 @@
-import React, { useRef , useEffect} from "react";
+import React, { useRef , useEffect, useState} from "react";
 import "../../assets/ListFertilizer.scss"
 import { clientMo } from "../../../../src/assets/js/moduleClient";
+import { CloseAccount } from "../../method";
 
-const PopupInsertFertilizer = ({setPopup , RefPop , uid , id , ReloadData}) => {
+const PopupInsertFertilizer = ({setPopup , RefPop , uid , id_house , id_form_plant , ReloadData , setPage}) => {
     const DateUse = useRef()
     const FormulaName = useRef()
     const NameFertilizer = useRef()
@@ -10,9 +11,24 @@ const PopupInsertFertilizer = ({setPopup , RefPop , uid , id , ReloadData}) => {
     const Volume = useRef()
     const Source = useRef()
 
+    const [SelectFerti , setSelect] = useState(<></>)
+    const [LoadingSelect , setLoading] = useState(false)
+    const [ListFetilizer , setListFetilizer] = useState("")
+
     useEffect(()=>{
         RefPop.current.setAttribute("show" , "")
-    })
+        FetchFertilizer()
+    } , [])
+
+    const FetchFertilizer = async () => {
+        const Data = await clientMo.post("/api/farmer/factor/get/auto" , {type : "fertilizer"})
+        if(await CloseAccount(Data , setPage)) {
+            setListFetilizer(Data)
+            const LIST = JSON.parse(Data).map((val , key)=> <option key={key} value={val.name}>{val.name}</option>)
+            setSelect(LIST)
+        }
+        setLoading(true)
+    }
 
     const Confirm = () => {
         const dateUse = DateUse.current
@@ -26,8 +42,8 @@ const PopupInsertFertilizer = ({setPopup , RefPop , uid , id , ReloadData}) => {
             ) {
                 let data = {
                     uid : uid,
-                    id_farmhouse : id.id_house,
-                    id : id.id_form,
+                    id_farmhouse : id_house,
+                    id : id_form_plant,
                     date : dateUse.value,
                     formula_name : formula_name.value,
                     name : Name.value,
@@ -96,8 +112,13 @@ const PopupInsertFertilizer = ({setPopup , RefPop , uid , id , ReloadData}) => {
                                             <span className="full">ชื่อสิ่งที่ใช้ (ชื่อการค้า, ตรา)</span>
                                             <div className="select-content">
                                                 <select ref={FormulaName} defaultValue={""}>
-                                                    <option value={""}>เลือก</option>
-                                                    <option value={"กระต่ายบิน"}>กระต่ายบิน</option>
+                                                    {LoadingSelect ? 
+                                                        <>
+                                                        <option value={""}>เลือก</option>
+                                                        <option value={"other"}>อื่น ๆ</option>
+                                                        </> : 
+                                                        <option value={""}>กำลังโหลดข้อมูล</option>}
+                                                    {SelectFerti}
                                                 </select>
                                             </div>
                                         </label>

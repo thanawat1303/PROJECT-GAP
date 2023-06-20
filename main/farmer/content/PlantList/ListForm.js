@@ -17,7 +17,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
     useEffect(()=>{
         setPage("HOME")
         setBodyList(<></>)
-        if(isClick === 1) window.history.pushState({} , null , `/farmer?f=${id_house}`)
+        if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}`)
 
         ListPlantForm()
     } , [])
@@ -31,7 +31,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
                         <div key={key} className="plant-content">
                             <div className="top">
                                 <div className="type-main">
-                                    <input readOnly value={val.type_plant}></input>
+                                    <input readOnly value={val.type_plant ? val.type_plant : "ไม่ระบุ"}></input>
                                 </div>
                                 <div className="date">
                                     <span>วันที่ปลูก <DAYUTC DATE={val.date_plant} TYPE="short"/></span>
@@ -63,24 +63,26 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
             clientMo.unLoadingPage()
     }
 
-    const OpenMenuPlant = async (id_table_list) => {
-        const result = await clientMo.post("/api/farmer/formplant/select" , {id_formplant : id_table_list})
-        if(await CloseAccount(result)) {
-            const auth = window.location.href.split("?")[1]
-            const path = new Map([...auth.split("&").map((val)=>val.split("="))])
-            setBody(<MenuPlant id_house={path.get("f")} id_plant={id_table_list} setBody={setBody} setPage={setPage} liff={liff} isClick={1}/>)
+    // insert Popup
+    const popupPlant = async () => {
+        const result = await clientMo.post("/api/farmer/account/check")
+        if(await CloseAccount(result , setPage)) {
+            setPopupAdd(<PopupInsertPlant setLoading={setLoading} setPopup={setPopupAdd}
+                RefPop={PopupRef} id_house={id_house} ReloadData={ListPlantForm} setPage={setPage}/>)
         }
     }
 
-    // insert Popup
-    const popupPlant = () => {
-        setPopupAdd(<PopupInsertPlant setLoading={setLoading} setPopup={setPopupAdd}
-            RefPop={PopupRef} id_house={id_house} ReloadData={ListPlantForm}/>)
+    // open menu
+    const OpenMenuPlant = async (id_table_list) => {
+        const result = await clientMo.post("/api/farmer/account/check")
+        if(await CloseAccount(result , setPage)) {
+            setBody(<MenuPlant setBody={setBody} id_house={id_house} id_plant={id_table_list} setPage={setPage} liff={liff} isClick={1}/>)
+        } 
     }
 
     return (
         <Template PopUp={{PopupRef : PopupRef , PopupBody : PopupAdd}}
-            List={BodyList} Loading={Loading} action={popupPlant} Option={{TextHead : "แบบบันทึกเกษตรกร" , img : "/ปลูก.jpg"}}/>
+            List={BodyList} Loading={Loading} action={popupPlant} Option={{TextHead : "แบบบันทึกเกษตรกร" , img : "/plant_glow.jpg"}}/>
     )
 }
 

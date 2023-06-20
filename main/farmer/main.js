@@ -49,7 +49,7 @@ const MainFarmer = ({socket , idLiff , Path}) => {
                 else if (result === "search") setBody(<House liff={liff}/>)
 
             } else if (Path === "form" && result !== "error auth") {
-                const auth = window.location.href.split("?")[1]
+                const auth = window.location.pathname.split("/")[3]
                 if(auth) {
                     setBody(<MenuMain liff={liff} uid={uid}/>)
                 } else {
@@ -62,7 +62,12 @@ const MainFarmer = ({socket , idLiff , Path}) => {
     }
 
     const Close = () => {
-        liff.closeWindow()
+        if(document.querySelector("#session-farmer .body #session-text").innerHTML !== "ไม่พบฟอร์ม") {
+            liff.closeWindow()
+        } else {
+            document.querySelector("#session-farmer").style.opacity = "0"
+            document.querySelector("#session-farmer").style.visibility = "hidden"
+        }
     }
 
     return(

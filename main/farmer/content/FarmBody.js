@@ -5,9 +5,9 @@ import "../assets/FarmBody.scss"
 import ListForm from "./PlantList/ListForm";
 import MenuPlant from "./PlantList/MenuPlant";
 import ListFactor from "./Factor/ListFactor";
-import { CloseAccount } from "../method";
+import { CloseAccount, GetPath } from "../method";
 
-const FarmBody = ({liff , uid}) => {
+const FarmBody = ({liff , uid , id_farmhouse}) => {
     const [Body , setBody] = useState(<></>)
     const [Page , setPage] = useState("HOME")
 
@@ -19,7 +19,7 @@ const FarmBody = ({liff , uid}) => {
     const Nav = useRef()
 
     useEffect(()=>{
-        // setBody(<NavFirst setPage={setPage} setBody={setBody} path={path} liff={liff}/>)
+        // setBody(<NavFirst setPage={setPage} path={path} liff={liff}/>)
         
         window.addEventListener('popstate' , checkPage)
         checkPage()
@@ -31,62 +31,58 @@ const FarmBody = ({liff , uid}) => {
 
     const HomeClick = async () => {
         if(Page !== "HOME") {
-            const result = await clientMo.post("/api/farmer/sign" , {uid:uid})
-            if(await CloseAccount(result)) {
-                const split = window.location.href.split("?")[1]
-                const path = new Map([...split.split("&").map((val)=>val.split("="))])
-                setBody(<ListForm id_house={path.get("f")} setBody={setBody} setPage={setPage} liff={liff} isClick={1}/>)
-            }
+            const result = await clientMo.post("/api/farmer/account/check")
+            if(await CloseAccount(result , setPage)) {
+                setBody(<ListForm setBody={setBody} id_house={id_farmhouse} setPage={setPage} liff={liff} isClick={1}/>)
+            } 
         }
     }
 
     const checkPage = async () => {
         // check page
-        const split = window.location.href.split("?")[1]
-        const path = new Map([...split.split("&").map((val)=>val.split("="))])
-        if(path.size === 1){
-            const result = await clientMo.post("/api/farmer/sign" , {uid:uid})
-            if(await CloseAccount(result)) {
-                setBody(<ListForm id_house={path.get("f")} setBody={setBody} setPage={setPage} liff={liff}/>)
-            }
+        if(GetPath().length === 1){
+            const result = await clientMo.post("/api/farmer/account/check")
+            if(await CloseAccount(result , setPage)) {
+                setBody(<ListForm setBody={setBody} id_house={id_farmhouse} setPage={setPage} liff={liff}/>)
+            } 
         }
 
         // 
-        else if(path.size === 2){
-            if(path.has("p"))
-                clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
-                    if(result === "search") {
-                        setBody(<MenuPlant id_house={path.get("f")} id_plant={path.get("p")} setBody={setBody} setPage={setPage} liff={liff}/>)
-                    }
-                })
-            else if(path.has("formferti")) 
-                clientMo.post("/api/farmer/sign" , {uid:uid , page : `authFactor`}).then((result)=>{
-                    if(result === "search") {
-                        const Hraf = {
-                            Path : "formferti",
-                            id_plant : path.get("p")
-                        }
-                        setBody(<ListFactor id_house={path.get("f")} HrafPath={Hraf} setPage={setPage} setBody={setBody} liff={liff} type={0}/>)
-                    }
-                })
-            else if(path.has("formcremi")) 
-                clientMo.post("/api/farmer/sign" , {uid:uid , page : `authFactor`}).then((result)=>{
-                    if(result === "search") {
-                        const Hraf = {
-                            Path : "formcremi",
-                            id_plant : path.get("p")
-                        }
-                        setBody(<ListFactor id_house={path.get("f")} HrafPath={Hraf} setPage={setPage} setBody={setBody} liff={liff} type={0}/>)
-                    }
-                })
+        else if(GetPath().length === 3){
+            if(GetPath()[1] === "p") {
+                const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_farmhouse , id_form_plant : GetPath()[2]})
+                if(await CloseAccount(result , setPage)) {
+                    setBody(<MenuPlant setBody={setBody} id_house={id_farmhouse} id_plant={GetPath()[2]} setPage={setPage} liff={liff}/>)
+                } 
+            }
+            // else if(path.has("formferti")) 
+            //     clientMo.post("/api/farmer/account/check" , {uid:uid , page : `authFactor`}).then((result)=>{
+            //         if(result === "search") {
+            //             const Hraf = {
+            //                 Path : "formferti",
+            //                 id_plant : GetPath()[2]
+            //             }
+            //             setBody(<ListFactor id_house={id_farmhouse} HrafPath={Hraf} setPage={setPage} liff={liff} type={0}/>)
+            //         }
+            //     })
+            // else if(path.has("formcremi")) 
+            //     clientMo.post("/api/farmer/account/check" , {uid:uid , page : `authFactor`}).then((result)=>{
+            //         if(result === "search") {
+            //             const Hraf = {
+            //                 Path : "formcremi",
+            //                 id_plant : GetPath()[2]
+            //             }
+            //             setBody(<ListFactor id_house={id_farmhouse} HrafPath={Hraf} setPage={setPage} liff={liff} type={0}/>)
+            //         }
+            //     })
 
             // เก็บเกี่ยว ดูคำแนะนำ
         }
 
-        // else if(path.size === 2 && path.has("f") && path.has("p"))
-        //     clientMo.post("/api/farmer/sign" , {uid:uid}).then((result)=>{
+        // else if(GetPath().length === 3 && path.has("f") && path.has("p"))
+        //     clientMo.post("/api/farmer/account/check").then((result)=>{
         //         if(result === "search") {
-        //             setBody(<ListFactor id_house={path.get("f")} setPage={setPage} setBody={setBody} liff={liff} type={0} valuePage={path.get("p")}/>)
+        //             setBody(<ListFactor id_house={id_farmhouse} setPage={setPage} liff={liff} type={0} valuePage={GetPath()[2]}/>)
         //         }
         //     })
     }

@@ -10,7 +10,7 @@ const NavFirst = ({ setBody , id_house , liff , uid , setPage , isClick = 0}) =>
 
     useEffect(()=>{
         setPage("HOME")
-        if(isClick === 1) window.history.pushState({} , null , `/farmer?farm=${id_house}`)
+        if(isClick === 1) window.history.pushState({} , null , `/farmer/form?farm=${id_house}`)
 
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
@@ -51,21 +51,21 @@ const NavFirst = ({ setBody , id_house , liff , uid , setPage , isClick = 0}) =>
                 <div className="row">
                     <div onClick={()=>selectMenu("ferti")} className="frame-menu frame-ferti">
                         <div className="img">
-                            <img src="/ปลูก.jpg"></img>
+                            <img src="/plant_glow.jpg"></img>
                         </div>
                         <span>การปลูกของฉัน</span>
                     </div>
                     <div onClick={()=>selectMenu("ferti")} className="frame-menu frame-ferti">
                         <div className="img">
-                            <img src="/ปุ๋ยธรรมชาติ.webp"></img>
+                            <img src="/fertilizer.jpg"></img>
                         </div>
                         <span>ปัจจัยการผลิต</span>
                     </div>
                 </div>
                 <div className="row">
-                    <div onClick={()=>selectMenu("cremi")} className="frame-menu frame-cremi">
+                    <div onClick={()=>selectMenu("chemi")} className="frame-menu frame-chemi">
                         <div className="img">
-                            <img src="/ใช้สารเคมี.jpg"></img>
+                            <img src="/chemical.jpg"></img>
                         </div>
                         <span>สารเคมีที่ใช้</span>
                     </div>
@@ -79,7 +79,7 @@ const NavFirst = ({ setBody , id_house , liff , uid , setPage , isClick = 0}) =>
                 <div className="report-farm" 
                     onClick={()=>selectMenu("report")}
                     >
-                    <img src="/คำแนะนำ.png"></img>
+                    <img src="/report.png"></img>
                 </div>
             </div>
         </section>

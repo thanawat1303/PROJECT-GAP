@@ -2,47 +2,28 @@ import React, { useEffect, useRef } from "react";
 
 import "./assets/Menu.scss"
 import { clientMo } from "../../../../src/assets/js/moduleClient";
+import { CloseAccount } from "../../method";
+import ListFactor from "../Factor/ListFactor";
 
-const MenuPlant = ({ setBody , id_house , id_plant , liff , uid , setPage , isClick = 0}) => {
+const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     const NavBody = useRef()
 
     useEffect(()=>{
         setPage("MENU ON LIST")
-        if(isClick === 1) window.history.pushState({} , null , `/farmer?f=${id_house}&p=${id_plant}`)
+        if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/p/${id_plant}`)
 
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
     } , [])
 
-    const openListFerti = (id) => {
-        clientMo.post("/api/farmer/sign" , {uid:uid , page : `authFactor`}).then((result)=>{
-            if(result === "search") {
-                const Hraf = {
-                    typePath : "formferti",
-                    valuePage : id
-                }
-                // setBody(<ListPlant path={path} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={1} HrafPath={Hraf}/>)
+    const selectMenu = async (page) => {
+        const result = await clientMo.post("/api/farmer/account/check")
+        if(await CloseAccount(result , setPage)) {
+            if(page === "plant") {}
+            else if (page === "z" || page === "c") {
+                setBody(<ListFactor setBody={setBody} setPage={setPage} id_house={id_house} typeHraf={{id_form_plant : id_plant , type : page}} isClick={1}/>)
             }
-        })
-    }
-
-    const selectMenu = (page) => {
-        Page(page , 1)
-    }
-
-    const Page = (type = 0) => {
-        // clientMo.post("/api/farmer/sign" , {
-        //     uid : uid,
-        //     page : `authplant`
-        // }).then((val)=>{
-        //     if(val === "search") {
-        //         const Hraf = {
-        //             Path : "page",
-        //             id_plant : page
-        //         }
-        //         setBody(<ListPlant path={path} setPage={setPage} setBody={setBody} liff={liff} uid={uid} type={type} HrafPath={Hraf}/>)
-        //     }
-        // })
+        } 
     }
 
     return (
@@ -52,21 +33,21 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , uid , setPage , isCl
                 <div className="row">
                     <div onClick={()=>selectMenu("plant")} className="frame-menu frame-plant">
                         <div className="img">
-                            <img src="/ปลูก.jpg"></img>
+                            <img src="/plant_glow.jpg"></img>
                         </div>
                         <span>ข้อมูลการปลูก</span>
                     </div>
-                    <div onClick={()=>selectMenu("ferti")} className="frame-menu frame-ferti">
+                    <div onClick={()=>selectMenu("z")} className="frame-menu frame-ferti">
                         <div className="img">
-                            <img src="/ปุ๋ยธรรมชาติ.webp"></img>
+                            <img src="/fertilizer.jpg"></img>
                         </div>
                         <span>ปัจจัยการผลิต</span>
                     </div>
                 </div>
                 <div className="row">
-                    <div onClick={()=>selectMenu("cremi")} className="frame-menu frame-cremi">
+                    <div onClick={()=>selectMenu("c")} className="frame-menu frame-chemi">
                         <div className="img">
-                            <img src="/ใช้สารเคมี.jpg"></img>
+                            <img src="/chemical.jpg"></img>
                         </div>
                         <span>สารเคมีที่ใช้</span>
                     </div>
@@ -80,7 +61,7 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , uid , setPage , isCl
                 <div className="report-farm" 
                     onClick={()=>selectMenu("report")}
                     >
-                    <img src="/คำแนะนำ.png"></img>
+                    <img src="/report.png"></img>
                 </div>
             </div>
         </section>

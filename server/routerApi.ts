@@ -52,12 +52,16 @@ export default function router(app : any) {
     app.get('/farmer/signup' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
+    
     app.get('/farmer/house' , function(req:any, res:any) {
         // console.log(req)
         res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
-    app.get('/farmer/form' , function(req:any, res:any) {
-        // console.log(req)
+
+    app.get('/farmer/form/:id_farm' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
+    });
+    app.get('/farmer/form/:id_farm/:page/:id_form_plant' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
 

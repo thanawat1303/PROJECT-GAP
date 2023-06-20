@@ -19,7 +19,7 @@ console.log("farmer")
 //     ReactDOM.createRoot(document.getElementById('farmer')).render(<MainFarmer socket={socket} Path={Path} idLiff={id[Path]}/>)
 // })
 
-let Path = window.location.pathname.split("/").reverse()[0]
+let Path = window.location.pathname.split("/")[2]
 const id = {
     "signup" : "1661049098-A9PON7LB" ,
     "house" : "1661049098-Lm7mZW32" ,

@@ -3,11 +3,20 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import { DAYUTC, Loading } from "../../../../src/assets/js/module";
 import { CloseAccount } from "../../method";
 
-const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
+let TimeOut = 0
+
+const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage}) =>{
 
     const FormContent = useRef()
 
     const TypePlant = useRef()
+
+    const TypePlantOther = useRef()
+    const TypePlantFrameOther = useRef()
+
+    const ListOther = useRef()
+    const [ListOtherSL , setListOther] = useState(<></>)
+
     const Generation = useRef()
     const DateGlow = useRef()
     const DatePlant = useRef()
@@ -35,50 +44,75 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
 
     const BTConfirm = useRef()
     useEffect(()=>{
+        RefPop.current.setAttribute("show" , "")
         FetchPlant()
+
+        return() => {
+            clearTimeout(TimeOut)
+        }
     } , [])
 
     const FetchPlant = async () => {
-        const Data = await clientMo.post("/api/farmer/plant/search")
-        if(await CloseAccount(Data)) {
-            const LIST = JSON.parse(Data).map((val , key)=> <option key={key} value={val.id}>{val.name}</option>)
-            RefPop.current.setAttribute("show" , "")
+        const Data = await clientMo.post("/api/farmer/plant/list")
+        if(await CloseAccount(Data , setPage)) {
+            const LIST = JSON.parse(Data).map((val , key)=> <option key={key} value={val.name}>{val.name}</option>)
             setSelect(LIST)
         }
         setLoading(true)
     }
 
-    const FetchDataForm = async (id_plant_list) => {
+    const FetchDataForm = async (name_plant_list) => {
         setHistory(true)
         FormContent.current.setAttribute("over" , "")
-        const Data = await clientMo.post("/api/farmer/formplant/get" , {id_farmhouse : id_house , id_plant_list : id_plant_list})
-        if(await CloseAccount(Data)) {
-            const Object = JSON.parse(Data)
-            if(Object[0]) {
-                Generation.current.value = Object[0].generetion
-                DateGlow.current.value = Object[0].date_glow
-                DatePlant.current.value = Object[0].date_plant
-                PositionW.current.value = Object[0].posi_w
-                PositionH.current.value = Object[0].posi_h
-                Qty.current.value = Object[0].qty
-                Area.current.value = Object[0].area
-                DateOut.current.value = Object[0].date_harvest
-                System.current.value = Object[0].system_glow
-                Water.current.value = Object[0].water
-                WaterStep.current.value = Object[0].water_flow
-                History.current.value = Object[0].history
-                Insect.current.value = Object[0].insect
-                QtyInsect.current.value = Object[0].qtyInsect
-                Seft.current.value = Object[0].seft
+        clearTimeout(TimeOut)
+        TimeOut = setTimeout( async ()=>{
+            const Data = await clientMo.post("/api/farmer/formplant/history" , {id_farmhouse : id_house , name_plant_list : name_plant_list})
+            if(await CloseAccount(Data , setPage)) {
+                try {
+                    const Object = JSON.parse(Data)
+                    Generation.current.value = Object[0].generation
+                    DateGlow.current.value = Object[0].date_glow
+                    DatePlant.current.value = Object[0].date_plant
+                    PositionW.current.value = Object[0].posi_w
+                    PositionH.current.value = Object[0].posi_h
+                    Qty.current.value = Object[0].qty
+                    Area.current.value = Object[0].area
+                    DateOut.current.value = Object[0].date_harvest
+                    System.current.value = Object[0].system_glow
+                    Water.current.value = Object[0].water
+                    WaterStep.current.value = Object[0].water_flow
+                    History.current.value = Object[0].history
+                    Insect.current.value = Object[0].insect
+                    QtyInsect.current.value = Object[0].qtyInsect
+                    Seft.current.value = Object[0].seft
+                } catch (err) {
+                    Generation.current.value = ""
+                    DateGlow.current.value = ""
+                    DatePlant.current.value = ""
+                    PositionW.current.value = ""
+                    PositionH.current.value = ""
+                    Qty.current.value = ""
+                    Area.current.value = ""
+                    DateOut.current.value = ""
+                    System.current.value = ""
+                    Water.current.value = ""
+                    WaterStep.current.value = ""
+                    History.current.value = ""
+                    Insect.current.value = ""
+                    QtyInsect.current.value = ""
+                    Seft.current.value = ""
+                }
             }
-        }
-        FormContent.current.removeAttribute("over")
-        setHistory(false)
+            if(name_plant_list !== "") {
+                FormContent.current.removeAttribute("over")
+                setHistory(false)
+            }
+        } , 1500)
     }
 
     const Confirm = async () => {
         if(!BTConfirm.current.getAttribute("no")) {
-            const type = TypePlant.current
+            const type = TypePlant.current.value === "other" ? TypePlantOther.current : TypePlant.current
             const generetion = Generation.current
             const dateGlow = DateGlow.current
             const datePlant = DatePlant.current
@@ -102,7 +136,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
                 ) {
                     const data = {
                         id_farmhouse : id_house,
-                        type : type.value,
+                        name_plant : type.value,
                         generetion : generetion.value,
                         dateGlow : dateGlow.value,
                         datePlant : datePlant.value,
@@ -122,7 +156,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
 
                     const Data = await clientMo.post("/api/farmer/formplant/insert" , data)
                     console.log(Data)
-                    if(await CloseAccount(Data)) {
+                    if(await CloseAccount(Data , setPage)) {
                         cancel()
                         ReloadData()
                     }
@@ -153,7 +187,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
     }
 
     const ChangeCHK = async (e) => {
-        const type = TypePlant.current
+        const type = TypePlant.current.value === "other" ? TypePlantOther.current : TypePlant.current
         const generetion = Generation.current
         const dateGlow = DateGlow.current
         const datePlant = DatePlant.current
@@ -169,7 +203,30 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
         const insect = Insect.current
         const qtyInsect = QtyInsect.current
 
-        if(e.target === type) await FetchDataForm(e.target.value)
+        setListOther(<></>)
+        ListOther.current.setAttribute("remove" , "")
+
+        if(TypePlant.current.value === "other" && e.target === TypePlant.current) {
+            TypePlantFrameOther.current.removeAttribute("hidden")
+            
+            clearTimeout(TimeOut)
+            FormContent.current.setAttribute("over" , "")
+            setHistory(true)
+        } else if (TypePlant.current.value !== "other" && e.target === TypePlant.current) {
+            TypePlantFrameOther.current.setAttribute("hidden" , "")
+            TypePlantOther.current.value = ""
+        }
+
+        if(TypePlant.current.value === "other" && e.target === TypePlantOther.current) {
+            ListOther.current.removeAttribute("remove")
+            const search = SELECT.filter((val , key)=>val.props.value.indexOf(TypePlantOther.current.value) >= 0)
+            if(search.length !== 0) setListOther(search.map((val , key)=> <span onClick={()=>SetTextOnOther(val.props.value)} key={key}>{val.props.value}</span>))
+            else setListOther(<span onClick={()=>SetTextOnOther(TypePlantOther.current.value)} key={0}>{TypePlantOther.current.value}</span>) 
+        }
+
+        if(e.target === type) {
+            await FetchDataForm(e.target.value)
+        }
         
         if(type.value && generetion.value && dateGlow.value && datePlant.value && 
             posiW.value && posiH.value && qty.value && area.value && dateOut.value && system.value &&
@@ -179,6 +236,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
         } else {
             BTConfirm.current.setAttribute("no" , "")
         }
+    }
+
+    const SetTextOnOther = (name) => {
+        TypePlantOther.current.value = name
+        setListOther(<></>)
+        ListOther.current.setAttribute("remove" , "")
     }
 
     return(
@@ -204,7 +267,14 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData}) =>{
                                             <select onChange={ChangeCHK} ref={TypePlant} type="text" defaultValue={""}>
                                                 {LoadingSelect ? <option disabled value={""}>เลือกชนิดพืช</option> : <option disabled value={""}>กำลังโหลด</option>}
                                                 {SELECT}
+                                                <option value={"other"}>อื่น ๆ</option>
                                             </select>
+                                            <div ref={TypePlantFrameOther} hidden className="input-other">
+                                                <input onInput={ChangeCHK} ref={TypePlantOther}></input>
+                                                <div ref={ListOther} remove="" className="list-other-search">
+                                                    {ListOtherSL}
+                                                </div>
+                                            </div>
                                         </label>
                                     </div>
                                     <div className="row">

@@ -85,6 +85,38 @@ $FontText : 5vw;
                                             padding-bottom: 10px;
                                             border-bottom:1px solid green ;
 
+                                            .input-other {
+                                                position: relative;
+                                                width: 50%;
+
+                                                input {
+                                                    width: 100%;
+                                                }
+
+                                                .list-other-search {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    overflow: scroll;
+                                                    max-height: 50px;
+                                                    position: absolute;
+                                                    background-color: white;
+                                                    width: 100%;
+                                                    border-radius: 8px;
+                                                    box-shadow: 0px 4px 4px rgb(181, 181, 181);
+                                                    padding: 1vw;
+                                                    z-index: 2;
+
+                                                    span {
+                                                        width: 100%;
+                                                    }
+
+                                                }
+
+                                                .list-other-search[remove=""] {
+                                                    display: none;
+                                                }
+                                            }
+
                                             span {
                                                 font-size: $FontText;
                                                 width: 40%;

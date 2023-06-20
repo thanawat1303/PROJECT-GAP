@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 import FarmBody from "./FarmBody";
+import { GetPath } from "../method";
 
 const MenuMain = ({liff , uid}) => {
 
@@ -14,13 +15,11 @@ const MenuMain = ({liff , uid}) => {
     } , [])
 
     const CheckFarm = async () => {
-        const auth = window.location.href.split("?")[1]
-        const path = new Map([...auth.split("&").map((val)=>val.split("="))])
         const result = await clientMo.post('/api/farmer/farmhouse/select' , {
-            id_farmhouse : path.get("f"),
+            id_farmhouse : GetPath()[0],
             uid : uid
         })
-        if(result === "access") setBody(<FarmBody liff={liff} uid={uid}/>)
+        if(result === "access") setBody(<FarmBody liff={liff} uid={uid} id_farmhouse={GetPath()[0]}/>)
         else if (result === "not") setBody(<>ไม่พบโรงเรือนนี้</>)
     }
 

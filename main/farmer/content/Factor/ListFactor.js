@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
 import { DAYUTC } from "../../../../src/assets/js/module";
-import PopupInsertFertilizer from "./InsertFertilizer";
+import PopupInsertFactor from "./InsertFactor";
 import Template from "../TemplateList";
 import { CloseAccount } from "../../method";
 import MenuPlant from "../PlantList/MenuPlant";
 
-const ListFactor = ({setBody , setPage , id_house , CheckForm , typeHraf = {id_form_plant : "" , type : ""} , isClick = 0 , liff}) => {
+const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : "" , type : ""} , isClick = 0 , liff}) => {
     const [BodyList , setBodyList] = useState(<></>)
     const [Loading , setLoading] = useState(false)
     const [PopupAdd , setPopupAdd] = useState(<></>)
@@ -20,50 +20,45 @@ const ListFactor = ({setBody , setPage , id_house , CheckForm , typeHraf = {id_f
         if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/${typeHraf.type}/${typeHraf.id_form_plant}`)
 
         if(document.getElementById("loading").classList[0] !== "hide")
-            clientMo.unLoadingPage()
+            clientMo.unLoadingPage();
 
         (typeHraf.type === "z") ? ListFerti() : (typeHraf.type === "c") ? ListChemi() : null
     } , [typeHraf])
 
     // Load Data List
 
-    const ListFerti = () => {
-        clientMo.post('/api/farmer/factor/select' , {
+    const ListFerti = async () => {
+        const result = await clientMo.post('/api/farmer/factor/select' , {
             id_farmhouse : id_house,
-            type : "formfertilizer",
-            id : typeHraf.id_plant,
+            type : "fertilizer",
+            id_plant : typeHraf.id_form_plant,
             order : "date"
-        }).then((list)=>{
-            setLoading(true)
-            console.log(list)
-            if(list !== 'error auth'){
-            } else {
-                setBodyList(<div></div>)
-            }
         })
+        if(await CloseAccount(result , setPage)) {
+            // console.log(result)
+        }
     }
 
     const ListChemi = async () => {
         const result = await clientMo.post('/api/farmer/factor/select' , {
             id_farmhouse : id_house,
-            type : "formfertilizer",
-            id : typeHraf.id_form_plant,
+            type : "chemical",
+            id_plant : typeHraf.id_form_plant,
             order : "date"
         })
-
-        
-        console.log(result)
         if(await CloseAccount(result , setPage)) {
-            
+            // console.log(result)
         }
-        setLoading(true)
     }
 
     // insert Popup
-    const popupFertilizer = async () => {
+    const popupInsertFactor = async () => {
         const result = await clientMo.post("/api/farmer/account/check")
         if(await CloseAccount(result , setPage)) {
-            setPopupAdd(<PopupInsertFertilizer setPage={setPage} id_house={id_house} id_form_plant={typeHraf.id_form_plant} setPopup={setPopupAdd} RefPop={PopupRef} ReloadData={ListFerti}/>)
+            const Reload = typeHraf.type === "z" ? ListFerti : ListChemi
+            setPopupAdd(<PopupInsertFactor setPage={setPage} 
+                            id_house={id_house} id_form_plant={typeHraf.id_form_plant} type_path={typeHraf.type} 
+                            setPopup={setPopupAdd} RefPop={PopupRef} ReloadData={Reload}/>)
         } 
     }
 
@@ -77,7 +72,7 @@ const ListFactor = ({setBody , setPage , id_house , CheckForm , typeHraf = {id_f
     return (
         <>
         <Template PopUp={{PopupRef : PopupRef , PopupBody : PopupAdd}} 
-            List={BodyList} Loading={Loading} action={popupFertilizer} Option={
+            List={BodyList} Loading={Loading} action={popupInsertFactor} Option={
                 {
                     TextHead : typeHraf.type === "z" ? "แบบบันทึกปัจจัยการผลิต" : typeHraf.type === "c" ? "แบบบันทึกสารเคมี" : "", 
                     img : typeHraf.type === "z" ? "/fertilizer.jpg" : typeHraf.type === "c" ? "/chemical.jpg" : ""

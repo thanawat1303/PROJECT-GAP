@@ -10,6 +10,8 @@ const socket = io(window.location.protocol+"//"+window.location.host)
 
 console.log("admin")
 
-socket.on('connect' , ()=>{
-    root.render(<MainAdmin socket={socket}/>)
-})
+// socket.on('connect' , ()=>{
+    
+// })
+
+root.render(<MainAdmin socket={socket}/>)

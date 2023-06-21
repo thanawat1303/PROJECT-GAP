@@ -53,18 +53,16 @@ const FarmBody = ({liff , uid , id_farmhouse}) => {
                 const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_farmhouse , id_form_plant : GetPath()[2]})
                 if(await CloseAccount(result , setPage)) {
                     setBody(<MenuPlant setBody={setBody} id_house={id_farmhouse} id_plant={GetPath()[2]} setPage={setPage} liff={liff}/>)
-                } 
+                }
             }
-            // else if(path.has("formferti")) 
-            //     clientMo.post("/api/farmer/account/check" , {uid:uid , page : `authFactor`}).then((result)=>{
-            //         if(result === "search") {
-            //             const Hraf = {
-            //                 Path : "formferti",
-            //                 id_plant : GetPath()[2]
-            //             }
-            //             setBody(<ListFactor id_house={id_farmhouse} HrafPath={Hraf} setPage={setPage} liff={liff} type={0}/>)
-            //         }
-            //     })
+            else if(GetPath()[1] === "z") {
+                const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_farmhouse , id_form_plant : GetPath()[2]})
+                if(await CloseAccount(result , setPage)) {
+                    setBody(<ListFactor setBody={setBody} setPage={setPage} id_house={id_farmhouse} 
+                                typeHraf={{type : "z" , id_form_plant : GetPath()[2]}} liff={liff}/>)
+                }
+            }
+                
             // else if(path.has("formcremi")) 
             //     clientMo.post("/api/farmer/account/check" , {uid:uid , page : `authFactor`}).then((result)=>{
             //         if(result === "search") {

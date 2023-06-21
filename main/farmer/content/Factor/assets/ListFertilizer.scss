@@ -1,6 +1,7 @@
 $FontText : 5vw;
 .plant {
     .popup-add{
+        z-index: 10;
         .popup-content-fertilizer {
             display: flex;
             justify-content: center;
@@ -15,8 +16,8 @@ $FontText : 5vw;
                 font-size: 8vw;
                 font-weight: 900;
                 font-family: Sans-font;
-                height: 10%;
-                background-color: white;
+                // height: 10%;
+                background: linear-gradient(180deg , white , transparent);
                 border-radius: 15px;
                 box-shadow: 0px 0px 50px white;
                 padding: 0px 15px;
@@ -26,7 +27,7 @@ $FontText : 5vw;
                 display: flex;
                 flex-direction: column;
                 // justify-content: space-evenly;
-                height: auto;
+                height: 90%;
                 width: 100%;
                 .head-form {
                     display: flex;
@@ -53,7 +54,7 @@ $FontText : 5vw;
                     padding: 10px 10px;
                     padding-top: 40px;
                     width: 95%;
-                    height: 85%;
+                    height: 90%;
                     margin: -25px auto;
                     margin-bottom: 0px;
 
@@ -62,6 +63,9 @@ $FontText : 5vw;
                         font-family: Sans-font;
 
                         .content {
+                            display: flex;
+                            flex-direction: column;
+                            width: 99%;
                             .step {
                                 display: flex;
                                 width: 100%;
@@ -84,38 +88,6 @@ $FontText : 5vw;
                                             margin-bottom: 10px;
                                             padding-bottom: 10px;
                                             border-bottom:1px solid green ;
-
-                                            .input-other {
-                                                position: relative;
-                                                width: 50%;
-
-                                                input {
-                                                    width: 100%;
-                                                }
-
-                                                .list-other-search {
-                                                    display: flex;
-                                                    flex-direction: column;
-                                                    overflow: scroll;
-                                                    max-height: 50px;
-                                                    position: absolute;
-                                                    background-color: white;
-                                                    width: 100%;
-                                                    border-radius: 8px;
-                                                    box-shadow: 0px 4px 4px rgb(181, 181, 181);
-                                                    padding: 1vw;
-                                                    z-index: 2;
-
-                                                    span {
-                                                        width: 100%;
-                                                    }
-
-                                                }
-
-                                                .list-other-search[remove=""] {
-                                                    display: none;
-                                                }
-                                            }
 
                                             span {
                                                 font-size: $FontText;
@@ -155,12 +127,76 @@ $FontText : 5vw;
                                                 }
                                             }
 
-                                            .select-content {
+                                            .content-colume-input {
                                                 display: flex;
                                                 justify-content: end;
                                                 align-items: center;
                                                 width: 100%;
                                                 margin-top: 10px;
+
+                                                .input-select-popup {
+                                                    position: relative;
+                                                    width: 50%;
+    
+                                                    input {
+                                                        width: 100%;
+                                                    }
+    
+                                                    .list-input-search {
+                                                        display: flex;
+                                                        flex-direction: column;
+                                                        overflow: scroll;
+                                                        max-height: 50px;
+                                                        position: absolute;
+                                                        background-color: white;
+                                                        width: 100%;
+                                                        border-radius: 8px;
+                                                        box-shadow: 0px 4px 4px rgb(181, 181, 181);
+                                                        padding: 1vw;
+                                                        z-index: 2;
+    
+                                                        span {
+                                                            width: 100%;
+                                                        }
+    
+                                                    }
+    
+                                                    .list-input-search[remove=""] {
+                                                        display: none;
+                                                    }
+                                                }
+                                            }
+
+                                            .input-select-other {
+                                                position: relative;
+                                                width: 50%;
+
+                                                input {
+                                                    width: 100%;
+                                                }
+
+                                                .list-input-search {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    overflow: scroll;
+                                                    max-height: 50px;
+                                                    position: absolute;
+                                                    background-color: white;
+                                                    width: 100%;
+                                                    border-radius: 8px;
+                                                    box-shadow: 0px 4px 4px rgb(181, 181, 181);
+                                                    padding: 1vw;
+                                                    z-index: 2;
+
+                                                    span {
+                                                        width: 100%;
+                                                    }
+
+                                                }
+
+                                                .list-input-search[remove=""] {
+                                                    display: none;
+                                                }
                                             }
                                         }
 
@@ -181,7 +217,7 @@ $FontText : 5vw;
                     margin-top: 5%;
                     height: 100%;
                     button {
-                        background-color: #FF8484;
+                        background-color: #23dd36;
                         border-radius: 5px;
                         border: 0;
                         width: 30vw;
@@ -189,6 +225,11 @@ $FontText : 5vw;
                         font-size: 6vw;
                         font-family: Sans-font;
                         padding: 3px 0px;
+                    }
+
+                    button[no=""] {
+                        background-color: #ACFFB4;
+                        color: rgba(16, 16, 16, 0.3);
                     }
                 }
             }

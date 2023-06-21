@@ -149,7 +149,7 @@
                                             padding-bottom: 5px;
                                             border-bottom:1px solid green ;
 
-                                            .input-other {
+                                            .input-select-popup {
                                                 position: relative;
                                                 width: 50%;
 
@@ -157,11 +157,11 @@
                                                     width: 100%;
                                                 }
 
-                                                .list-other-search {
+                                                .list-input-search {
                                                     display: flex;
                                                     flex-direction: column;
                                                     overflow: scroll;
-                                                    max-height: 50px;
+                                                    max-height: 100px;
                                                     position: absolute;
                                                     background-color: white;
                                                     width: 100%;
@@ -176,7 +176,7 @@
 
                                                 }
 
-                                                .list-other-search[remove=""] {
+                                                .list-input-search[remove=""] {
                                                     display: none;
                                                 }
                                             }

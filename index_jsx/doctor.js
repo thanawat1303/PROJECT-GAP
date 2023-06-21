@@ -10,6 +10,7 @@ const socket = io(window.location.protocol+"//"+window.location.host)
 
 console.log("doctor")
 
-socket.on('connect' , ()=>{
-    root.render(<MainDoctor socket={socket}/>)
-})
+// socket.on('connect' , ()=>{
+    
+// })
+root.render(<MainDoctor socket={socket}/>)

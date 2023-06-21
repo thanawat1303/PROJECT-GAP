@@ -535,29 +535,28 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
             try {
                 const auth : any = await authCheck(con , dbpacket , res , req , LINE)
                 const where = (req.body.id_factor) ? 
-                                `and ${req.body.type}.id = "${req.body.id_factor}"` :
+                                `and form${req.body.type}.id = "${req.body.id_factor}"` :
                                 ""
 
                 con.query(`
-                            SELECT ${req.body.type}.* 
-                            FROM ${req.body.type} , 
+                            SELECT form${req.body.type}.* 
+                            FROM form${req.body.type} , 
                                 (
                                     SELECT formplant.id
                                     FROM formplant , 
                                         (
-                                            SELECT id_farmHouse 
-                                            FROM housefarm
+                                            SELECT id_farmHouse FROM housefarm
                                             WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
                                         ) as houseFarm
                                     WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                                 ) as formPlant
-                            WHERE ${req.body.type}.id_plant = formPlant.id ${where}
-                            ORDER BY ${req.body['order']} ASC
+                            WHERE form${req.body.type}.id_plant = formPlant.id ${where}
+                            ORDER BY ${req.body.order} ASC
                         ` , 
                         [
                             auth.data.uid_line , 
                             req.body.id_farmhouse , 
-                            req.body.id
+                            req.body.id_plant
                         ] , 
                         (err : any , result : any)=>{
                             if (err) {
@@ -565,7 +564,6 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 console.log("select listform");
                                 return 0;
                             }
-
                             con.end()
                             res.send(result)
                         })
@@ -603,32 +601,20 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
-    app.post('/api/farmer/factor/fertilizer/insert' , (req:any , res:any)=>{
+    app.post('/api/farmer/factor/insert' , async (req:any , res:any)=>{
         if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
-            con.connect(( err:any )=>{
-                if (err) {
-                    dbpacket.dbErrorReturn(con, err, res);
-                    console.log("connect");
-                    return 0;
-                }
-
+            try {
+                const auth : any = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`
                             SELECT formplant.id
                             FROM formplant , 
                                 (
-                                    SELECT id_farmHouse FROM housefarm , 
-                                        (
-                                            SELECT uid_line FROM acc_farmer 
-                                            WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
-                                            GROUP BY uid_line
-                                        ) as farmer 
-                                    WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
+                                    SELECT id_farmHouse FROM housefarm
+                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
                                 ) as houseFarm
                             WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
-                        ` , [
-                                req.body['uid'] , req.body.id_farmhouse , req.body.id
-                            ] , 
+                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant ] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -636,24 +622,35 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 return 0;
                             }
 
-                            if(result[0].id == req.body.id) {
+                            if(result[0]) {
                                 let data = req.body
-                                console.log(result[0].id , data.name , data.formula_name , data.use , data.volume , data.source , new Date(data.date))
-                                con.query(`INSERT INTO formfertilizer 
-                                            ( 
-                                                id_plant , name , formula_name , use_is , volume , source , date
-                                            ) VALUES (
-                                                ? , ? , ? , ? , ? , ? , ?
-                                            );
-                                            ` , 
-                                            [
-                                                result[0].id , data.name , data.formula_name , data.use , data.volume , data.source , new Date(data.date)
-                                            ] ,
+                                const sql = data.type_insert === "z" ? 
+                                                `INSERT INTO formfertilizer 
+                                                ( 
+                                                    id_plant , name , formula_name , use_is , volume , source , date
+                                                ) VALUES (
+                                                    ? , ? , ? , ? , ? , ? , ?
+                                                );
+                                                ` : 
+                                            data.type_insert === "c" ? 
+                                                `INSERT INTO formchemical 
+                                                ( 
+                                                    id_plant , name , formula_name , insect , use_is , rate , volume , source , date_safe , date
+                                                ) VALUES (
+                                                    ? , ? , ? , ? , ? , ? , ? , ? , ? , ?
+                                                );
+                                                ` : ""
+                                const ArrayData = data.type_insert === "z" ? 
+                                                    [ data.id_plant , data.name , data.formula_name , data.use , data.volume , data.source , new Date(data.date) ] :
+                                                data.type_insert === "c" ? 
+                                                [ data.id_plant , data.name , data.formula_name , data.insect , data.use , data.rate , data.volume , data.source , new Date(data.dateSafe) , new Date(data.date) ] : []
+                                
+                                con.query(sql , ArrayData ,
                                             (err : any , insert : any)=>{
-                                                console.log(insert)
                                                 con.end()
-                                                if(insert.affectedRows >= 1) res.send("133")
-                                                else res.send("130")
+                                                res.send("insert")
+                                                // if(insert.affectedRows >= 1) 
+                                                // else res.send("130")
                                             })
                             }
                             else {
@@ -661,10 +658,13 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 res.send("not")
                             }
                         })
-            })
+            } catch (err) {
+                console.log(err)
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
         } else res.send("error auth")
     })
-
 }
 
 const authCheck = (con : any , dbpacket : any , res : any , req : any , LINE : any) => {

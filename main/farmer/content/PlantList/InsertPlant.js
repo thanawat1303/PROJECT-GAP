@@ -9,14 +9,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
 
     const FormContent = useRef()
 
-    const TypePlant = useRef()
-
-    const TypePlantOther = useRef()
-    const TypePlantFrameOther = useRef()
-
-    const ListOther = useRef()
-    const [ListOtherSL , setListOther] = useState(<></>)
-
+    const TypePlantInput = useRef()
     const Generation = useRef()
     const DateGlow = useRef()
     const DatePlant = useRef()
@@ -37,15 +30,17 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
     const QtyInsect = useRef()
     const Seft = useRef()
 
-    const [SELECT , setSelect] = useState(<></>)
-    const [LoadingSelect , setLoading] = useState(false)
+    const ListSearch = useRef()
+    const [ListSelect , setListOther] = useState(<></>)
+    const [DataPlant , setDataPlant] = useState([])
 
     const [HistoryPlantLoad , setHistory] = useState(true)
 
     const BTConfirm = useRef()
+
     useEffect(()=>{
-        RefPop.current.setAttribute("show" , "")
         FetchPlant()
+        RefPop.current.setAttribute("show" , "")
 
         return() => {
             clearTimeout(TimeOut)
@@ -55,10 +50,9 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
     const FetchPlant = async () => {
         const Data = await clientMo.post("/api/farmer/plant/list")
         if(await CloseAccount(Data , setPage)) {
-            const LIST = JSON.parse(Data).map((val , key)=> <option key={key} value={val.name}>{val.name}</option>)
-            setSelect(LIST)
+            const LIST = JSON.parse(Data)
+            setDataPlant(LIST)
         }
-        setLoading(true)
     }
 
     const FetchDataForm = async (name_plant_list) => {
@@ -86,21 +80,21 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                     QtyInsect.current.value = Object[0].qtyInsect
                     Seft.current.value = Object[0].seft
                 } catch (err) {
-                    Generation.current.value = ""
-                    DateGlow.current.value = ""
-                    DatePlant.current.value = ""
-                    PositionW.current.value = ""
-                    PositionH.current.value = ""
-                    Qty.current.value = ""
-                    Area.current.value = ""
-                    DateOut.current.value = ""
-                    System.current.value = ""
-                    Water.current.value = ""
-                    WaterStep.current.value = ""
-                    History.current.value = ""
-                    Insect.current.value = ""
-                    QtyInsect.current.value = ""
-                    Seft.current.value = ""
+                    // Generation.current.value = ""
+                    // DateGlow.current.value = ""
+                    // DatePlant.current.value = ""
+                    // PositionW.current.value = ""
+                    // PositionH.current.value = ""
+                    // Qty.current.value = ""
+                    // Area.current.value = ""
+                    // DateOut.current.value = ""
+                    // System.current.value = ""
+                    // Water.current.value = ""
+                    // WaterStep.current.value = ""
+                    // History.current.value = ""
+                    // Insect.current.value = ""
+                    // QtyInsect.current.value = ""
+                    // Seft.current.value = ""
                 }
             }
             if(name_plant_list !== "") {
@@ -112,7 +106,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
 
     const Confirm = async () => {
         if(!BTConfirm.current.getAttribute("no")) {
-            const type = TypePlant.current.value === "other" ? TypePlantOther.current : TypePlant.current
+            const type = TypePlantInput.current
             const generetion = Generation.current
             const dateGlow = DateGlow.current
             const datePlant = DatePlant.current
@@ -186,8 +180,8 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         ele.current.focus()
     }
 
-    const ChangeCHK = async (e) => {
-        const type = TypePlant.current.value === "other" ? TypePlantOther.current : TypePlant.current
+    const ChangeCHK = () => {
+        const type = TypePlantInput.current
         const generetion = Generation.current
         const dateGlow = DateGlow.current
         const datePlant = DatePlant.current
@@ -202,31 +196,6 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         const history = History.current
         const insect = Insect.current
         const qtyInsect = QtyInsect.current
-
-        setListOther(<></>)
-        ListOther.current.setAttribute("remove" , "")
-
-        if(TypePlant.current.value === "other" && e.target === TypePlant.current) {
-            TypePlantFrameOther.current.removeAttribute("hidden")
-            
-            clearTimeout(TimeOut)
-            FormContent.current.setAttribute("over" , "")
-            setHistory(true)
-        } else if (TypePlant.current.value !== "other" && e.target === TypePlant.current) {
-            TypePlantFrameOther.current.setAttribute("hidden" , "")
-            TypePlantOther.current.value = ""
-        }
-
-        if(TypePlant.current.value === "other" && e.target === TypePlantOther.current) {
-            ListOther.current.removeAttribute("remove")
-            const search = SELECT.filter((val , key)=>val.props.value.indexOf(TypePlantOther.current.value) >= 0)
-            if(search.length !== 0) setListOther(search.map((val , key)=> <span onClick={()=>SetTextOnOther(val.props.value)} key={key}>{val.props.value}</span>))
-            else setListOther(<span onClick={()=>SetTextOnOther(TypePlantOther.current.value)} key={0}>{TypePlantOther.current.value}</span>) 
-        }
-
-        if(e.target === type) {
-            await FetchDataForm(e.target.value)
-        }
         
         if(type.value && generetion.value && dateGlow.value && datePlant.value && 
             posiW.value && posiH.value && qty.value && area.value && dateOut.value && system.value &&
@@ -238,10 +207,27 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         }
     }
 
-    const SetTextOnOther = (name) => {
-        TypePlantOther.current.value = name
+    const OpenPopupPlant = async (e) => {
+        ResetListPopup()
+        await FetchDataForm(e.target.value)
+        ListSearch.current.removeAttribute("remove")
+        const search = DataPlant.filter((val , key)=>val.name.indexOf(TypePlantInput.current.value) >= 0)
+        if(search.length !== 0) setListOther(search.map((val , key)=> <span onClick={(e)=>SetTextOnOther(val.name , e)} key={key}>{val.name}</span>))
+        else ResetListPopup()
+
+        ChangeCHK()
+    }
+
+    const SetTextOnOther = async (name) => {
+        TypePlantInput.current.value = name
+        await FetchDataForm(name)
+        ChangeCHK()
+        ResetListPopup()
+    }
+
+    const ResetListPopup = () => {
         setListOther(<></>)
-        ListOther.current.setAttribute("remove" , "")
+        ListSearch.current.setAttribute("remove" , "")
     }
 
     return(
@@ -264,15 +250,10 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                     <div className="row">
                                         <label className="frame-textbox">
                                             <span>ชนิดพืช</span>
-                                            <select onChange={ChangeCHK} ref={TypePlant} type="text" defaultValue={""}>
-                                                {LoadingSelect ? <option disabled value={""}>เลือกชนิดพืช</option> : <option disabled value={""}>กำลังโหลด</option>}
-                                                {SELECT}
-                                                <option value={"other"}>อื่น ๆ</option>
-                                            </select>
-                                            <div ref={TypePlantFrameOther} hidden className="input-other">
-                                                <input onInput={ChangeCHK} ref={TypePlantOther}></input>
-                                                <div ref={ListOther} remove="" className="list-other-search">
-                                                    {ListOtherSL}
+                                            <div className="input-select-popup">
+                                                <input onChange={OpenPopupPlant} onTouchStart={OpenPopupPlant} placeholder="กรอกชื่อพืช" ref={TypePlantInput}></input>
+                                                <div ref={ListSearch} remove="" className="list-input-search">
+                                                    {ListSelect}
                                                 </div>
                                             </div>
                                         </label>

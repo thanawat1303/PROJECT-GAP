@@ -1,0 +1,168 @@
+.farm {
+    .farm-body {
+        .body-main {
+            .body-success {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+
+                .head {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-family: Sans-font;
+                    font-size: 8vw;
+                    font-weight: 900;
+                    width: 100%;
+                    height: 15%;
+                }
+                .content-success {
+                    display : flex;
+                    flex-direction: column;
+                    padding: 0px 4%;
+                    width: 100%;
+                    height: 90%;
+
+                    .list-success {
+                        display: flex;
+                        flex-direction: column;
+                        width: 100%;
+                        height: 100%;
+                        .list-in-success {
+                            display: flex;
+                            flex-direction: column;
+                            background-color: #FFC3C3;
+                            box-shadow: 0px 4px 4px #946a6a;
+                            border-radius: 15px;
+                            padding:8px 8px;
+                            font-family: Sans-font;
+                            font-size: 16px;
+
+                            .row {
+                                width: 100%;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            }
+
+                            .first {
+                                margin-bottom: 4px;
+                                .type-head {
+
+                                }
+                                .date {
+                                    text-align: end;
+                                    width: 58%;
+                                    input {
+                                        background-color: transparent;
+                                        text-align: end;
+                                        border: 0;
+                                        font-size: 12px;
+                                        font-family: Sans-font;
+                                        width: 100%;
+                                    }
+                                }
+                            }
+
+                            .second {
+                                .station {
+                                    display: flex;
+                                }
+
+                                .bt {
+                                    button {
+                                        font-size: 18px;
+                                        padding: 0 15px;
+                                        font-weight: 900;
+                                        background-color: white;
+                                        box-shadow: 0px 3px 3px rgba(155, 155, 155, 0.805);
+                                        font-family: Sans-font;
+                                        border-radius: 20px;
+                                        border: 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .popup {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: transparent;
+                    backdrop-filter: blur(8px);
+                    z-index: 1;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: 0.5s opacity , 0.5s visibility;
+
+                    .detail-popup {
+                        font-family: Sans-font;
+                        padding: 15px 8px;
+                        border-radius: 15px;
+                        width: 90%;
+                        background-color: white;
+                        box-shadow: 0px 4px 4px rgb(185, 185, 185);
+                        
+                        .head-content {
+                            display: flex;
+                            position: relative;
+                            align-items: center;
+                            justify-content: center;
+                            .head-popup {
+                                text-align: center;
+                                width: 100%;
+                                font-size: 22px;
+                                font-weight: 900;
+                            }
+
+                            .content-load {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                position: absolute;
+                                right: 0.4em;
+                            }
+                        }
+
+                        .report-alert {
+                            display: flex;
+                            margin: 5px 0px;
+                            color: red;
+                        }
+
+                        .bt {
+                            display: flex;
+                            justify-content: space-evenly;
+                            margin-top: 15px;
+                            width: 100%;
+
+                            button {
+                                font-family: Sans-font;
+                                border-radius: 18px;
+                                border: 0;
+                                width: 30%;
+                                font-size: 18px;
+                                font-weight: 900;
+                            }
+                        }
+                    }
+                }
+
+                .popup[show=""] {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    }
+}

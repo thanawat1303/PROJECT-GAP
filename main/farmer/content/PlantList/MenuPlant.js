@@ -4,6 +4,8 @@ import "./assets/Menu.scss"
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 import { CloseAccount } from "../../method";
 import ListFactor from "../Factor/ListFactor";
+import Success from "../Success/Success";
+import DataForm from "../DataForm/DataForm";
 
 const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     const NavBody = useRef()
@@ -19,9 +21,12 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
     const selectMenu = async (page) => {
         const result = await clientMo.post("/api/farmer/account/check")
         if(await CloseAccount(result , setPage)) {
-            if(page === "plant") {}
+            if(page === "plant") setBody(<DataForm id_house={id_house} id_plant={id_plant} setBody={setBody} setPage={setPage} liff={liff} isClick={1}/>)
             else if (page === "z" || page === "c") {
                 setBody(<ListFactor setBody={setBody} setPage={setPage} id_house={id_house} typeHraf={{id_form_plant : id_plant , type : page}} isClick={1}/>)
+            }
+            else if (page === "s") {
+                setBody(<Success setBody={setBody} setPage={setPage} id_house={id_house} id_plant={id_plant} isClick={1} liff={liff}/>)
             }
         } 
     }
@@ -51,7 +56,7 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                         </div>
                         <span>สารเคมีที่ใช้</span>
                     </div>
-                    <div onClick={()=>selectMenu("success")} className="frame-menu frame-success">
+                    <div onClick={()=>selectMenu("s")} className="frame-menu frame-success">
                         <div className="img">
                             <img src="/เก็บ.png"></img>
                         </div>

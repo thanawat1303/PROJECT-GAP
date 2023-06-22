@@ -40,11 +40,11 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                                     for (let key in result) {
                                         query.push(
                                                 {
-                                                    imageUrl : `${UrlNgrok}/imageHouse?imagefarm=${result[key]["id_farmHouse"]}`,
+                                                    imageUrl : `${UrlNgrok}/imageHouse/${result[key]["id_farmHouse"]}`,
                                                     action : {
                                                         type : "uri",
                                                         label : `${result[key]["name_house"]}`,
-                                                        uri : `https://liff.line.me/1661049098-GVZzbm5q?f=${result[key]["id_farmHouse"]}`
+                                                        uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farmHouse"]}`
                                                     }
                                                 }
                                         )
@@ -88,7 +88,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
         
     })
 
-    app.get("/imageHouse" , (req : any , res : any)=>{
+    app.get("/imageHouse/:imagefarm" , (req : any , res : any)=>{
 
         if(req.query.imagefarm) {
             let con = Database.createConnection(listDB)
@@ -100,7 +100,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                 }
 
                 con.query(`SELECT img_house FROM housefarm WHERE id_farmHouse = ?` , 
-                    [req.query.imagefarm] ,
+                    [req.param.imagefarm] ,
                     (err:any , result:any)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);

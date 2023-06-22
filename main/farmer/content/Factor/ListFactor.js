@@ -63,7 +63,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
     }
 
     const ReturnPage = async () =>{
-        const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse : id_house , id_form_plant : typeHraf.id_form_plant})
+        const result = await clientMo.post("/api/farmer/account/check")
         if(await CloseAccount(result , setPage)) {
             setBody(<MenuPlant setBody={setBody} id_house={id_house} id_plant={typeHraf.id_form_plant} setPage={setPage} liff={liff} isClick={1} />)
         }

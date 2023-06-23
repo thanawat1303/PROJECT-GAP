@@ -80,7 +80,15 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}
     return (<>
             <div className="body-success">
                 <div className="head">
-                    การเก็บเกี่ยว
+                    <div className="return" onClick={ReturnPage}>
+                        <svg fill="#000000" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+                            <g fill-rule="evenodd">
+                                <path d="M1052 92.168 959.701 0-.234 959.935 959.701 1920l92.299-92.43-867.636-867.635L1052 92.168Z"/>
+                                <path d="M1920 92.168 1827.7 0 867.766 959.935 1827.7 1920l92.3-92.43-867.64-867.635L1920 92.168Z"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <span>การเก็บเกี่ยว</span>
                 </div>
                 <div className="content-success">
                     <div className="list-success">
@@ -91,13 +99,6 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}
                     {PopupState}
                 </div>
             </div>
-            <div className="" style={{
-                display : "flex",
-                position : "fixed",
-                bottom : "0" ,
-                left : "0",
-                margin : "0px 0px 15px 15px"
-            }} onClick={ReturnPage}>เมนู</div>
             </>
             )
 }

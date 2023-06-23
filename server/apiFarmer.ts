@@ -555,7 +555,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                     WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                                 ) as formPlant
                             WHERE form${req.body.type}.id_plant = formPlant.id ${where}
-                            ORDER BY ${req.body.order} ASC
+                            ORDER BY ${req.body.order} DESC
                         ` , 
                         [
                             auth.data.uid_line , 
@@ -611,7 +611,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
             try {
                 const auth : any = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`
-                            SELECT formplant.id
+                            SELECT formplant.id , formplant.submit
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
@@ -627,35 +627,157 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             }
 
                             if(result[0]) {
-                                let data = req.body
-                                const sql = data.type_insert === "z" ? 
-                                                `INSERT INTO formfertilizer 
-                                                ( 
-                                                    id_plant , name , formula_name , use_is , volume , source , date
-                                                ) VALUES (
-                                                    ? , ? , ? , ? , ? , ? , ?
-                                                );
-                                                ` : 
-                                            data.type_insert === "c" ? 
-                                                `INSERT INTO formchemical 
-                                                ( 
-                                                    id_plant , name , formula_name , insect , use_is , rate , volume , source , date_safe , date
-                                                ) VALUES (
-                                                    ? , ? , ? , ? , ? , ? , ? , ? , ? , ?
-                                                );
-                                                ` : ""
-                                const ArrayData = data.type_insert === "z" ? 
-                                                    [ data.id_plant , data.name , data.formula_name , data.use , data.volume , data.source , new Date(data.date) ] :
+                                if(!result[0].submit) {
+                                    let data = req.body
+                                    const sql = data.type_insert === "z" ? 
+                                                    `INSERT INTO formfertilizer 
+                                                    ( 
+                                                        id_plant , name , formula_name , use_is , volume , source , date
+                                                    ) VALUES (
+                                                        ? , ? , ? , ? , ? , ? , ?
+                                                    );
+                                                    ` : 
                                                 data.type_insert === "c" ? 
-                                                [ data.id_plant , data.name , data.formula_name , data.insect , data.use , data.rate , data.volume , data.source , new Date(data.dateSafe) , new Date(data.date) ] : []
-                                
-                                con.query(sql , ArrayData ,
-                                            (err : any , insert : any)=>{
+                                                    `INSERT INTO formchemical 
+                                                    ( 
+                                                        id_plant , name , formula_name , insect , use_is , rate , volume , source , date_safe , date
+                                                    ) VALUES (
+                                                        ? , ? , ? , ? , ? , ? , ? , ? , ? , ?
+                                                    );
+                                                    ` : ""
+                                    const ArrayData = data.type_insert === "z" ? 
+                                                        [ data.id_plant , data.name , data.formula_name , data.use , data.volume , data.source , new Date(data.date) ] :
+                                                    data.type_insert === "c" ? 
+                                                    [ data.id_plant , data.name , data.formula_name , data.insect , data.use , data.rate , data.volume , data.source , new Date(data.dateSafe) , new Date(data.date) ] : []
+                                    
+                                    con.query(sql , ArrayData ,
+                                                (err : any , insert : any)=>{
+                                                    con.end()
+                                                    res.send("insert")
+                                                    // if(insert.affectedRows >= 1) 
+                                                    // else res.send("130")
+                                                })
+                                } else {
+                                    con.end()
+                                    res.send("submit")
+                                }
+                            }
+                            else {
+                                con.end()
+                                res.send("not")
+                            }
+                        })
+            } catch (err) {
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+        } else res.send("error auth")
+    })
+
+    app.post('/api/farmer/factor/edit' , async (req:any , res:any)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+            try {
+                const auth : any = await authCheck(con , dbpacket , res , req , LINE)
+                con.query(` 
+                            SELECT form${req.body.type_form}.* , formplant.submit
+                            FROM form${req.body.type_form} ,
+                            (
+                                SELECT formplant.id , formplant.submit
+                                FROM formplant , 
+                                    (
+                                        SELECT id_farmHouse FROM housefarm
+                                        WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    ) as houseFarm
+                                WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
+                            ) as formplant
+                            WHERE form${req.body.type_form}.id_plant = formplant.id and form${req.body.type_form}.id = ?
+                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant , req.body.id_form] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select house");
+                                return 0;
+                            }
+
+                            if(result[0]) {
+                                let data = req.body
+                                if(!result[0].submit) {
+                                    con.query(
+                                        `
+                                        INSERT INTO editform 
+                                            ( id_form , id_doctor , because , note , status , type_form )
+                                            VALUES 
+                                            ( ? , ? , ? , ? , ? , ? )
+                                        ` , [ data.id_form , "" , data.because , "" , 0 , data.type_form ] ,
+                                        (err : any , resultEdit : any) => {
+                                            if (err) {
+                                                dbpacket.dbErrorReturn(con, err, res);
+                                                console.log("insert editform");
+                                                return 0;
+                                            }
+
+                                            if(resultEdit.insertId > 0) {
+                                                const arrUpdate = new Array
+                                                let checkerr = false
+                                                for(let subject in data.dataChange) {
+                                                    con.query(
+                                                        `
+                                                        INSERT INTO detailedit
+                                                            (id_edit , subject_form , old_content)
+                                                            VALUES 
+                                                            ( ? , ? , ?)
+                                                        ` , [ resultEdit.insertId , subject , result[0][subject] ] ,
+                                                        (err : any , Edit : any) => {
+                                                            if (err) {
+                                                                dbpacket.dbErrorReturn(con, err, res);
+                                                                console.log("insert detailedit");
+                                                                return 0;
+                                                            }
+
+                                                            if( Edit.insertId ) {
+                                                                arrUpdate.push(`${subject}="${data.dataChange[subject]}"`)
+                                                                if(arrUpdate.length == data.num) {
+                                                                    let strUpdate = arrUpdate.join(" , ")
+                                                                    con.query(
+                                                                        `
+                                                                        UPDATE form${data.type_form} 
+                                                                        SET ${strUpdate}
+                                                                        WHERE id = ?
+                                                                        ` , [ data.id_form ] , 
+                                                                        (err : any , update : any) => {
+                                                                            if (err) {
+                                                                                dbpacket.dbErrorReturn(con, err, res);
+                                                                                console.log("update form");
+                                                                                return 0;
+                                                                            }
+                                                                            con.end()
+                                                                            res.send("133")
+                                                                        }
+                                                                    )
+                                                                }
+                                                            } else {
+                                                                checkerr = true
+                                                            }
+                                                        }
+                                                    )
+                                                    if(checkerr) {
+                                                        con.end()
+                                                        res.send("edit")
+                                                        break
+                                                    }
+                                                }
+                                            } else {
                                                 con.end()
-                                                res.send("insert")
-                                                // if(insert.affectedRows >= 1) 
-                                                // else res.send("130")
-                                            })
+                                                res.send("edit")
+                                            }
+                                        }
+                                    )
+                                }
+                                else {
+                                    con.end()
+                                    res.send("submit")
+                                }
                             }
                             else {
                                 con.end()
@@ -667,6 +789,48 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 if(err === "no" || err === "no account") res.send("close")
                 else res.send("error auth")
             }
+        } else res.send("error auth")
+    })
+
+    app.post('/api/farmer/factor/edit/list' , async (req:any , res:any)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+
+            try {
+                const auth : any = await authCheck(con , dbpacket , res , req , LINE)
+                con.query(` 
+                            SELECT * FROM editform , 
+                            (
+                                SELECT form${req.body.type_form}.id
+                                FROM form${req.body.type_form} ,
+                                (
+                                    SELECT formplant.id
+                                    FROM formplant , 
+                                        (
+                                            SELECT id_farmHouse FROM housefarm
+                                            WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                        ) as houseFarm
+                                    WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
+                                ) as formplant
+                                WHERE form${req.body.type_form}.id_plant = formplant.id and form${req.body.type_form}.id = ?
+                            ) as factor
+                            WHERE editform.id_form = factor.id and type_form = ?
+                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant , req.body.id_form_factor , req.body.type_form] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select editform");
+                                return 0;
+                            }
+                            con.end()
+                            res.send(result)
+                        })
+            } catch (err) {
+                con.end()
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+
         } else res.send("error auth")
     })
 

@@ -4,8 +4,9 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import { CloseAccount } from "../../method";
 import { Loading } from "../../../../src/assets/js/module";
 
-const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant , type_path , ReloadData , setPage}) => {
-    const DateNowOnForm = `${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`
+const EditFactorPopup = ({setPopup , setPage , RefPop , id_house , id_form_plant , type_path , ReloadData , 
+ObjectData}) => {
+    const Because = useRef()
     // same
     const DateUse = useRef()
     const NameMainFactor = useRef()
@@ -54,24 +55,54 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const volume = Volume.current
         const source = Source.current
 
-        if( dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value
+        const because = Because.current
+
+        if( (dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value 
+                && because.value)
+                && (
+                    dateUse.value != ObjectData.date.split(" ")[0] || 
+                    formula_name.value != ObjectData.formula_name || 
+                    Name.value != ObjectData.name || 
+                    use.value != ObjectData.use_is || 
+                    volume.value != ObjectData.volume || 
+                    source.value != ObjectData.source
+                )
             ) {
-                let data = {
+                const Check = [
+                    dateUse.value != ObjectData.date.split(" ")[0], 
+                    formula_name.value != ObjectData.formula_name, 
+                    Name.value != ObjectData.name, 
+                    use.value != ObjectData.use_is, 
+                    volume.value != ObjectData.volume, 
+                    source.value != ObjectData.source
+                ]
+                const Key = [ "date" , "formula_name" , "name" , "use_is" , "volume" , "source" ]
+                const Value = [
+                                dateUse.value , 
+                                formula_name.value, 
+                                Name.value, 
+                                use.value,
+                                volume.value,
+                                source.value
+                            ]
+
+                const foundChange = Check.map((val , index) => (val) ? [ Key[index] , Value[index] ] : "").filter(val => val !== "")
+                const data = {
                     id_farmhouse : id_house,
-                    id_plant : id_form_plant,
-                    date : dateUse.value,
-                    formula_name : formula_name.value,
-                    name : Name.value,
-                    use : use.value,
-                    volume : volume.value,
-                    source : source.value,
-                    type_insert : type_path
+                    id_plant : id_form_plant ,
+                    id_form : ObjectData.id,
+                    type_form : "fertilizer",
+                    because : because.value,
+                    dataChange : Object.fromEntries(new Map([...foundChange])),
+                    num : foundChange.length
                 }
 
-                const result = await clientMo.post("/api/farmer/factor/insert" , data)
+                const result = await clientMo.post("/api/farmer/factor/edit" , data)
                 if(await CloseAccount(result , setPage)) {
-                    cancel()
-                    ReloadData()
+                    if(result === "133") {
+                        cancel()
+                        ReloadData()
+                    }
                 }
         } else {
             let RefObject = [
@@ -81,6 +112,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                         use ,
                         volume ,
                         source ,
+                        because
                         // , seft
                     ]
             RefObject.forEach((ele , index)=>{
@@ -101,30 +133,68 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const dateSafe = DateSafe.current
         const source = Source.current
 
-        if( dateUse.value && formula_name.value && Name.value 
+        const because = Because.current
+
+        if( (dateUse.value && formula_name.value && Name.value 
                 && insect.value && use.value && rate.value
-                && volume.value && dateSafe.value && source.value
+                && volume.value && dateSafe.value && source.value 
+                && because.value) 
+                && 
+                (
+                    dateUse.value != ObjectData.date.split(" ")[0] || 
+                    formula_name.value != ObjectData.formula_name || 
+                    Name.value != ObjectData.name || 
+                    insect.value != ObjectData.insect || 
+                    use.value != ObjectData.use_is || 
+                    rate.value != ObjectData.rate || 
+                    volume.value != ObjectData.volume || 
+                    dateSafe.value != ObjectData.date_safe.split(" ")[0] || 
+                    source.value != ObjectData.source
+                )
             ) {
-                let data = {
+                const Check = [
+                    dateUse.value != ObjectData.date.split(" ")[0] , 
+                    formula_name.value != ObjectData.formula_name , 
+                    Name.value != ObjectData.name , 
+                    insect.value != ObjectData.insect , 
+                    use.value != ObjectData.use_is , 
+                    rate.value != ObjectData.rate , 
+                    volume.value != ObjectData.volume , 
+                    dateSafe.value != ObjectData.date_safe.split(" ")[0] , 
+                    source.value != ObjectData.source
+                ]
+                const Key = [ "date" , "formula_name" , "name" , "insect" , "use_is" , "rate" , "volume" , "date_safe" , "source" ]
+                const Value = [
+                                dateUse.value, 
+                                formula_name.value, 
+                                Name.value,
+                                insect.value, 
+                                use.value,
+                                rate.value, 
+                                volume.value,
+                                dateSafe.value,
+                                source.value
+                            ]
+
+                const foundChange = Check.map((val , index) => (val) ? [ Key[index] , Value[index] ] : "").filter(val => val !== "")
+                const data = {
                     id_farmhouse : id_house,
-                    id_plant : id_form_plant,
-                    date : dateUse.value,
-                    formula_name : formula_name.value,
-                    name : Name.value,
-                    insect : insect.value,
-                    use : use.value,
-                    rate : rate.value,
-                    volume : volume.value,
-                    dateSafe : dateSafe.value,
-                    source : source.value,
-                    type_insert : type_path
+                    id_plant : id_form_plant ,
+                    id_form : ObjectData.id,
+                    type_form : "chemical",
+                    because : because.value,
+                    dataChange : Object.fromEntries(new Map([...foundChange])),
+                    num : foundChange.length
                 }
 
-                const result = await clientMo.post("/api/farmer/factor/insert" , data)
+                const result = await clientMo.post("/api/farmer/factor/edit" , data)
                 if(await CloseAccount(result , setPage)) {
-                    cancel()
-                    ReloadData()
+                    if(result === "133") {
+                        cancel()
+                        ReloadData()
+                    }
                 }
+                
         } else {
             let RefObject = [
                         dateUse ,
@@ -136,6 +206,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                         volume ,
                         dateSafe,
                         source ,
+                        because
                         // , seft
                     ]
             RefObject.forEach((ele , index)=>{
@@ -164,13 +235,24 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const volume = Volume.current
         const source = Source.current
 
+        const because = Because.current
+
         if(!e) {
             if(Name.value && formula_name.value) {
                 setHowUse()
             }
         }
         
-        if( dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value
+        if( (dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value 
+                && because.value)
+                && (
+                    dateUse.value != ObjectData.date.split(" ")[0] || 
+                    formula_name.value != ObjectData.formula_name || 
+                    Name.value != ObjectData.name || 
+                    use.value != ObjectData.use_is || 
+                    volume.value != ObjectData.volume || 
+                    source.value != ObjectData.source
+                )
             ) {
                 BTConfirm.current.removeAttribute("no")
         } else {
@@ -189,16 +271,36 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const dateSafe = DateSafe.current
         const source = Source.current
 
+        const because = Because.current
+
         if(!e) {
+            if(formula_name.value != ObjectData.formula_name || 
+                Name.value != ObjectData.name) {
+                    dateSafe.value = ""
+                }
+
             if(Name.value && formula_name.value) {
                 setHowUse()
                 setDateSafe() 
             }
         }
 
-        if( dateUse.value && formula_name.value && Name.value 
+        if( (dateUse.value && formula_name.value && Name.value 
                 && insect.value && use.value && rate.value
-                && volume.value && dateSafe.value && source.value
+                && volume.value && dateSafe.value && source.value 
+                && because.value) 
+                && 
+                (
+                    dateUse.value != ObjectData.date.split(" ")[0] || 
+                    formula_name.value != ObjectData.formula_name || 
+                    Name.value != ObjectData.name || 
+                    insect.value != ObjectData.insect || 
+                    use.value != ObjectData.use_is || 
+                    rate.value != ObjectData.rate || 
+                    volume.value != ObjectData.volume || 
+                    dateSafe.value != ObjectData.date_safe.split(" ")[0] || 
+                    source.value != ObjectData.source
+                )
             ) {
                 BTConfirm.current.removeAttribute("no")
         } else {
@@ -223,12 +325,12 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         else ResetListNamePopup()
         setLoadName(true);
 
-        (type_path === "z") ? ChangeFerti() : ChangeChemi()
+        (type_path === "z") ? ChangeFerti() : ChangeChemi();
     }
 
     const SetTextInputName = (name) => {
         NameFactor.current.value = name;
-        (type_path === "z") ? ChangeFerti() : ChangeChemi()
+        (type_path === "z") ? ChangeFerti() : ChangeChemi();
         ResetListNamePopup()
     }
 
@@ -254,12 +356,12 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         else ResetListOtherPopup()
         setLoadNameMain(true);
 
-        (type_path === "z") ? ChangeFerti() : ChangeChemi()
+        (type_path === "z") ? ChangeFerti() : ChangeChemi();
     }
 
     const SetTextInputOrther = (name) => {
         NameMainFactor.current.value = name;
-        (type_path === "z") ? ChangeFerti() : ChangeChemi()
+        (type_path === "z") ? ChangeFerti() : ChangeChemi();
         ResetListOtherPopup()
     }
 
@@ -271,6 +373,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     // change how use 
     const setHowUse = () => {
         if(Use.current.value === "") {
+            console.log(DataFactor)
             Use.current.value = DataFactor.filter((val)=>
                             val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
                                 .map((val)=>val.how_use)[0]
@@ -309,10 +412,10 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
 
     return(
         <section className="popup-content-fertilizer" onTouchStart={OutListSearch}>
-            <div className="head">แบบบันทึกเกษตรกร</div>
+            {/* <div className="head">แบบบันทึกเกษตรกร</div> */}
             <div className="form">
                 <div className="head-form">
-                    {type_path === "z" ? <span>ปัจจัยการผลิต</span> : <span>สารเคมี</span>}
+                    {type_path === "z" ? <span>แก้ไขปัจจัยการผลิต</span> : <span>แก้ไขสารเคมี</span>}
                 </div>
                 <div className="body-content">
                     <div className="frame-content">
@@ -325,7 +428,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ว/ด/ป ที่ใช้</span>
-                                                <input onChange={ChangeFerti} defaultValue={DateNowOnForm} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
+                                                <input onChange={ChangeFerti} defaultValue={ObjectData.date.split(" ")[0]} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -333,7 +436,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                                 <span className="full">ชื่อสิ่งที่ใช้ (ชื่อการค้า, ตรา)</span>
                                                 <div className="content-colume-input">
                                                     <div className="input-select-popup">
-                                                        <input onChange={SearchNameFactor} onMouseDown={SearchNameFactor} placeholder="กรอกชื่อปุ๋ย" ref={NameFactor}></input>
+                                                        <input onChange={SearchNameFactor} onMouseDown={SearchNameFactor} defaultValue={ObjectData.name} placeholder="กรอกชื่อปุ๋ย" ref={NameFactor}></input>
                                                         <div ref={ListSearchName} remove="" className="list-input-search">
                                                             {LoadSearchName ? 
                                                                 ListSelectName : 
@@ -354,7 +457,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                             <label className="frame-textbox">
                                                 <span>ชื่อสูตรปุ๋ย</span>
                                                 <div className="input-select-other">
-                                                    <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} ref={NameMainFactor} type="text" placeholder="กรอก"></input>
+                                                    <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} defaultValue={ObjectData.formula_name} ref={NameMainFactor} type="text" placeholder="กรอก"></input>
                                                     <div ref={ListSearchFactorNameMain} remove="" className="list-input-search">
                                                         {LoadSearchNameMain ? 
                                                             ListSelectNameMain :
@@ -373,19 +476,19 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox colume">
                                                 <span className="full">วิธีการใช้</span>
-                                                <textarea onChange={ChangeFerti} className="content-colume-input" style={{textAlign : "left"}} ref={Use}></textarea>
+                                                <textarea onChange={ChangeFerti} defaultValue={ObjectData.use_is} className="content-colume-input" style={{textAlign : "start"}} ref={Use}></textarea>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ปริมาณที่ใช้</span>
-                                                <input onChange={ChangeFerti} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                <input onChange={ChangeFerti} defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
-                                                <input onChange={ChangeFerti} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
+                                                <input onChange={ChangeFerti} defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
                                             </label>
                                         </div>
                                         </> :
@@ -393,7 +496,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ว/ด/ป ที่ใช้</span>
-                                                <input onChange={ChangeChemi} defaultValue={DateNowOnForm} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
+                                                <input onChange={ChangeChemi} defaultValue={ObjectData.date.split(" ")[0]} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -401,7 +504,8 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                                 <span className="full">ชื่อสารเคมี (ชื่อการค้า, ตรา)</span>
                                                 <div className="content-colume-input">
                                                     <div className="input-select-popup">
-                                                        <input onChange={SearchNameFactor} onMouseDown={SearchNameFactor} placeholder="กรอกชื่อปุ๋ย" ref={NameFactor}></input>
+                                                        <input onChange={SearchNameFactor} onMouseDown={SearchNameFactor}
+                                                            defaultValue={ObjectData.name} placeholder="กรอกชื่อปุ๋ย" ref={NameFactor}></input>
                                                         <div ref={ListSearchName} remove="" className="list-input-search">
                                                             {LoadSearchName ? 
                                                                 ListSelectName : 
@@ -422,7 +526,8 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                             <label className="frame-textbox">
                                                 <span>ชื่อสามัญสารเคมี</span>
                                                 <div className="input-select-other">
-                                                    <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} ref={NameMainFactor} type="text" placeholder="กรอก"></input>
+                                                    <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} 
+                                                        defaultValue={ObjectData.formula_name} ref={NameMainFactor} type="text" placeholder="กรอก"></input>
                                                     <div ref={ListSearchFactorNameMain} remove="" className="list-input-search">
                                                         {LoadSearchNameMain ? 
                                                             ListSelectNameMain :
@@ -441,41 +546,55 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ศัตรูพืชที่พบ</span>
-                                                <input onChange={ChangeChemi} ref={NameInsect} type="text" placeholder="ชื่อศัตรูพืช"></input>
+                                                <input onChange={ChangeChemi} 
+                                                    defaultValue={ObjectData.insect} ref={NameInsect} type="text" placeholder="ชื่อศัตรูพืช"></input>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox colume">
                                                 <span className="full">วิธีการใช้</span>
-                                                <textarea className="content-colume-input" style={{textAlign : "left"}} ref={Use}></textarea>
+                                                <textarea className="content-colume-input" style={{textAlign : "start"}}
+                                                    defaultValue={ObjectData.use_is} ref={Use}></textarea>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>อัตราที่ผสม</span>
-                                                <input onChange={ChangeChemi} ref={Rate} type="text" placeholder="กรอก 00/00"></input>
+                                                <input onChange={ChangeChemi} 
+                                                    defaultValue={ObjectData.rate} ref={Rate} type="text" placeholder="กรอก 00/00"></input>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ปริมาณที่ใช้ทั้งหมด</span>
-                                                <input onChange={ChangeChemi} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                <input onChange={ChangeChemi} 
+                                                    defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>วันที่ปลอดภัย</span>
-                                                <input onChange={ChangeChemi} onClick={()=>clickDate(DateSafe)} ref={DateSafe} type="date"></input>
+                                                <input onChange={ChangeChemi} 
+                                                    defaultValue={ObjectData.date_safe.split(" ")[0]} onClick={()=>clickDate(DateSafe)} ref={DateSafe} type="date"></input>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
-                                                <input onChange={ChangeChemi} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
+                                                <input onChange={ChangeChemi} 
+                                                    defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
                                             </label>
                                         </div>
                                         </>
                                     }
+                                    <div className="row">
+                                        <label className="frame-textbox colume">
+                                            <span className="full">เหตุผลการแก้ไข</span>
+                                            <textarea style={{
+                                                textAlign : "start"
+                                            }} onChange={type_path === "z" ? ChangeFerti : ChangeChemi} ref={Because} className="full"></textarea>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -490,4 +609,4 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     )
 }
 
-export default PopupInsertFactor
+export default EditFactorPopup

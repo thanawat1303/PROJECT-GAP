@@ -1,5 +1,86 @@
 $FontText : 5vw;
 .plant {
+    .list-factor-content {
+        width: 90vw;
+        background-color: #daf1ee;
+        padding: 0px 8px;
+        border-radius: 18px;
+        margin-bottom: 10px;
+        box-shadow: 0px 2px 2px #5c807b;
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            font-family: Sans-font;
+            font-size: 5vw;
+            margin: 1.3vw 0px;
+
+            .date {
+                display: flex;
+                justify-content: end;
+                align-items: center;
+                input {
+                    font-family: Sans-font;
+                    width: 90%;
+                    text-align: end;
+                    border: 0;
+                    background-color: transparent;
+                    outline: 0;
+                }
+            }
+
+            .date-safe {
+                justify-content: start;
+                width: 100%;
+                input {
+                    display: flex;
+                    font-family: Sans-font;
+                    border: 0;
+                    width: 100%;
+                    padding: 0;
+                    background-color: transparent;
+                }
+            }
+
+            button {
+                font-size: 5vw;
+                font-family: Sans-font;
+                border: 0;
+                border-radius: 15px;
+                padding: 0px 18px;
+                font-weight: 900;
+                background-color: rgb(251, 186, 186);
+                box-shadow: 2px 2px 2px gray;
+            }
+
+            .manage-form {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0px 2px 2px rgb(179, 179, 179);
+                bottom: 0em;
+                right: 5.5em;
+                opacity: 0;
+                visibility: hidden;
+                transition: 0.5s opacity , 0.5s visibility;
+
+                div {
+                    padding: 0px 0.5em;
+                    margin: 0.1em 0px;
+                }
+
+            }
+
+            .manage-form[show=""] {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+
     .popup-add{
         z-index: 10;
         .popup-content-fertilizer {
@@ -26,7 +107,7 @@ $FontText : 5vw;
             .form {
                 display: flex;
                 flex-direction: column;
-                // justify-content: space-evenly;
+                justify-content: center;
                 height: 90%;
                 width: 100%;
                 .head-form {
@@ -54,7 +135,7 @@ $FontText : 5vw;
                     padding: 10px 10px;
                     padding-top: 40px;
                     width: 95%;
-                    height: 90%;
+                    height: 80%;
                     margin: -25px auto;
                     margin-bottom: 0px;
 
@@ -215,7 +296,7 @@ $FontText : 5vw;
                     justify-content: space-evenly;
                     align-items: center;
                     margin-top: 5%;
-                    height: 100%;
+                    height: 8%;
                     button {
                         background-color: #23dd36;
                         border-radius: 5px;

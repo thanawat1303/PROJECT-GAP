@@ -163,7 +163,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                         ]
                 RefObject.forEach((ele , index)=>{
                     if(!ele.value && ele) ele.style.border = "2px solid red"
-                    else if (ele.value && ele) ele.removeAttribute("style")
+                    else if (ele.value && ele) ele.style.border = "2px solid transparent"
                 })
             }
         }

@@ -48,7 +48,7 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}
 
     const OpenPopup = async (id_table_success , type , name_station , Dom) => {
         const result = await clientMo.post("/api/farmer/success/get" , {
-            id_farmhouse : id_house , id_plant : id_plant
+            id_farmhouse : id_house , id_plant : id_plant , id_table : id_table_success
         })
         if(await CloseAccount(result , setPage)) {
             const ob = JSON.parse(result)
@@ -82,7 +82,7 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}
                 <div className="head">
                     <div className="return" onClick={ReturnPage}>
                         <svg fill="#000000" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
-                            <g fill-rule="evenodd">
+                            <g fillRule="evenodd">
                                 <path d="M1052 92.168 959.701 0-.234 959.935 959.701 1920l92.299-92.43-867.636-867.635L1052 92.168Z"/>
                                 <path d="M1920 92.168 1827.7 0 867.766 959.935 1827.7 1920l92.3-92.43-867.64-867.635L1920 92.168Z"/>
                             </g>

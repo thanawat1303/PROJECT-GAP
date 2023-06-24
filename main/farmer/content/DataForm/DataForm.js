@@ -5,12 +5,14 @@ import { CloseAccount } from "../../method";
 import "./assets/DataForm.scss"
 import { DayJSX } from "../../../../src/assets/js/module";
 import MenuPlant from "../PlantList/MenuPlant";
-import { validate } from "uuid";
+import DetailEdit from "../DetailEdit";
 const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     const [Data , setData] = useState([])
     const [Load , setLoad] = useState(false)
     const [StatusEdit , setStatusEdit] = useState(false)
+    const [Popup , setPopup] = useState(<></>)
 
+    const PopupRef = useRef()
     const ManageMenu = useRef()
     const BtManageMenu = {
         Frame : useRef(),
@@ -262,13 +264,9 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
 
     // history Edit
     const HistoryEdit = async () => {
-        const result = await clientMo.post("/api/farmer/formplant/edit/list" , {
-            id_farmhouse : id_house , 
-            id_plant : id_plant
-        })
-        if(await CloseAccount(result , setPage)) {
-            // popup show edit
-        }
+        setPopup(<DetailEdit Ref={PopupRef} setRef={setPopup} setPage={setPage} Data_on={{
+            id_house : id_house , id_plant : id_plant
+        }} type={"plant"}/>)
     }
 
     return (
@@ -293,7 +291,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                         </div>
                         <div className="manage-menu" ref={ManageMenu}>
                             <div onClick={EditForm}>แก้ไขข้อมูล</div>
-                            <div>ประวัติแก้ไข</div>
+                            <div onClick={HistoryEdit}>ประวัติแก้ไข</div>
                         </div>
                         </> : <></>
                 }
@@ -480,6 +478,9 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                     </div>
                     : <></>
                 }
+            </div>
+            <div className="popup-detail-edit" ref={PopupRef}>
+                {Popup}
             </div>
         </section>
     )

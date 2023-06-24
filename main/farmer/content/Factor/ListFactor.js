@@ -146,7 +146,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
     }
 
     const HistoryEdit = async (id_table) => {
-        const result = await clientMo.post("/api/farmer/factor/edit/list" , {
+        const result = await clientMo.post("/api/farmer/factor/edit/select" , {
             id_farmhouse : id_house , 
             id_plant : typeHraf.id_form_plant ,
             id_form_factor : id_table ,

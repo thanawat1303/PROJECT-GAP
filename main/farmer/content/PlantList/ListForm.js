@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-import { DAYUTC } from "../../../../src/assets/js/module";
+import { DayJSX } from "../../../../src/assets/js/module";
 import PopupInsertPlant from "./InsertPlant";
 import Template from "../TemplateList";
 import MenuPlant from "./MenuPlant";
@@ -34,7 +34,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
                                     <input readOnly value={val.type_plant ? val.type_plant : "ไม่ระบุ"}></input>
                                 </div>
                                 <div className="date">
-                                    <span>วันที่ปลูก <DAYUTC DATE={val.date_plant} TYPE="short"/></span>
+                                    <span>วันที่ปลูก <DayJSX DATE={val.date_plant} TYPE="short"/></span>
                                 </div>
                             </div>
                             <div className="body">

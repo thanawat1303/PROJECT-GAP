@@ -4,7 +4,7 @@ import { CloseAccount } from "../../method";
 import MenuPlant from "../PlantList/MenuPlant";
 
 import "./assets/Success.scss"
-import { DAYUTC, Loading } from "../../../../src/assets/js/module";
+import { DayJSX, Loading } from "../../../../src/assets/js/module";
 
 const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     const Popup = useRef()
@@ -27,7 +27,7 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}
                             <div className="row first">
                                 <div className="type-head">{val.type_success ? "เก็บผลผลิต" : "เก็บผลตัวอย่าง"}</div>
                                 <div className="date">
-                                    <DAYUTC DATE={val.date_of_doctor} TYPE="normal"/>
+                                    <DayJSX DATE={val.date_of_doctor} TYPE="normal"/>
                                 </div>
                             </div>
                             <div className="row second">

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/form/formList.scss"
-import { DAYUTC } from "../../../../../src/assets/js/module";
+import { DayJSX } from "../../../../../src/assets/js/module";
 
 const FormList = ({main , session , socket , type = 0 , eleImageCover , LoadType , eleBody , setTextStatus}) => {
     const [Body , setBody] = useState(<></>)
@@ -85,7 +85,7 @@ const List = ({ session , socket , status}) => {
                                         </div>
                                         <div className="date">
                                             <span>ปลูก</span>
-                                            <DAYUTC DATE={val.date_plant} TYPE="SMALL"/>
+                                            <DayJSX DATE={val.date_plant} TYPE="SMALL"/>
                                         </div>
                                     </div>
                                     <div className="inrow">

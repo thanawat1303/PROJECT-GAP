@@ -48,171 +48,163 @@ ObjectData}) => {
     }
 
     const ConfirmFerti = async () => {
-        const dateUse = DateUse.current
-        const formula_name = NameMainFactor.current
-        const Name = NameFactor.current
-        const use = Use.current
-        const volume = Volume.current
-        const source = Source.current
+        if(BTConfirm.current.getAttribute("no") == null) {
+            const dateUse = DateUse.current
+            const formula_name = NameMainFactor.current
+            const Name = NameFactor.current
+            const use = Use.current
+            const volume = Volume.current
+            const source = Source.current
 
-        const because = Because.current
+            const because = Because.current
 
-        if( (dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value 
-                && because.value)
-                && (
-                    dateUse.value != ObjectData.date.split(" ")[0] || 
-                    formula_name.value != ObjectData.formula_name || 
-                    Name.value != ObjectData.name || 
-                    use.value != ObjectData.use_is || 
-                    volume.value != ObjectData.volume || 
-                    source.value != ObjectData.source
-                )
-            ) {
-                const Check = [
-                    dateUse.value != ObjectData.date.split(" ")[0], 
-                    formula_name.value != ObjectData.formula_name, 
-                    Name.value != ObjectData.name, 
-                    use.value != ObjectData.use_is, 
-                    volume.value != ObjectData.volume, 
-                    source.value != ObjectData.source
-                ]
-                const Key = [ "date" , "formula_name" , "name" , "use_is" , "volume" , "source" ]
-                const Value = [
-                                dateUse.value , 
-                                formula_name.value, 
-                                Name.value, 
-                                use.value,
-                                volume.value,
-                                source.value
-                            ]
+            const Check = [
+                dateUse.value != ObjectData.date.split(" ")[0], 
+                formula_name.value != ObjectData.formula_name, 
+                Name.value != ObjectData.name, 
+                use.value != ObjectData.use_is, 
+                volume.value != ObjectData.volume, 
+                source.value != ObjectData.source
+            ]
 
-                const foundChange = Check.map((val , index) => (val) ? [ Key[index] , Value[index] ] : "").filter(val => val !== "")
-                const data = {
-                    id_farmhouse : id_house,
-                    id_plant : id_form_plant ,
-                    id_form : ObjectData.id,
-                    type_form : "fertilizer",
-                    because : because.value,
-                    dataChange : Object.fromEntries(new Map([...foundChange])),
-                    num : foundChange.length
-                }
+            if( (dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value 
+                    && because.value)
+                    && (
+                        Check.filter(val => val)[0]
+                    )
+                ) {
+                    const Key = [ "date" , "formula_name" , "name" , "use_is" , "volume" , "source" ]
+                    const Value = [
+                                    dateUse.value , 
+                                    formula_name.value, 
+                                    Name.value, 
+                                    use.value,
+                                    volume.value,
+                                    source.value
+                                ]
 
-                const result = await clientMo.post("/api/farmer/factor/edit" , data)
-                if(await CloseAccount(result , setPage)) {
-                    if(result === "133") {
-                        cancel()
-                        ReloadData()
+                    const foundChange = Check.map((val , index) => (val) ? [ Key[index] , Value[index] ] : "").filter(val => val !== "")
+                    const data = {
+                        id_farmhouse : id_house,
+                        id_plant : id_form_plant ,
+                        id_form : ObjectData.id,
+                        type_form : "fertilizer",
+                        because : because.value,
+                        dataChange : Object.fromEntries(new Map([...foundChange])),
+                        num : foundChange.length
                     }
-                }
-        } else {
-            let RefObject = [
-                        dateUse ,
-                        formula_name ,
-                        Name ,
-                        use ,
-                        volume ,
-                        source ,
-                        because
-                        // , seft
-                    ]
-            RefObject.forEach((ele , index)=>{
-                if(!ele.value && ele) ele.style.border = "2px solid red"
-                else if (ele.value && ele) ele.style.border = "2px solid transparent"
-            })
+
+                    const result = await clientMo.post("/api/farmer/factor/edit" , data)
+                    if(await CloseAccount(result , setPage)) {
+                        if(result === "133") {
+                            cancel()
+                            ReloadData()
+                        }
+                    }
+            } else {
+                let RefObject = [
+                            dateUse ,
+                            formula_name ,
+                            Name ,
+                            use ,
+                            volume ,
+                            source ,
+                            because
+                            // , seft
+                        ]
+                RefObject.forEach((ele , index)=>{
+                    if(!ele.value && ele) ele.style.border = "2px solid red"
+                    else if (ele.value && ele) ele.style.border = "2px solid transparent"
+                })
+            }
         }
     }
 
     const ConfirmChemi = async () => {
-        const dateUse = DateUse.current
-        const formula_name = NameMainFactor.current
-        const Name = NameFactor.current
-        const insect = NameInsect.current
-        const use = Use.current
-        const rate = Rate.current
-        const volume = Volume.current
-        const dateSafe = DateSafe.current
-        const source = Source.current
+        if(BTConfirm.current.getAttribute("no") == null) {
+            const dateUse = DateUse.current
+            const formula_name = NameMainFactor.current
+            const Name = NameFactor.current
+            const insect = NameInsect.current
+            const use = Use.current
+            const rate = Rate.current
+            const volume = Volume.current
+            const dateSafe = DateSafe.current
+            const source = Source.current
 
-        const because = Because.current
+            const because = Because.current
 
-        if( (dateUse.value && formula_name.value && Name.value 
-                && insect.value && use.value && rate.value
-                && volume.value && dateSafe.value && source.value 
-                && because.value) 
-                && 
-                (
-                    dateUse.value != ObjectData.date.split(" ")[0] || 
-                    formula_name.value != ObjectData.formula_name || 
-                    Name.value != ObjectData.name || 
-                    insect.value != ObjectData.insect || 
-                    use.value != ObjectData.use_is || 
-                    rate.value != ObjectData.rate || 
-                    volume.value != ObjectData.volume || 
-                    dateSafe.value != ObjectData.date_safe.split(" ")[0] || 
-                    source.value != ObjectData.source
-                )
-            ) {
-                const Check = [
-                    dateUse.value != ObjectData.date.split(" ")[0] , 
-                    formula_name.value != ObjectData.formula_name , 
-                    Name.value != ObjectData.name , 
-                    insect.value != ObjectData.insect , 
-                    use.value != ObjectData.use_is , 
-                    rate.value != ObjectData.rate , 
-                    volume.value != ObjectData.volume , 
-                    dateSafe.value != ObjectData.date_safe.split(" ")[0] , 
-                    source.value != ObjectData.source
-                ]
-                const Key = [ "date" , "formula_name" , "name" , "insect" , "use_is" , "rate" , "volume" , "date_safe" , "source" ]
-                const Value = [
-                                dateUse.value, 
-                                formula_name.value, 
-                                Name.value,
-                                insect.value, 
-                                use.value,
-                                rate.value, 
-                                volume.value,
-                                dateSafe.value,
-                                source.value
-                            ]
+            const Check = [
+                dateUse.value != ObjectData.date.split(" ")[0] , 
+                formula_name.value != ObjectData.formula_name , 
+                Name.value != ObjectData.name , 
+                insect.value != ObjectData.insect , 
+                use.value != ObjectData.use_is , 
+                rate.value != ObjectData.rate , 
+                volume.value != ObjectData.volume , 
+                dateSafe.value != ObjectData.date_safe.split(" ")[0] , 
+                source.value != ObjectData.source
+            ]
 
-                const foundChange = Check.map((val , index) => (val) ? [ Key[index] , Value[index] ] : "").filter(val => val !== "")
-                const data = {
-                    id_farmhouse : id_house,
-                    id_plant : id_form_plant ,
-                    id_form : ObjectData.id,
-                    type_form : "chemical",
-                    because : because.value,
-                    dataChange : Object.fromEntries(new Map([...foundChange])),
-                    num : foundChange.length
-                }
+            if( (dateUse.value && formula_name.value && Name.value 
+                    && insect.value && use.value && rate.value
+                    && volume.value && dateSafe.value && source.value 
+                    && because.value) 
+                    && 
+                    (
+                        Check.filter(val => val)[0]
+                    )
+                ) {
+                    const Key = [ "date" , "formula_name" , "name" , "insect" , "use_is" , "rate" , "volume" , "date_safe" , "source" ]
+                    const Value = [
+                                    dateUse.value, 
+                                    formula_name.value, 
+                                    Name.value,
+                                    insect.value, 
+                                    use.value,
+                                    rate.value, 
+                                    volume.value,
+                                    dateSafe.value,
+                                    source.value
+                                ]
 
-                const result = await clientMo.post("/api/farmer/factor/edit" , data)
-                if(await CloseAccount(result , setPage)) {
-                    if(result === "133") {
-                        cancel()
-                        ReloadData()
+                    const foundChange = Check.map((val , index) => (val) ? [ Key[index] , Value[index] ] : "").filter(val => val !== "")
+                    const data = {
+                        id_farmhouse : id_house,
+                        id_plant : id_form_plant ,
+                        id_form : ObjectData.id,
+                        type_form : "chemical",
+                        because : because.value,
+                        dataChange : Object.fromEntries(new Map([...foundChange])),
+                        num : foundChange.length
                     }
-                }
-                
-        } else {
-            let RefObject = [
-                        dateUse ,
-                        formula_name ,
-                        Name ,
-                        insect,
-                        use ,
-                        rate,
-                        volume ,
-                        dateSafe,
-                        source ,
-                        because
-                        // , seft
-                    ]
-            RefObject.forEach((ele , index)=>{
-                if(!ele.value && ele) ele.style.border = "2px solid red"
-                else if (ele.value && ele) ele.style.border = "2px solid transparent"
-            })
+
+                    const result = await clientMo.post("/api/farmer/factor/edit" , data)
+                    if(await CloseAccount(result , setPage)) {
+                        if(result === "133") {
+                            cancel()
+                            ReloadData()
+                        }
+                    }      
+            } else {
+                let RefObject = [
+                            dateUse ,
+                            formula_name ,
+                            Name ,
+                            insect,
+                            use ,
+                            rate,
+                            volume ,
+                            dateSafe,
+                            source ,
+                            because
+                            // , seft
+                        ]
+                RefObject.forEach((ele , index)=>{
+                    if(!ele.value && ele) ele.style.border = "2px solid red"
+                    else if (ele.value && ele) ele.style.border = "2px solid transparent"
+                })
+            }
         }
     }
 

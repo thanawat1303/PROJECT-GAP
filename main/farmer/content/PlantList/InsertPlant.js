@@ -1,6 +1,6 @@
 import React , {useEffect , useRef, useState} from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
-import { DAYUTC, Loading } from "../../../../src/assets/js/module";
+import { DayJSX, Loading } from "../../../../src/assets/js/module";
 import { CloseAccount } from "../../method";
 
 let TimeOut = 0
@@ -105,7 +105,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
     }
 
     const Confirm = async () => {
-        if(!BTConfirm.current.getAttribute("no")) {
+        if(!BTConfirm.current.getAttribute("no") == null ) {
             const type = TypePlantInput.current
             const generetion = Generation.current
             const dateGlow = DateGlow.current

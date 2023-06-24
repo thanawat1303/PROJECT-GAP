@@ -16,27 +16,27 @@ const MapsJSX = ({lat , lng , w , h}) => {
     )
 }
 
-const DAYUTC = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
+const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
     const [DateOut , setDATE] = useState("")
     const DayWeek = [ 'วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'] 
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"] 
 
     useEffect(()=>{
         const DateIn = new Date(DATE)
-        if(TYPE === "full") setDATE(`${DayWeek[DateIn.getUTCDay()]} ที่ ${DateIn.getUTCDate()} ${Mount[DateIn.getUTCMonth()]} ปี พ.ศ. ${DateIn.getUTCFullYear() + 543}`)
-        else if (TYPE === "small") setDATE(`${TEXT} ${DateIn.getUTCDate()} ${Mount[DateIn.getUTCMonth()]} ${DateIn.getUTCFullYear() + 543}`)
-        else setDATE(`วันที่ ${DateIn.getUTCDate()} ${Mount[DateIn.getUTCMonth()]} ${DateIn.getUTCFullYear() + 543}`)
+        if(TYPE === "full") setDATE(`${DayWeek[DateIn.getDay()]} ที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ปี พ.ศ. ${DateIn.getFullYear() + 543}`)
+        else if (TYPE === "small") setDATE(`${TEXT} ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
+        else setDATE(`วันที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
     })
 
     return (<input date_dom="" ref={REF} readOnly value={DateOut}></input>)
 }
 
-const TIMEUTC = (props) => {
+const TimeJSX = (props) => {
     const [Time , setTime] = useState("")
 
     useEffect(()=>{
         const TimeIn = new Date(props.time)
-        setTime(`เวลา ${TimeIn.getUTCHours()} นาฬิกา ${TimeIn.getUTCMinutes()} นาที ${TimeIn.getUTCSeconds()} วินาที`)
+        setTime(`เวลา ${TimeIn.getHours()} นาฬิกา ${TimeIn.getMinutes()} นาที ${TimeIn.getSeconds()} วินาที`)
     })
 
     return(<input readOnly value={Time}></input>)
@@ -417,4 +417,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DAYUTC , TIMEUTC , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , TabLoad , HrefData}

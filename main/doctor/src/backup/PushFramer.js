@@ -1,6 +1,6 @@
 import React , {Component} from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
-import { MapsJSX , DAYUTC, TIMEUTC} from "../../../../src/assets/js/module";
+import { MapsJSX , DayJSX, TimeJSX} from "../../../../src/assets/js/module";
 
 import "./assets/style/Push.scss"
 
@@ -37,8 +37,8 @@ export default class Push extends Component {
                         <img className="img-doctor" src={'/farmer-svgrepo-com.svg'}></img>
                         <div className="detail-content-fm">
                             <div className="name-fm"><input readOnly value={`ชื่อเกษตรกร ${listFm['fullname']}`}></input></div>
-                            <div className="date-fm"><DAYUTC DATE={listFm['date_register']}/></div>
-                            <div className="date-fm"><TIMEUTC time={listFm['date_register']}/></div>
+                            <div className="date-fm"><DayJSX DATE={listFm['date_register']}/></div>
+                            <div className="date-fm"><TimeJSX time={listFm['date_register']}/></div>
                         </div>
                     </div>
                 )
@@ -138,8 +138,8 @@ class DetailConfirm extends Component {
                             {<MapsJSX w={250} h={250} lat={profileP['location']['x']} lng={profileP['location']['y']}/>}
                         </div>
                         <div id="date-profile-confirm">
-                            <div className="date-fm-confirm"><DAYUTC date={profileP['date_register']}/></div>
-                            <div className="date-fm-confirm"><TIMEUTC time={profileP['date_register']}/></div>
+                            <div className="date-fm-confirm"><DayJSX date={profileP['date_register']}/></div>
+                            <div className="date-fm-confirm"><TimeJSX time={profileP['date_register']}/></div>
                         </div>
                         <div id="password-confirm-fm-push">
                             <input autoComplete="off" placeholder="รหัสผ่านเพื่อยืนยัน" type="password"></input>

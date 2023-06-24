@@ -1,6 +1,6 @@
 import React , {useState , useEffect} from "react"
 import { clientMo } from "../../../../src/assets/js/moduleClient"
-import { DAYUTC , TIMEUTC , MapsJSX , ClosePopUp } from "../../../../src/assets/js/module"
+import { DayJSX , TimeJSX , MapsJSX , ClosePopUp } from "../../../../src/assets/js/module"
 import { ShowDetailDoctor } from "./DetailDoctor";
 
 const ShowDetailFarmer = (props) => {
@@ -22,8 +22,8 @@ const ShowDetailFarmer = (props) => {
                 profile = JSON.parse(profile)
                 setFullname(profile['fullname'])
                 setImg((profile['img']['data'] != '') ? profile['img']['data'] : '/farmer-svgrepo-com.svg')
-                setDate(<DAYUTC date={profile['date_register']}/>)
-                setTime(<TIMEUTC time={profile['date_register']}/>)
+                setDate(<DayJSX date={profile['date_register']}/>)
+                setTime(<TimeJSX time={profile['date_register']}/>)
                 setDoctorID(profile['id_doctor'])
                 setStation(profile['station'])
 
@@ -52,8 +52,8 @@ const ShowDetailFarmer = (props) => {
                 
                 setFullname(profile['fullname'])
                 setImg((profile['img']['data'] != '') ? profile['img']['data'] : '/farmer-svgrepo-com.svg')
-                setDate(<DAYUTC date={profile['date_register']}/>)
-                setTime(<TIMEUTC time={profile['date_register']}/>)
+                setDate(<DayJSX date={profile['date_register']}/>)
+                setTime(<TimeJSX time={profile['date_register']}/>)
                 setDoctorID(profile['id_doctor'])
                 setStation(profile['station'])
 

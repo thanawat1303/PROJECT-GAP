@@ -454,79 +454,153 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
         } else res.send("error auth")
     })
 
-    app.post('/api/farmer/formplant/edit' , (req:any , res:any)=>{
+    app.post('/api/farmer/formplant/edit' , async (req:any , res:any)=>{
         if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
             let con = Database.createConnection(listDB)
-            con.connect(( err:any )=>{
-                if (err) {
-                    dbpacket.dbErrorReturn(con, err, res);
-                    console.log("connect");
-                    return 0;
-                }
-
-                con.query(`
-                            SELECT formplant.id
+            try {
+                const auth : any = await authCheck(con , dbpacket , res , req , LINE)
+                con.query(` 
+                            SELECT formplant.*
                             FROM formplant , 
                                 (
-                                    SELECT id_farmHouse FROM housefarm , 
-                                        (
-                                            SELECT uid_line FROM acc_farmer 
-                                            WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
-                                            GROUP BY uid_line
-                                        ) as farmer 
-                                    WHERE housefarm.uid_line = farmer.uid_line and housefarm.id_farmHouse = ?
+                                    SELECT id_farmHouse FROM housefarm
+                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
                                 ) as houseFarm
-                            WHERE formplant.id_farmHouse = houseFarm.id_farmHouse and formplant.id = ?
-                        ` , 
-                        [
-                            req.body['uid'] , req.body.id_farmhouse , req.body.id_formplant
-                        ] , 
+                            WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
+                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
-                                console.log("select listform");
+                                console.log("select house");
                                 return 0;
                             }
 
                             if(result[0]) {
-                                // req.body['old_content'] คือ ค่าที่ถูกแก้ไข
-                                con.query(`
-                                    INSERT INTO editformplant 
-                                        (id_form_edit , subject_form , content_edit , because_edit , 
-                                            id_doctor_scan , note_edit)
-                                        VALUES (? , ? , ? , ? ,  , "" , "")
-                                        `[
-                                            req.body.id_formplant , 
-                                            req.body['subject'] , 
-                                            req.body['old_content'] ,
-                                            req.body['because']
-                                        ] , (err : any , correct : any)=>{
+                                let data = req.body
+                                if(!result[0].submit) {
+                                    con.query(
+                                        `
+                                        INSERT INTO editform 
+                                            ( id_form , id_doctor , because , note , status , type_form )
+                                            VALUES 
+                                            ( ? , ? , ? , ? , ? , "plant" )
+                                        ` , [ data.id_plant , "" , data.because , "" , 0 ] ,
+                                        (err : any , resultEdit : any) => {
                                             if (err) {
                                                 dbpacket.dbErrorReturn(con, err, res);
-                                                console.log("insert edit");
+                                                console.log("insert editform");
                                                 return 0;
                                             }
 
-                                            con.query(
-                                                `
-                                                    UPDATE formplant SET ? = ? 
-                                                    WHERE id = ? 
-                                                ` , [
-                                                        req.body['subject'],
-                                                        req.body['new_content'],
-                                                        req.body.id_formplant
-                                                    ] , (err : any , complete : any)=>{
+                                            if(resultEdit.insertId > 0) {
+                                                const arrUpdate = new Array
+                                                let checkerr = false
+                                                for(let subject in data.dataChange) {
+                                                    con.query(
+                                                        `
+                                                        INSERT INTO detailedit
+                                                            (id_edit , subject_form , old_content)
+                                                            VALUES 
+                                                            ( ? , ? , ?)
+                                                        ` , [ resultEdit.insertId , subject , result[0][subject] ] ,
+                                                        (err : any , Edit : any) => {
+                                                            if (err) {
+                                                                dbpacket.dbErrorReturn(con, err, res);
+                                                                console.log("insert detailedit");
+                                                                return 0;
+                                                            }
+
+                                                            if( Edit.insertId ) {
+                                                                arrUpdate.push(`${subject}="${data.dataChange[subject]}"`)
+                                                                if(arrUpdate.length == data.num) {
+                                                                    let strUpdate = arrUpdate.join(" , ")
+                                                                    con.query(
+                                                                        `
+                                                                        UPDATE formplant 
+                                                                        SET ${strUpdate}
+                                                                        WHERE id = ?
+                                                                        ` , [ data.id_plant ] , 
+                                                                        (err : any , update : any) => {
+                                                                            if (err) {
+                                                                                dbpacket.dbErrorReturn(con, err, res);
+                                                                                console.log("update form");
+                                                                                return 0;
+                                                                            }
+                                                                            con.end()
+                                                                            res.send("133")
+                                                                        }
+                                                                    )
+                                                                }
+                                                            } else {
+                                                                checkerr = true
+                                                            }
+                                                        }
+                                                    )
+                                                    if(checkerr) {
                                                         con.end()
-                                                        if(complete.changeRow == 1) res.send("133")
-                                                        else res.send("130")
-                                                    })
-                                        })
-                            } else {
+                                                        res.send("edit")
+                                                        break
+                                                    }
+                                                }
+                                            } else {
+                                                con.end()
+                                                res.send("edit")
+                                            }
+                                        }
+                                    )
+                                }
+                                else {
+                                    con.end()
+                                    res.send("submit")
+                                }
+                            }
+                            else {
                                 con.end()
-                                res.send("not found")
+                                res.send("not")
                             }
                         })
-            })
+            } catch (err) {
+                console.log(err)
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+        } else res.send("error auth")
+    })
+
+    app.post('/api/farmer/formplant/edit/list' , async (req:any , res:any)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+
+            try {
+                const auth : any = await authCheck(con , dbpacket , res , req , LINE)
+                con.query(` 
+                            SELECT * FROM editform , 
+                            (
+                                SELECT formplant.id
+                                FROM formplant , 
+                                    (
+                                        SELECT id_farmHouse FROM housefarm
+                                        WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    ) as houseFarm
+                                WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
+                            ) as formplant
+                            WHERE editform.id_form = formplant.id and type_form = "plant"
+                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant ] , 
+                        (err : any , result : any)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("select plant editform");
+                                return 0;
+                            }
+                            con.end()
+                            res.send(result)
+                        })
+            } catch (err) {
+                con.end()
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+
         } else res.send("error auth")
     })
     // end formplant

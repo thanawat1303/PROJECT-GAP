@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-import { DAYUTC } from "../../../../src/assets/js/module";
+import { DayJSX } from "../../../../src/assets/js/module";
 import PopupInsertFactor from "./InsertFactor";
 import Template from "../TemplateList";
 import { CloseAccount } from "../../method";
@@ -48,7 +48,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                     <div className="row">
                         <div className="name">{val.name}</div>
                         <div className="date">
-                            <DAYUTC DATE={val.date} TYPE="normal"/>
+                            <DayJSX DATE={val.date} TYPE="normal"/>
                         </div>
                     </div>
                     <div className="row">
@@ -105,7 +105,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                     </div>
                     <div className="row">
                         <div className="date-safe">
-                            <DAYUTC DATE={val.date_safe} TEXT="วันที่ปลอดภัย" TYPE="small"/>
+                            <DayJSX DATE={val.date_safe} TEXT="วันที่ปลอดภัย" TYPE="small"/>
                         </div>
                     </div>
                     <div className="row">
@@ -114,7 +114,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                         <div className={`manage-form content-${val.id}`}>
                             <div>รายละเอียด</div>
                             <div onClick={()=>PopupEditForm(val.id , val)}>แก้ไขข้อมูล</div>
-                            <div>ประวัติแก้ไข</div>
+                            <div onClick={()=>HistoryEdit(val.id)}>ประวัติแก้ไข</div>
                         </div>
                     </div>
                 </section>

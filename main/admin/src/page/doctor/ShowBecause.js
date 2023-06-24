@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
-import { DAYUTC, Loading } from "../../../../../src/assets/js/module";
+import { DayJSX, Loading } from "../../../../../src/assets/js/module";
 
 import "../../assets/style/page/doctor/Because.scss"
 const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
@@ -41,7 +41,7 @@ const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
                     <td style={{width : "60%"}}>
                         <div>
                             <span className="date">
-                                <DAYUTC DATE={value.date} TYPE="normal"/>
+                                <DayJSX DATE={value.date} TYPE="normal"/>
                             </span>
                             <span>
                                 {value.because_text}
@@ -55,7 +55,7 @@ const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
                     <td style={{width : "80%"}}>
                         <div>
                             <span className="date">
-                                <DAYUTC DATE={value.date} TYPE="normal"/>
+                                <DayJSX DATE={value.date} TYPE="normal"/>
                             </span>
                             <span>
                                 {value.because_text}

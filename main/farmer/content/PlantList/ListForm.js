@@ -34,21 +34,25 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
                                     <input readOnly value={val.type_plant ? val.type_plant : "ไม่ระบุ"}></input>
                                 </div>
                                 <div className="date">
-                                    <span>วันที่ปลูก <DayJSX DATE={val.date_plant} TYPE="short"/></span>
+                                    <span>วันที่ปลูก</span>
+                                    <DayJSX DATE={val.date_plant} TYPE="short"/>
                                 </div>
                             </div>
                             <div className="body">
                                 <div className="content">
-                                    <span>{val.name_plant}</span>
+                                    {val.name_plant}
                                 </div>
                                 <div className="content">
-                                    <input readOnly value={`จำนวน ${val.qty} ต้น`}></input>
+                                    <span>จำนวน :</span>
+                                    <div>{`${val.qty} ต้น`}</div>
+                                    {/* <input readOnly value=></input> */}
                                 </div>
                                 
                             </div>
                             <div className="bottom">
                                 <div className="content">
-                                    <span>{`รุ่นที่ ${val.generation}`}</span>
+                                    <span>รุ่นที่ :</span>
+                                    <div>{val.generation}</div>
                                 </div>
                                 <div className="bt">
                                     <button onClick={()=>OpenMenuPlant(val.id)}>บันทึกข้อมูล</button>

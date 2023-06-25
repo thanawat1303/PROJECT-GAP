@@ -15,7 +15,8 @@ CREATE TABLE line_chat_gap.detailEdit (
     id_detail INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_edit INT NOT NULL,
     subject_form varchar(20) NOT NULL , -- subject of content on the form / หัวข้อที่ถูกแก้ไขเนื้อหาในฟอร์ม เช่น หัวข้อ พื้นที่
-    old_content varchar(100) NOT NULL -- this content was edit / ข้อมูลที่ถูกแก้ไข โดยข้อมูลปัจจุบันจะถูกบันทึกลงในฟอร์ม
+    old_content varchar(100) NOT NULL, -- this content was edit / ข้อมูลที่ถูกแก้ไข โดยข้อมูลปัจจุบันจะถูกบันทึกลงในฟอร์ม
+    new_content varchar(100) NOT NULL
 );
 
 -- ALTER TABLE line_chat_gap.editFormPlant

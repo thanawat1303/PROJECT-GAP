@@ -500,10 +500,10 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                                     con.query(
                                                         `
                                                         INSERT INTO detailedit
-                                                            (id_edit , subject_form , old_content)
+                                                            (id_edit , subject_form , old_content , new_content)
                                                             VALUES 
-                                                            ( ? , ? , ?)
-                                                        ` , [ resultEdit.insertId , subject , result[0][subject] ] ,
+                                                            ( ? , ? , ? , ?)
+                                                        ` , [ resultEdit.insertId , subject , result[0][subject] , data.dataChange[subject] ] ,
                                                         (err : any , Edit : any) => {
                                                             if (err) {
                                                                 dbpacket.dbErrorReturn(con, err, res);
@@ -576,7 +576,6 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 const auth : any = await authCheck(con , dbpacket , res , req , LINE)
                 const type = req.body.id_edit ? "*" : "id_edit" ;
                 const where = req.body.id_edit ? `and editform.id_edit = '${req.body.id_edit}'` : "" ;
-                console.log(type)
                 con.query(` 
                             SELECT editform.${type} FROM editform , 
                             (
@@ -589,6 +588,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                             ) as formplant
                             WHERE editform.id_form = formplant.id and type_form = "plant" ${where}
+                            ORDER BY date DESC
                         ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant ] , 
                         (err : any , result : any)=>{
                             if (err) {
@@ -596,7 +596,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 console.log("select plant editform");
                                 return 0;
                             }
-                            
+
                             if(req.body.id_edit) {
                                 con.query(
                                     `
@@ -613,7 +613,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                         con.end()
                                         res.send({
                                             head : result[0] ,
-                                            detail : detail[0]
+                                            detail : detail
                                         })
                                     }
                                     )
@@ -825,10 +825,10 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                                     con.query(
                                                         `
                                                         INSERT INTO detailedit
-                                                            (id_edit , subject_form , old_content)
+                                                            (id_edit , subject_form , old_content , new_content)
                                                             VALUES 
-                                                            ( ? , ? , ?)
-                                                        ` , [ resultEdit.insertId , subject , result[0][subject] ] ,
+                                                            ( ? , ? , ? , ?)
+                                                        ` , [ resultEdit.insertId , subject , result[0][subject] , data.dataChange[subject] ] ,
                                                         (err : any , Edit : any) => {
                                                             if (err) {
                                                                 dbpacket.dbErrorReturn(con, err, res);
@@ -942,7 +942,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                         con.end()
                                         res.send({
                                             head : result[0] ,
-                                            detail : detail[0]
+                                            detail : detail
                                         })
                                     }
                                     )

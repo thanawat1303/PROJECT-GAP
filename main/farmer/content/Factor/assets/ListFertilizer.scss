@@ -1,221 +1,275 @@
 $FontText : 5vw;
-.plant {
-    .list-factor-content {
-        width: 90vw;
-        background-color: #daf1ee;
-        padding: 0px 8px;
-        border-radius: 18px;
-        margin-bottom: 10px;
-        box-shadow: 0px 2px 2px #5c807b;
-        .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            font-family: Sans-font;
-            font-size: 5vw;
-            margin: 1.3vw 0px;
-
-            .date {
+.farm {
+    .plant {
+        .list-factor-content {
+            width: 90vw;
+            background-color: #daf1ee;
+            padding: 0px 8px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            box-shadow: 0px 2px 2px #5c807b;
+            .row {
                 display: flex;
-                justify-content: end;
-                align-items: center;
-                input {
-                    font-family: Sans-font;
-                    width: 90%;
-                    text-align: end;
-                    border: 0;
-                    background-color: transparent;
-                    outline: 0;
-                }
-            }
-
-            .date-safe {
-                justify-content: start;
-                width: 100%;
-                input {
-                    display: flex;
-                    font-family: Sans-font;
-                    border: 0;
-                    width: 100%;
-                    padding: 0;
-                    background-color: transparent;
-                }
-            }
-
-            button {
+                justify-content: space-between;
+                align-items: start;
+                position: relative;
+                font-family: Sans-font;
                 font-size: 5vw;
-                font-family: Sans-font;
-                border: 0;
-                border-radius: 15px;
-                padding: 0px 18px;
-                font-weight: 900;
-                background-color: rgb(251, 186, 186);
-                box-shadow: 2px 2px 2px gray;
-            }
-
-            .manage-form {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                background-color: white;
-                border-radius: 10px;
-                box-shadow: 0px 2px 2px rgb(179, 179, 179);
-                bottom: 0em;
-                right: 5.5em;
-                opacity: 0;
-                visibility: hidden;
-                transition: 0.5s opacity , 0.5s visibility;
-
-                div {
-                    padding: 0.1em 0.5em;
-                    margin: 0.1em 0px;
+                margin: 1.3vw 0px;
+                
+                .name {
+                    font-weight: 900;
+                    font-size: 7vw;
                 }
-
-            }
-
-            .manage-form[show=""] {
-                opacity: 1;
-                visibility: visible;
-            }
-        }
-    }
-
-    .popup-add{
-        z-index: 10;
-        .popup-content-fertilizer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            width: 100%;
-
-            .head {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 8vw;
-                font-weight: 900;
-                font-family: Sans-font;
-                // height: 10%;
-                background: linear-gradient(180deg , white , transparent);
-                border-radius: 15px;
-                box-shadow: 0px 0px 50px white;
-                padding: 0px 15px;
-            }
-
-            .form {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                height: 90%;
-                width: 100%;
-                .head-form {
+    
+                .date {
                     display: flex;
-                    justify-content: center;
+                    flex-direction: column;
+                    justify-content: end;
                     align-items: center;
-                    z-index: 5;
+
                     span {
-                        background-color: #ffe5a1;
-                        border-radius: 15px;
-                        padding: 5px 15px;
-                        font-family: Sans-font;
+                        width: 100%;
+                        text-align: end;
+                        font-size: 4vw;
                         font-weight: 900;
-                        font-size: 6vw;
+                    }
+                    input {
+                        font-family: Sans-font;
+                        width: 90%;
+                        text-align: end;
+                        border: 0;
+                        background-color: transparent;
+                        outline: 0;
+                        font-size: 4vw;
                     }
                 }
 
-                .body-content {
-                    background-color: #DAF1EE;
-                    border-radius: 18px;
+                span {
+                    font-weight: 900;
+                    margin-right: 3px;
+                }
+    
+                .date-safe {
+                    display: flex;
+                    justify-content: start;
+                    width: 100%;
+                    input {
+                        display: flex;
+                        font-family: Sans-font;
+                        border: 0;
+                        width: 58%;
+                        padding: 0;
+                        background-color: transparent;
+                    }
+                }
+    
+                button {
+                    font-size: 5vw;
+                    font-family: Sans-font;
+                    border: 0;
+                    border-radius: 15px;
+                    padding: 0px 18px;
+                    font-weight: 900;
+                    background-color: rgb(251, 186, 186);
+                    box-shadow: 2px 2px 2px gray;
+                }
+    
+                .manage-form {
+                    display: flex;
+                    flex-direction: column;
+                    position: absolute;
+                    background-color: white;
+                    border-radius: 10px;
+                    box-shadow: 0px 2px 2px rgb(179, 179, 179);
+                    bottom: 0em;
+                    right: 5.5em;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: 0.5s opacity , 0.5s visibility;
+    
+                    div {
+                        padding: 0.1em 0.5em;
+                        margin: 0.1em 0px;
+                    }
+    
+                }
+    
+                .manage-form[show=""] {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    
+        .popup-add{
+            z-index: 10;
+            .popup-content-fertilizer {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 100%;
+    
+                .head {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 8vw;
+                    font-weight: 900;
+                    font-family: Sans-font;
+                    // height: 10%;
+                    background: linear-gradient(180deg , white , transparent);
+                    border-radius: 15px;
+                    box-shadow: 0px 0px 50px white;
+                    padding: 0px 15px;
+                }
+    
+                .form {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                    align-items: center;
-                    padding: 10px 10px;
-                    padding-top: 40px;
-                    width: 95%;
-                    height: 80%;
-                    margin: -25px auto;
-                    margin-bottom: 0px;
-
-                    .frame-content {
-                        overflow-y: scroll;
-                        font-family: Sans-font;
-
-                        .content {
-                            display: flex;
-                            flex-direction: column;
-                            width: 99%;
-                            .step {
+                    height: 90%;
+                    width: 100%;
+                    .head-form {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 5;
+                        span {
+                            background-color: #ffe5a1;
+                            border-radius: 15px;
+                            padding: 5px 15px;
+                            font-family: Sans-font;
+                            font-weight: 900;
+                            font-size: 6vw;
+                        }
+                    }
+    
+                    .body-content {
+                        background-color: #DAF1EE;
+                        border-radius: 18px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 10px 10px;
+                        padding-top: 40px;
+                        width: 95%;
+                        height: 80%;
+                        margin: -25px auto;
+                        margin-bottom: 0px;
+    
+                        .frame-content {
+                            overflow-y: scroll;
+                            font-family: Sans-font;
+    
+                            .content {
                                 display: flex;
-                                width: 100%;
-                                margin-bottom: 5px;
-                                .num {
-                                    font-size: $FontText;
-                                    margin-right: 5px;
-                                }
-
-                                .body {
+                                flex-direction: column;
+                                width: 99%;
+                                .step {
+                                    display: flex;
                                     width: 100%;
-                                    .row {
-                                        display: flex;
-
-                                        .frame-textbox {
+                                    margin-bottom: 5px;
+                                    .num {
+                                        font-size: $FontText;
+                                        margin-right: 5px;
+                                    }
+    
+                                    .body {
+                                        width: 100%;
+                                        .row {
                                             display: flex;
-                                            justify-content: space-between;
-                                            align-items: center;
-                                            width: 100%;
-                                            margin-bottom: 10px;
-                                            padding-bottom: 10px;
-                                            border-bottom:1px solid green ;
-
-                                            span {
-                                                font-size: $FontText;
-                                                width: 40%;
-                                            }
-                                            input , select , textarea {
-                                                margin-left: 2px;
-                                                font-size: $FontText;
-                                                font-family: Sans-font;
-                                                text-align: center;
-                                                border: 0;
-                                                border-radius: 8px;
-                                                width: 50%;
-                                                border: 2px solid transparent;
-                                            }
-
-                                            textarea {
-                                                text-align: center;
-                                            }
-
-                                            .full {
-                                                width: 100%;
+    
+                                            .frame-textbox {
                                                 display: flex;
-                                            }
-
-                                            .choose {
-                                                display: flex;
-                                                padding-left: 5px;
-                                                width: 100%;
-                                                label {
-                                                    width: 100%;
-
-                                                    input {
-                                                        margin:0px 5px;
-                                                        width: 100%;
-                                                    }
-                                                }
-                                            }
-
-                                            .content-colume-input {
-                                                display: flex;
-                                                justify-content: end;
+                                                justify-content: space-between;
                                                 align-items: center;
                                                 width: 100%;
-                                                margin-top: 10px;
-
-                                                .input-select-popup {
+                                                margin-bottom: 10px;
+                                                padding-bottom: 10px;
+                                                border-bottom:1px solid green ;
+    
+                                                span {
+                                                    font-size: $FontText;
+                                                    width: 40%;
+                                                }
+                                                input , select , textarea {
+                                                    margin-left: 2px;
+                                                    font-size: $FontText;
+                                                    font-family: Sans-font;
+                                                    text-align: center;
+                                                    border: 0;
+                                                    border-radius: 8px;
+                                                    width: 50%;
+                                                    border: 2px solid transparent;
+                                                }
+    
+                                                textarea {
+                                                    text-align: center;
+                                                }
+    
+                                                .full {
+                                                    width: 100%;
+                                                    display: flex;
+                                                }
+    
+                                                .choose {
+                                                    display: flex;
+                                                    padding-left: 5px;
+                                                    width: 100%;
+                                                    label {
+                                                        width: 100%;
+    
+                                                        input {
+                                                            margin:0px 5px;
+                                                            width: 100%;
+                                                        }
+                                                    }
+                                                }
+    
+                                                .content-colume-input {
+                                                    display: flex;
+                                                    justify-content: end;
+                                                    align-items: center;
+                                                    width: 100%;
+                                                    margin-top: 10px;
+    
+                                                    .input-select-popup {
+                                                        position: relative;
+                                                        width: 50%;
+        
+                                                        input {
+                                                            width: 100%;
+                                                        }
+        
+                                                        .list-input-search {
+                                                            display: flex;
+                                                            flex-direction: column;
+                                                            overflow: scroll;
+                                                            max-height: 50px;
+                                                            position: absolute;
+                                                            background-color: white;
+                                                            width: 100%;
+                                                            border-radius: 8px;
+                                                            box-shadow: 0px 4px 4px rgb(181, 181, 181);
+                                                            padding: 1vw;
+                                                            z-index: 2;
+        
+                                                            span {
+                                                                width: 100%;
+                                                            }
+        
+                                                        }
+        
+                                                        .list-input-search[remove=""] {
+                                                            display: none;
+                                                        }
+                                                    }
+                                                }
+    
+                                                .input-select-other {
                                                     position: relative;
                                                     width: 50%;
     
@@ -247,73 +301,62 @@ $FontText : 5vw;
                                                     }
                                                 }
                                             }
-
-                                            .input-select-other {
-                                                position: relative;
-                                                width: 50%;
-
-                                                input {
-                                                    width: 100%;
-                                                }
-
-                                                .list-input-search {
-                                                    display: flex;
-                                                    flex-direction: column;
-                                                    overflow: scroll;
-                                                    max-height: 50px;
-                                                    position: absolute;
-                                                    background-color: white;
-                                                    width: 100%;
-                                                    border-radius: 8px;
-                                                    box-shadow: 0px 4px 4px rgb(181, 181, 181);
-                                                    padding: 1vw;
-                                                    z-index: 2;
-
-                                                    span {
-                                                        width: 100%;
-                                                    }
-
-                                                }
-
-                                                .list-input-search[remove=""] {
-                                                    display: none;
-                                                }
+    
+                                            .colume {
+                                                flex-direction: column;
                                             }
-                                        }
-
-                                        .colume {
-                                            flex-direction: column;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-
-                .bt-form {
-                    display: flex;
-                    justify-content: space-evenly;
-                    align-items: center;
-                    margin-top: 5%;
-                    height: 8%;
-                    button {
-                        background-color: #23dd36;
-                        border-radius: 5px;
-                        border: 0;
-                        width: 30vw;
-                        font-weight: 900;
-                        font-size: 6vw;
-                        font-family: Sans-font;
-                        padding: 3px 0px;
-                    }
-
-                    button[no=""] {
-                        background-color: #ACFFB4;
-                        color: rgba(16, 16, 16, 0.3);
+    
+                    .bt-form {
+                        display: flex;
+                        justify-content: space-evenly;
+                        align-items: center;
+                        margin-top: 5%;
+                        height: 8%;
+                        button {
+                            background-color: #23dd36;
+                            border-radius: 5px;
+                            border: 0;
+                            width: 30vw;
+                            font-weight: 900;
+                            font-size: 6vw;
+                            font-family: Sans-font;
+                            padding: 3px 0px;
+                        }
+    
+                        button[no=""] {
+                            background-color: #ACFFB4;
+                            color: rgba(16, 16, 16, 0.3);
+                        }
                     }
                 }
             }
         }
+    }
+    
+    .popup-detail-edit-factor {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.5s opacity , 0.5s visibility;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .popup-detail-edit-factor[s=""] {
+        opacity: 1;
+        visibility: visible;
     }
 }

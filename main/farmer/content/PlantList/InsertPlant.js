@@ -6,6 +6,7 @@ import { CloseAccount } from "../../method";
 let TimeOut = 0
 
 const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage}) =>{
+    const DateNowOnForm = `${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`
 
     const FormContent = useRef()
 
@@ -65,13 +66,13 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                 try {
                     const Object = JSON.parse(Data)
                     Generation.current.value = Object[0].generation
-                    DateGlow.current.value = Object[0].date_glow
-                    DatePlant.current.value = Object[0].date_plant
+                    // DateGlow.current.value = Object[0].date_glow
+                    // DatePlant.current.value = Object[0].date_plant
                     PositionW.current.value = Object[0].posi_w
                     PositionH.current.value = Object[0].posi_h
                     Qty.current.value = Object[0].qty
                     Area.current.value = Object[0].area
-                    DateOut.current.value = Object[0].date_harvest
+                    // DateOut.current.value = Object[0].date_harvest
                     System.current.value = Object[0].system_glow
                     Water.current.value = Object[0].water
                     WaterStep.current.value = Object[0].water_flow
@@ -273,7 +274,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                     <div className="row">
                                         <label className="frame-textbox">
                                             <span>วันที่ปลูก</span>
-                                            <input onInput={ChangeCHK} ref={DatePlant} type="date" placeholder="ว/ด/ป"></input>
+                                            <input onInput={ChangeCHK} defaultValue={DateNowOnForm} ref={DatePlant} type="date" placeholder="ว/ด/ป"></input>
                                         </label>
                                     </div>
                                     <div className="row">

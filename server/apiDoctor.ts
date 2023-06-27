@@ -195,36 +195,33 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
             if(result['result'] === "pass") {
-                let queryType = (req.body['type'] === 'list') ? 
-                                    `
-                                    SELECT acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img FROM acc_farmer , 
-                                        (
-                                            SELECT MAX(id_table) AS id_table , id_farmer , MAX(date_register) AS date_register
-                                            FROM acc_farmer 
-                                            WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 
-                                            GROUP BY id_farmer 
-                                            ORDER BY date_register
-                                        ) AS MaxRowDate
-                                    WHERE acc_farmer.id_table = MaxRowDate.id_table LIMIT 30;
-                                    ` 
-                                    :
-                                (req.body['type'] === 'push') ? 
-                                    `
-                                    SELECT acc_farmer.id_table , acc_farmer.fullname , acc_farmer.img , acc_farmer.date_register , LineID.countID
-                                    FROM acc_farmer , (
-                                        SELECT MAX(date_register) as DateLast , uid_line , MAX(id_table) as id_table , COUNT(uid_line) as countID
-                                        FROM acc_farmer 
-                                        WHERE station = "${result['data']['station_doctor']}" and register_auth = 0 
-                                        GROUP BY uid_line
-                                    ) AS LineID
-                                    WHERE acc_farmer.id_table=LineID.id_table and acc_farmer.date_register=LineID.DateLast
-                                    ORDER BY acc_farmer.date_register 
-                                    DESC LIMIT 30;
-                                    ` 
-                                    : 
-                                (req.body['type'] === 'profile') ? 
-                                    `SELECT id_table , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 and id_farmer=${req.body['farmer']} ORDER BY date_register DESC;` : ""
-                con.query(queryType , (err:any , result:any)=>{
+                let queryType = (!req.body.approve) ?
+                    `
+                    SELECT id_table , img , date_register , fullname
+                    FROM acc_farmer 
+                    WHERE station = "${result['data']['station_doctor']}" and register_auth = 0
+                    ORDER BY date_register ASC
+                    LIMIT 30;
+                    `
+                    : 
+                    `
+                    SELECT acc_farmer.id_table , acc_farmer.img , acc_farmer.fullname , 
+                    (
+                        SELECT fullname_doctor 
+                        FROM acc_doctor
+                        WHERE acc_doctor.id_doctor = acc_farmer.id_doctor
+                    ) as name_doctor
+                    FROM acc_farmer , (
+                        SELECT MAX(date_register) as DateLast , link_user
+                        FROM acc_farmer 
+                        WHERE station = "${result['data']['station_doctor']}" and register_auth = 1
+                        GROUP BY link_user
+                    ) as farmer_main
+                    WHERE acc_farmer.link_user = farmer_main.link_user 
+                            and acc_farmer.date_register = farmer_main.DateLast
+                    LIMIT 30;
+                    `
+                con.query(queryType, (err:any , result:any)=>{
                     if (err){
                         dbpacket.dbErrorReturn(con , err , res)
                         return 0
@@ -233,6 +230,35 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                     con.end()
                     res.send(result)
                 })
+                // let queryType = (req.body['type'] === 'list') ? 
+                //                     `
+                //                     SELECT acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img FROM acc_farmer , 
+                //                         (
+                //                             SELECT MAX(id_table) AS id_table , id_farmer , MAX(date_register) AS date_register
+                //                             FROM acc_farmer 
+                //                             WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 
+                //                             GROUP BY id_farmer 
+                //                             ORDER BY date_register
+                //                         ) AS MaxRowDate
+                //                     WHERE acc_farmer.id_table = MaxRowDate.id_table LIMIT 30;
+                //                     ` 
+                //                     :
+                //                 (req.body['type'] === 'push') ? 
+                //                     `
+                //                     SELECT acc_farmer.id_table , acc_farmer.fullname , acc_farmer.img , acc_farmer.date_register , LineID.countID
+                //                     FROM acc_farmer , (
+                //                         SELECT MAX(date_register) as DateLast , uid_line , MAX(id_table) as id_table , COUNT(uid_line) as countID
+                //                         FROM acc_farmer 
+                //                         WHERE station = "${result['data']['station_doctor']}" and register_auth = 0 
+                //                         GROUP BY uid_line
+                //                     ) AS LineID
+                //                     WHERE acc_farmer.id_table=LineID.id_table and acc_farmer.date_register=LineID.DateLast
+                //                     ORDER BY acc_farmer.date_register 
+                //                     DESC LIMIT 30;
+                //                     ` 
+                //                     : 
+                //                 (req.body['type'] === 'profile') ? 
+                //                     `SELECT id_table , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 and id_farmer=${req.body['farmer']} ORDER BY date_register DESC;` : ""
             }
         }).catch((err:any)=>{
             con.end()

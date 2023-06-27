@@ -1,134 +1,142 @@
-#box-login-doctor {
-
-    height: 100%;
-
-    .content-login {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 100%;
-        width: 50%;
-        max-width: 300px;
-        text-align: center;
-        margin: auto auto;
-
-        button {
-            margin-top: 15px;
-            border-radius: 12px;
-            padding: 2px 0px;
-            
-            font-family: Sans-font;
-            font-size: 16pt;
-        }
-
-        .content-pw {
-            transition: 0.25s;
-        }
-
-        label {
-
-            margin: 5px 0px;
-            display: flex;
-            justify-content: end;
-
-            .label-login {
-                position: absolute;
-                transition: 0.3s;
-                transform: translate( -5px , 0px );
-                font-family: Sans-font;
-                font-size: 19px;
-                font-weight: 900;
-                z-index: -1;
-            }
-
-            .inputForm {
-                border-radius: 12px;
-                border: 0.5px solid greenyellow;
-                border-bottom: 4px solid greenyellow;
-                box-shadow: 0px 0px 2.5px greenyellow;
-                outline: 0px;
-                padding: 2px 10px;
-                width: 100%;
-                height: 35.8px;
-                font-family: Sans-font;
-                font-weight: 900;
-                font-size: 14pt;
-            }
-        }
+#doctor {
+    .login-doctor * {
+        -webkit-user-drag: none;
+    
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
-
-    #form-personal {
+    .login-doctor {
         display: flex;
-        position: fixed;
+        justify-content: center;
         align-items: center;
-        justify-content: center;
-        width: 100%;
+        flex-direction: column;
         height: 100%;
-        background-color: rgba(255, 255, 255, 0);
-        backdrop-filter: blur(8px);
-        z-index: 5;
-        transition: 0.5s opacity ,0.5s visibility;
-
-        opacity: 0;
-        visibility: hidden;
-
-        #account-error {
-            position: absolute;
+        width: 100%;
+    
+        form {
             display: flex;
-            z-index: 5;
-            background-color: transparent;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            padding: 20px 50px;
+            border-radius: 30px;
+    
+            .Logo-App {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 18px;
+                img {
+                    width: 80px;
+                }
+    
+                span {
+                    font-size: 45px;
+                    font-family: Sans-font;
+                    font-weight: 900;
+                    margin-left: 15px;
+                    padding-top: 8px;
+                    letter-spacing: 3px;
+                    color: #379B7A;
+                }
+            }
+    
+            label {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #F3F3F3;
+                border-radius: 10px;
+                margin: 8px 0px;
+                padding: 0px 0px;
+                width: 292.4px;
+                height: 52.4px;
+                outline: 2px solid transparent;
+                span {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 0px 10px;
+                    svg {
+                        color: #22C7A9;
+                        font-size: 30px;
+                    }
+    
+                    svg[emply=""] {
+                        animation: emplyInput 0.5s 0s alternate;
+                    }
+                }
+    
+                input {
+                    display: flex;
+                    border: 0;
+                    padding-right: 10px;
+                    width: 100%;
+                    height: 100%;
+                    font-family: Sans-font;
+                    font-size: 20px;
+                    background-color: transparent;
+                    outline: 0;
+                    font-weight: 900;
+                }
+                input[type="password"]::placeholder {
+                    font-family: Sans-font;
+                }
+                input[type="password"] {
+                    font-family: main-font;
+                }
+            }
+    
+            .empty {
+                box-shadow: 0px 2px 2px rgba(255, 0, 0, 0.719) !important;
+            }
+    
+            button {
+                margin-top: 15px;
+                border-radius: 50px;
+                padding: 2px 55px;
+                background-color: #379B7A;
+                font-family: Sans-font;
+                border: 0;
+                outline: 0;
+                color: white;
+                font-weight: 900;
+                font-size: 15pt;
+                box-shadow: 0px 4px 4px rgb(194, 194, 194);
+            }
+        }
+
+        .error-login {
+            color: white;
+            position: absolute;
+            font-family: Sans-font;
+            font-weight: 900;
+            font-size: 18px;
+            margin: 0;
+            opacity: 0;
+            visibility: hidden;
+            background-color: rgba(0, 0, 0, 0.259);
             backdrop-filter: blur(8px);
+            padding: 5px 10px;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.5s opacity , 0.5s visibility;
+            box-shadow: 0px 4px 4px rgba(255, 0, 0, 0.829);
         }
-
-        #form {
-            #id-doctor {
-
-            }
-
-            input[request=""]{
-                border: 2px solid red;
-            }
+        
+        .error-login[show=""] {
+            opacity: 1;
+            visibility: visible;
         }
     }
-
-    #form-personal[show=""] {
-        opacity: 1;
-        visibility: visible;
-    }
-}
-
-.moveOn {
-    transform: translate(-5px, -28px) !important;
-}
-
-.empty {
-    box-shadow: 0px 0px 5px red !important;
-}
-
-.error-login {
-    color: red;
-    font-family: Sans-font;
-    font-weight: 900;
-    font-size: 16px;
-}
-
-.Logo-App {
-    transition: 0.3s;
-    margin-bottom: 18px;
-
-    -webkit-user-drag: none;
-
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-// responsive computer
-@media only screen and (min-width: 1280px) and  (min-height: 720px) and (max-width: 1920px) and (max-height: 1080px) {
-    #box-login-doctor {
+    
+    // responsive computer
+    .login-doctor[computer=""] {
         .content-login {
             button {
                 cursor: pointer;
@@ -138,5 +146,192 @@
             }
         }
     }
-}
 
+    #form-personal-doctor {
+        * , input {
+            -webkit-user-drag: none;
+    
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    }
+
+    #form-personal-doctor {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 25px;
+        background-color: #7ae5c1;
+        border-radius: 15px;
+        box-shadow: 0px 4px 4px #398068;
+
+        .head {
+            font-size: 25px;
+            font-weight: 900;
+            font-family: Sans-font;
+        }
+
+        .form {
+            margin: 15px 0px;
+            .id {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-family: Sans-font;
+                margin-bottom: 5px;
+                background-color: white;
+                border-radius: 15px 15px 0px 0px;
+                padding: 5px 0px;
+                padding-top: 8px;
+                span {
+                    font-size: 18px;
+                    font-weight: 900;
+                }
+
+                input {
+                    text-align: center;
+                    font-family: Sans-font;
+                    border: 0;
+                    outline: 0;
+                    padding: 0;
+                    background-color: transparent;
+                    font-size: 18px;
+                }
+            }
+
+            .profile {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-family: Sans-font;
+                margin-bottom: 10px;
+                background-color: white;
+                padding: 10px;
+
+                .input-field {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    margin-bottom: 8px;
+
+                    span {
+                        width: 100%;
+                        font-size: 20px;
+                        font-weight: 900;
+                    }
+
+                    input , select {
+                        background-color: #418b72;
+                        border: 0;
+                        outline: 0;
+                        font-family: Sans-font;
+                        border-radius: 10px;
+                        padding: 5px 10px;
+                        padding-top: 7px;
+                        font-size: 18px;                        color: white;
+                        width: 100%;
+                    }
+
+                    input::placeholder {
+                        color: rgb(255, 255, 255);
+                    }
+                }
+            }
+
+            .password {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-family: Sans-font;
+                background-color: white;
+                padding: 10px;
+                border-radius: 0px 0px 15px 15px;
+
+                input {
+                    background-color: #418b72;
+                    border: 0;
+                    outline: 0;
+                    border-radius: 10px;
+                    padding: 5px 10px;
+                    font-size: 18px;
+                    color: white;
+                    text-align: center;
+                    font-family: Sans-font;
+                    width: 100%;
+                    height: 35px;
+                    border: 2px solid transparent;
+                }
+
+                input[type="password"] {
+                    font-family: main-font;
+                }
+
+                input[type="password"][err=""] {
+                    border: 2px solid red;
+                    box-shadow: 0px 0px 8px red;
+                }
+
+                input::placeholder {
+                    font-family: Sans-font;
+                    color: rgb(255, 255, 255);
+                }
+            }
+        }
+
+        .bt {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100%;
+            button {
+                border-radius: 10px;
+                width: 30%;
+                padding: 5px 0px;
+                font-family: Sans-font;
+                font-weight: 900;
+                font-size: 18px;
+                color: white;
+                border: 0;
+                cursor: pointer;
+            }
+
+            .cancel {
+                background-color: rgb(245, 76, 76);
+            }
+
+            .submit[confirm=""] {
+                background-color: #226750;
+                color: white;
+                cursor: pointer;
+            }
+
+            .submit {
+                background-color: #4b927bcf;
+                color: rgb(191, 191, 191);
+                cursor: not-allowed;
+            }
+        }
+    }
+    
+    @keyframes emplyInput {
+        0% {
+            transform: rotate(20deg);
+        }
+        50% {
+            transform: rotate(-20deg);
+        }
+        100% {
+            transform: rotate(0deg);
+        }
+    } 
+}

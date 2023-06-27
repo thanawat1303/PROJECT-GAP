@@ -123,9 +123,10 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             register_auth,
                             uid_line,
                             date_doctor_confirm,
-                            id_doctor
+                            id_doctor,
+                            link_user
                             ) 
-                        VALUES (? , ? , ? , ? , POINT(?,?) , SHA2(? , 256) , 0 , ? , "" , "")` , 
+                        VALUES (? , ? , ? , ? , POINT(?,?) , SHA2(? , 256) , 0 , ? , "" , "" , ?)` , 
                         [
                             req.body['oldID'] , 
                             `${req.body['firstname']} ${req.body['lastname']}` ,
@@ -134,6 +135,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             req.body['lat'] ,
                             req.body['lng'] ,
                             req.body['password'] ,
+                            req.session.uidFarmer ,
                             req.session.uidFarmer
                         ] , (err : any , result : any)=>{
                             if (err) {
@@ -174,11 +176,11 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 uid_line , 
                                 name_house , 
                                 img_house , 
-                                id_farmer
+                                link_user
                             )
                         VALUES (? , ? , ? , ?)` , 
                         [
-                            auth.data.uid_line , req.body['name'] , req.body['img'] , auth.data.id_farmer
+                            auth.data.uid_line , req.body['name'] , req.body['img'] , auth.data.link_user
                         ] , (err : any , insert : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -210,9 +212,9 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 const auth : any = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`
                             SELECT id_farmHouse FROM housefarm
-                            WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                            WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                         ` , [
-                                auth.data.uid_line , req.body.id_farmhouse
+                                auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse
                             ] , 
                         (err : any , result : any)=>{
                             if (err) {
@@ -259,13 +261,13 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
-                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                 ) as houseFarm
                             WHERE formplant.id_farmHouse = houseFarm.id_farmHouse ${where}
                             ORDER BY date_plant DESC
                         ` , 
                         [
-                            auth.data.uid_line , req.body.id_farmhouse
+                            auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse
                         ] , 
                         (err : any , result : any)=>{
                             if (err) {
@@ -299,12 +301,12 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
-                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                 ) as houseFarm
                             WHERE formplant.id = ?
                         ` , 
                         [
-                            auth.data.uid_line , req.body.id_farmhouse , req.body.id_form_plant
+                            auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_form_plant
                         ] , 
                         (err : any , result : any)=>{
                             if (err) {
@@ -358,14 +360,14 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
-                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                 ) as houseFarm
                             WHERE formplant.name_plant = ?
                             ORDER BY date_plant DESC
                             LIMIT 1
                         ` , 
                         [
-                            auth.data.uid_line , req.body.id_farmhouse , req.body.name_plant_list
+                            auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.name_plant_list
                         ] , 
                         (err : any , result : any)=>{
                             if (err) {
@@ -391,9 +393,9 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                 const auth : any = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`
                             SELECT id_farmHouse FROM housefarm
-                            WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                            WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                         ` , [
-                                auth.data.uid_line , req.body.id_farmhouse
+                                auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse
                             ] , 
                         (err : any , result : any)=>{
                             if (err) {
@@ -465,10 +467,10 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
-                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                 ) as houseFarm
                             WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
-                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant] , 
+                        ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -583,13 +585,13 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 FROM formplant , 
                                     (
                                         SELECT id_farmHouse FROM housefarm
-                                        WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                        WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                     ) as houseFarm
                                 WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                             ) as formplant
                             WHERE editform.id_form = formplant.id and type_form = "plant" ${where}
                             ORDER BY date DESC
-                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant ] , 
+                        ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant ] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -651,7 +653,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                     FROM formplant , 
                                         (
                                             SELECT id_farmHouse FROM housefarm
-                                            WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                            WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                         ) as houseFarm
                                     WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                                 ) as formPlant
@@ -659,7 +661,7 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             ORDER BY ${req.body.order} DESC
                         ` , 
                         [
-                            auth.data.uid_line , 
+                            auth.data.uid_line , auth.data.link_user , 
                             req.body.id_farmhouse , 
                             req.body.id_plant
                         ] , 
@@ -716,10 +718,10 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
-                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                 ) as houseFarm
                             WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
-                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant ] , 
+                        ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant ] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -788,12 +790,12 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                 FROM formplant , 
                                     (
                                         SELECT id_farmHouse FROM housefarm
-                                        WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                        WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                     ) as houseFarm
                                 WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                             ) as formplant
                             WHERE form${req.body.type_form}.id_plant = formplant.id and form${req.body.type_form}.id = ?
-                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant , req.body.id_form] , 
+                        ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant , req.body.id_form] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -911,14 +913,14 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                     FROM formplant , 
                                         (
                                             SELECT id_farmHouse FROM housefarm
-                                            WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                            WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                         ) as houseFarm
                                     WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                                 ) as formplant
                                 WHERE form${req.body.type_form}.id_plant = formplant.id and form${req.body.type_form}.id = ?
                             ) as factor
                             WHERE editform.id_form = factor.id and type_form = ? ${where}
-                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant , req.body.id_form_factor , req.body.type_form] , 
+                        ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant , req.body.id_form_factor , req.body.type_form] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -979,12 +981,12 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                             SELECT name FROM station_list WHERE station_list.id = ?
                                         ) as name_station
                                         FROM housefarm
-                                        WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                        WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                     ) as houseFarm
                                 WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                             ) as formPlant
                             WHERE success_detail.id_plant = formPlant.id
-                            ` , [ auth.data.station , auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant ] ,
+                            ` , [ auth.data.station , auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant ] ,
                             (err :any , result : any) => {
                                 if (err) {
                                     dbpacket.dbErrorReturn(con, err, res);
@@ -1022,12 +1024,12 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                                     (
                                         SELECT id_farmHouse
                                         FROM housefarm
-                                        WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                        WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                     ) as houseFarm
                                 WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
                             ) as formPlant
                             WHERE success_detail.id_plant = formPlant.id and date_of_farmer != "" and success_detail.id = ?
-                            ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant , req.body.id_table ] ,
+                            ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant , req.body.id_table ] ,
                             (err :any , result : any) => {
                                 if (err) {
                                     dbpacket.dbErrorReturn(con, err, res);
@@ -1059,10 +1061,10 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
-                                    WHERE housefarm.uid_line = ? and housefarm.id_farmHouse = ?
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                 ) as houseFarm
                             WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
-                        ` , [ auth.data.uid_line , req.body.id_farmhouse , req.body.id_plant ] , 
+                        ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_plant ] , 
                         (err : any , result : any)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);

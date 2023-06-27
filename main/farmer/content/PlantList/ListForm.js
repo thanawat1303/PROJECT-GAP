@@ -40,7 +40,8 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
                             </div>
                             <div className="body">
                                 <div className="content">
-                                    {val.name_plant}
+                                    <span>ชนิดพืช :</span>
+                                    <div>{val.name_plant}</div>
                                 </div>
                                 <div className="content">
                                     <span>จำนวน :</span>

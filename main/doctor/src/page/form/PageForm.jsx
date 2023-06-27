@@ -4,7 +4,7 @@ import FormList from "./formList";
 import "../../assets/style/page/form/Pageform.scss"
 import { ButtonMenu } from "../modules";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
-const PageForm = ({main , session , setBodyDoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) =>{
+const PageForm = ({setMain , session , setBodyDoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) =>{
     const [Body , setBody] = useState(<></>)
 
     useEffect(()=>{
@@ -15,23 +15,22 @@ const PageForm = ({main , session , setBodyDoctor , socket , type = 0 , eleImage
         eleImageCover.current.style.height = "50%"
         eleBody.current.style.height = "50%"
         setTextStatus(["หน้าหลัก" , "แบบบันทึกการปลูก"])
+        clientMo.unLoadingPage()
 
-        console.log(type)
         // if(path.length >= 2) {
-        //     if(path[1].indexOf("ap") >= 0) setBody(<FormList main={main} socket={socket} setBodyDoctor={setBodyDoctor} session={session} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} typeDataForm={"ap"}/>)
-        //     else if (path[1].indexOf("wt") >= 0) setBody(<FormList main={main} socket={socket} setBodyDoctor={setBodyDoctor} session={session} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} typeDataForm={"wt"}/>)
+        //     if(path[1].indexOf("ap") >= 0) setBody(<FormList setMain={setMain} socket={socket} setBodyDoctor={setBodyDoctor} session={session} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} typeDataForm={"ap"}/>)
+        //     else if (path[1].indexOf("wt") >= 0) setBody(<FormList setMain={setMain} socket={socket} setBodyDoctor={setBodyDoctor} session={session} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} typeDataForm={"wt"}/>)
         // }
         // else {
         //     
         // }
     } , [])
 
-    const OpenListForm = () => {
-        clientMo.post('/api/doctor/check').then((context)=>{
-            if(context) 
-                setBodyDoctor(<FormList main={main} socket={socket} setBodyDoctor={setBodyDoctor} session={session} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} type={1} LoadType={"ap"}/>)
-            else session()
-        })
+    const OpenListForm = async () => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) 
+            setBodyDoctor(<FormList setMain={setMain} socket={socket} setBodyDoctor={setBodyDoctor} session={session} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} type={1} LoadType={"ap"}/>)
+        else session()
     }
 
     return (

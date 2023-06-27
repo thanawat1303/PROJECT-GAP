@@ -1,55 +1,59 @@
-#session {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-
-    opacity: 0;
-    visibility: hidden;
-
-    z-index: 600;
-    transition: 0.5s;
-
+#doctor {
     width: 100%;
     height: 100%;
-
-    left: 0;
-    top: 0;
-    overflow: hidden;
-    background-color: rgba(159, 159, 159, 0.23);
-    backdrop-filter: blur(3px);
-
-    form {
+    #session {
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
+        position: fixed;
     
-        background-color: white;
+        opacity: 0;
+        visibility: hidden;
     
-        padding: 25px 45px;
-        border-radius: 8px;
-        box-shadow: 0px 0px 5px rgba(148, 148, 148, 0.329);
-
-        div {
-            font-size: 18pt;
-            margin-bottom: 15px;
-        }
-
-        button {
-            padding: 0px 30px;
+        z-index: 600;
+        transition: 0.5s;
+    
+        width: 100%;
+        height: 100%;
+    
+        left: 0;
+        top: 0;
+        overflow: hidden;
+        background-color: rgba(159, 159, 159, 0.23);
+        backdrop-filter: blur(3px);
+    
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        
+            background-color: white;
+        
+            padding: 25px 45px;
             border-radius: 8px;
-            font-size: 14pt;
-            cursor: pointer;
+            box-shadow: 0px 0px 5px rgba(148, 148, 148, 0.329);
+    
+            div {
+                font-size: 18pt;
+                margin-bottom: 15px;
+            }
+    
+            button {
+                padding: 0px 30px;
+                border-radius: 8px;
+                font-size: 14pt;
+                cursor: pointer;
+            }
+        } 
+    
+        form * {
+            font-family: Sans-font;
         }
-    } 
-
-    form * {
-        font-family: Sans-font;
     }
-}
-
-#session[show] {
-    opacity: 1;
-    visibility: visible;
+    
+    #session[show] {
+        opacity: 1;
+        visibility: visible;
+    }
 }

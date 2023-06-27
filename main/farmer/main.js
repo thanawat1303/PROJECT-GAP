@@ -41,11 +41,11 @@ const MainFarmer = ({socket , idLiff , Path}) => {
         clientMo.post("/api/farmer/sign" , {uid:uid , page : Path}).then((result)=>{
 
             if(Path === "signup" && result !== "error auth") {
-                if(result === "no" || result === "no account") setBody(<Signup liff={liff}/>)
+                if(result === "close" || result === "no account") setBody(<Signup liff={liff}/>)
                 else if (result === "search") setBody(<ErrorPage text={"บัญชีลงทะเบียนแล้ว"}/>)
 
             } else if (Path === "house" && result !== "error auth") {
-                if(result === "no" || result === "no account") setBody(<ErrorPage text={"ไม่พบบัญชี"}/>)
+                if(result === "close" || result === "no account") setBody(<ErrorPage text={"ไม่พบบัญชี"}/>)
                 else if (result === "search") setBody(<House liff={liff}/>)
 
             } else if (Path === "form" && result !== "error auth") {

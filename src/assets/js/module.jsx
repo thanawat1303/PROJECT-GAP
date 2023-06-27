@@ -344,6 +344,29 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
     )
 }
 
+const PopupDom = ({Ref , Body , zIndex}) => {
+    return (
+        <section ref={Ref} style={{
+            display : "flex",
+            justifyContent : "center" ,
+            alignItems : "center" ,
+            backgroundColor : "transparent" ,
+            backdropFilter : "blur(8px)",
+            position : "fixed" ,
+            width : "100%",
+            height : "100%",
+            top : "0" ,
+            left : "0" ,
+            zIndex : zIndex ,
+            opacity : "0" ,
+            visibility : "hidden" ,
+            transition : "0.5s opacity , 0.5s visibility"
+        }}>
+            {Body}
+        </section>
+    )
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -417,4 +440,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , TabLoad , HrefData}

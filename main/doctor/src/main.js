@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 
 import Login from "./Login";
@@ -6,44 +6,28 @@ import Doctor from "./Doctor";
 
 import './assets/style/main.scss'
 
-export default class MainDoctor extends Component {
-    constructor(){
-        super();
-        this.state={
-            body : <div></div>
-        }
-    }
+const MainDoctor = ({socket}) => {
+    const [Body , setBody] = useState()
 
-    componentDidMount() {
+    useEffect(()=>{
+        FetchCheck()
+    } , [])
 
+    const FetchCheck = async () => {
         if(window.location.href.indexOf("/doctor/logout") >= 0) {
             window.history.replaceState({} , "" , "/doctor")
-            clientMo.get('/api/logout').then(()=>{
-                this.setState({
-                    body : <Login socket={this.props.socket} main={this}/>
-                }) 
-                clientMo.addAction('#loading' , 'hide' , 1500)
-            })
+            const result = await clientMo.get('/api/logout')
+            setBody(<Login socket={socket} setMain={setBody}/>)
         } else {
-            clientMo.post('/api/doctor/check').then((context)=>{
-                console.log(context)
-                if(context) 
-                    this.setState({
-                        body : <Doctor main={this} socket={this.props.socket}/>
-                    })
-                else 
-                    this.setState({
-                        body : <Login socket={this.props.socket} main={this}/>
-                    }) 
-                
-                clientMo.unLoadingPage()
-            })
+            const context = await clientMo.post('/api/doctor/check')
+            if(context) {
+                setBody(<Doctor setMain={setBody} socket={socket}/>)
+            }
+            else setBody(<Login socket={socket} setMain={setBody}/>)
         }
     }
 
-    render() {
-        return (
-            this.state.body
-        )
-    }
+    return (Body)
 }
+
+export default MainDoctor

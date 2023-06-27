@@ -19,12 +19,12 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                         con.query(`
                                     SELECT id_farmHouse , name_house FROM housefarm , 
                                         (
-                                            SELECT uid_line FROM acc_farmer 
+                                            SELECT uid_line , link_user FROM acc_farmer 
                                             WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
                                             ORDER BY date_register DESC
                                             LIMIT 1
                                         ) as farmer 
-                                    WHERE housefarm.uid_line = farmer.uid_line
+                                    WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
                                     ` , 
                             [req["body"]['events'][0]["source"]["userId"]] ,
                             (err:any , result:any)=>{
@@ -40,7 +40,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                                     for (let key in result) {
                                         query.push(
                                                 {
-                                                    imageUrl : `${UrlNgrok}/imageHouse/${result[key]["id_farmHouse"]}`,
+                                                    imageUrl : `${UrlNgrok}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
                                                     action : {
                                                         type : "uri",
                                                         label : `${result[key]["name_house"]}`,
@@ -88,8 +88,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
         
     })
 
-    app.get("/imageHouse/:imagefarm" , (req : any , res : any)=>{
-
+    app.get("/image/house" , (req : any , res : any)=>{
         if(req.query.imagefarm) {
             let con = Database.createConnection(listDB)
             con.connect(( err:any )=>{
@@ -100,7 +99,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                 }
 
                 con.query(`SELECT img_house FROM housefarm WHERE id_farmHouse = ?` , 
-                    [req.param.imagefarm] ,
+                    [req.query.imagefarm] ,
                     (err:any , result:any)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);

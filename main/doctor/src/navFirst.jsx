@@ -2,10 +2,12 @@ import React, { useEffect } from "react"
 
 import "./assets/style/Navfirst.scss"
 import PageForm from "./page/form/PageForm"
-import PageExport from "./page/export/PageExport" 
+import PageExport from "./page/export/PageExport"
+import PageFarmer from "./page/farmer/PageFarmer"
+
 import { clientMo } from "../../../src/assets/js/moduleClient"
 import { ButtonMenu } from "./page/modules"
-const NavFirst = ({main , setSession , setdoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) => {
+const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) => {
     useEffect(()=>{
         if(type === 1) window.history.pushState({} , "" , "/doctor")
 
@@ -14,35 +16,38 @@ const NavFirst = ({main , setSession , setdoctor , socket , type = 0 , eleImageC
         eleBody.current.style.height = "50%"
     } , [])
 
-    const farmer = () => {
-        console.log(123)
+    const farmer = async () => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) 
+            setdoctor(<PageFarmer setMain={setMain}
+                        socket={socket} LoadType={"ap"} session={setSession} type={1} 
+                        eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
+        else setSession()
     }
 
-    const form = () => {
-        clientMo.post('/api/doctor/check').then((context)=>{
-            if(context) 
-                setdoctor(<PageForm main={main} 
-                            socket={socket} setBodyDoctor={setdoctor} session={setSession} type={1} 
-                            eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
-            else setSession()
-        })
+    const form = async () => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) 
+            setdoctor(<PageForm setMain={setMain} 
+                        socket={socket} setBodyDoctor={setdoctor} session={setSession} type={1} 
+                        eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
+        else setSession()
     }
 
     const data = () => {
         console.log(123)
     }
 
-    const exportData = () => {
-        clientMo.post('/api/doctor/check').then((context)=>{
-            if(context) 
-                setdoctor(<PageExport main={main} 
-                            socket={socket} setBodyDoctor={setdoctor} session={setSession} type={1} typeDataForm={"all"}
-                            eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
-            else setSession()
-        })
+    const exportData = async () => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) 
+            setdoctor(<PageExport setMain={setMain} 
+                        socket={socket} setBodyDoctor={setdoctor} session={setSession} type={1} typeDataForm={"all"}
+                        eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
+        else setSession()
     }
     return (
-        <section className="nav-first">
+        <section className="nav-first" onLoad={clientMo.unLoadingPage}>
             <div className="head">
                 <span>Menu</span>
             </div>

@@ -4,11 +4,9 @@ import io from "socket.io-client"
 
 import MainDoctor from "../main/doctor/src/main";
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
+const root = ReactDOM.createRoot(document.getElementById('doctor'))
 // const socket = new WebSocket();
 const socket = io(window.location.protocol+"//"+window.location.host)
-
-console.log("doctor")
 
 // socket.on('connect' , ()=>{
     

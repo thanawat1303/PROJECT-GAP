@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/export/PageExport.scss"
 import { ExportExcel } from "../../../../../src/assets/js/module";
-const PageExport = ({main , session , setBodyDoctor , socket , type = 0 , typeDataForm , eleImageCover , eleBody , setTextStatus}) => {
+const PageExport = ({setMain , session , setBodyDoctor , socket , type = 0 , typeDataForm , eleImageCover , eleBody , setTextStatus}) => {
     const [DataPull , setData] = useState({})
     const [Loading , setLoading] = useState(false)
     const [Year , setYear] = useState(<></>)

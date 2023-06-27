@@ -15,7 +15,7 @@ const apifunc = {
         let usernameDB = authAccount == "admin" ? "username" : authAccount == "acc_doctor" ? "id_doctor" : "";
         let passwordDB = authAccount == "admin" ? "password" : authAccount == "acc_doctor" ? "password_doctor" : "";
 
-        let ORDER = authAccount == "admin" ? "" : authAccount == "acc_doctor" ? "ORDER BY status_delete DECS" : "";
+        let ORDER = authAccount == "admin" ? "" : authAccount == "acc_doctor" ? "ORDER BY status_delete ASC" : "";
         connectDB.query(
           `SELECT * FROM ${authAccount} WHERE ${usernameDB}=? AND ${passwordDB}=SHA2( ? , 256) ${ORDER}`,
           [username, password],

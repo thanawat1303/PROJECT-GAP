@@ -31,9 +31,43 @@ export default function router(app : any) {
     app.get('/doctor/push' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
+
+    // farmer
+    app.get('/doctor/farmer' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/farmer/ap' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/farmer/wt' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/farmer/ap/:id_farmer' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/farmer/wt/:id_farmer' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    // farmer
+
+    // form
     app.get('/doctor/form' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
+    app.get('/doctor/form/ap' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/form/wt' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/form/ap/:id_form' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    app.get('/doctor/form/wt/:id_form' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
+    // form
+
     app.get('/doctor/export' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
@@ -58,6 +92,9 @@ export default function router(app : any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
 
+    app.get('/farmer/form' , function(req:any, res:any) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
+    });
     app.get('/farmer/form/:id_farm' , function(req:any, res:any) {
         res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });

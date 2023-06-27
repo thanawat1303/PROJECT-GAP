@@ -54,6 +54,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
     } , [])
 
     const FetchData = async () => {
+        setData([])
         const result = await clientMo.post("/api/farmer/formplant/select" , {id_formplant : id_plant , id_farmhouse : id_house})
         if(await CloseAccount(result , setPage)) {
             const Data = JSON.parse(result)
@@ -352,11 +353,11 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                 <div className="choose">
                                                     <label className="choose">
                                                         กว้าง
-                                                        <input ref={PositionW} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.posi_w} ></input>
+                                                        <input ref={PositionW} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_w} ></input>
                                                     </label>
                                                     <label className="choose">
                                                         ยาว
-                                                        <input ref={PositionH} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.posi_h}></input>
+                                                        <input ref={PositionH} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_h}></input>
                                                     </label>
                                                 </div>
                                             </label>

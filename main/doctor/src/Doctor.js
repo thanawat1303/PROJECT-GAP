@@ -12,15 +12,118 @@ import SessionOut from "./sesionOut";
 import PageForm from "./page/form/PageForm";
 import FormList from "./page/form/formList";
 import PageExport from "./page/export/PageExport";
+import PageFarmer from "./page/farmer/PageFarmer";
 
-const Doctor = ({main , socket , type = 0}) => {
+const Doctor = ({setMain , socket , isClick = 0}) => {
     const [body , setBody] = useState(<div></div>)
     const [session , setSession] = useState(<div></div>)
     const [TextPage , setTextPage] = useState([])
 
     const ImageCover = useRef()
     const BodyRef = useRef()
-    // constructor(){
+
+    useEffect(()=>{
+        if(isClick === 1) window.history.replaceState({} , "" , "/doctor")
+        
+        ChkPath(null , "web")
+        window.addEventListener("popstate" , ChkPath)
+
+        return() => {
+            window.removeEventListener("popstate" , ChkPath)
+        }
+    } , [])
+
+
+    const ChkPath = async (e , type="pop") => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) {
+            let path = window.location.pathname.split("/").filter(val=>val)
+            if(path.length === 1 && path[0] === "doctor") setBody(<NavFirst setMain={setMain} setdoctor={setBody} setSession={sessionoff} socket={socket} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+            else if(path.length >= 2 && path[0] === "doctor") {
+                if(path[1] === "form"){
+                    if(path[2] == undefined) setBody(<PageForm setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    else if(path[2] === "ap" || path[2] === "wt") {
+                        if(path[2] === "ap") {
+                            setBody(<FormList setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                        }
+                        else if(path[2] === "wt") {
+                            setBody(<FormList setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                        }
+                    }
+                } else if(path[1] === "farmer") {
+                    if(path[2] === "ap") {
+                        setBody(<PageFarmer setMain={setMain} socket={socket} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    }
+                    else if(path[2] === "wt") {
+                        setBody(<PageFarmer setMain={setMain} socket={socket} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    }
+                } else if(path[1].indexOf("export") >= 0) {
+                    setBody(<PageExport setMain={setMain} 
+                                socket={socket} setBodyDoctor={setBody} session={sessionoff}
+                                eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                }
+                
+            } else {
+                console.log(15)
+            }
+        }
+        else sessionoff()
+    }
+
+    const sessionoff = (type = false) => {
+        if(type) {
+            setMain(<Login setMain={setMain} socket={socket} isClick={1}/>)
+        } else {
+            setSession(<SessionOut/>)
+            document.getElementById('session').setAttribute('show' , '')
+        }
+    } 
+
+    return (
+        <div className="doctor" 
+        // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
+        >
+            <DesktopNev setMain={setMain} socket={socket} setSession={sessionoff} setBody={setBody} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>
+            <section ref={ImageCover} className="image-cover">
+                <div className="text-cover">
+                    <div className="icon">
+                        <span>ยินดีต้อนรับ</span>
+                        <img src="/Logo-white.png"></img>
+                    </div>
+                    <div className="status">
+                        {TextPage.map((val , index)=>(
+                            <div className="box-status" key={index}>
+                                <span>{val}</span>
+                                {TextPage.length - 1 > index ? <img src={"/arrow.png"}></img> : <></>}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="frame">
+                    <img src="/cover-2-3.png"></img>
+                </div>
+            </section>
+            <section ref={BodyRef} className="container-body-doctor">
+                {/* <div onLoad={this.checkSize}>
+                    {this.state.nav}
+                </div> */}
+                <bot-main>
+                    <bot-content>
+                        {body}
+                    </bot-content>
+                </bot-main>
+            </section>
+            {/* feedBack */}
+            <section id="session">
+                {session}
+            </section>
+        </div>
+    )
+}
+
+export default Doctor
+
+// constructor(){
     //     super();
     //     this.state={
     //         // nav: <div></div> ,
@@ -30,49 +133,6 @@ const Doctor = ({main , socket , type = 0}) => {
     //     }
     // }
 
-    useEffect(()=>{
-        if(type === 1) window.history.replaceState({} , "" , "/doctor")
-        
-        ChkPath()
-        window.addEventListener("popstate" , ChkPath)
-
-        return() => {
-            window.removeEventListener("popstate" , ChkPath)
-        }
-    } , [])
-
-
-    const ChkPath = () => {
-        clientMo.post('/api/doctor/check').then((context)=>{
-            if(context) {
-                let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
-                if(path.length === 1 && path[0] === "doctor") setBody(<NavFirst main={main} setdoctor={setBody} setSession={sessionoff} socket={socket} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                else if(path.length >= 2 && path[0] === "doctor") {
-                    if(path[1].indexOf("form") >= 0){
-                        if(path[1] === "form") setBody(<PageForm main={main} socket={socket} setBodyDoctor={setBody} session={sessionoff} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                        else if(path[1].indexOf("form?ap") >= 0 || path[1].indexOf("form?wt") >= 0) {
-                            if(path[1].indexOf("form?ap") >= 0) {
-                                setBody(<FormList main={main} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={"ap"} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                            }
-                            else if(path[1].indexOf("form?wt") >= 0) {
-                                setBody(<FormList main={main} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={"wt"} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                            }
-                        }
-                    } else if(false) {
-
-                    } else if(path[1].indexOf("export") >= 0) {
-                        setBody(<PageExport main={main} 
-                                    socket={socket} setBodyDoctor={setBody} session={sessionoff}
-                                    eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                    }
-                    
-                } else {
-                    console.log(15)
-                }
-            }
-            else sessionoff()
-        })
-    }
     // componentDidMount() {
     //     this.setState({
     //         body : 
@@ -156,58 +216,3 @@ const Doctor = ({main , socket , type = 0}) => {
     //         }
     //     }  
     // }
-
-    const sessionoff = (type = false) => {
-        if(type) {
-            main.setState({
-                body : <Login main={main} state={true}/>
-            })
-        } else {
-            setSession(<SessionOut main={main}/>)
-            document.getElementById('session').setAttribute('show' , '')
-        }
-    } 
-
-    return (
-        <div className="doctor" 
-        // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
-        >
-            <DesktopNev main={main} socket={socket} setSession={sessionoff} setBody={setBody} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>
-            <section ref={ImageCover} className="image-cover">
-                <div className="text-cover">
-                    <div className="icon">
-                        <span>ยินดีต้อนรับ</span>
-                        <img src="/Logo-white.png"></img>
-                    </div>
-                    <div className="status">
-                        {TextPage.map((val , index)=>(
-                            <div className="box-status" key={index}>
-                                <span>{val}</span>
-                                {TextPage.length - 1 > index ? <img src={"/arrow.png"}></img> : <></>}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="frame">
-                    <img src="/cover-2-3.png"></img>
-                </div>
-            </section>
-            <section ref={BodyRef} className="container-body-doctor">
-                {/* <div onLoad={this.checkSize}>
-                    {this.state.nav}
-                </div> */}
-                <bot-main>
-                    <bot-content>
-                        {body}
-                    </bot-content>
-                </bot-main>
-            </section>
-            {/* feedBack */}
-            <section id="session">
-                {session}
-            </section>
-        </div>
-    )
-}
-
-export default Doctor

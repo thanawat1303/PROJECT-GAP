@@ -61,7 +61,6 @@
                     background-color: #DAF1EE;
                     border-radius: 18px;
                     display: flex;
-                    position: relative;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
@@ -72,18 +71,6 @@
                     margin: -15px auto;
                     margin-bottom: 0px;
 
-                    .block-wait {
-                        background-color: rgba(128, 128, 128, 0.584);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        position: absolute;
-                        width: 100%;
-                        height: 26.3em;
-                        top: 3.7em;
-                        border-radius:0px 0px 18px 18px;
-                        z-index: 1;
-                    }
                     .frame-content[over=""] {
                         overflow-y: hidden;
                     }
@@ -148,6 +135,21 @@
                                             margin-bottom: 5px;
                                             padding-bottom: 5px;
                                             border-bottom:1px solid green ;
+                                            position: relative;
+
+                                            .block-wait {
+                                                background-color: rgba(128, 128, 128, 0.584);
+                                                display: flex;
+                                                justify-content: center;
+                                                align-items: center;
+                                                position: absolute;
+                                                width: 100%;
+                                                height: 100%;
+                                                left: 0em;
+                                                top: 0em;
+                                                border-radius:5px;
+                                                z-index: 1;
+                                            }
 
                                             .input-select-popup {
                                                 position: relative;
@@ -239,7 +241,7 @@
                         border: 0;
                         width: 30vw;
                         font-weight: 900;
-                        font-size: 6vw;
+                        font-size: 5vw;
                         font-family: Sans-font;
                         padding: 3px 0px;
                     }
@@ -391,7 +393,7 @@
                     margin: 4px 0px;
                     
                     .content {
-                        font-size: 6vw;
+                        font-size: 5vw;
                         font-family: Sans-font;
                         display: flex;
                         justify-content: center;
@@ -416,7 +418,7 @@
                     align-items: center;
                     
                     .content {
-                        font-size: 6vw;
+                        font-size: 5vw;
                         font-family: Sans-font;
                         display: flex;
                         justify-content: center;
@@ -436,7 +438,7 @@
                         justify-content: end;
                         width: 180px;
                         button {
-                            font-size: 6vw;
+                            font-size: 5vw;
                             font-family: Sans-font;
                             border: 0;
                             border-radius: 15px;

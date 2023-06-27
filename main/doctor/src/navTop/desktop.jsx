@@ -6,7 +6,7 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
 
-const DesktopNev = ({main , socket , setSession , setBody , eleImageCover , eleBody , setTextStatus}) => {
+const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , eleBody , setTextStatus}) => {
     useEffect(()=>{
         
     } , [])
@@ -17,9 +17,7 @@ const DesktopNev = ({main , socket , setSession , setBody , eleImageCover , eleB
         if(e) e.preventDefault()
         setTimeout(()=>{
             clientMo.get('/api/logout').then(()=>{
-                main.setState({
-                    body : <Login socket={socket} main={main} state={true}/>
-                })
+                setMain(<Login socket={socket} setMain={setMain} isClick={1}/>)
                 clientMo.addAction('#loading' , 'hide' , 1500)
             })
         } , 2000)
@@ -28,9 +26,8 @@ const DesktopNev = ({main , socket , setSession , setBody , eleImageCover , eleB
     const Home = (e) => {
         e.preventDefault()
         clientMo.post('/api/doctor/check').then((context)=>{
-            console.log(context)
             if(context) 
-                setBody(<NavFirst main={main} socket={socket} setdoctor={setBody} setSession={setSession} type={1} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
+                setBody(<NavFirst setMain={setMain} socket={socket} setdoctor={setBody} setSession={setSession} type={1} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
             else setSession()
         })
     }

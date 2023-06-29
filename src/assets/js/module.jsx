@@ -31,12 +31,13 @@ const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
     return (<input date_dom="" ref={REF} readOnly value={DateOut}></input>)
 }
 
-const TimeJSX = (props) => {
+const TimeJSX = ({DATE , MAX = true}) => {
     const [Time , setTime] = useState("")
 
     useEffect(()=>{
-        const TimeIn = new Date(props.time)
-        setTime(`เวลา ${TimeIn.getHours()} นาฬิกา ${TimeIn.getMinutes()} นาที ${TimeIn.getSeconds()} วินาที`)
+        const TimeIn = new Date(DATE)
+        if(MAX) setTime(`เวลา ${TimeIn.getUTCHours()} นาฬิกา ${TimeIn.getMinutes()} นาที ${TimeIn.getSeconds()} วินาที`)
+        else setTime(`เวลา ${TimeIn.getUTCHours()}:${TimeIn.getMinutes()}`)
     })
 
     return(<input readOnly value={Time}></input>)
@@ -367,6 +368,44 @@ const PopupDom = ({Ref , Body , zIndex}) => {
     )
 }
 
+const LoadOtherDom = ({Fetch , count , setCount , Limit , style = {
+    backgroundColor : ""
+}}) => {
+    const [Load , setLoad] = useState(true)
+    const Other = async () => {
+        const newCount = count + Limit
+        setCount(newCount)
+        setLoad(false)
+        setLoad(await Fetch(newCount))
+    }
+
+    return (
+        <div style={{
+            display : "flex",
+            justifyContent : "center",
+            alignItems : "center",
+            width : "100%",
+            marginTop : "5px"
+        }}>
+            {Load ? 
+                <button style={{
+                    backgroundColor : style.backgroundColor,
+                    outline : 0,
+                    border : 0,
+                    borderRadius : "15px",
+                    color : "white",
+                    fontFamily : "Sans-font",
+                    fontWeight : "900",
+                    fontSize : "18px",
+                    padding : "2px 15px"
+                }} onClick={Other}>โหลดเพิ่มเติม</button>
+                : <Loading size={31.2} border={7} color={style.backgroundColor} animetion={true}/>
+
+            }
+        </div>
+    )
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -440,4 +479,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , TabLoad , HrefData}

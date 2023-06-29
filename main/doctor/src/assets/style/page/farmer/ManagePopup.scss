@@ -1,0 +1,216 @@
+.farmer-list-page {
+    #popup-detail-farmer {
+        .popup-manage {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #22C7A9;
+            border-radius: 10px;
+            box-shadow: 0px 4px 4px #16836f;
+            width: 20vw;
+            height: 60%;
+            min-width: 240px;
+            min-height: 350px;
+            overflow: hidden;
+            .head-popup {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 28px;
+                font-weight: 900;
+                font-family: Sans-font;
+                width: 100%;
+                height: 10%;
+                border-radius: 10px;
+                background-color: white;
+            }
+    
+            .detail-content[type="ap"] {
+                height: 100%;
+            }
+    
+            .detail-content[type="wt"] {
+                height: 60%;
+            }
+    
+            .detail-content::-webkit-scrollbar {
+                width: 5px;
+                background-color: white;
+                border-radius: 20px;
+            }
+    
+            .detail-content::-webkit-scrollbar-thumb {
+                background-color: rgb(208, 113, 113);
+                border-radius: 20px;
+            }
+            
+            .detail-content {
+                padding: 1.5vw;
+                padding-right: 1vw;
+                overflow-y: auto;
+                .detail-farmer {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    .img {
+                        text-align: center;
+                        width: 65%;
+                        margin-bottom: 1.5vw;
+                        img {
+                            width: 100%;
+                            border-radius: 50%;
+                        }
+                    }
+    
+                    .text-detail {
+                        display: flex;
+                        flex-direction: column;
+                        width: 100%;
+                        margin-bottom: 15px;
+                        span {
+                            font-size: 20px;
+                            font-family: Sans-font;
+                            font-weight: 900;
+                        }
+                        .frame-text {
+                            background-color: white;
+                            border-radius: 15px;
+                            padding: 0.2vw 1vw;
+                            width: 100%;
+                            input {
+                                font-family: Sans-font;
+                                font-size: 18px;
+                                outline: 0;
+                                border: 0;
+                                width: 100%;
+                                background-color: transparent;
+                            }
+                        }
+    
+                        div{
+                            font-size: 18px;
+                            font-family: Sans-font;
+                        }
+                    }
+    
+                    .convert-user {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        align-items: center;
+                        width: 100%;
+                        background-color: white;
+                        padding: 3px;
+                        border-radius: 15px;
+                        div {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            width: 100%;
+    
+                            span {
+                                font-family: Sans-font;
+                                font-weight: 900;
+                                font-size: 18px;
+                            }
+
+                            .bt-convert {
+                                display: flex;
+                                justify-content: end;
+                                align-items: center;
+                                width: 50%;
+                                button {
+                                    font-family: Sans-font;
+                                    font-weight: 900;
+                                    font-size: 12px;
+                                    border-radius: 20px;
+                                    border: 0;
+                                    outline: 0;
+                                    background-color: #068863;
+                                    color: white;
+                                    box-shadow: 0px 2px 2px #0d562a;
+                                    margin-left: 5px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+    
+            .action-account {
+                display: flex;
+                border-radius: 20px 20px 0px 0px;
+                background-color: white;
+                width: 100%;
+                height: 25%;
+                flex-direction: column;
+                justify-content: space-evenly;
+    
+                .password {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+    
+                    input {
+                        width: 80%;
+                        text-align: center;
+                        font-family: main-font;
+                        font-size: 17px;
+                        outline: 1px solid transparent;
+                        border: 0;
+                        border-radius: 20px;
+                        padding: 5px 0px;
+                        background-color: #65b89f;
+                    }
+    
+                    input::placeholder {
+                        font-weight: 900;
+                        font-family: Sans-font;
+                        color: white;
+                    }
+
+                    input[placeholder="รหัสผ่านไม่ถูกต้อง"] {
+                        outline: 1px solid red;
+                        box-shadow: 0px 0px 8px red;
+                    }
+                }
+    
+                .bt {
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    // margin-top: 1.5vw;
+                    button {
+                        font-family: Sans-font;
+                        border: 0;
+                        outline: 0;
+                        border-radius: 10px;
+                        width: 32%;
+                        font-size: 18px;
+                        font-weight: 900;
+                        color: white;
+                    }
+    
+                    .cancel {
+                        background-color: rgb(211, 43, 43);
+                        box-shadow: 0px 4px 4px rgb(114, 22, 22);
+                    }
+    
+                    .submit {
+                        background-color: #168342;
+                        box-shadow: 0px 4px 4px #0d562a;
+                    }
+
+                    .submit[not=""] {
+                        background-color: #67ca8f;
+                        color: rgba(136, 135, 135, 0.864);
+                        cursor: not-allowed;
+                        // box-shadow: 0px 4px 4px #0d562a;
+                    }
+                }
+            }
+        }
+    }
+}

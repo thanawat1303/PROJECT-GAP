@@ -80,7 +80,7 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
     } 
 
     return (
-        <div className="doctor" 
+        <div className="doctor"
         // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
         >
             <DesktopNev setMain={setMain} socket={socket} setSession={sessionoff} setBody={setBody} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>

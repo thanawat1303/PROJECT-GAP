@@ -1,3 +1,11 @@
+// @media only screen and (min-width : 1250px) {
+//     $item-in-row-doctor : 3;
+// }
+
+// @media only screen and (max-width : 1250px) {
+//     $item-in-row-doctor : 2;
+// }
+
 .farmer-list-page {
     display: flex;
     position: relative;
@@ -21,10 +29,11 @@
         right: 0;
         top: 0;
         // width: 100%;
-        background-color: transparent;
+        background-color: white;
         box-shadow: 0px 2px 2px rgb(185, 185, 185);
         transform: translateX(100%);
         transition: 0.5s transform;
+        z-index: 2;
         div{
             display: flex;
             justify-content: center;
@@ -59,18 +68,94 @@
     .farmer-list {
         width: 100%;
         height: 100%;
+        overflow-y: auto;
+        padding: 1.5vw;
+        padding-bottom: 0.7vw;
 
-        .list-some-farmer {
-            display: inline-flex;
-            justify-content: space-between;
+        .row {
+            display: flex;
+            justify-content: space-evenly;
             align-items: center;
-            width: 30%;
-            height: auto;
+            width: 100%;
+    
+            .row-content {
+                width: 100%;
+                display: flex;
+                .list-some-farmer {
+                    display: inline-flex;
+                    position: relative;
+                    justify-content: space-around;
+                    width: calc((100% / var(--item-in-row-doctor)) - var(--margin-in-row-doctor) - 0.01px);
+                    margin: 10px calc(var(--margin-in-row-doctor)/2);
+                    padding: 0.7vw 1vw;
+                    height: auto;
+                    box-shadow: 0px 4px 4px rgb(183, 183, 183);
+                    transition: 0.5s opacity , 0.5s visibility;
+        
+                    .img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 30%;
+                        img {
+                            width:100%;
+                            height: 100%;
+                            border-radius: 50%;
+                        }
+                    }
+        
+                    .detail {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-evenly;
+                        width: 60%;
+                        // height: 100%;
+        
+                        .text {
+                            input {
+                                font-family: Sans-font;
+                                font-size: var(--font-size-date-in-row-doctor);
+                                width: 100%;
+                                outline: 0;
+                                border: 0;
+                            }
+                        }
+        
+                        .fullname {
+                            input {
+                                font-weight: 900;
+                                font-size: var(--font-size-in-row-doctor);
+                            }
 
-            .img {
-                width: 35%;
-                img {
-                    width:100%;
+                            border-bottom: 3px solid #22C7A9;
+                        }
+        
+                        .line {
+                            width: 100%;
+                            height: 0.2vw;
+                            background-color: #22C7A9;
+                        }
+                    }
+
+                    .bt {
+                        position: absolute;
+                        bottom: 0.5em;
+                        right: 1.5em;
+
+                        button {
+                            font-size: var(--font-size-date-in-row-doctor);
+                            width: 115%;
+                            font-family: Sans-font;
+                            font-weight: 900;
+                            border-radius: 15px;
+                            outline: 0;
+                            border: 0;
+                            box-shadow: 0px 2px 2px rgb(189, 189, 189);
+                            background-color: #22C7A9;
+                            color: white;
+                            cursor: pointer;
+                        }
+                    }
                 }
             }
         }

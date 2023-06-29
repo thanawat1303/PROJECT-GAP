@@ -1,10 +1,13 @@
 $ColorGreen : #22C7A9;
 .tab-bar-desktop {
     display: flex;
+    position: fixed;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
     background-color: white;
     padding: 6px 10px;
+    z-index: 2;
     .pg-action {
         .Logo {
             display: flex;

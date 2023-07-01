@@ -369,14 +369,16 @@ const PopupDom = ({Ref , Body , zIndex}) => {
 }
 
 const LoadOtherDom = ({Fetch , count , setCount , Limit , style = {
-    backgroundColor : ""
+    backgroundColor : "",
+    fontSize : "18px",
+    sizeLoading : "31.2px",
 }}) => {
     const [Load , setLoad] = useState(true)
     const Other = async () => {
         const newCount = count + Limit
-        setCount(newCount)
         setLoad(false)
-        setLoad(await Fetch(newCount))
+        if((await Fetch(newCount)).length === newCount) setCount(newCount)
+        setLoad(true)
     }
 
     return (
@@ -396,10 +398,10 @@ const LoadOtherDom = ({Fetch , count , setCount , Limit , style = {
                     color : "white",
                     fontFamily : "Sans-font",
                     fontWeight : "900",
-                    fontSize : "18px",
+                    fontSize : style.fontSize ? style.fontSize : "18px",
                     padding : "2px 15px"
                 }} onClick={Other}>โหลดเพิ่มเติม</button>
-                : <Loading size={31.2} border={7} color={style.backgroundColor} animetion={true}/>
+                : <Loading size={style.sizeLoading ? style.sizeLoading : "31.2px"} border={7} color={style.backgroundColor} animetion={true}/>
 
             }
         </div>

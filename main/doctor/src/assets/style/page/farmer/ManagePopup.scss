@@ -2,6 +2,7 @@
     #popup-detail-farmer {
         .popup-manage {
             display: flex;
+            position: relative;
             flex-direction: column;
             justify-content: space-between;
             background-color: #22C7A9;
@@ -9,11 +10,12 @@
             box-shadow: 0px 4px 4px #16836f;
             width: 20vw;
             height: 60%;
-            min-width: 240px;
+            min-width: 230px;
             min-height: 350px;
-            overflow: hidden;
+            // overflow: hidden;
             .head-popup {
                 display: flex;
+                position: relative;
                 justify-content: center;
                 align-items: center;
                 font-size: 28px;
@@ -23,10 +25,88 @@
                 height: 10%;
                 border-radius: 10px;
                 background-color: white;
+
+                .close {
+                    position: absolute;
+                    background-color: white;
+                    border-radius: 50%;
+                    right: -0.2em;
+                    top: -1em;
+                    width: 40px;
+                    height: 40px;
+                    svg {
+                        width: 40px;
+                        height: 40px;
+                    }
+                }
+            }
+
+            .tab-content {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                height: 10%;
+                background-color: white;
+                margin-top: 3%;
+                box-shadow: 0px 4px 4px #0d562a;
+                border-radius: 10px;
+                overflow-x: auto;
+
+                .tab-select-detail {
+                    width: 20%;
+                    height: 100%;
+                    display: flex;
+                    position: relative;
+                    justify-content: center;
+                    align-items: center;
+                    font-family: Sans-font;
+                    font-weight: 900;
+                    border-radius: 10px;
+                }
+
+                .tab-select-detail[select=""] {
+                    background-color: #22C7A9;
+                }
+            }
+
+            .option-account[top="y"] {
+                top: 3em;
+            }
+
+            .option-account[top="n"] {
+                top: 5.8em;
+            }
+
+            .option-account {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                justify-content: center;
+                align-items: end;
+                right: 0.4em;
+                z-index: 1;
+
+                .list-type {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 30px;
+                    margin-bottom: 8px;
+                    background-color: white;
+                    border-radius: 50%;
+                    padding: 2px; 
+                    box-shadow: 0px 2px 2px gray;
+                    cursor: pointer;
+
+                    svg {
+                        width: 100%;
+                        fill: #4c8e7b;
+                    }
+                }
             }
     
             .detail-content[type="ap"] {
-                height: 100%;
+                height: 90%;
             }
     
             .detail-content[type="wt"] {
@@ -45,14 +125,18 @@
             }
             
             .detail-content {
-                padding: 1.5vw;
+                position: relative;
+                padding: 0px 10px;
+                margin: 10px 0px;
                 padding-right: 1vw;
                 overflow-y: auto;
+
                 .detail-farmer {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
+
                     .img {
                         text-align: center;
                         width: 65%;
@@ -103,7 +187,7 @@
                         background-color: white;
                         padding: 3px;
                         border-radius: 15px;
-                        div {
+                        div.action-bt {
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
@@ -134,13 +218,73 @@
                                 }
                             }
                         }
+
+                        div.profile-preview {
+                            display: flex;
+                            position: relative;
+                            justify-content: start;
+                            align-items: center;
+                            width: 100%;
+
+                            .image {
+                                width: 30%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                padding: 2px;
+                                background-color: #22C7A9;
+                                border-radius: 10px;
+
+                                img {
+                                    border-radius: 10px;
+                                    width: 100%;
+                                }
+                            }
+
+                            .detail {
+                                display: flex;
+                                justify-content: center;
+                                align-items: start;
+                                flex-direction: column;
+                                padding-left: 5px;
+
+                                span , div {
+                                    font-family: Sans-font;
+                                    font-size: 14px;
+                                }
+
+                                span {
+                                    font-weight: 900;
+                                }
+                            }
+
+                            .bt-cancel {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                position: absolute;
+                                background-color: rgb(173, 41, 41);
+                                right: 0.4em;
+                                bottom: 0.4em;
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 50%;
+                                cursor: pointer;
+                                box-shadow: 0px 2px 2px rgb(167, 167, 167);
+
+                                svg {
+                                    width: 70%;
+                                    fill: white;
+                                }
+                            }
+                        }
                     }
                 }
             }
     
             .action-account {
                 display: flex;
-                border-radius: 20px 20px 0px 0px;
+                border-radius: 20px 20px 10px 10px;
                 background-color: white;
                 width: 100%;
                 height: 25%;
@@ -208,6 +352,92 @@
                         color: rgba(136, 135, 135, 0.864);
                         cursor: not-allowed;
                         // box-shadow: 0px 4px 4px #0d562a;
+                    }
+                }
+            }
+
+            .submit-convert {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                padding: 5px 0px;
+                background-color: white;
+                border-radius: 20px 20px 10px 10px;
+
+                button {
+                    background-color: #068863;
+                    border: 0;
+                    outline: 0;
+                    box-shadow: 0px 4px 4px #0d562a;
+                    color: white;
+                    font-family: Sans-font;
+                    font-weight: 900;
+                    padding: 0PX 15PX;
+                    border-radius: 10px;
+                    font-size: 18px;
+                }
+            }
+
+            .content-confirm-account {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                border-radius: 10px;
+                box-shadow: 0px 4px 4px gray;
+                background-color: white;
+                height: 150px;
+                
+                span {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    font-weight: 900;
+                    font-size: 20px;
+                    font-family: Sans-font;
+                }
+
+                input {
+                    width: 90%;
+                    padding: 5px 0px;
+                    font-size: 18px;
+                    text-align: center;
+                    font-family: main-font;
+                    background-color: #22C7A9;
+                    border: 0;
+                    outline: 0;
+                    border-radius: 10px;
+                }
+
+                input::placeholder {
+                    color: white;
+                    font-family: Sans-font;
+                }
+
+                .bt-content {
+                    display: flex;
+                    justify-content: space-evenly;
+                    width: 100%;
+
+                    button {
+                        border-radius: 10px;
+                        width: 35%;
+                        border: 0;
+                        outline: 0;
+                        font-family: Sans-font;
+                        font-size: 15px;
+                        font-weight: 900;
+                        background-color: #0d562a;
+                        color: white;
+                        box-shadow: 0px 4px 4px gray;
+                    }
+
+                    button[not=""] {
+                        background-color: #43a269c0;
+                        color: rgba(255, 255, 255, 0.614);
                     }
                 }
             }

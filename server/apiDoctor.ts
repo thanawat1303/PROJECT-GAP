@@ -289,20 +289,22 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                     `
                     : 
                     `
-                    SELECT acc_farmer.id_table , acc_farmer.img , acc_farmer.fullname , acc_farmer.link_user , acc_farmer.date_register ,
-                    (
-                        SELECT fullname_doctor 
-                        FROM acc_doctor
-                        WHERE acc_doctor.id_doctor = acc_farmer.id_doctor
-                    ) as name_doctor
+                    SELECT acc_farmer.id_table , acc_farmer.img , acc_farmer.fullname , acc_farmer.link_user , acc_farmer.date_register
+                            , farmer_main.Count , acc_farmer.date_doctor_confirm ,
+                        (
+                            SELECT fullname_doctor
+                            FROM acc_doctor
+                            WHERE acc_doctor.id_table_doctor = acc_farmer.id_doctor
+                        ) as name_doctor
                     FROM acc_farmer , (
-                        SELECT MAX(date_register) as DateLast , link_user
+                        SELECT MAX(date_register) as DateLast , link_user , COUNT(link_user) as Count
                         FROM acc_farmer 
                         WHERE station = "${result['data']['station_doctor']}" and register_auth = 1
                         GROUP BY link_user
                     ) as farmer_main
                     WHERE acc_farmer.link_user = farmer_main.link_user 
                             and acc_farmer.date_register = farmer_main.DateLast
+                    ORDER BY date_register DESC
                     LIMIT ${req.body.limit};
                     `
                 con.query(queryType, (err:any , result:any)=>{
@@ -343,52 +345,6 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                 //                     : 
                 //                 (req.body['type'] === 'profile') ? 
                 //                     `SELECT id_table , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 and id_farmer=${req.body['farmer']} ORDER BY date_register DESC;` : ""
-            }
-        }).catch((err:any)=>{
-            con.end()
-            if(err == "not pass") {
-                res.redirect('/api/logout')
-            }
-        })
-    })
-
-    app.post('/api/doctor/farmer/list/convert' , (req:any , res:any)=>{
-        let username = req.session.user_doctor
-        let password = req.session.pass_doctor
-    
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
-            res.redirect('/api/logout')
-            return 0
-        }
-    
-        let con = Database.createConnection(listDB)
-    
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
-            if(result['result'] === "pass") {
-                con.query(
-                    `
-                    SELECT acc_farmer.id_table , acc_farmer.fullname , acc_farmer.img , acc_farmer.id_farmer
-                    FROM acc_farmer , 
-                    (
-                        SELECT MAX(date_register) as date , MAX(id_table) as id_table
-                        FROM acc_farmer
-                        WHERE link_user != ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
-                        GROUP BY link_user
-                    ) as selectList
-                    WHERE acc_farmer.id_table = selectList.id_table
-                    ORDER BY acc_farmer.date_register DESC
-                    LIMIT ${req.body.limit};
-                    ` , [ req.body.id_table ]
-                    , (err:any , result:any)=>{
-                    if (err){
-                        dbpacket.dbErrorReturn(con , err , res)
-                        return 0
-                    };
-                    const filterSearch = (req.body.search) ? result.filter((val : any)=>val.fullname.indexOf(req.body.search) || val.id_farmer.indexOf(req.body.search)) : result
-    
-                    con.end()
-                    res.send(filterSearch)
-                })
             }
         }).catch((err:any)=>{
             con.end()
@@ -507,6 +463,232 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                         }
 
                         res.send("113")
+                    }
+                )
+            }
+        } catch (err : any) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        } 
+    })
+
+    app.post('/api/doctor/farmer/convert/list' , (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    SELECT acc_farmer.id_table , acc_farmer.fullname , acc_farmer.img , acc_farmer.id_farmer
+                    FROM acc_farmer , 
+                    (
+                        SELECT MAX(date_register) as date , MAX(id_table) as id_table
+                        FROM acc_farmer
+                        WHERE id_table != ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
+                        GROUP BY link_user
+                    ) as selectList
+                    WHERE acc_farmer.id_table = selectList.id_table 
+                            and (INSTR(acc_farmer.fullname , ?) OR INSTR(acc_farmer.id_farmer , ?))
+                    ORDER BY acc_farmer.date_register DESC
+                    LIMIT ${req.body.limit};
+                    ` , [ req.body.id_table , req.body.search , req.body.search]
+                    , (err:any , result:any)=>{
+                    if (err){
+                        dbpacket.dbErrorReturn(con , err , res)
+                        return 0
+                    };
+    
+                    con.end()
+                    res.send(result)
+                })
+            }
+        }).catch((err:any)=>{
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        })
+    })
+
+    app.post('/api/doctor/farmer/convert/cancel' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(`
+                    SELECT uid_line , link_user
+                    FROM acc_farmer
+                    WHERE id_table = ?
+                ` , [req.body.id_table] ,
+                (err : any , search : any) => {
+                    if (err){
+                        dbpacket.dbErrorReturn(con , err , res)
+                        return 0
+                    };
+
+                    con.query(
+                        `
+                        UPDATE acc_farmer
+                        SET link_user = ?
+                        WHERE id_table = ?
+                        ` , [search[0].uid_line , req.body.id_table] ,
+                        (err : any , result : any) => {
+                            if (err){
+                                dbpacket.dbErrorReturn(con , err , res)
+                                return 0
+                            };
+
+                            con.query(
+                                `
+                                UPDATE housefarm
+                                SET link_user = ?
+                                WHERE uid_line = ?
+                                ` , [search[0].uid_line , search[0].uid_line] ,
+                                (err : any , update : any) => {
+                                    if (err){
+                                        dbpacket.dbErrorReturn(con , err , res)
+                                        return 0
+                                    };
+
+                                    con.end()
+                                    res.send(search[0].link_user)
+                                }
+                            )
+                        }
+                    )
+                })
+            }
+        } catch (err : any) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        } 
+    })
+
+    app.post('/api/doctor/farmer/convert/comfirm' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const convert : any = await new Promise((resole , reject)=> {
+                    con.query(
+                        `
+                        SELECT link_user , uid_line
+                        FROM acc_farmer
+                        WHERE id_table = ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
+                        ` , [ req.body.id_table_convert ]
+                        , (err:any , result:any)=>{
+                        if (err){
+                            dbpacket.dbErrorReturn(con , err , res)
+                            return 0
+                        };
+    
+                        resole(result)
+                    })
+                })
+
+                let Link_user = ""
+                if(convert[0]){
+                    if(convert[0].link_user.indexOf("cvpf-") >= 0) Link_user = convert[0].link_user
+                    else Link_user = `cvpf-${new Date().getTime()}${convert[0].link_user.slice(0 , 3)}`
+                    
+                    if(convert[0].link_user != Link_user) {
+                        await new Promise((resole , reject)=> {
+                            con.query(
+                                `
+                                UPDATE acc_farmer 
+                                SET link_user = ?
+                                WHERE register_auth = 1 and id_table = ? and station = "${result['data']['station_doctor']}"
+                                `,[ Link_user , req.body.id_table_convert ],
+                                (err : any , result : any)=>{
+                                    if (err){
+                                        dbpacket.dbErrorReturn(con , err , res)
+                                        return 0
+                                    };
+        
+                                    con.query(
+                                        `
+                                        UPDATE housefarm 
+                                        SET link_user = ?
+                                        WHERE uid_line = ?
+                                        ` , [ Link_user , convert[0].uid_line ] ,
+                                        (err : any , result : any) => {
+                                            if (err){
+                                                dbpacket.dbErrorReturn(con , err , res)
+                                                return 0
+                                            };
+                                            
+                                            resole(1)
+                                        }
+                                    )
+                                }
+                            )
+                        })
+                    }
+                }
+
+                con.query(
+                    `
+                    UPDATE acc_farmer 
+                    SET link_user = ?
+                    WHERE register_auth = 1 and id_table = ? and station = "${result['data']['station_doctor']}"
+                    `,[Link_user , req.body.id_table ],
+                    (err : any , result : any)=>{
+                        if (err){
+                            dbpacket.dbErrorReturn(con , err , res)
+                            return 0
+                        };
+
+                        if(Link_user) {
+                            con.query(
+                                `
+                                UPDATE housefarm 
+                                SET link_user = ?
+                                WHERE uid_line = ?
+                                ` , [ Link_user , req.body.uid_line ] ,
+                                (err : any , result : any) => {
+                                    if (err){
+                                        dbpacket.dbErrorReturn(con , err , res)
+                                        return 0
+                                    };
+
+                                    con.end()
+                                }
+                            )
+                        } else {
+                            con.end()
+                        }
+
+                        res.send(Link_user)
                     }
                 )
             }

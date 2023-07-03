@@ -52,7 +52,7 @@ export default class NavDoctor extends Component {
         else if (path[1] + "/" + path[2] == 'doctor/listformfarm')
         {
             if(path[3] == "approve" || path[3] == undefined || path[3] == "wait" || path[3] == "") {
-                clientMo.post('/api/doctor/list/form' , {type : 0 , approve:(path[3] == "wait") ? 0 : 1}).then((list)=>{
+                clientMo.post('/api/doctor/form/list' , {type : 0 , approve:(path[3] == "wait") ? 0 : 1}).then((list)=>{
                     if(list) {
                         this.props.bodyDoctor.setState({body : <ListFormFarm socket={this.props.socket} status={statusLoad} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list} path={path[3]}/>})
                         if(document.querySelector('a[nav-select=""]')) document.querySelector('a[nav-select=""]').removeAttribute('nav-select')
@@ -103,7 +103,7 @@ export default class NavDoctor extends Component {
         }
 
         else if (ele == 'list-form-farm') {
-            clientMo.post('/api/doctor/list/form' , {type : 0 , approve:1}).then((list)=>{
+            clientMo.post('/api/doctor/form/list' , {type : 0 , approve:1}).then((list)=>{
                 console.log(list)
                 if(list) {
                     this.props.bodyDoctor.setState({body : <ListFormFarm socket={this.props.socket} status={1} main={this.props.main} bodyDoctor={this.props.bodyDoctor} list={list}/>})

@@ -263,6 +263,43 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             }
         })
     })
+
+    app.post('/api/doctor/farmer/get/account/confirm' , (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    SELECT id_doctor , fullname_doctor , img_doctor
+                    FROM acc_doctor
+                    WHERE id_table_doctor = ?
+                    ` , [ req.body.id_table_doctor]
+                    , (err:any , result:any)=>{
+                    if (err){
+                        dbpacket.dbErrorReturn(con , err , res)
+                        return 0
+                    };
+    
+                    con.end()
+                    res.send(result)
+                })
+            }
+        }).catch((err:any)=>{
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        })
+    })
     
     app.post('/api/doctor/farmer/list' , (req:any , res:any)=>{
         let username = req.session.user_doctor
@@ -354,7 +391,7 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         })
     })
 
-    app.post('/api/doctor/farmer/appove/comfirm' , async (req:any , res:any)=>{
+    app.post('/api/doctor/farmer/account/comfirm' , async (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.body.password
     
@@ -462,6 +499,48 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                             con.end()
                         }
 
+                        res.send("113")
+                    }
+                )
+            }
+        } catch (err : any) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        } 
+    })
+
+    app.post('/api/doctor/farmer/account/cancel' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    UPDATE acc_farmer 
+                    SET 
+                        register_auth = 2 , 
+                        date_doctor_confirm = ? ,
+                        id_doctor = ?
+                    WHERE id_table = ? and register_auth = 0
+                    ` , [new Date() , result['data']['id_table_doctor'] , req.body.id_table] , 
+                    (err : any , result : any) => {
+                        if (err){
+                            dbpacket.dbErrorReturn(con , err , res)
+                            return 0
+                        };
+
+                        con.end()
                         res.send("113")
                     }
                 )
@@ -627,8 +706,8 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                                 `
                                 UPDATE acc_farmer 
                                 SET link_user = ?
-                                WHERE register_auth = 1 and id_table = ? and station = "${result['data']['station_doctor']}"
-                                `,[ Link_user , req.body.id_table_convert ],
+                                WHERE register_auth = 1 and id_table = ? and station = ?
+                                `,[ Link_user , req.body.id_table_convert , result['data']['station_doctor']],
                                 (err : any , result : any)=>{
                                     if (err){
                                         dbpacket.dbErrorReturn(con , err , res)
@@ -660,8 +739,8 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                     `
                     UPDATE acc_farmer 
                     SET link_user = ?
-                    WHERE register_auth = 1 and id_table = ? and station = "${result['data']['station_doctor']}"
-                    `,[Link_user , req.body.id_table ],
+                    WHERE register_auth = 1 and id_table = ? and station = ?
+                    `,[Link_user , req.body.id_table , result['data']['station_doctor'] ],
                     (err : any , result : any)=>{
                         if (err){
                             dbpacket.dbErrorReturn(con , err , res)
@@ -698,6 +777,59 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                 res.send("password")
             }
         } 
+    })
+
+    app.post('/api/doctor/form/list' , (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
+            if(result['result'] === "pass") {
+
+                // select out table
+                con.query(
+                    `
+                    SELECT * 
+                    FROM formplant , 
+                        (
+                            SELECT id_farmHouse 
+                            FROM housefarm , 
+                                (
+                                    SELECT uid_line , link_user
+                                    FROM acc_farmer
+                                    WHERE (register_auth = 0 OR register_auth = 1) and station = ?
+                                ) as farmer
+                            WHERE housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user
+                        ) as house
+                    WHERE formplant.id_farmHouse = house.id_farmHouse ${req.body.submit ? `and submit = ${req.body.submit}` : ""}
+                    ORDER BY date_plant
+                    LIMIT ${req.body.limit}
+                    ` , 
+                    [result['data']['station_doctor']] , 
+                    (err:any , listFarm:any)=>{
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("query");
+                        }
+
+                        con.end()
+                        res.send(listFarm)
+                    }
+                )
+            }
+        }).catch((err:any)=>{
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        })
     })
     
     // app.post("/doctor/api/doctor/pull" , (req:any , res:any)=>{
@@ -930,69 +1062,6 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
     //     })
     // })
     // manage farmer
-    
-    app.post('/api/doctor/list/form' , (req:any , res:any)=>{
-        let username = req.session.user_doctor
-        let password = req.session.pass_doctor
-    
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
-            res.redirect('/api/logout')
-            return 0
-        }
-    
-        let con = Database.createConnection(listDB)
-    
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
-            if(result['result'] === "pass") {
-
-                // select out table
-                con.query(`
-                        SELECT 
-                        (
-                            SELECT COUNT(formfertilizer.id_plant)
-                            FROM formfertilizer
-                            WHERE form.id = formfertilizer.id_plant
-                        ) as ctFer , 
-                        (
-                            SELECT COUNT(formchemical.id_plant)
-                            FROM formchemical
-                            WHERE form.id = formchemical.id_plant
-                        ) as Ctche , 
-                        form.*
-                        FROM 
-                        (
-                            SELECT formplant.* , House.id_farmer , House.fullname   
-                            FROM formplant , 
-                                (
-                                    SELECT id_farmHouse , acc_farmer.id_farmer , acc_farmer.fullname 
-                                    FROM housefarm , 
-                                        (
-                                            SELECT id_farmer , uid_line , fullname FROM acc_farmer 
-                                            WHERE station = ? and register_auth = ?
-                                        ) AS acc_farmer
-                                    WHERE (housefarm.uid_line = acc_farmer.uid_line) or (housefarm.id_farmer = acc_farmer.id_farmer)
-                                ) as House
-                            WHERE House.id_farmHouse = formplant.id_farmHouse and formplant.submit=?
-                            ORDER BY date_plant 
-                            LIMIT 30
-                        ) as form
-                        ` , 
-                        [ result['data']['station_doctor'] , req.body['approve'] , req.body['type']] , (err:any , listFarm:any)=>{
-                            if (err) {
-                                dbpacket.dbErrorReturn(con, err, res);
-                                console.log("query");
-                            }
-                            con.end()
-                            res.send(listFarm)
-                        })
-            }
-        }).catch((err:any)=>{
-            con.end()
-            if(err == "not pass") {
-                res.redirect('/api/logout')
-            }
-        })
-    })
 
     app.post('/api/doctor/export' , (req:any , res:any)=>{
         let username = req.session.user_doctor

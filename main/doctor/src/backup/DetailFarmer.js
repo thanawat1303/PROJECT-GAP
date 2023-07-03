@@ -36,7 +36,7 @@ const ShowDetailFarmer = (props) => {
 
         return () => {
             document.getElementById('popup-detail-farmer').removeEventListener('click' , ClosePage)
-            clientMo.post('/api/doctor/list/form')
+            clientMo.post('/api/doctor/form/list')
         }
     } , [])
 

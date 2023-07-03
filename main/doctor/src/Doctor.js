@@ -9,8 +9,7 @@ import "./assets/style/doctorMain.scss"
 // import './assets/style/doctor.scss'
 import DesktopNev from "./navTop/desktop";
 import SessionOut from "./sesionOut";
-import PageForm from "./page/form/PageForm";
-import FormList from "./page/form/formList";
+import PageFormPlant from "./page/form/PageFormPlant";
 import PageExport from "./page/export/PageExport";
 import PageFarmer from "./page/farmer/PageFarmer";
 
@@ -41,14 +40,20 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
             if(path.length === 1 && path[0] === "doctor") setBody(<NavFirst setMain={setMain} setdoctor={setBody} setSession={sessionoff} socket={socket} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
             else if(path.length >= 2 && path[0] === "doctor") {
                 if(path[1] === "form"){
-                    if(path[2] == undefined) setBody(<PageForm setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                    else if(path[2] === "ap" || path[2] === "wt") {
-                        if(path[2] === "ap") {
-                            setBody(<FormList setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                        }
-                        else if(path[2] === "wt") {
-                            setBody(<FormList setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                        }
+                    // if(path[2] == undefined) setBody(<PageForm setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    // else if(path[2] === "ap" || path[2] === "wt") {
+                    //     if(path[2] === "ap") {
+                    //         setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    //     }
+                    //     else if(path[2] === "wt") {
+                    //         setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    //     }
+                    // }
+                    if(path[2] === "ap") {
+                        setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    }
+                    else if(path[2] === "wt") {
+                        setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                     }
                 } else if(path[1] === "farmer") {
                     if(path[2] === "ap") {

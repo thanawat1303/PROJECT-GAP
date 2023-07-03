@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 
 import "./assets/style/Navfirst.scss"
-import PageForm from "./page/form/PageForm"
+import PageFormPlant from "./page/form/PageFormPlant"
 import PageExport from "./page/export/PageExport"
 import PageFarmer from "./page/farmer/PageFarmer"
 
@@ -27,10 +27,10 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
 
     const form = async () => {
         const context = await clientMo.post('/api/doctor/check')
-        if(context) 
-            setdoctor(<PageForm setMain={setMain} 
-                        socket={socket} setBodyDoctor={setdoctor} session={setSession} type={1} 
-                        eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
+        if(context)
+            setdoctor(<PageFormPlant setMain={setMain}
+                        socket={socket} LoadType={"ap"} session={setSession} type={1} 
+                        eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} />)
         else setSession()
     }
 

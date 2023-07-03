@@ -8,10 +8,11 @@
             background-color: #22C7A9;
             border-radius: 10px;
             box-shadow: 0px 4px 4px #16836f;
-            width: 20vw;
+            width: 230px;
             height: 60%;
-            min-width: 230px;
+            // min-width: 230px;
             min-height: 350px;
+            // max-width: 290px;
             // overflow: hidden;
             .head-popup {
                 display: flex;
@@ -70,11 +71,11 @@
             }
 
             .option-account[top="y"] {
-                top: 3em;
+                top: 3.4em;
             }
 
             .option-account[top="n"] {
-                top: 5.8em;
+                top: 6.1em;
             }
 
             .option-account {
@@ -96,7 +97,6 @@
                     border-radius: 50%;
                     padding: 2px; 
                     box-shadow: 0px 2px 2px gray;
-                    cursor: pointer;
 
                     svg {
                         width: 100%;
@@ -131,16 +131,31 @@
                 padding-right: 1vw;
                 overflow-y: auto;
 
-                .detail-farmer {
+                .detail-account-data {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
 
+                    .appove-account-head {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        font-family: Sans-font;
+                        font-weight: 900;
+                        color: white;
+                        font-size: 18px;
+                        margin: 7.5px 0px;
+                    }
                     .img {
-                        text-align: center;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
                         width: 65%;
-                        margin-bottom: 1.5vw;
+                        background-color: white;
+                        border-radius: 50%;
+                        // margin-bottom: 1.5vw;
                         img {
                             width: 100%;
                             border-radius: 50%;
@@ -151,7 +166,7 @@
                         display: flex;
                         flex-direction: column;
                         width: 100%;
-                        margin-bottom: 15px;
+                        margin: 7.5px 0px;
                         span {
                             font-size: 20px;
                             font-family: Sans-font;

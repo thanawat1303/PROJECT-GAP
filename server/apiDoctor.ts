@@ -146,6 +146,60 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             })
         })
     })
+
+    app.post('/api/doctor/plant/list' , (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    SELECT name , 
+                    (
+                        SELECT COUNT(name_plant)
+                        FROM formplant , 
+                            (
+                                SELECT id_farmHouse 
+                                FROM housefarm , 
+                                    (
+                                        SELECT uid_line , link_user
+                                        FROM acc_farmer
+                                        WHERE (register_auth = 0 OR register_auth = 1) and station = ?
+                                    ) as farmer
+                                WHERE housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user
+                            ) as house
+                        WHERE formplant.name_plant = plant_list.name
+                    ) as countPlant
+                    FROM plant_list
+                    WHERE is_use = 1
+                    ORDER BY name
+                    ` , [result.data.station_doctor]
+                    , (err:any , result:any)=>{
+                    if (err) {
+                        dbpacket.dbErrorReturn(con, err, res);
+                        console.log("query");
+                        return 0
+                    }
+                    con.end()
+                    res.send(result)
+                    
+                })
+            }
+        }).catch((err:any)=>{
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        })
+    })
     
     // req manager farmer
     // app.post('/api/doctor/farmer/approv' , (req:any , res:any)=>{
@@ -778,8 +832,10 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             }
         } 
     })
+    // account end
 
-    app.post('/api/doctor/form/list' , (req:any , res:any)=>{
+    // form start
+    app.post('/api/doctor/form/list' , async (req:any , res:any)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -790,33 +846,77 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
     
         let con = Database.createConnection(listDB)
     
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result:any)=>{
+        try {
+            const result : any = await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
 
                 // select out table
+
+                const TypePlant = (req.body.typePlant) ? req.body.typePlant : null ;
+                const Submit = (req.body.statusForm >= 0 && req.body.statusForm <= 2) ? req.body.statusForm : null ;
+                const StatusFarmer = (req.body.statusFarmer >= 0 && req.body.statusFarmer <= 1) ? req.body.statusFarmer : null;
+                
+                const TypeDate = (req.body.typeDate == 1) ? "date_success" : (req.body.typeDate == 0) ? "date_plant" : null;
+                const StartDate = (new Date(req.body.StartDate).toString() !== "Invalid Date") ? req.body.StartDate : null ;
+                const EndDate = (new Date(req.body.EndDate).toString() !== "Invalid Date") ? req.body.EndDate : null ;
+
+                const OrderBy = (req.body.typeDate == 1) ? "date_success" : "date_plant";
+                const Limit = (!isNaN(req.body.limit)) ? req.body.limit : null;
+                const Success : any = await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                        SELECT id_plant
+                        FROM success_detail
+                        WHERE INSTR(id_success , '${req.body.textInput ? req.body.textInput : ""}')
+                        ` , (err : any , result : any) => {
+                            resole(result)
+                        }
+                    )
+                })
+
                 con.query(
                     `
-                    SELECT * 
+                    SELECT formplant.id , formplant.submit , formplant.name_plant , formplant.date_plant ,
+                        formplant.system_glow , formplant.insect , formplant.generation , formplant.qty ,
+                        (
+                            SELECT COUNT(id)
+                            FROM formfertilizer
+                            WHERE id_plant = formplant.id
+                        ) as ctFer ,
+                        (
+                            SELECT COUNT(id)
+                            FROM formchemical
+                            WHERE id_plant = formplant.id
+                        ) as ctChe ,
+                        (
+                            SELECT type_plant
+                            FROM plant_list
+                            WHERE name = formplant.name_plant
+                        ) as type_main
                     FROM formplant , 
                         (
-                            SELECT id_farmHouse 
+                            SELECT id_farmHouse
                             FROM housefarm , 
                                 (
                                     SELECT uid_line , link_user
                                     FROM acc_farmer
-                                    WHERE (register_auth = 0 OR register_auth = 1) and station = ?
+                                    WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
                                 ) as farmer
                             WHERE housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user
                         ) as house
-                    WHERE formplant.id_farmHouse = house.id_farmHouse ${req.body.submit ? `and submit = ${req.body.submit}` : ""}
-                    ORDER BY date_plant
-                    LIMIT ${req.body.limit}
+                    WHERE formplant.id_farmHouse = house.id_farmHouse
+                            ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
+                            ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
+                            ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
+                            and INSTR(formplant.id , '${Success[0] ? Success[0].id_plant : req.body.textInput ? req.body.textInput : ""}')
+                    ORDER BY ${OrderBy}
+                    ${(Limit !== null) ? `LIMIT ${Limit}` : "LIMIT 0"}
                     ` , 
-                    [result['data']['station_doctor']] , 
+                    [ result['data']['station_doctor'] ] , 
                     (err:any , listFarm:any)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
-                            console.log("query");
+                            console.log("select form");
                         }
 
                         con.end()
@@ -824,12 +924,59 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                     }
                 )
             }
-        }).catch((err:any)=>{
+        } catch (err) {
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')
             }
-        })
+        }
+    })
+
+    app.get('/api/doctor/form/get/detail' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result : any = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const TypeForm = (req.query.type === '0') ? "plant" : (req.query.type === '1') ? "fertilizer" : "chemical";
+                const subjectWhereID = (req.query.type === '0') ? "id" : (req.query.type === '1') ? "id_plant" : "id_plant";
+                
+                con.query(
+                    `
+                    SELECT * ,
+                    (
+                        SELECT COUNT(status)
+                        FROM editform
+                        WHERE status = 0 and type_form = ? and id_form = form${TypeForm}.id
+                    ) as countStatus
+                    FROM form${TypeForm}
+                    WHERE ${subjectWhereID} = ?
+                    ` , [TypeForm , req.query.id_form] ,
+                    (err : any , result : any)=>{
+                        if(err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("select form");
+                        }
+
+                        con.end()
+                        res.send(result)
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
     })
     
     // app.post("/doctor/api/doctor/pull" , (req:any , res:any)=>{

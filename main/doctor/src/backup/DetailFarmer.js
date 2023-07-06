@@ -106,7 +106,7 @@ const ShowDetailFarmer = (props) => {
                     </div>
                 </div>
             </section>
-            <section id="farmer-list-doctor-detail" onClick={(e)=> ClosePopUp(e,"farmer-list-doctor-detail",()=>setDoctor(<></>))}>
+            <section id="data-list-content-doctor-detail" onClick={(e)=> ClosePopUp(e,"data-list-content-doctor-detail",()=>setDoctor(<></>))}>
                 {Doctor}
             </section>
         </>

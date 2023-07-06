@@ -35,7 +35,7 @@
             }
         }
 
-        #farmer-list-doctor-detail {
+        #data-list-content-doctor-detail {
             position: fixed;
             display: flex;
             justify-content: center;
@@ -63,7 +63,7 @@
             }
         }
 
-        #farmer-list-doctor-detail[show=""] {
+        #data-list-content-doctor-detail[show=""] {
             opacity: 1;
             visibility: visible;
         }

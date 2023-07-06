@@ -1,6 +1,7 @@
 import React, { useEffect , useState , useRef, useCallback } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/farmer/PageFarmer.scss"
+import "../../assets/style/TemplantList.scss"
 import { DayJSX, LoadOtherDom, Loading, PopupDom, TimeJSX } from "../../../../../src/assets/js/module";
 import ManagePopup from "./ManagePopup";
 const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , LoadType , eleBody , setTextStatus}) => {
@@ -55,7 +56,7 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
     } 
 
     return(
-        <section className="farmer-list-page">
+        <section className="data-list-content-page">
             <div ref={SelectOption} className="bt-action">
                 <div onClick={OptionSelect}>ตัวเลือก</div>
                 <select value={statusPage.status} onChange={changeMenu}>
@@ -63,7 +64,7 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
                     <option value={"wt"}>ยังไม่ตรวจสอบ</option>
                 </select>
             </div>
-            <div className="farmer-list">
+            <div className="data-list-content">
                 <List session={session} socket={socket} status={statusPage}/>
             </div>
         </section>
@@ -166,7 +167,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                                     const Ref = refData[countKey]
                                     countKey++
                                     return (
-                                        <section key={key} className="list-some-farmer"
+                                        <section key={key} className="list-some-data-on-page"
                                             ref={Ref}
                                             >
                                             <div className="img">
@@ -235,7 +236,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
 
     return(
         <>
-        <div className="body-farmer">
+        <div className="body-page-content">
             {Body}
         </div>
         <div className="footer">

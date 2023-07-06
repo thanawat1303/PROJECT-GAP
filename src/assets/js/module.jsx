@@ -181,7 +181,8 @@ const Loading = ({size , border , color="green" , animetion = false}) => {
     return (
         <div style={{
             width : isNaN(size) ? size : `${size}px`,
-            height : isNaN(size) ? size : `${size}px`
+            height : isNaN(size) ? size : `${size}px`,
+            overflow : "hidden"
         }}>
             <div className="curcle"
                 style={{

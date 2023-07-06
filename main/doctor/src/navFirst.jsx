@@ -29,7 +29,7 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
         const context = await clientMo.post('/api/doctor/check')
         if(context)
             setdoctor(<PageFormPlant setMain={setMain}
-                        socket={socket} LoadType={"ap"} session={setSession} type={1} 
+                        socket={socket} LoadType={"ap"} session={setSession} type={true} 
                         eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} />)
         else setSession()
     }
@@ -55,7 +55,7 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
                 <ButtonMenu type={"farmer"} textRow1={"ลงทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
                 <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
                 <ButtonMenu type={"data"} textRow1={"เพิ่มเติม"} textRow2={"ข้อมูล"} action={data}/>
-                <ButtonMenu type={"exportData"} textRow1={"Export"} textRow2={"ข้อมูล"} action={exportData}/>
+                {/* <ButtonMenu type={"exportData"} textRow1={"Export"} textRow2={"ข้อมูล"} action={exportData}/> */}
             </div>
         </section>
     )

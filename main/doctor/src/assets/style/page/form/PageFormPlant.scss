@@ -1,4 +1,4 @@
-.form-list-page {
+.data-list-content-page.form-page {
     display: flex;
     position: relative;
     justify-content: space-evenly;
@@ -136,6 +136,10 @@
                             padding: 0px 2px;
                             margin: 0px 2px;
                             border:2px solid #22C7A9;
+
+                            option.on {
+                                background-color: #22C7A9;
+                            }
                         }
 
                         select:focus-visible {
@@ -155,77 +159,94 @@
         transform: translateX(0%);
     }
 
-    .form-list {
-        display: flex;
-        width: 100%;
-        height: 100%;
+    .data-list-content {
+        .body-page-content {
+            padding: 2px 0px;
+            text-align: center;
+            .list-some-data-on-page[status="0"] {
+                background-color:#81f6e0;
+                box-shadow:0px 2px 2px #53ab9b;
+            }
 
-        .row {
-            display: flex;
-            justify-content: start;
-            align-items: start;
-            width: 100%;
-            margin: 10px 0px;
-            .content-list-form {
-                display: flex;
-                flex-direction: column;
-                width: 25%;
-                background-color: #A0FFE3;
-                border-radius: 20px;
-                padding: 5px 10px;
-                font-family: Sans-font;
-                margin: 0px 4.2%;
-                box-shadow: 0px 4px 4px rgb(195, 195, 195);
-                cursor: pointer;
+            .list-some-data-on-page:hover {
+                box-shadow:0px 3px 3px gray;
+            }
 
-                .inrow {
-                    display: flex;
-                    // justify-content: center;
+            .list-some-data-on-page {
+                display: inline-flex;
+                max-width: 260px;
+                width: 97%;
+                padding: 1px 5px;
+                border-radius: 10px;
+                
+                .frame-data-list {
                     width: 100%;
-                    align-items: center;
-                    justify-content: space-between;
-                    margin: 5px 0px;
-                    font-size: 17px;
-
-                    .type-main {
-                        font-weight: 900;
-                        font-size: 19px;
-                    }
-
-                    .date {
+                    .inrow {
                         display: flex;
+                        // justify-content: center;
+                        width: 100%;
                         align-items: start;
-                        justify-content: end;
-                        padding-top: 2px;
-                        padding-right: 11px;
-                        border-radius: 0px 18px 0px 18px;
-                        background-color: white;
-                        span {
-                            font-size: 13px;
-                        }
-                        input {
-                            font-family: Sans-font;
-                            text-align: end;
-                            padding: 2px;
-                            margin-top: 4px;
-                            border: 0px;
-                            background-color: transparent;
-                            width: 80%;
-                            outline: 0;
-                            cursor: pointer;
-                            pointer-events: none;
-                        }
-                    }
-                    .factor {
-                        display: flex;
-                        justify-content: end;
+                        justify-content: space-between;
+                        margin: 3px 0px;
+                        font-size: 13px;
+                        font-family: Sans-font;
 
                         span {
-                            margin: 0px 5px;
+                            font-weight: 900;
                         }
+    
+                        .column {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: start;
+                            .type-main {
+                                font-weight: 900;
+                                font-size: 16px;
+                            }
 
-                        .dot {
-                            color: white;
+                            .type {
+                                margin-left: 5px;
+                                font-size: 13px;
+                                text-decoration: underline;
+                            }
+                        }
+    
+                        .date {
+                            display: flex;
+                            align-items: start;
+                            justify-content: end;
+                            padding-top: 2px;
+                            padding-right: 11px;
+                            border-radius: 0px 18px 0px 18px;
+                            background-color: white;
+                            span {
+                                font-size: 13px;
+                            }
+                            input {
+                                font-family: Sans-font;
+                                text-align: end;
+                                font-size: 11px;
+                                padding: 2px;
+                                margin-top: 4px;
+                                border: 0px;
+                                background-color: transparent;
+                                width: 80%;
+                                outline: 0;
+                                cursor: pointer;
+                                pointer-events: none;
+                            }
+                        }
+                        .factor {
+                            display: flex;
+                            justify-content: end;
+
+                            div.content {
+                                margin: 0px 2px;
+                            }
+    
+                            .dot {
+                                color: white;
+                            }
                         }
                     }
                 }

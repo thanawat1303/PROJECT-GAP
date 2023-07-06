@@ -21,7 +21,7 @@ const ShowDetailDoctor = (props) => {
             </div>
         </>
         )
-        document.getElementById('farmer-list-doctor-detail').setAttribute('show' , "")
+        document.getElementById('data-list-content-doctor-detail').setAttribute('show' , "")
     } , [])
 
     return(

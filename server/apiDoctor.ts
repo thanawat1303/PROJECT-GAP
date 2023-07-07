@@ -176,7 +176,7 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                                     ) as farmer
                                 WHERE housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user
                             ) as house
-                        WHERE formplant.name_plant = plant_list.name
+                        WHERE formplant.name_plant = plant_list.name and house.id_farmHouse = formplant.id_farmHouse
                     ) as countPlant
                     FROM plant_list
                     WHERE is_use = 1
@@ -862,17 +862,6 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
 
                 const OrderBy = (req.body.typeDate == 1) ? "date_success" : "date_plant";
                 const Limit = (!isNaN(req.body.limit)) ? req.body.limit : null;
-                const Success : any = await new Promise((resole , reject)=>{
-                    con.query(
-                        `
-                        SELECT id_plant
-                        FROM success_detail
-                        WHERE INSTR(id_success , '${req.body.textInput ? req.body.textInput : ""}')
-                        ` , (err : any , result : any) => {
-                            resole(result)
-                        }
-                    )
-                })
 
                 con.query(
                     `
@@ -902,13 +891,13 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                                     FROM acc_farmer
                                     WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
                                 ) as farmer
-                            WHERE housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user
+                            WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
                         ) as house
                     WHERE formplant.id_farmHouse = house.id_farmHouse
                             ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
                             ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
                             ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
-                            and INSTR(formplant.id , '${Success[0] ? Success[0].id_plant : req.body.textInput ? req.body.textInput : ""}')
+                            
                     ORDER BY ${OrderBy}
                     ${(Limit !== null) ? `LIMIT ${Limit}` : "LIMIT 0"}
                     ` , 
@@ -919,8 +908,23 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                             console.log("select form");
                         }
 
-                        con.end()
-                        res.send(listFarm)
+                        const length = listFarm.length
+                        listFarm.map((data : any , key : any)=>{
+                            con.query(
+                                `
+                                SELECT id_success
+                                FROM success_detail
+                                WHERE id_plant = ?
+                                ` ,[ data.id ] , (err : any , result : any) => {
+                                    listFarm[key]["success_id_all"] = result
+
+                                    if(length - 1 === key ) {
+                                        con.end()
+                                        res.send(listFarm)
+                                    }
+                                }
+                            )
+                        })
                     }
                 )
             }
@@ -956,7 +960,16 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                         SELECT COUNT(status)
                         FROM editform
                         WHERE status = 0 and type_form = ? and id_form = form${TypeForm}.id
-                    ) as countStatus
+                    ) as countStatus ,
+                    ${ req.query.type === '0' ?
+                        `
+                        (
+                            SELECT type_plant
+                            FROM plant_list
+                            WHERE name = formplant.name_plant
+                        ) as type_main
+                        ` : ''
+                    }
                     FROM form${TypeForm}
                     WHERE ${subjectWhereID} = ?
                     ` , [TypeForm , req.query.id_form] ,

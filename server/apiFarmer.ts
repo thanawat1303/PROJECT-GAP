@@ -360,9 +360,9 @@ export default function apiFarmer (app:any , Database:any , apifunc:any , HOST_C
                             FROM formplant , 
                                 (
                                     SELECT id_farmHouse FROM housefarm
-                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
+                                    WHERE (housefarm.uid_line = ? or housefarm.link_user = ?) and housefarm.id_farmHouse = ?
                                 ) as houseFarm
-                            WHERE formplant.name_plant = ?
+                            WHERE formplant.name_plant = ? and housefarm.id_farmHouse = formplant.id_farmHouse
                             ORDER BY date_plant DESC
                             LIMIT 1
                         ` , 

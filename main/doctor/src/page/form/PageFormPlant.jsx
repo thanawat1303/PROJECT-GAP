@@ -367,7 +367,7 @@ const List = ({ session , socket , DataFillter}) => {
             let stringUrl = new Array
             DataFillter.forEach((data , key)=>{
                 if(key != "statusClick") { 
-                    JsonData[key] = data
+                    (key != "textInput") ? JsonData[key] = data : null;
                     stringUrl.push(`${key}=${data}`)
                 }
             })
@@ -376,7 +376,11 @@ const List = ({ session , socket , DataFillter}) => {
 
             JsonData["limit"] = Limit
             const list = await clientMo.post('/api/doctor/form/list' , JsonData)
-            const data = JSON.parse(list)
+            const data = JSON.parse(list).filter((val , index)=>{
+                const textSearch = DataFillter.get("textInput") ? DataFillter.get("textInput") : "";
+                return val.id.indexOf(textSearch) >= 0 || val.success_id_all.filter((success , key) => success.id_success.indexOf(textSearch) >= 0)[0]
+            })
+            
             setData(data)
             setLoadList(false)
             return data

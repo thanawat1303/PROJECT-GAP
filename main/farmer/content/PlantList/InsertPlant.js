@@ -209,28 +209,28 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         }
     }
 
-    const OpenPopupPlant = async (e) => {
-        ResetListPopup()
+    // const OpenPopupPlant = async (e) => {
+    //     ResetListPopup()
+    //     await FetchDataForm(e.target.value)
+    //     ListSearch.current.removeAttribute("remove")
+    //     const search = DataPlant.filter((val , key)=>val.name.indexOf(TypePlantInput.current.value) >= 0)
+    //     if(search.length !== 0) setListOther(search.map((val , key)=> <span onClick={(e)=>SetTextOnOther(val.name , e)} key={key}>{val.name}</span>))
+    //     else ResetListPopup()
+
+    //     ChangeCHK()
+    // }
+
+    const SetTextOnOther = async (e) => {
+        // TypePlantInput.current.value = name
         await FetchDataForm(e.target.value)
-        ListSearch.current.removeAttribute("remove")
-        const search = DataPlant.filter((val , key)=>val.name.indexOf(TypePlantInput.current.value) >= 0)
-        if(search.length !== 0) setListOther(search.map((val , key)=> <span onClick={(e)=>SetTextOnOther(val.name , e)} key={key}>{val.name}</span>))
-        else ResetListPopup()
-
         ChangeCHK()
+        // ResetListPopup()
     }
 
-    const SetTextOnOther = async (name) => {
-        TypePlantInput.current.value = name
-        await FetchDataForm(name)
-        ChangeCHK()
-        ResetListPopup()
-    }
-
-    const ResetListPopup = () => {
-        setListOther(<></>)
-        ListSearch.current.setAttribute("remove" , "")
-    }
+    // const ResetListPopup = () => {
+    //     setListOther(<></>)
+    //     ListSearch.current.setAttribute("remove" , "")
+    // }
 
     return(
         <section className="popup-content">
@@ -248,12 +248,20 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                     <div className="row">
                                         <label className="frame-textbox">
                                             <span>ชนิดพืช</span>
-                                            <div className="input-select-popup">
+                                            <select onChange={SetTextOnOther} ref={TypePlantInput} defaultValue={""}>
+                                                <option disabled value={""}>เลือกพืช</option>
+                                                { 
+                                                    DataPlant.map((plant , key)=>
+                                                        <option key={key} value={plant.name}>{plant.name}</option>
+                                                    )
+                                                }
+                                            </select>
+                                            {/* <div className="input-select-popup">
                                                 <input onChange={OpenPopupPlant} onTouchStart={OpenPopupPlant} placeholder="กรอกชื่อพืช" ref={TypePlantInput}></input>
                                                 <div ref={ListSearch} remove="" className="list-input-search">
                                                     {ListSelect}
                                                 </div>
-                                            </div>
+                                            </div> */}
                                         </label>
                                     </div>
                                     <div className="row">
@@ -349,8 +357,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                             <span>ระบบการปลูก</span>
                                             <select onChange={ChangeCHK} ref={System} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
-                                                <option>น้ำ</option>
-                                                <option>ดิน</option>
+                                                <option value={"ขึ้นแปลงปลูกตามไหล่เขา"}>ขึ้นแปลงปลูกตามไหล่เขา</option>
+                                                <option value={"ขึ้นแปลงปลูกที่ลุ่มหลังนา"}>ขึ้นแปลงปลูกที่ลุ่มหลังนา</option>
+                                                <option value={"ปลูกแบบขึ้นค้าง"}>ปลูกแบบขึ้นค้าง</option>
+                                                <option value={"ระบบ Hydroponic"}>ระบบ Hydroponic</option>
+                                                <option value={"ปลูกในวัสดุปลูก"}>ปลูกในวัสดุปลูก</option>
+                                                <option value={"ในโรงเรือน"}>ในโรงเรือน</option>
                                             </select>
                                         </label>
                                     </div>
@@ -368,8 +380,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                             <span>แหล่งน้ำ</span>
                                             <select onChange={ChangeCHK} ref={Water} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
-                                                <option>ลำธาร</option>
-                                                <option>ปะปา</option>
+                                                <option value={"อาศัยน้ำฝน"}>อาศัยน้ำฝน</option>
+                                                <option value={"ลำธาร/คลองธรรมชาติ"}>ลำธาร/คลองธรรมชาติ</option>
+                                                <option value={"บ่อบาดาล"}>บ่อบาดาล</option>
+                                                <option value={"บ่อ/สระขุด"}>บ่อ/สระขุด</option>
+                                                <option value={"คลองชลประทาน"}>คลองชลประทาน</option>
+                                                <option value={"อ่างเก็บน้ำ"}>อ่างเก็บน้ำ</option>
                                             </select>
                                         </label>
                                     </div>
@@ -387,8 +403,11 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                             <span>วิธีการให้น้ำ</span>
                                             <select onChange={ChangeCHK} ref={WaterStep} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
-                                                <option>ตักรด</option>
-                                                <option>รดฝักบัว</option>
+                                                <option value={"สปริงเกอร์"}>สปริงเกอร์</option>
+                                                <option value={"ระบบน้ำหยด"}>ระบบน้ำหยด</option>
+                                                <option value={"ปล่อยตามร่อง"}>ปล่อยตามร่อง</option>
+                                                <option value={"ใช้สายยางรด"}>ใช้สายยางรด</option>
+                                                <option value={"ตักรด"}>ตักรด</option>
                                             </select>
                                         </label>
                                     </div>
@@ -403,8 +422,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                                 <div className="block-wait"></div>
                                                 : <></>
                                             }
-                                            <span>ประวัติการใช้พื้นที่</span>
-                                            <textarea onInput={ChangeCHK} ref={History} type="" placeholder="กรอก"></textarea>
+                                            <span style={{width : "100%"}}>ประวัติการใช้พื้นที่และการเกิดโรคระบาด</span>
                                         </label>
                                     </div>
                                     <div className="row">
@@ -413,11 +431,22 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                                 <div className="block-wait"></div>
                                                 : <></>
                                             }
-                                            <span>โรคและแมลงที่พบ</span>
+                                            <span>พืชที่ปลูกก่อนหน้า</span>
+                                            <input onInput={ChangeCHK} ref={History} type="" placeholder="กรอก"></input>
+                                        </label>
+                                    </div>
+                                    <div className="row">
+                                        <label className="frame-textbox">
+                                            { HistoryPlantLoad ? 
+                                                <div className="block-wait"></div>
+                                                : <></>
+                                            }
+                                            <span>โรค/แมลงที่พบ</span>
                                             <select onChange={ChangeCHK} ref={Insect} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
-                                                <option>แมลง</option>
-                                                <option>เพี้ย</option>
+                                                <option value={"แมลง"}>แมลง</option>
+                                                <option value={"ใบกุด"}>ใบกุด</option>
+                                                <option value={"เพี้ย"}>เพี้ย</option>
                                             </select>
                                         </label>
                                     </div>
@@ -430,8 +459,9 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                             <span>ปริมาณการเกิดโรค และแมลงที่พบ</span>
                                             <select onChange={ChangeCHK} ref={QtyInsect} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
-                                                <option>แมลง</option>
-                                                <option>เพี้ย</option>
+                                                <option value={"น้อย"}>น้อย</option>
+                                                <option value={"ปานกลาง"}>ปานกลาง</option>
+                                                <option value={"มาก"}>มาก</option>
                                             </select>
                                         </label>
                                     </div>

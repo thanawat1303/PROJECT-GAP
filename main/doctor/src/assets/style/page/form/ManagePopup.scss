@@ -55,8 +55,157 @@
         }
 
         .content-detail {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
             height: 100%;
+            padding: 5px;
+
+            .content-body {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                height: 100%;
+                .head-content {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-family: Sans-font;
+                    width: 100%;
+                    height: 33px;
+                    font-weight: 900;
+                    font-size: 20px;
+                    background-color: #81f6e0;
+                    border-radius: 8px;
+                    margin-bottom: 5px;
+                }
+
+                .frame-body {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: calc(100% - 38px);
+                    background-color: #81f6e169;
+                    border-radius: 8px;
+                    padding: 5px;
+                    .body::-webkit-scrollbar {
+                        width: 8px;
+                        background-color: white;
+                        border-radius: 0px 15px 15px 0px;
+                    }
+
+                    .body::-webkit-scrollbar-thumb {
+                        background-color: #52c7b1;
+                        border-radius: 15px;
+                        border-radius: 0px 15px 15px 0px;
+                    }
+                    .body {
+                        display: flex;
+                        width: 100%;
+                        height: 100%;
+                        overflow-y: auto;
+                        font-family: Sans-font;
+                        .detail-main-form {
+                            display: flex;
+                            justify-content: start;
+                            align-items: start;
+                            flex-direction: column;
+                            width: 100%;
+                            height: 100%;
+                            padding-right: 5px;
+                            .content-data {
+                                display: flex;
+                                justify-content: space-evenly;
+                                width: 100%;
+                                margin: 5px 0px;
+            
+                                .data-row {
+                                    width: 95%;
+                                    display: flex;
+                                    flex-direction: column;
+            
+                                    .row {
+                                        width: 100%;
+
+                                        .head-text {
+                                            font-weight: 900;
+                                            padding: 0px 5px;
+                                        }
+                                        
+                                        .data-main {
+                                            display: inline-flex;
+                                            justify-content: space-between;
+                                            flex-direction: column;
+                                            margin-bottom: 4px;
+                                            padding: 0px 5px;
+                                            font-size: 16px;
+                                            
+                                            .head-data {
+                                                font-weight: 900;
+                                            }
+
+                                            .data-show {
+                                                margin-left: 5px;
+                                                background-color: white;
+                                                width: 100%;
+                                                padding: 0px 5px;
+                                                border-radius: 8px;
+                                            }
+
+                                            input {
+                                                width: 100%;
+                                                font-family: Sans-font;
+                                                border-radius: 8px;
+                                                border: 0;
+                                                outline: 0;
+                                                margin-left: 5px;
+                                                padding: 0px 5px;
+                                                font-size: 16px;
+                                            }
+                                        }
+
+                                        .text-body {
+                                            padding-left:5px;
+                                            .data-main {
+                                                flex-direction: row;
+                                                padding-right: 0;
+                                                .head-data {
+                                                    font-weight: 500;
+                                                }
+                                            }
+                                        }
+
+                                        .in-1 {
+                                            flex-direction: row;
+                                            width: 100%;
+                                            .head-data {
+                                                width: auto;
+                                            }
+                                            .data-show {
+                                                width: 100%;
+                                            }
+                                        }
+
+                                        .in-2 {
+                                            width: 50%;
+                                        } 
+
+                                        .in-3 {
+                                            width: 135px;
+                                        } 
+
+                                        .row {
+                                            flex-direction: row;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

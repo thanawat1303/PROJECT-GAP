@@ -353,12 +353,17 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
 const List = ({ session , socket , DataFillter}) => {
     const [Data , setData] = useState([])
     const [Count , setCount] = useState(10)
-
+    const [timeOut , setTimeOut] = useState()
     const [LoadingList , setLoadList ] = useState(true)
     
     useEffect(()=>{
         setLoadList(true)
-        FetchList(10)
+
+        clearTimeout(timeOut)
+        setTimeOut(setTimeout(()=>{
+            FetchList(10)
+        } , 1500))
+
     } , [DataFillter])
 
     const FetchList = async (Limit) => {
@@ -367,7 +372,7 @@ const List = ({ session , socket , DataFillter}) => {
             let stringUrl = new Array
             DataFillter.forEach((data , key)=>{
                 if(key != "statusClick") { 
-                    (key != "textInput") ? JsonData[key] = data : null;
+                    JsonData[key] = data 
                     stringUrl.push(`${key}=${data}`)
                 }
             })
@@ -376,10 +381,7 @@ const List = ({ session , socket , DataFillter}) => {
 
             JsonData["limit"] = Limit
             const list = await clientMo.post('/api/doctor/form/list' , JsonData)
-            const data = JSON.parse(list).filter((val , index)=>{
-                const textSearch = DataFillter.get("textInput") ? DataFillter.get("textInput") : "";
-                return val.id.indexOf(textSearch) >= 0 || val.success_id_all.filter((success , key) => success.id_success.indexOf(textSearch) >= 0)[0]
-            })
+            const data = JSON.parse(list)
             
             setData(data)
             setLoadList(false)

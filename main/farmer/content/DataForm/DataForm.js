@@ -11,6 +11,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
     const [Load , setLoad] = useState(false)
     const [StatusEdit , setStatusEdit] = useState(false)
     const [Popup , setPopup] = useState(<></>)
+    const [DataPlant , setDataPlant] = useState([])
 
     const PopupRef = useRef()
     const ManageMenu = useRef()
@@ -65,6 +66,15 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
             clientMo.unLoadingPage()
     }
 
+    const FetchPlant = async () => {
+        setDataPlant([])
+        const Data = await clientMo.post("/api/farmer/plant/list")
+        if(await CloseAccount(Data , setPage)) {
+            const LIST = JSON.parse(Data)
+            setDataPlant(LIST)
+        }
+    }
+
     const ReturnPage = async () =>{
         const result = await clientMo.post("/api/farmer/account/check")
         if(await CloseAccount(result , setPage)) {
@@ -84,9 +94,10 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
         }
     }
 
-    const EditForm = () => {
-        setStatusEdit(true)
+    const EditForm = async () => {
+        await FetchPlant()
         DataContent.current.setAttribute("edit" , "")
+        setStatusEdit(true)
         document.querySelectorAll("#data-form-page *[readonly='']").forEach((val)=>{
             if(val.getAttribute("date_dom") !== "") {
                 val.removeAttribute("readonly")
@@ -154,7 +165,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                 )
                     ) {
                         const Key = [ 
-                                        "type_plant" , "generation" , "date_glow" , "date_plant" , 
+                                        "name_plant" , "generation" , "date_glow" , "date_plant" , 
                                         "posi_w" , "posi_h" , "qty" , "area" , "date_harvest" , "system_glow" ,
                                         "water" , "water_flow" , "history" , "insect" , "qtyInsect" , "seft"
                                     ]
@@ -309,7 +320,18 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             <label className="frame-textbox">
                                                 <span>ชนิดพืช</span>
                                                 <div className="input-select-popup">
-                                                    <input ref={TypePlantInput} onChange={StatusEdit ? ChangeEdit : null} type="text" readOnly defaultValue={Data.name_plant}></input>
+                                                    { StatusEdit ?
+                                                        DataPlant.length != 0 ?
+                                                            <select style={{width : "100%"}} onChange={ChangeEdit} ref={TypePlantInput} defaultValue={Data.name_plant}>
+                                                                <option disabled value={""}>เลือกพืช</option>
+                                                                { 
+                                                                    DataPlant.map((plant , key)=>
+                                                                        <option key={key} value={plant.name}>{plant.name}</option>
+                                                                    )
+                                                                }
+                                                            </select> : <></>
+                                                        : <input readOnly defaultValue={Data.name_plant}></input>
+                                                    }
                                                 </div>
                                             </label>
                                         </div>
@@ -398,7 +420,18 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ระบบการปลูก</span>
-                                                <input ref={System} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.system_glow}></input>
+                                                { StatusEdit ?
+                                                    <select onChange={ChangeEdit} ref={System} defaultValue={Data.system_glow}>
+                                                        <option disabled value="">เลือก</option>
+                                                        <option value={"ขึ้นแปลงปลูกตามไหล่เขา"}>ขึ้นแปลงปลูกตามไหล่เขา</option>
+                                                        <option value={"ขึ้นแปลงปลูกที่ลุ่มหลังนา"}>ขึ้นแปลงปลูกที่ลุ่มหลังนา</option>
+                                                        <option value={"ปลูกแบบขึ้นค้าง"}>ปลูกแบบขึ้นค้าง</option>
+                                                        <option value={"ระบบ Hydroponic"}>ระบบ Hydroponic</option>
+                                                        <option value={"ปลูกในวัสดุปลูก"}>ปลูกในวัสดุปลูก</option>
+                                                        <option value={"ในโรงเรือน"}>ในโรงเรือน</option>
+                                                    </select>
+                                                    : <input readOnly defaultValue={Data.system_glow}></input>
+                                                }
                                             </label>
                                         </div>
                                     </div>
@@ -409,7 +442,18 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งน้ำ</span>
-                                                <input ref={Water} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.water}></input>
+                                                { StatusEdit ?
+                                                    <select onChange={ChangeEdit} ref={Water} defaultValue={Data.water}>
+                                                        <option disabled value="">เลือก</option>
+                                                        <option value={"อาศัยน้ำฝน"}>อาศัยน้ำฝน</option>
+                                                        <option value={"ลำธาร/คลองธรรมชาติ"}>ลำธาร/คลองธรรมชาติ</option>
+                                                        <option value={"บ่อบาดาล"}>บ่อบาดาล</option>
+                                                        <option value={"บ่อ/สระขุด"}>บ่อ/สระขุด</option>
+                                                        <option value={"คลองชลประทาน"}>คลองชลประทาน</option>
+                                                        <option value={"อ่างเก็บน้ำ"}>อ่างเก็บน้ำ</option>
+                                                    </select>
+                                                    : <input readOnly defaultValue={Data.water}></input>
+                                                }
                                             </label>
                                         </div>
                                     </div>
@@ -420,7 +464,17 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="row">
                                             <label className="frame-textbox">
                                                 <span>วิธีการให้น้ำ</span>
-                                                <input ref={WaterStep} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.water_flow}></input>
+                                                { StatusEdit ?
+                                                    <select onChange={ChangeEdit} ref={WaterStep} defaultValue={Data.water_flow}>
+                                                        <option disabled value="">เลือก</option>
+                                                        <option value={"สปริงเกอร์"}>สปริงเกอร์</option>
+                                                        <option value={"ระบบน้ำหยด"}>ระบบน้ำหยด</option>
+                                                        <option value={"ปล่อยตามร่อง"}>ปล่อยตามร่อง</option>
+                                                        <option value={"ใช้สายยางรด"}>ใช้สายยางรด</option>
+                                                        <option value={"ตักรด"}>ตักรด</option>
+                                                    </select>
+                                                    : <input readOnly defaultValue={Data.water_flow}></input>
+                                                }
                                             </label>
                                         </div>
                                     </div>
@@ -430,20 +484,41 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="body">
                                         <div className="row">
                                             <label className="frame-textbox">
-                                                <span>ประวัติการใช้พื้นที่</span>
-                                                <textarea style={{textAlign : "start" , padding : "0.5em"}} ref={History} readOnly defaultValue={Data.history}></textarea>
+                                                <span style={{width : "100%"}}>ประวัติการใช้พื้นที่และการเกิดโรคระบาด</span>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
-                                                <span>โรคและแมลงที่พบ</span>
-                                                <input ref={Insect} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.insect}></input>
+                                                <span>พืชที่ปลูกก่อนหน้า</span>
+                                                <input ref={History} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.history}></input>
+                                            </label>
+                                        </div>
+                                        <div className="row">
+                                            <label className="frame-textbox">
+                                                <span>โรค/แมลงที่พบ</span>
+                                                { StatusEdit ?
+                                                    <select onChange={ChangeEdit} ref={Insect} defaultValue={Data.insect}>
+                                                        <option disabled value="">เลือก</option>
+                                                        <option value={"แมลง"}>แมลง</option>
+                                                        <option value={"ใบกุด"}>ใบกุด</option>
+                                                        <option value={"เพี้ย"}>เพี้ย</option>
+                                                    </select>
+                                                    : <input readOnly defaultValue={Data.insect}></input>
+                                                }
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ปริมาณการเกิดโรค และแมลงที่พบ</span>
-                                                <input ref={QtyInsect} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.qtyInsect}></input>
+                                                { StatusEdit ?
+                                                    <select onChange={ChangeEdit} ref={QtyInsect} defaultValue={Data.qtyInsect}>
+                                                        <option disabled value="">เลือก</option>
+                                                        <option value={"น้อย"}>น้อย</option>
+                                                        <option value={"ปานกลาง"}>ปานกลาง</option>
+                                                        <option value={"มาก"}>มาก</option>
+                                                    </select>
+                                                    : <input readOnly defaultValue={Data.qtyInsect}></input>
+                                                }
                                             </label>
                                         </div>
                                         <div className="row">

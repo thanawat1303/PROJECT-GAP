@@ -851,8 +851,8 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             if(result['result'] === "pass") {
 
                 // select out table
-
-                const TypePlant = (req.body.typePlant) ? req.body.typePlant : null ;
+                const TextInsert = req.body.textInput ?? "";
+                const TypePlant = req.body.typePlant ?? null ;
                 const Submit = (req.body.statusForm >= 0 && req.body.statusForm <= 2) ? req.body.statusForm : null ;
                 const StatusFarmer = (req.body.statusFarmer >= 0 && req.body.statusFarmer <= 1) ? req.body.statusFarmer : null;
                 
@@ -865,66 +865,62 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
 
                 con.query(
                     `
-                    SELECT formplant.id , formplant.submit , formplant.name_plant , formplant.date_plant ,
+                    SELECT fromInsert.* 
+                    FROM formplant ,
+                    (
+                        SELECT formplant.id , formplant.submit , formplant.name_plant , formplant.date_plant ,
                         formplant.system_glow , formplant.insect , formplant.generation , formplant.qty ,
-                        (
-                            SELECT COUNT(id)
-                            FROM formfertilizer
-                            WHERE id_plant = formplant.id
-                        ) as ctFer ,
-                        (
-                            SELECT COUNT(id)
-                            FROM formchemical
-                            WHERE id_plant = formplant.id
-                        ) as ctChe ,
-                        (
-                            SELECT type_plant
-                            FROM plant_list
-                            WHERE name = formplant.name_plant
-                        ) as type_main
-                    FROM formplant , 
-                        (
-                            SELECT id_farmHouse
-                            FROM housefarm , 
-                                (
-                                    SELECT uid_line , link_user
-                                    FROM acc_farmer
-                                    WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
-                                ) as farmer
-                            WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
-                        ) as house
-                    WHERE formplant.id_farmHouse = house.id_farmHouse
-                            ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
-                            ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
-                            ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
-                            
-                    ORDER BY ${OrderBy}
+                            (
+                                SELECT COUNT(id)
+                                FROM formfertilizer
+                                WHERE id_plant = formplant.id
+                            ) as ctFer ,
+                            (
+                                SELECT COUNT(id)
+                                FROM formchemical
+                                WHERE id_plant = formplant.id
+                            ) as ctChe ,
+                            (
+                                SELECT type_plant
+                                FROM plant_list
+                                WHERE name = formplant.name_plant
+                            ) as type_main ,
+                            (
+                                SELECT id_plant
+                                FROM success_detail
+                                WHERE id_plant = formplant.id and INSTR(id_success , ?)
+                                GROUP BY id_plant
+                            ) as success_id_plant
+                        FROM formplant , 
+                            (
+                                SELECT id_farmHouse
+                                FROM housefarm , 
+                                    (
+                                        SELECT uid_line , link_user
+                                        FROM acc_farmer
+                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
+                                    ) as farmer
+                                WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
+                            ) as house
+                        WHERE formplant.id_farmHouse = house.id_farmHouse
+                                ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
+                                ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
+                                ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
+                                
+                        ORDER BY ${OrderBy}
+                    ) as fromInsert
+                    WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
                     ${(Limit !== null) ? `LIMIT ${Limit}` : "LIMIT 0"}
-                    ` , 
-                    [ result['data']['station_doctor'] ] , 
+                    `
+                    , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
                     (err:any , listFarm:any)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
                             console.log("select form");
                         }
 
-                        const length = listFarm.length
-                        listFarm.map((data : any , key : any)=>{
-                            con.query(
-                                `
-                                SELECT id_success
-                                FROM success_detail
-                                WHERE id_plant = ?
-                                ` ,[ data.id ] , (err : any , result : any) => {
-                                    listFarm[key]["success_id_all"] = result
-
-                                    if(length - 1 === key ) {
-                                        con.end()
-                                        res.send(listFarm)
-                                    }
-                                }
-                            )
-                        })
+                        con.end()
+                        res.send(listFarm)
                     }
                 )
             }

@@ -21,28 +21,113 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                 type_form === 0 ?
                     JsonData.map((data , key)=>
                         <section key={key} className="detail-main-form">
-                            <div className="row">
-                                <div className="data-main in-2">
-                                    <span>ชนิดพืช</span>
-                                    <span>{data.type_main}</span>
-                                </div>
-                                <div className="data-main in-2">
-                                    <span>ชื่อพืช</span>
-                                    <span>{data.name_plant}</span>
+                            <div className="content-data">
+                                <div className="number">1.</div>
+                                <div className="data-row">
+                                    <div className="row">
+                                        <div className="data-main in-2">
+                                            <span className="head-data">ชนิดพืช</span>
+                                            <span className="data-show">{data.type_main}</span>
+                                        </div>
+                                        <div className="data-main in-2">
+                                            <span className="head-data">ชื่อพืช</span>
+                                            <span className="data-show">{data.name_plant}</span>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="data-main in-2">
+                                            <span className="head-data">วันที่เพาะกล้า</span>
+                                            <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_glow}/>
+                                        </div>
+                                        <div className="data-main in-2">
+                                            <span className="head-data">วันที่ปลูก</span>
+                                            <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_plant}/>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="data-main in-2">
+                                            <span className="head-data">วันที่คาดว่าจะเก็บเกี่ยว</span>
+                                            <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_harvest}/>
+                                        </div>
+                                        <div className="data-main in-2">
+                                            <span className="head-data">วันที่เก็บเกี่ยว</span>
+                                            { data.date_success ? 
+                                                <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_success}/> 
+                                                : <span className="data-show">ยังไม่เก็บเกี่ยว</span>}
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="data-main in-2">
+                                            <span className="head-data">พื้นที่</span>
+                                            <span className="data-show">{data.area}</span>
+                                        </div>
+                                        <div className="data-main in-2">
+                                            <span className="head-data">จำนวนต้น</span>
+                                            <span className="data-show">{data.qty}</span>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <span className="head-text">ระยะการปลูก</span>
+                                        <div className="text-body">
+                                            <div className="data-main in-2">
+                                                <span className="head-data">กว้าง</span>
+                                                <span className="data-show">{data.posi_w}</span>
+                                            </div>
+                                            <div className="data-main in-2">
+                                                <span className="head-data">ยาว</span>
+                                                <span className="data-show">{data.posi_h}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="data-main in-2">
+                                            <span className="head-data">รุ่นที่ปลูก</span>
+                                            <span className="data-show">{data.generation}</span>
+                                        </div>
+                                        <div className="data-main in-2">
+                                            <span className="head-data">ระบบการปลูก</span>
+                                            <span className="data-show">{data.system_glow}</span>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="data-main in-2">
+                                            <span className="head-data">รุ่นที่ปลูก</span>
+                                            <span className="data-show">{data.generation}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="data-main in-3">
-                                    <span>วันที่เพาะกล้า</span>
-                                    <DayJSX DATE={data.date_glow}/>
+                            <div className="content-data">
+                                <div className="number">2.</div>
+                                <div className="data-row">
+                                    <div className="row">
+                                        <div className="data-main in-1">
+                                            <span className="head-data" style={{width : "110px"}}>ระบบการปลูก</span>
+                                            <span className="data-show">{data.system_glow}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="data-main in-3">
-                                    <span>วันที่ปลูก</span>
-                                    <DayJSX DATE={data.date_plant}/>
+                            </div>
+                            <div className="content-data">
+                                <div className="number">3.</div>
+                                <div className="data-row">
+                                    <div className="row">
+                                        <div className="data-main in-1">
+                                            <span className="head-data" style={{width : "110px"}}>แหล่งน้ำ</span>
+                                            <span className="data-show">{data.water}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="data-main in-3">
-                                    <span>วันที่คาดว่าจะเก็บเกี่ยว</span>
-                                    <DayJSX DATE={data.date_harvest}/>
+                            </div>
+                            <div className="content-data">
+                                <div className="number">4.</div>
+                                <div className="data-row">
+                                    <div className="row">
+                                        <div className="data-main in-1">
+                                            <span className="head-data" style={{width : "110px"}}>วิธีการให้น้ำ</span>
+                                            <span className="data-show">{data.water_flow}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -107,7 +192,16 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                         <Loading size={"100px"} border={"8px"} color="#22c7a9b2" animetion={true}/>
                     </div>
                     :
-                    Content
+                    <div className="content-body">
+                        <div className="head-content">
+                            ข้อมูลการปลูกพืช
+                        </div>
+                        <div className="frame-body">
+                            <div className="body">
+                                {Content}
+                            </div>
+                        </div>
+                    </div>
                 }
             </div>
         </div>

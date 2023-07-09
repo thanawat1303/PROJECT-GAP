@@ -19,6 +19,15 @@ class moduleClient {
                 body: formData
             }).then((e)=>e.text().then((context)=>context))
         },
+        this.put = async (url = "" , data={}) => {
+            return fetch(url, {
+                method: 'put',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then((e)=>e.text().then((context)=>context))
+        },
         this.get = async (url = "") => {
             return fetch(url, {
                 headers: {

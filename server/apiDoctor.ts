@@ -956,10 +956,10 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                         SELECT COUNT(status)
                         FROM editform
                         WHERE status = 0 and type_form = ? and id_form = form${TypeForm}.id
-                    ) as countStatus ,
+                    ) as countStatus
                     ${ req.query.type === '0' ?
                         `
-                        (
+                        , (
                             SELECT type_plant
                             FROM plant_list
                             WHERE name = formplant.name_plant
@@ -987,6 +987,153 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             }
         }
     })
+
+    app.post('/api/doctor/form/edit/get' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result : any = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const type = req.body.id_edit ? "*" : "id_edit" ;
+                const where = req.body.id_edit ? `and editform.id_edit = '${req.body.id_edit}'` : "" ;
+                con.query(
+                    ` 
+                        SELECT editform.${type} 
+                        FROM editform
+                        WHERE editform.id_form = ? and type_form = ? ${where}
+                        ORDER BY date DESC
+                    ` 
+                , [  req.body.id_form , req.body.type_form ] , 
+                (err : any , result : any)=>{
+                    if (err) {
+                        dbpacket.dbErrorReturn(con, err, res);
+                        console.log("select plant editform");
+                        return 0;
+                    }
+
+                    if(req.body.id_edit) {
+                        con.query(
+                            `
+                            SELECT * FROM detailedit
+                            WHERE id_edit = ?
+                            ` , [req.body.id_edit] , 
+                            (err : any , detail : any) => {
+                                if (err) {
+                                    dbpacket.dbErrorReturn(con, err, res);
+                                    console.log("select detailedit");
+                                    return 0;
+                                }
+
+                                con.end()
+                                res.send({
+                                    head : result[0] ,
+                                    detail : detail
+                                })
+                            }
+                            )
+                    } else {
+                        con.end()
+                        res.send(result)
+                    }
+                })
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.put('/api/doctor/form/edit/change/status' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result : any = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                        UPDATE editform
+                        SET status = ? , note = ? , id_doctor = ?
+                        WHERE id_edit = ?
+                    ` , [ req.body.status , req.body.note , result['data']['id_table_doctor'] , req.body.id_edit ] ,
+                    (err : any , result : any) => {
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("update plant editform");
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send("133")
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.get('/api/doctor/form/manage/get' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result : any = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                        SELECT *
+                        FROM ${req.query.typePage}
+                        WHERE id_plant = ?
+                        ORDER BY date_of_doctor
+                    ` , [ req.query.id_plant ] ,
+                    (err : any , result : any) => {
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("get manage");
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send(result)
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+    // end formplant
     
     // app.post("/doctor/api/doctor/pull" , (req:any , res:any)=>{
     //     let username = req.session.user_doctor

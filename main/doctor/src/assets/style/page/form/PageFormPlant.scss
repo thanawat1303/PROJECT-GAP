@@ -236,6 +236,15 @@
                                 pointer-events: none;
                             }
                         }
+                        .system-glow {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: start;
+
+                            div {
+                                margin-left: 5px;
+                            }
+                        }
                         .factor {
                             display: flex;
                             justify-content: end;

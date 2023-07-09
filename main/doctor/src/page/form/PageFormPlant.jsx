@@ -468,7 +468,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                             <div className="inrow">
                                 <div className="system-glow">
                                     <span>ระบบการปลูก</span> 
-                                    {" "+Data.system_glow}
+                                    <div>{" "+Data.system_glow}</div>
                                 </div>
                                 <div className="factor">
                                     <div className="content">

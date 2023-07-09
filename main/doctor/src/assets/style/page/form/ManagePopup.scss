@@ -1,3 +1,5 @@
+$colorBoderBottonData : #3bc69c;
+
 .data-list-content-page.form-page {
     .content-detail-form {
         display: flex;
@@ -6,7 +8,7 @@
         position: relative;
         max-width: 500px;
         // min-width: 250px;
-        max-height: 50%;
+        max-height: 70%;
         height: 100%;
         width: 97%;
         background-color: white;
@@ -69,16 +71,118 @@
                 height: 100%;
                 .head-content {
                     display: flex;
+                    position: relative;
                     justify-content: center;
                     align-items: center;
                     font-family: Sans-font;
                     width: 100%;
                     height: 33px;
-                    font-weight: 900;
-                    font-size: 20px;
                     background-color: #81f6e0;
                     border-radius: 8px;
                     margin-bottom: 5px;
+
+                    .text {
+                        font-weight: 900;
+                        font-size: 20px;
+                    }
+
+                    .bt-edit {
+                        position: absolute;
+                        right: 1em;
+                        display: flex;
+                        background-color: #5dd4be;
+                        padding: 3px;
+                        border-radius: 8px;
+                        box-shadow: 0px 2px 2px #3a9685;
+
+                        .count-edit {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            position: absolute;
+                            left: 80%;
+                            bottom: -0.3em;
+                            background-color: rgb(255, 0, 0);
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 50%;
+                            color: white;
+                            font-family: Sans-font;
+                        }
+
+                        svg {
+                            fill: black;
+                            width: 22px;
+                        }
+                    }
+                }
+
+                .frame-body.p-1 {
+                    padding:0;
+                    background-color: white;
+                    .body {
+                        padding: 2px;
+                    }
+                }
+
+                .frame-body.manage {
+                    padding:0;
+                    background-color: white;
+                    flex-direction: column;
+
+                    .menu-manage-form {
+                        display: flex;
+                        justify-content: space-evenly;
+                        width: 100%;
+                        
+                        .flex-center {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            flex-direction: column;
+                            width: 24%;
+                            padding: 2px;
+                            border: 2px solid #3bc69c;
+                            border-radius: 18px;
+
+                            div {
+                                text-align: center;
+                                width: 100%;
+                                font-family: Sans-font;
+                                font-weight: 900;
+                                font-size: 14px;
+                            }
+                        }
+
+                        .flex-center[select=""] {
+                            background-color: #3bc69c;
+                            color: white;
+                        }
+                    }
+
+                    .bt-add-content {
+                        display: flex;
+                        justify-content: space-evenly;
+                        width: 100%;
+                        margin: 4px 0px;
+                        a {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            width: 45%;
+                            font-family: Sans-font;
+                            font-size: 14px;
+                            font-weight: 900;
+                            background-color: #3bc69c;
+                            border-radius: 18px;
+                            padding: 2px 0px;
+                            color: white;
+                        }
+                    }
+                    .body {
+                        padding: 2px;
+                    }
                 }
 
                 .frame-body {
@@ -101,11 +205,14 @@
                         border-radius: 15px;
                         border-radius: 0px 15px 15px 0px;
                     }
+
                     .body {
                         display: flex;
+                        flex-direction: column;
                         width: 100%;
                         height: 100%;
                         overflow-y: auto;
+                        border-radius: 8px;
                         font-family: Sans-font;
                         .detail-main-form {
                             display: flex;
@@ -121,6 +228,10 @@
                                 width: 100%;
                                 margin: 5px 0px;
             
+                                .number {
+                                    padding: 4px 0px;
+                                }
+                                
                                 .data-row {
                                     width: 95%;
                                     display: flex;
@@ -139,8 +250,10 @@
                                             justify-content: space-between;
                                             flex-direction: column;
                                             margin-bottom: 4px;
-                                            padding: 0px 5px;
+                                            padding: 4px 5px;
+                                            padding-bottom: 8px;
                                             font-size: 16px;
+                                            border-bottom: 2px solid $colorBoderBottonData;
                                             
                                             .head-data {
                                                 font-weight: 900;
@@ -168,9 +281,13 @@
 
                                         .text-body {
                                             padding-left:5px;
+                                            padding-bottom: 4px;
+                                            border-bottom: 2px solid $colorBoderBottonData;
                                             .data-main {
                                                 flex-direction: row;
                                                 padding-right: 0;
+                                                padding-bottom: 0px;
+                                                border-bottom: none;
                                                 .head-data {
                                                     font-weight: 500;
                                                 }
@@ -200,6 +317,101 @@
                                             flex-direction: row;
                                         }
                                     }
+                                }
+                            }
+                        }
+
+                        .row-factor {
+                            display: flex;
+                            flex-direction: column;
+                            position: relative;
+                            width: 100%;
+                            background-color: #81f6e169;
+                            margin-bottom: 8px;
+                            border-radius: 15px;
+                            padding: 4px 8px;
+                            box-shadow: 0px 2px 4px #5a9e93;
+                            
+                            .row-in {
+                                display: flex;
+                                justify-content: space-between;
+                                font-size: 14px;
+                                margin: 1px 0px;
+                                .in-data {
+                                    display: flex;
+
+                                    span {
+                                        font-weight: 900;
+                                    }
+
+                                    span.head {
+                                        font-size: 18px;
+                                    }
+
+                                    span:not(.head) {
+                                        margin-right: 3px;
+                                    }
+                                }
+
+                                .in-data.date {
+                                    align-items: start;
+                                    flex-direction: column;
+                                    background-color: white;
+                                    padding-left: 8px;
+                                    padding-top: 2px;
+                                    border-radius: 18px 0px 18px 0px;
+
+                                    input {
+                                        border: 0;
+                                        outline: 0;
+                                        padding: 0px 2px;
+                                        font-size: 11px;
+                                        background-color: transparent;
+                                        text-align: start;
+                                        font-family: Sans-font;
+                                    }
+                                }
+
+                                .in-data.chemical {
+                                    display: flex;
+                                    flex-direction: column;
+
+                                    div {
+                                        padding-left: 5px;
+                                    }
+                                }
+
+                                .in-data.safe {
+                                    input {
+                                        border: 0;
+                                        outline: 0;
+                                        font-family: Sans-font;
+                                        font-size: 13px;
+                                        background-color: transparent;
+                                    }
+                                }
+                            }
+
+                            .bt-factor {
+                                position: absolute;
+                                right: 0.2em;
+                                top: 0.2em;
+
+                                button {
+                                    border-radius: 15px;
+                                    border: 0;
+                                    outline: 0;
+                                    font-family: Sans-font;
+                                    font-weight: 900;
+                                    font-size: 12px;
+                                    box-shadow: 0px 2px 2px #3a9685;
+                                    background-color: #1e6255;
+                                    color: white;
+                                    cursor: pointer;
+                                }
+
+                                button:hover {
+                                    box-shadow: 0px 2px 2px #20584e;
                                 }
                             }
                         }

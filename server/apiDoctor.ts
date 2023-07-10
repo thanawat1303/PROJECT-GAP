@@ -1133,6 +1133,90 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
             }
         }
     })
+
+    app.put('/api/doctor/form/manage/success/insert' , async (req:any , res:any)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result : any = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const Result : any = req.body.type == 1 ? await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                            SELECT id
+                            FROM check_plant_detail
+                            WHERE id_plant = ?
+                        ` , [ req.body.id_plant ] , 
+                        (err : any , result : any) => {
+                            resole(result)
+                        }
+                    )
+                }) : "";
+
+                const Check = req.body.type == 1 ? Result[0] ? true : false : true;
+
+                const Random = await new Promise( async (resole , reject)=>{
+                    while(true) {
+                        let random = apifunc.generateID(8)
+                        let resultFound : any = await new Promise((resole , reject)=> {
+                            con.query(
+                                `
+                                SELECT id
+                                FROM success_detail
+                                WHERE id_success = ?
+                                ` , [ random ] , 
+                                (err : any , result : any) => {
+                                    resole(result)
+                                }
+                            )
+                        })
+
+                        if(resultFound.length === 0) {
+                            resole(random)
+                            break;
+                        }
+                    }
+                })
+                
+                if(Check) {
+                    con.query(
+                        `
+                            INSERT success_detail
+                            ( id_plant , id_success , id_table_doctor , type_success , date_of_farmer )
+                            VALUES 
+                            ( ? , ? , ? , ? , '')
+                        ` , [ req.body.id_plant , Random , result["data"].id_table_doctor , req.body.type ] ,
+                        (err : any , result : any) => {
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("get manage");
+                                return 0;
+                            }
+    
+                            con.end()
+                            res.send("113")
+                        }
+                    )
+                } else {
+                    con.end()
+                    res.send("not")
+                }
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        }
+    })
     // end formplant
     
     // app.post("/doctor/api/doctor/pull" , (req:any , res:any)=>{

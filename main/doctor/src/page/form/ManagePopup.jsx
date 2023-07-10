@@ -279,10 +279,10 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
         } , 500)
     }
 
-    const GetDetailEdit = async (id_form , type) => {
+    const GetDetailEdit = async (id_form_edit , type) => {
         const context = await clientMo.post('/api/doctor/check')
         if(context) 
-            setBodyPopupEdit(<DetailEdit Ref={PopRef} setRef={setBodyPopupEdit} setDetailData={FetchContent} type={type} id_form={id_form} session={session}/>)
+            setBodyPopupEdit(<DetailEdit Ref={PopRef} setRef={setBodyPopupEdit} setDetailData={FetchContent} type={type} id_form={id_form_edit} session={session}/>)
         else session()
     }
 
@@ -310,7 +310,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                     : type_page === "report" ? "report_detail"
                     : type_page === "CheckForm" ? "check_form_detail"
                     : type_page === "CheckPlant" ? "check_plant_detail" 
-                    : "success_detail"
+                    : ""
                     )
         const context = await clientMo.get(`/api/doctor/form/manage/get?id_plant=${id_form}&typePage=${Type}`)
         if(context) {
@@ -322,7 +322,26 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
             }
             setTypePage(3)
             SetStatePage(type_page)
-            setContent(type_page)
+            const Data = JSON.parse(context)
+
+            setContent(Data.map((data , key)=> 
+                <section key={key} className="list-manage-doctor">
+                    {data.id}
+                </section>
+            ))
+        }
+        else session()
+    }
+
+    // succes action
+    const RefManagePopup = useRef()
+    const [ ManagePop , setManagePop ] = useState(<></>) 
+
+    const SuccessResult = async (result) => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) {
+            setManagePop(<PopupConfirmAction Ref={RefManagePopup} setPopup={setManagePop}
+                            session={session} FetchData={()=>MenuManageFormByDoctor("success")} Result={result} id_plant={id_form}/>)
         }
         else session()
     }
@@ -422,11 +441,11 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                     <div className="bt-add-content">
                                         { StatePage === "success" ?
                                             <>
-                                            <a>
+                                            <a onClick={()=>SuccessResult(0)}>
                                                 <div>เก็บเกี่ยวผลผลิต</div>
                                                 <div>ตัวอย่าง</div>
                                             </a>
-                                            <a>
+                                            <a onClick={()=>SuccessResult(1)}>
                                                 <div>เก็บเกี่ยวผลผลิต</div>
                                                 <div>ทั้งหมด</div>
                                             </a>
@@ -446,7 +465,70 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
             </div>
         </div>
         <PopupDom Ref={PopRef} Body={BodyPopupEdit}/>
+        <PopupDom Ref={RefManagePopup} Body={ManagePop}/>
         </>
+    )
+}
+
+const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_plant}) => {
+
+    const BtConfirm = useRef()
+    const Password = useRef()
+    
+    useEffect(()=>{
+        Ref.current.style.opacity = "1"
+        Ref.current.style.visibility = "visible"
+    } , [])
+
+    const Confirm = async () => {
+        if(CheckEmply()) {
+            const result = await clientMo.put("/api/doctor/form/manage/success/insert" , {
+                type : Result,
+                id_plant : id_plant,
+                password : Password.current.value
+            })
+
+            if(result === "113") {
+                FetchData()
+                close()
+            } else if (result === "password") {
+                Password.current.value = ""
+                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+            } else session()
+        }
+    }
+
+    const close = () => {
+        Ref.current.style.opacity = "0"
+        Ref.current.style.visibility = "hidden"
+
+        setTimeout(()=>{
+            setPopup(<></>)
+        })
+    }
+
+    const CheckEmply = () => {
+        const pw = Password.current
+
+        if(pw.value) {
+            BtConfirm.current.removeAttribute("not")
+            return true
+        }
+        else {
+            BtConfirm.current.setAttribute("not" , "")
+            return false
+        }
+    }
+
+    return (
+        <div className="content-confirm-manage">
+            <span>{Result ? "ยืนยันเก็บเกี่ยวผลผลิตทั้งหมด" : "ยืนยันเก็บเกี่ยวผลผลิตตัวอย่าง"}</span>
+            <input onChange={CheckEmply} ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่" type="password"></input>
+            <div className="bt-content">
+                <button style={{backgroundColor : "red"}} onClick={close}>ยกเลิก</button>
+                <button ref={BtConfirm} not="" onClick={Confirm}>ยืนยัน</button>
+            </div>
+        </div>
     )
 }
 

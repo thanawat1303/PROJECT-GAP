@@ -1,7 +1,7 @@
 require('dotenv').config().parsed
 import line from "./configLine";
 import * as fs from "fs"
-export default function Messaging (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any , LINE = line , UrlNgrok : any) {
+export default function Messaging (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any , LINE = line , UrlApi : any) {
 
     app.post('/messageAPI' , (req : any , res : any)=>{
         
@@ -40,7 +40,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                                     for (let key in result) {
                                         query.push(
                                                 {
-                                                    imageUrl : `${UrlNgrok}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
+                                                    imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
                                                     action : {
                                                         type : "uri",
                                                         label : `${result[key]["name_house"]}`,

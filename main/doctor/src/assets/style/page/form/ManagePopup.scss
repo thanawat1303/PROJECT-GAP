@@ -144,6 +144,8 @@ $colorBoderBottonData : #3bc69c;
                             padding: 2px;
                             border: 2px solid #3bc69c;
                             border-radius: 18px;
+                            box-shadow: 0px 1.5px 1.5px #1e6255;
+                            cursor: pointer;
 
                             div {
                                 text-align: center;
@@ -157,6 +159,7 @@ $colorBoderBottonData : #3bc69c;
                         .flex-center[select=""] {
                             background-color: #3bc69c;
                             color: white;
+                            box-shadow: none;
                         }
                     }
 
@@ -172,12 +175,14 @@ $colorBoderBottonData : #3bc69c;
                             align-items: center;
                             width: 45%;
                             font-family: Sans-font;
-                            font-size: 14px;
+                            font-size: 12px;
                             font-weight: 900;
-                            background-color: #3bc69c;
+                            background-color: #96dac5;
                             border-radius: 18px;
-                            padding: 2px 0px;
-                            color: white;
+                            padding: 0px 0px;
+                            padding-top: 3px;
+                            color: black;
+                            box-shadow: 0px 2px 2px #20584e;
                         }
                     }
                     .body {
@@ -417,6 +422,69 @@ $colorBoderBottonData : #3bc69c;
                         }
                     }
                 }
+            }
+        }
+    }
+
+    .content-confirm-manage {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 4px gray;
+        background-color: white;
+        height: 150px;
+        
+        span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            font-weight: 900;
+            font-size: 18px;
+            font-family: Sans-font;
+        }
+
+        input {
+            width: 90%;
+            padding: 5px 0px;
+            font-size: 16px;
+            text-align: center;
+            font-family: main-font;
+            background-color: #22C7A9;
+            border: 0;
+            outline: 0;
+            border-radius: 10px;
+        }
+
+        input::placeholder {
+            color: white;
+            font-family: Sans-font;
+        }
+
+        .bt-content {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+
+            button {
+                border-radius: 10px;
+                width: 35%;
+                border: 0;
+                outline: 0;
+                font-family: Sans-font;
+                font-size: 15px;
+                font-weight: 900;
+                background-color: #0d562a;
+                color: white;
+                box-shadow: 0px 4px 4px gray;
+            }
+
+            button[not=""] {
+                background-color: #43a269c0;
+                color: rgba(255, 255, 255, 0.614);
             }
         }
     }

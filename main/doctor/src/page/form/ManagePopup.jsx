@@ -494,6 +494,8 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
             } else if (result === "password") {
                 Password.current.value = ""
                 Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+            } else if (result === "not") {
+                console.log("not")
             } else session()
         }
     }

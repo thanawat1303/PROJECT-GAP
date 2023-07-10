@@ -1107,12 +1107,15 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
         try {
             const result : any = await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
+                const Order = req.query.typePage === "success_detail" ? "date_of_doctor" 
+                                : req.query.typePage === "report_detail" ? "date_report"
+                                : "date_check";
                 con.query(
                     `
                         SELECT *
                         FROM ${req.query.typePage}
                         WHERE id_plant = ?
-                        ORDER BY date_of_doctor
+                        ORDER BY ${Order}
                     ` , [ req.query.id_plant ] ,
                     (err : any , result : any) => {
                         if (err) {
@@ -1153,7 +1156,7 @@ export default function apiDoctor (app:any , Database:any , apifunc:any , HOST_C
                         `
                             SELECT id
                             FROM check_plant_detail
-                            WHERE id_plant = ?
+                            WHERE id_plant = ? and status_check = 0
                         ` , [ req.body.id_plant ] , 
                         (err : any , result : any) => {
                             resole(result)

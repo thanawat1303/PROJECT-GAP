@@ -28,8 +28,8 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     // set Server
 
     const listDB = dbpacket.listConfig(username , password)
-    const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : ""
-    
+    const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV;
+
     // protocal websocket
     WebSocket(server)
 

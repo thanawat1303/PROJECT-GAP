@@ -4,6 +4,32 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     app.post('/api/doctor/check' , (req , res)=>{
         res.redirect('/api/doctor/auth');
     })
+
+    app.get('/api/doctor/name' , (req , res)=>{
+      
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+            con.end()
+            res.send(result['data'].fullname_doctor)
+        }).catch((err)=>{
+            if(err == "not pass") {
+                con.end()
+                res.redirect('/api/logout')
+            } else if( err == "connect" ) {
+                res.redirect('/api/logout')
+            }
+        })
+    
+    })
     
     app.post('/api/doctor/checkline' , (req , res)=>{
         let con = Database.createConnection(listDB)
@@ -33,7 +59,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.body['username'] ?? '';
         let password = req.body['password'] ?? '';
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -89,7 +115,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor ?? req.body['username'] ?? '';
         let password = req.session.pass_doctor ?? req.body['password'] ?? '';
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -151,7 +177,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -206,7 +232,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     //     let username = req.session.user_doctor
     //     let password = req.session.pass_doctor
     
-    //     if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    //     if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
     //         res.redirect('/api/logout')
     //         return 0
     //     }
@@ -240,7 +266,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -285,7 +311,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -322,7 +348,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -359,7 +385,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -449,7 +475,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -569,7 +595,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -611,7 +637,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -657,7 +683,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -722,7 +748,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -839,7 +865,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -936,7 +962,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -992,7 +1018,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -1057,7 +1083,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -1097,7 +1123,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -1141,7 +1167,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -1226,7 +1252,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     //     let username = req.session.user_doctor
     //     let password = req.session.pass_doctor
     
-    //     if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    //     if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
     //         res.redirect('/api/logout')
     //         return 0
     //     }
@@ -1278,7 +1304,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     //     let username = req.session.user_doctor
     //     let password = req.body['password']
     
-    //     if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    //     if(username === '' || (req.hostname !== HOST_CHECK)) {
     //         res.redirect('/api/logout')
     //         return 0
     //     }
@@ -1457,7 +1483,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }

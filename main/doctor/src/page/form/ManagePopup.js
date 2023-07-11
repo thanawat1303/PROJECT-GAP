@@ -347,10 +347,11 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
     }
 
     // report
-    const PopupReport = async () => {
-        const context = await clientMo.post('/api/doctor/check')
+    const PopupReport = async (typeClick) => {
+        const context = await clientMo.get('/api/doctor/name')
         if(context) {
-            setManagePop()
+            setManagePop(<InsertManage Ref={RefManagePopup} setPopup={setManagePop}
+                session={session} FetchData={()=>MenuManageFormByDoctor("success")} NameDoctor={context} typeInsert={typeClick} id_plant={id_form}/>)
         }
         else session()
     }
@@ -461,7 +462,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                             </a>
                                             </> 
                                             : StatePage === "report" ? 
-                                            <a>เพิ่มข้อแนะนำ</a>
+                                            <a onClick={()=>PopupReport()}>เพิ่มข้อแนะนำ</a>
                                             : <></>
                                         }
                                     </div>
@@ -546,7 +547,8 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
     )
 }
 
-const InsertManage = ({Ref , setPopup , session , FetchData , typeInsert , id_plant}) => {
+const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeInsert , id_plant}) => {
+
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
@@ -571,11 +573,28 @@ const InsertManage = ({Ref , setPopup , session , FetchData , typeInsert , id_pl
                     <div className="report">
                         <input type="date"></input>
                         <textarea placeholder="กรอกข้อความ"></textarea>
+                        <input value={NameDoctor} readOnly className="name-doctor" type="text"></input>
                     </div> :
                     <div className="check">
-
+                        <input type="date"></input>
+                        <div className="result">
+                            <div className="box-result">
+                                <a>ก่อน</a>
+                                <a>หลัง</a>
+                            </div>
+                            <div className="box-result">
+                                <input type="number"></input>
+                                <input type="number"></input>
+                            </div>
+                        </div>
+                        <input value={NameDoctor} readOnly className="name-doctor" type="text"></input>
+                        <textarea placeholder="หมายเหตุ"></textarea>
                     </div>
                 }
+            </div>
+            <div className="bt-insert">
+                <button>ยกเลิก</button>
+                <button>ยืนยัน</button>
             </div>
         </div>
     )

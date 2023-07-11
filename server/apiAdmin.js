@@ -1,6 +1,7 @@
 require('dotenv').config().parsed
 module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
   app.post('/api/admin/check' , (req , res)=>{
+    console.log(req.hostname);
     res.redirect('/api/admin/auth');
   })
   
@@ -9,7 +10,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -54,7 +55,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -98,7 +99,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -215,7 +216,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin
     let password = req.body['password']
   
-    if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -300,7 +301,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -335,7 +336,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -371,7 +372,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   })
 
   app.post('/api/admin/data/insert' , async (req , res)=>{
-    if(req.body.passwordAd && req.body.type && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+    if(req.body.passwordAd && req.body.type && req.hostname == HOST_CHECK) {
         
       let username = req.session.user_admin
       let password = req.body.passwordAd
@@ -450,7 +451,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin
     let password = req.body['password']
   
-    if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -539,7 +540,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     let username = req.session.user_admin ?? req.body['username'] ?? '';
     let password = req.session.pass_admin ?? req.body['password'] ?? '';
   
-    if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')
       return 0
     }
@@ -574,7 +575,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   //   let username = req.session.user_admin
   //   let password = req.session.pass_admin
   
-  //   if(username === '' || password === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+  //   if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
   //     res.redirect('/api/logout')
   //     return 0
   //   }
@@ -653,7 +654,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   //   let username = req.session.user_admin ?? '';
   //   let password = req.body['password'] ?? '';
   
-  //   if(username === '' || (req.hostname !== HOST_CHECK && HOST_CHECK)) {
+  //   if(username === '' || (req.hostname !== HOST_CHECK)) {
   //     res.redirect('/api/logout')
   //     return 0
   //   }

@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require("webpack");
 
 module.exports = {
   entry: {
@@ -10,6 +11,11 @@ module.exports = {
     path: path.resolve(__dirname , "public"), 
     filename: "[name].main.js"
   },
+  plugins : [
+    new webpack.DefinePlugin({
+        "process.env.REACT_API_KEY" : JSON.stringify("AIzaSyDgCfVBI9YfvOp1esw8dnuPTtNOpr9YgI4")
+    })
+  ],
   module: {
     rules: [
         {

@@ -346,6 +346,16 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
         else session()
     }
 
+    // report
+    const PopupReport = async () => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) {
+            setManagePop()
+        }
+        else session()
+    }
+
+
     return (
         <>
         <div className="content-detail-form">
@@ -534,6 +544,10 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
             </div>
         </div>
     )
+}
+
+const InsertManage = () => {
+    
 }
 
 export default ManagePopup

@@ -59,7 +59,12 @@
    
    - on Deploy product
       ```
-      npm run server
+      npm run server 'username-db' 'password-db'
+      ```
+   
+   - on text Deploy product
+      ```
+      npm run server-node
       ```
 
    - on Ngrok

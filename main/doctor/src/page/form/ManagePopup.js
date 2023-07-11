@@ -593,7 +593,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                 }
             </div>
             <div className="bt-insert">
-                <button>ยกเลิก</button>
+                <button onClick={close}>ยกเลิก</button>
                 <button>ยืนยัน</button>
             </div>
         </div>

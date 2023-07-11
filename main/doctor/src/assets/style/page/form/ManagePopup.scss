@@ -165,21 +165,22 @@ $colorBoderBottonData : #3bc69c;
 
                     .bt-add-content {
                         display: flex;
-                        justify-content: space-evenly;
+                        justify-content: end;
+                        align-items: center;
                         width: 100%;
-                        margin: 4px 0px;
+                        margin: 6px 0px;
                         a {
                             display: flex;
                             flex-direction: column;
                             justify-content: center;
                             align-items: center;
-                            width: 45%;
                             font-family: Sans-font;
                             font-size: 12px;
                             font-weight: 900;
-                            background-color: #96dac5;
-                            border-radius: 18px;
-                            padding: 0px 0px;
+                            background: linear-gradient(160deg , #3dffc5b4 , white);
+                            border-radius: 10px;
+                            padding: 0px 12px;
+                            margin: 0px 5px;
                             padding-top: 3px;
                             color: black;
                             box-shadow: 0px 2px 2px #20584e;

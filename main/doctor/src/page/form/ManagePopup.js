@@ -442,14 +442,16 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                         { StatePage === "success" ?
                                             <>
                                             <a onClick={()=>SuccessResult(0)}>
-                                                <div>เก็บเกี่ยวผลผลิต</div>
+                                                <div>สั่งเก็บผลผลิต</div>
                                                 <div>ตัวอย่าง</div>
                                             </a>
                                             <a onClick={()=>SuccessResult(1)}>
-                                                <div>เก็บเกี่ยวผลผลิต</div>
+                                                <div>สั่งเก็บผลผลิต</div>
                                                 <div>ทั้งหมด</div>
                                             </a>
                                             </> 
+                                            : StatePage === "report" ? 
+                                            <a>เพิ่มข้อแนะนำ</a>
                                             : <></>
                                         }
                                     </div>

@@ -64,7 +64,7 @@
    
    - on text Deploy product
       ```
-      npm run server-node
+      npm run server-node 'username-db' 'password-db'
       ```
 
    - on Ngrok

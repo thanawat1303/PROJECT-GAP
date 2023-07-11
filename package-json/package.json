@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server .",
-    "server": "nodemon server/server.ts deploy",
+    "server": "ts-node server/server.ts deploy",
     "server-dev": "nodemon server/server.ts",
     "server-ngrok": "npx ts-node server/serverNgrok.ts",
     "build": "webpack --mode production"

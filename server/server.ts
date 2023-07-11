@@ -2,8 +2,8 @@ import db from 'mysql'
 import appRun from './appRun'
 require('dotenv').config().parsed
 
-let username = (process.argv[2] == process.env.BUILD) ? "" : process.env.USER_DBDEV ?? ""
-let password = (process.argv[2] == process.env.BUILD) ? "" : process.env.PASSWORD_DBDEV ?? ""
+let username = (process.argv[2] == process.env.BUILD) ? process.env.USER_DB : process.env.USER_DBDEV ?? ""
+let password = (process.argv[2] == process.env.BUILD) ? process.env.PASSWORD_DB : process.env.PASSWORD_DBDEV ?? ""
 let state = 0
 
 if(!username && !password) {

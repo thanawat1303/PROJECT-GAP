@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server .",
-    "server": "node server/server.js deploy",
+    "server": "pm2 start server/server.js -- deploy",
+    "server-stop" : "pm2 stop server/server.js",
     "server-dev": "nodemon server/server.js",
     "server-ngrok": "node server/serverNgrok.js",
     "build": "webpack --mode production"

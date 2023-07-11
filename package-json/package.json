@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server .",
-    "server": "nodemon server/server.js deploy",
-    "server-dev": "nodemon server/server.ts",
-    "server-ngrok": "node server/serverNgrok.ts",
+    "server": "node server/server.js deploy",
+    "server-dev": "nodemon server/server.js",
+    "server-ngrok": "node server/serverNgrok.js",
     "build": "webpack --mode production"
   },
   "repository": {

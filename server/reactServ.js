@@ -1,11 +1,12 @@
-import webpack, { Configuration } from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import {_config} from '../webpack.dev.config';
-import path from 'path';
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const _config = require('../webpack.dev.config');
+const path = require('path');
 
-export default function reactServ(app : any) {
-    const WebpackConfig = _config as Configuration
+module.exports = function reactServ(app) {
+    const WebpackConfig = _config 
+    // as Configuration
     const compiler = webpack(WebpackConfig);
     const dirName = path.resolve(__dirname, "../src/");
     

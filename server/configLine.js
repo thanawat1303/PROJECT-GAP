@@ -1,4 +1,4 @@
-import * as Line from "@line/bot-sdk" 
+const Line = require("@line/bot-sdk") 
 require('dotenv').config().parsed
 
 const config = {
@@ -6,4 +6,6 @@ const config = {
   channelSecret: process.env.channelSecret
 }
 
-export default new Line.Client(config)
+const LINE = new Line.Client(config)
+
+module.exports = LINE

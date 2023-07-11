@@ -1,23 +1,23 @@
-import router from './routerApi'
-import reactServ from './reactServ';
-import apiAdmin from './apiAdmin';
-import apiDoctor from './apiDoctor';
-import apiFarmer from './apiFarmer';
-import message from './apiMessaging';
-import dbpacket from './dbConfig';
-import apifunc from './apifunc';
-import LINE from "./configLine";
-import WebSocket from './webSocket';
+const router = require('./routerApi');
+const reactServ = require('./reactServ');
+const apiAdmin = require('./apiAdmin');
+const apiDoctor = require('./apiDoctor');
+const apiFarmer = require('./apiFarmer');
+const message = require('./apiMessaging');
+const dbpacket = require('./dbConfig');
+const apifunc = require('./apifunc');
+const LINE = require("./configLine");
+const WebSocket = require('./webSocket');
 
-import express from 'express';
-import helmat from 'helmet';
-import multer from 'multer';
-import * as http from 'http';
-import * as https from 'https'
-import db from 'mysql';
-import cookieParser from 'cookie-parser';
-import sessions from 'express-session';
-export default function appConfig(username: any , password: any , UrlNgrok : any) {
+const express = require('express');
+const helmat = require('helmet');
+const multer = require('multer');
+const http = require('http');
+const https = require('https');
+const db = require('mysql');
+const cookieParser = require('cookie-parser');
+const sessions = require('express-session');
+module.exports = function appConfig(username , password , UrlNgrok ) {
     require('dotenv').config().parsed
 
     const app = express();

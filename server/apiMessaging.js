@@ -1,15 +1,15 @@
 require('dotenv').config().parsed
-import line from "./configLine";
-import * as fs from "fs"
-export default function Messaging (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any , LINE = line , UrlApi : any) {
+const line = require('./configLine')
+const fs = require('fs')
+module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , LINE = line , UrlApi) {
 
-    app.post('/messageAPI' , (req : any , res : any)=>{
+    app.post('/messageAPI' , (req , res)=>{
         
         if(req.body.events.length > 0) {
             if(req.body.events[0].postback) {
                 if(req.body.events[0].postback.data == "house_add") {
                     let con = Database.createConnection(listDB)
-                    con.connect(( err:any )=>{
+                    con.connect(( err )=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
                             console.log("connect");
@@ -27,14 +27,14 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
                                     WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
                                     ` , 
                             [req["body"]['events'][0]["source"]["userId"]] ,
-                            (err:any , result:any)=>{
+                            (err , result)=>{
                                 if (err) {
                                     dbpacket.dbErrorReturn(con, err, res);
                                     console.log("query");
                                     return 0
                                 }
                                 con.end()
-                                let msg : any
+                                let msg
                                 if(result[0]) {
                                     let query = new Array
                                     for (let key in result) {
@@ -88,10 +88,10 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
         
     })
 
-    app.get("/image/house" , (req : any , res : any)=>{
+    app.get("/image/house" , (req , res)=>{
         if(req.query.imagefarm) {
             let con = Database.createConnection(listDB)
-            con.connect(( err:any )=>{
+            con.connect(( err )=>{
                 if (err) {
                     dbpacket.dbErrorReturn(con, err, res);
                     console.log("connect");
@@ -100,7 +100,7 @@ export default function Messaging (app:any , Database:any , apifunc:any , HOST_C
 
                 con.query(`SELECT img_house FROM housefarm WHERE id_farmHouse = ?` , 
                     [req.query.imagefarm] ,
-                    (err:any , result:any)=>{
+                    (err , result)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
                             console.log("query");

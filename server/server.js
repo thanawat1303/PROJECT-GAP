@@ -46,11 +46,11 @@ if(!username && !password) {
                     state = 2
                     con.end()
 
-                    appRun.default(username , password)
+                    appRun(username , password)
                 };
             })
         }
     });
 } else {
-    appRun.default(username , password)
+    appRun(username , password)
 }

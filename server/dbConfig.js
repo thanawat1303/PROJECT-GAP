@@ -1,7 +1,7 @@
 require('dotenv').config().parsed
 
 const DB = {
-    listConfig : (username:any , password:any) => {
+    listConfig : (username, password) => {
         return {
             host: process.env.HOST,
             user: username,
@@ -10,7 +10,7 @@ const DB = {
         }
     },
     
-    dbErrorReturn : (con:any , err:any , res:any) => {
+    dbErrorReturn : (con, err, res) => {
         console.log(err)
         res.send('error')
         con.end()
@@ -33,4 +33,4 @@ const DB = {
 //     con.pause()
 // })
 
-export default DB
+module.exports = DB

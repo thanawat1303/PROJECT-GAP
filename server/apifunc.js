@@ -1,12 +1,13 @@
-import dbFunc from './dbConfig';
-const ErrorDB = (connectDB : any, err : any, res : any) => {
+const dbFunc = require('./dbConfig').default
+
+const ErrorDB = (connectDB, err, res) => {
   dbFunc.dbErrorReturn(connectDB, err, res)
 }
 
 const apifunc = {
-  auth: (connectDB : any, username : any, password : any, res : any, authAccount : any) => {
+  auth: (connectDB, username, password, res, authAccount) => {
     return new Promise((resole, reject) => {
-      connectDB.connect((err:any) => {
+      connectDB.connect((err) => {
         if (err) {
           ErrorDB(connectDB, err, res);
           reject("connect");
@@ -19,7 +20,7 @@ const apifunc = {
         connectDB.query(
           `SELECT * FROM ${authAccount} WHERE ${usernameDB}=? AND ${passwordDB}=SHA2( ? , 256) ${ORDER}`,
           [username, password],
-          (err : any, result : any) => {
+          (err, result) => {
             if (err) {
               ErrorDB(connectDB, err, res);
               reject("query");
@@ -39,7 +40,7 @@ const apifunc = {
     });
   },
 
-  generateID : (length : any) => {
+  generateID : (length) => {
       var result = '';
       var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       var charactersLength = characters.length;
@@ -50,4 +51,4 @@ const apifunc = {
   }
 };
 
-export default apifunc;
+module.exports = apifunc;

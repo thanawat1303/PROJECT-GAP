@@ -1,12 +1,12 @@
-import path from 'path';
+const path = require('path');
 require('dotenv').config().parsed
 
 // Hot refresh
-import webpack from "webpack";
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+const webpack = require("webpack");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
 // Hot refresh
-export const _config = {
+module.exports = {
     mode: "development", //set Mode 
     entry:
         {

@@ -1,6 +1,6 @@
-import appConfig from './configExpress'
-import fs from 'fs'
-export default function appRun(username : any , password : any){
+const appConfig = require("./configExpress")
+const fs = require('fs')
+module.exports = function appRun(username , password){
     console.log("Load Server ...")
     const UrlApi = fs.readFileSync(__dirname.replace('\server' , "/UrlServer.json"))
     const app = appConfig(username , password , JSON.parse(UrlApi.toString()).url) 

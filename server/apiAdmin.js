@@ -1,11 +1,11 @@
 require('dotenv').config().parsed
-export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CHECK:any , dbpacket:any , listDB:any) {
-  app.post('/api/admin/check' , (req:any , res:any)=>{
+module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
+  app.post('/api/admin/check' , (req , res)=>{
     res.redirect('/api/admin/auth');
   })
   
 // doctor page
-  app.post('/api/admin/doctor/list' , (req:any , res:any)=>{
+  app.post('/api/admin/doctor/list' , (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -16,7 +16,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   
     let con = Database.createConnection(listDB)
   
-    apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
+    apifunc.auth(con , username , password , res , "admin").then((result)=>{
       if(result['result'] === "pass") {
         let data = req.body
         let select = data.typeDelete === 0 ? ", status_account" : ""
@@ -32,7 +32,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           ` 
         , 
         [data.typeDelete] ,
-        (err:any , result:any)=>{
+        (err , result)=>{
           if (err){
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -42,7 +42,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           res.send(result)
         })
       }
-    }).catch((err:any)=>{
+    }).catch((err)=>{
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -50,7 +50,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     })
   })
 
-  app.post('/api/admin/doctor/get' , async (req:any , res:any)=>{
+  app.post('/api/admin/doctor/get' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -76,7 +76,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           ` 
         , 
         [data.id_table] ,
-        (err:any , result:any)=>{
+        (err , result)=>{
           if (err){
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -86,7 +86,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           res.send(result)
         })
       }
-    } catch (err : any) {
+    } catch (err) {
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -94,7 +94,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
 
-  app.post('/api/admin/doctor/because/get' , async (req:any , res:any)=>{
+  app.post('/api/admin/doctor/because/get' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -121,7 +121,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
             ` 
           , 
           [data.id_table] ,
-          (err:any , result:any)=>{
+          (err , result)=>{
             if (err){
               dbpacket.dbErrorReturn(con , err , res)
               return 0
@@ -132,7 +132,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           })
         }
       }
-    } catch (err : any) {
+    } catch (err) {
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -140,7 +140,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
 
-  app.post('/api/admin/add' , async (req:any , res:any)=>{
+  app.post('/api/admin/add' , async (req , res)=>{
     if(req.body['id_doctor'] && req.body['passwordDT'] && req.body['passwordAd'] && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
         
       let username = req.session.user_admin
@@ -162,7 +162,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
                     WHERE id_doctor=? and status_delete=0
                     ` , 
           [req.body['id_doctor']] , 
-          (err : any , account : any)=>{
+          (err , account)=>{
 
             if(err) {
               dbpacket.dbErrorReturn(con , err , res)
@@ -187,7 +187,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
                             ) 
                             VALUES ('',?,'',SHA2(?,256),'','',1,0)` , 
                 [req.body['id_doctor'],req.body['passwordDT']] , 
-                (err:any , result:any)=>{
+                (err , result)=>{
                   if(err) {
                     dbpacket.dbErrorReturn(con , err , res)
                     console.log("insert doctor")
@@ -199,7 +199,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
             }
           })   
         }
-      } catch (err : any) {
+      } catch (err) {
         if(err == "not pass") {
           con.end()
           res.send("incorrect")
@@ -211,7 +211,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
 
-  app.post('/api/admin/manage/doctor' , async (req:any,res:any)=>{
+  app.post('/api/admin/manage/doctor' , async (req,res)=>{
     let username = req.session.user_admin
     let password = req.body['password']
   
@@ -235,7 +235,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
               FROM acc_doctor 
               WHERE id_table_doctor = ? and status_delete = 0
               `
-              , [ req.body['id_table'] ] , (err : any , deleteResult : any) => {
+              , [ req.body['id_table'] ] , (err , deleteResult) => {
                 if(err) {
                   dbpacket.dbErrorReturn(con , err , res)
                   console.log(`select check err`)
@@ -249,7 +249,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
                       (id_table_doctor , id_admin , because_text , date ${type_status === "status" ? ", type_status" : ""}) VALUES 
                       (? , ? , ? , ? ${type_status === "status" ? `, "${req.body['status']}"` : ""});
                     ` , [ req.body['id_table'] , username , req.body['because'] , new Date()] ,
-                    (err : any , resultBecause : any) => {
+                    (err , resultBecause) => {
                       if(err) {
                         dbpacket.dbErrorReturn(con , err , res)
                         console.log("insert change status doctor")
@@ -261,7 +261,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
                             SET ${req.body['type_status']} = ? 
                             WHERE id_table_doctor = ? ${type_status === "delete" ? "and status_delete = 0" : ""};` , 
                           [req.body['status'] , req.body['id_table']] , 
-                          (err:any,result:any)=>{
+                          (err,result)=>{
                             if(err) {
                               dbpacket.dbErrorReturn(con , err , res)
                               console.log(`UPDATE ${type_status} err`)
@@ -287,7 +287,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           res.send('error ID or status')
         }
       }
-    }catch(err : any) {
+    }catch(err) {
       con.end()
       if(err == "not pass") {
         res.send("password")
@@ -296,7 +296,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   })
 
 // data page
-  app.post('/api/admin/data/list' , async (req:any , res:any)=>{
+  app.post('/api/admin/data/list' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -313,7 +313,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           `
           SELECT * FROM ${data.type}_list LIMIT 25;
           `
-         , (err : any , result : any)=>{
+         , (err , result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
             console.log(`select ${data.type} err`)
@@ -323,7 +323,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           res.send(result)
          })
       }
-    } catch (err : any) {
+    } catch (err) {
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -331,7 +331,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
 
-  app.post('/api/admin/data/get' , async (req:any , res:any)=>{
+  app.post('/api/admin/data/get' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -352,7 +352,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           ` 
         , 
         [data.id] ,
-        (err:any , result:any)=>{
+        (err , result)=>{
           if (err){
             dbpacket.dbErrorReturn(con , err , res)
             return 0
@@ -362,7 +362,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           res.send(result)
         })
       }
-    } catch (err : any) {
+    } catch (err) {
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -370,7 +370,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
 
-  app.post('/api/admin/data/insert' , async (req:any , res:any)=>{
+  app.post('/api/admin/data/insert' , async (req , res)=>{
     if(req.body.passwordAd && req.body.type && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
         
       let username = req.session.user_admin
@@ -391,7 +391,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
             `
             SELECT * FROM ${data.type}_list WHERE name=? and is_use = 1;
             `
-            ,[ data.name ], (err : any , result : any)=>{
+            ,[ data.name ], (err , result)=>{
             if(err) {
               dbpacket.dbErrorReturn(con , err , res)
               console.log(`select ${data.type} err`)
@@ -418,7 +418,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
                               data.type === "station" ? `, POINT(${data.lat},${data.lng})` : ""
                             }
                           )` , 
-              [ data.name ] , (err : any , insert : any)=>{
+              [ data.name ] , (err , insert)=>{
                 if(err) {
                   dbpacket.dbErrorReturn(con , err , res)
                   console.log(`insert ${data.type} err`)
@@ -434,7 +434,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
             }
           })  
         }
-      } catch (err : any) {
+      } catch (err) {
         if(err == "not pass") {
           con.end()
           res.send("incorrect")
@@ -446,7 +446,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
 
-  app.post('/api/admin/data/change' , async (req:any , res:any)=>{
+  app.post('/api/admin/data/change' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.body['password']
   
@@ -466,7 +466,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
             `
             UPDATE ${data.type}_list SET is_use = ? WHERE id = ?;
             `
-            , [ data.state_use , data.id_table] , (err : any , result : any)=>{
+            , [ data.state_use , data.id_table] , (err , result)=>{
             if(err) {
               dbpacket.dbErrorReturn(con , err , res)
               console.log(`change ${data.type} err`)
@@ -477,7 +477,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
           })
         } else res.send("no")
       }
-    } catch (err : any) {
+    } catch (err) {
       con.end()
       if(err == "not pass") {
         res.send("password")
@@ -485,7 +485,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
   
-  // app.post('/api/admin/delete' , (req:any , res:any)=>{
+  // app.post('/api/admin/delete' , (req , res)=>{
   //   let timeoutSession = 20
   //   if(req.body['ID'] &&
   //       req.session.checkDelete['value'] === process.env.KEY_SESSION + "delete" && 
@@ -504,9 +504,9 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   
   //     let con = Database.createConnection(listDB)
   
-  //     apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
+  //     apifunc.auth(con , username , password , res , "admin").then((result)=>{
   //       if(result['result'] === "pass") {
-  //         con.query(`UPDATE acc_doctor SET status_delete = 1 WHERE id_doctor=?` , [req.body['ID']] , (err:any , result:any)=>{
+  //         con.query(`UPDATE acc_doctor SET status_delete = 1 WHERE id_doctor=?` , [req.body['ID']] , (err , result)=>{
   //           if(err) {
   //             dbpacket.dbErrorReturn(con , err , res)
   //             return 0
@@ -517,7 +517,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   //         })
   //       }
   
-  //     }).catch((err:any)=>{
+  //     }).catch((err)=>{
   //       con.end()
   //       if(err == "not pass") {
   //         res.redirect('/api/logout')
@@ -533,7 +533,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   // })
 
   // check Login
-  app.all('/api/admin/auth' , async (req:any , res:any)=>{
+  app.all('/api/admin/auth' , async (req , res)=>{
     
     // เช็คการเข้าสู่ระบบจริงๆ
     let username = req.session.user_admin ?? req.body['username'] ?? '';
@@ -555,7 +555,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
         req.session.pass_admin = password
         res.send('1')
       }
-    } catch (err : any) {
+    } catch (err) {
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -565,12 +565,12 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
     }
   })
   
-  app.get('/api/logout' , (req:any , res:any) => {
+  app.get('/api/logout' , (req , res) => {
     res.clearCookie('connect.sid').send('')
   })
 }
 
-  // app.post('/api/admin/chkOver' , (req:any , res:any)=>{
+  // app.post('/api/admin/chkOver' , (req , res)=>{
   //   let username = req.session.user_admin
   //   let password = req.session.pass_admin
   
@@ -581,10 +581,10 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   
   //   let con = Database.createConnection(listDB)
   
-  //   apifunc.auth(con , username , password , res , "admin").then((result:any)=>{
+  //   apifunc.auth(con , username , password , res , "admin").then((result)=>{
   //     if(result['result'] === "pass") {
   //       if(req.body['ID']) {
-  //         con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err:any,result:any)=>{
+  //         con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err,result)=>{
   //           if(err) {
   //             dbpacket.dbErrorReturn(con , err , res)
   //             return 0
@@ -601,31 +601,31 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   //         res.send('error ID')
   //       }
   //     }
-  //   }).catch((err:any)=>{
+  //   }).catch((err)=>{
   //     con.end()
   //     if(err == "not pass") {
   //       res.redirect('/api/logout')
   //     }
   //   })
   
-  //   // con.connect((err:any) => {
+  //   // con.connect((err) => {
   //   //   if(err) {
-  //   //     dbpacket.dbErrorReturn(con , err , res:any)
+  //   //     dbpacket.dbErrorReturn(con , err , res)
   //   //     return 0
   //   //   }
   
-  //   //   con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err:any , result:any)=>{
+  //   //   con.query(`SELECT * FROM admin WHERE username=? AND password=?` , [username , password] , (err , result)=>{
   //   //     if (err) {
-  //   //       dbpacket.dbErrorReturn(con , err , res:any)
+  //   //       dbpacket.dbErrorReturn(con , err , res)
   //   //       return 0
   //   //     };
     
   //   //     if(result[0]){
     
   //   //       if(req.body['ID']) {
-  //   //         con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err:any,result:any)=>{
+  //   //         con.query(`SELECT id_doctor FROM acc_doctor WHERE id_doctor=?` , [req.body['ID']] , (err,result)=>{
   //   //           if(err) {
-  //   //             dbpacket.dbErrorReturn(con , err , res:any)
+  //   //             dbpacket.dbErrorReturn(con , err , res)
   //   //             return 0
   //   //           }
   
@@ -649,7 +649,7 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   // })
   
   // check action of user
-  // app.post('/api/admin/checkUserAction' , (req:any , res:any)=> {
+  // app.post('/api/admin/checkUserAction' , (req , res)=> {
   //   let username = req.session.user_admin ?? '';
   //   let password = req.body['password'] ?? '';
   
@@ -660,13 +660,13 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   
   //   let con = Database.createConnection(listDB)
   
-  //   con.connect((err:any)=>{
+  //   con.connect((err)=>{
   //     if(err) {
   //       dbpacket.dbErrorReturn(con , err , res)
   //       return 0
   //     }
   
-  //     con.query(`SELECT * FROM admin WHERE username=? AND password=SHA2( ? , 256)` , [username , password] , (err:any , result:any)=>{
+  //     con.query(`SELECT * FROM admin WHERE username=? AND password=SHA2( ? , 256)` , [username , password] , (err , result)=>{
   //       if (err) {
   //         dbpacket.dbErrorReturn(con , err , res)
   //         return 0

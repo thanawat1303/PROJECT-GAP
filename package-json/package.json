@@ -4,10 +4,11 @@
   "description": "��#\u0000 \u0000P\u0000R\u0000O\u0000J\u0000E\u0000C\u0000T\u0000-\u0000L\u0000I\u0000N\u0000E\u0000-\u0000O\u0000A\u0000-\u0000G\u0000A\u0000P\u0000",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server .",
     "server": "pm2 start server/server.js -- deploy",
     "server-stop" : "pm2 stop server/server.js",
+    "server-restart" : "pm2 restart server/server.js",
+    "server-startup" : "pm2 startup",
     "server-dev": "nodemon server/server.js",
     "server-ngrok": "node server/serverNgrok.js",
     "build": "webpack --mode production"

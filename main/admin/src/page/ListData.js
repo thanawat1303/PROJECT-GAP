@@ -349,7 +349,8 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                 } , 100)
             }
             else {
-                setOpen(0)
+                setText(`มีปัญหาในการเพิ่มข้อมูล`)
+                setStatus(2)
             }
         } else {
             console.log("not")

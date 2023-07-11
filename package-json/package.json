@@ -6,6 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server .",
     "server": "pm2 start server/server.js -- deploy",
+    "server-node": "node server/server.js deploy",
     "server-stop" : "pm2 stop server/server.js",
     "server-restart" : "pm2 restart server/server.js",
     "server-startup" : "pm2 startup",

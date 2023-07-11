@@ -546,8 +546,39 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
     )
 }
 
-const InsertManage = () => {
-    
+const InsertManage = ({Ref , setPopup , session , FetchData , typeInsert , id_plant}) => {
+    useEffect(()=>{
+        Ref.current.style.opacity = "1"
+        Ref.current.style.visibility = "visible"
+    } , [])
+
+    const close = () => {
+        Ref.current.style.opacity = "0"
+        Ref.current.style.visibility = "hidden"
+
+        setTimeout(()=>{
+            setPopup(<></>)
+        })
+    }
+
+    return(
+        <div className="insert-manage-doctor">
+            <div className="head-content">
+                {typeInsert === "report" ? "เพิ่มข้อแนะนำ" : "เพิ่มผลการตรวจสอบ" }
+            </div>
+            <div className="content-insert">
+                { typeInsert === "report" ? 
+                    <div className="report">
+                        <input type="date"></input>
+                        <textarea placeholder="กรอกข้อความ"></textarea>
+                    </div> :
+                    <div className="check">
+
+                    </div>
+                }
+            </div>
+        </div>
+    )
 }
 
 export default ManagePopup

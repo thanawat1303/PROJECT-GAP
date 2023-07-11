@@ -17,7 +17,7 @@
       npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session helmet mysql uuid 
       
       npm i react react-dom resize-observer-polyfill sass-loader sass css-loader style-loader @pmmmwh/react-refresh-webpack-plugin react-refresh 
-      
+
       npm i webpack-hot-middleware webpack webpack-cli webpack-dev-server 
       
       npm i html-webpack-plugin babel-loader @babel/preset-env @babel/core @babel/plugin-transform-runtime @babel/preset-react babel-eslint @babel/runtime pm2
@@ -42,6 +42,8 @@
       npm i ngrok
 
       npm i file-saver sheetjs-style
+
+      npm i ts-node
       ```
 
 ### Build Project

@@ -566,7 +566,6 @@ export default function apiAdmin (app:any , Database:any , apifunc:any , HOST_CH
   })
   
   app.get('/api/logout' , (req:any , res:any) => {
-    console.log('Logout')
     res.clearCookie('connect.sid').send('')
   })
 }

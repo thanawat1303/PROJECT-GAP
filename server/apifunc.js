@@ -1,4 +1,4 @@
-const dbFunc = require('./dbConfig').default
+const dbFunc = require('./dbConfig')
 
 const ErrorDB = (connectDB, err, res) => {
   dbFunc.dbErrorReturn(connectDB, err, res)

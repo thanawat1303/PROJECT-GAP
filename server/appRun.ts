@@ -1,6 +1,7 @@
 import appConfig from './configExpress'
 import fs from 'fs'
 export default function appRun(username : any , password : any){
+    console.log("Load Server ...")
     const UrlApi = fs.readFileSync(__dirname.replace('\server' , "/UrlServer.json"))
     const app = appConfig(username , password , JSON.parse(UrlApi.toString()).url) 
     app.listen(parseInt(process.env.PORT ?? "80") , "0.0.0.0" , undefined , function () {

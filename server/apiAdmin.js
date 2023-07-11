@@ -1,7 +1,6 @@
 require('dotenv').config().parsed
 module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
   app.post('/api/admin/check' , (req , res)=>{
-    console.log(req.hostname);
     res.redirect('/api/admin/auth');
   })
   

@@ -12,7 +12,6 @@ let password = (process.argv[2] == process.env.BUILD) ? process.env.PASSWORD_DB 
 let state = 0
 
 console.log("Read Database...")
-console.log(username , password)
 if(!username && !password) {
     process.stdout.write('USERNAME DB : ')
     process.stdin.on('data', (data) => {

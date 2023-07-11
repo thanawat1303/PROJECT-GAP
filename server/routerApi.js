@@ -1,7 +1,6 @@
 module.exports = function router(app) {
     // router admin
     app.get('/admin' , function(req, res) {
-        console.log("admin")
         res.sendFile(__dirname.replace('\server' , '/public/index_admin.html'));
     });
     app.get('/admin/list' , function(req, res) {

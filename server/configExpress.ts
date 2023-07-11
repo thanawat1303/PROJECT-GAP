@@ -22,7 +22,9 @@ export default function appConfig(username: any , password: any , UrlNgrok : any
 
     const app = express();
     const upload = multer()
-    const server = http.createServer(app)
+    const server = 
+                // (process.argv[2] == process.env.BUILD) ? https.createServer(app) : 
+                    http.createServer(app)
     // set Server
 
     const listDB = dbpacket.listConfig(username , password)

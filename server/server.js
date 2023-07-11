@@ -1,7 +1,11 @@
-import db from 'mysql'
-import appRun from './appRun'
-import dotenv from 'dotenv'
-dotenv.config().parsed
+// import db from 'mysql'
+// import appRun from './appRun'
+// import dotenv from 'dotenv'
+// dotenv.config().parsed
+
+const db  = require('mysql')
+const appRun = require("./appRun")
+require('dotenv').config().parsed
 
 let username = (process.argv[2] == process.env.BUILD) ? process.env.USER_DB : process.env.USER_DBDEV ?? ""
 let password = (process.argv[2] == process.env.BUILD) ? process.env.PASSWORD_DB : process.env.PASSWORD_DBDEV ?? ""
@@ -29,7 +33,7 @@ if(!username && !password) {
                 database : process.argv[2] == process.env.BUILD ? process.env.DATABASE_SER : process.env.DATABASE_DEV 
             })
             
-            con.connect((err: { errno: number })=>{
+            con.connect((err)=>{
                 if (err) {
                     state = 0
                     username = password = ""
@@ -42,11 +46,11 @@ if(!username && !password) {
                     state = 2
                     con.end()
 
-                    appRun(username , password)
+                    appRun.default(username , password)
                 };
             })
         }
     });
 } else {
-    appRun(username , password)
+    appRun.default(username , password)
 }

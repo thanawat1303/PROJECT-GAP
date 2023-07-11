@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server .",
-    "server": "ts-node server/server.ts deploy",
+    "server": "nodemon server/server.js deploy",
     "server-dev": "nodemon server/server.ts",
-    "server-ngrok": "npx ts-node server/serverNgrok.ts",
+    "server-ngrok": "node server/serverNgrok.ts",
     "build": "webpack --mode production"
   },
   "repository": {
@@ -27,8 +27,6 @@
       "server",
       "webpack.dev.config.ts"
     ],
-    "ext": "ts",
-    "exec": "npx ts-node",
     "ignore": [
       "/main",
       "server/serverNgrok.ts"
@@ -36,3 +34,5 @@
     "delay": "1"
   }
 }
+
+

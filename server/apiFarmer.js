@@ -10,7 +10,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             delete req.session.pass_doctor
             delete req.session.user_doctor
         }
-        if(req.body['uid'] && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.body['uid'] && (req.hostname == HOST_CHECK)) {
             req.session.uidFarmer = req.body['uid']
             let con = Database.createConnection(listDB)
             try {
@@ -26,7 +26,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/account/check' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
 
             let con = Database.createConnection(listDB)
             try {
@@ -46,7 +46,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/station/search' , (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
@@ -70,7 +70,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/station/get' , (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
@@ -94,7 +94,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/signup' , (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
@@ -162,7 +162,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
     
     app.post('/api/farmer/farmhouse/add' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             
             let con = Database.createConnection(listDB)
             try {
@@ -205,7 +205,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/farmhouse/select' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
@@ -237,7 +237,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
     // start formplant
     app.post('/api/farmer/formplant/select' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK) ) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK) ) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -290,7 +290,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/formplant/check' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK) ) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK) ) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -326,7 +326,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/plant/list' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
@@ -349,7 +349,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/formplant/history' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK) ) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK) ) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -386,7 +386,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/formplant/insert' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
@@ -457,7 +457,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/formplant/edit' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
@@ -570,7 +570,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/formplant/edit/select' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -635,7 +635,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
     // start factor
     app.post('/api/farmer/factor/select' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -683,7 +683,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/factor/get/auto' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -708,7 +708,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/factor/insert' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
@@ -729,7 +729,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             }
 
                             if(result[0]) {
-                                if(!result[0].submit) {
+                                if(result[0].submit == 0 || result[0].submit == 1) {
                                     let data = req.body
                                     const sql = data.type_insert === "z" ? 
                                                     `INSERT INTO formfertilizer 
@@ -760,6 +760,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                                     // else res.send("130")
                                                 })
                                 } else {
+                                    // เวลา submit แล้ว
                                     con.end()
                                     res.send("submit")
                                 }
@@ -777,7 +778,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/factor/edit' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
@@ -895,7 +896,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/factor/edit/select' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -963,7 +964,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
     // success 
     app.post('/api/farmer/success/list' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -1008,7 +1009,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/success/get' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
 
             try {
@@ -1051,7 +1052,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/success/update' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)

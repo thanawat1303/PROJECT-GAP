@@ -168,6 +168,16 @@
                 box-shadow:0px 2px 2px #53ab9b;
             }
 
+            .list-some-data-on-page[status="1"] {
+                background-color:rgb(230, 247, 134);
+                box-shadow:0px 2px 2px rgb(142, 164, 13);
+            }
+
+            .list-some-data-on-page[status="2"] {
+                background-color:rgb(27, 255, 255);
+                box-shadow:0px 2px 2px rgb(8, 78, 78);
+            }
+
             .list-some-data-on-page:hover {
                 box-shadow:0px 3px 3px gray;
             }
@@ -178,6 +188,7 @@
                 width: 97%;
                 padding: 1px 5px;
                 border-radius: 10px;
+                margin: 5px 5px;
                 
                 .frame-data-list {
                     width: 100%;

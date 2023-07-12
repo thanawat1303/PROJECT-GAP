@@ -24,16 +24,17 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     const app = express();
     const upload = multer()
     const server = 
-                (process.argv[2] == process.env.BUILD) ? https.createServer({
-                    key: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/key.pem`),
-                    cert: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/cert.pem`)
-                } , app) 
-                : http.createServer(app)
+                // (process.argv[2] == process.env.BUILD) ? https.createServer({
+                //     key: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/key.pem`),
+                //     cert: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/cert.pem`)
+                // } , app) 
+                // : 
+                http.createServer(app)
     // set Server
 
     const listDB = dbpacket.listConfig(username , password)
     const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV;
-
+    const HOST_FARMER = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_FARMER;
     // protocal websocket
     WebSocket(server)
 
@@ -69,10 +70,10 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
 
     // router api url
     router(app)
-    apiAdmin(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
-    apiDoctor(app,db,apifunc,HOST_CHECK,dbpacket,listDB)
-    apiFarmer(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE)
-    message(app,db,apifunc,HOST_CHECK,dbpacket,listDB  , LINE , UrlNgrok)
+    apiAdmin(app , db , apifunc , HOST_CHECK , dbpacket , listDB)
+    apiDoctor(app , db , apifunc , HOST_CHECK , dbpacket , listDB)
+    apiFarmer(app , db , apifunc , HOST_FARMER , dbpacket , listDB , LINE)
+    message(app , db , apifunc , HOST_CHECK , dbpacket , listDB , LINE , UrlNgrok)
 
     return server
 }

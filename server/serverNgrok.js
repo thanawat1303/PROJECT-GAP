@@ -1,5 +1,5 @@
-import ngrok from 'ngrok'
-import fs from 'fs'
+const ngrok = require('ngrok')
+const fs = require('fs')
 
 ngrok.connect(3001).then((val)=>{
     const data = {

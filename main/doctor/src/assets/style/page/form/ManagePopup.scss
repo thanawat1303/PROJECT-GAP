@@ -169,13 +169,44 @@ $colorBoderBottonData : #3bc69c;
                         align-items: center;
                         width: 100%;
                         margin: 6px 0px;
+                        .item-2 {
+                            flex-direction: column;
+
+                            a {
+                                margin: 6px 5px;
+                            }
+
+                            a.success-0 {
+                                background: linear-gradient(160deg , rgb(230, 247, 134) , white);
+                                color: black;
+                                box-shadow: 0px 2px 2px rgb(144, 156, 73);
+                            }
+
+                            a.success-1 {
+                                background: linear-gradient(160deg , rgb(27, 255, 255) , white);
+                                color: black;
+                                box-shadow: 0px 2px 2px rgb(29, 115, 115);
+                            }
+
+                            a.success-0[not=""] {
+                                background: linear-gradient(160deg , rgb(230, 247, 134) , white);
+                                color: rgba(128, 128, 128, 0.56);
+                                box-shadow: none;
+                            }
+
+                            a.success-1[not=""] {
+                                background: linear-gradient(160deg , rgb(27, 255, 255) , white);
+                                color: rgba(128, 128, 128, 0.56);
+                                box-shadow: none;
+                            }
+                        }
                         a {
                             display: flex;
                             flex-direction: column;
                             justify-content: center;
                             align-items: center;
                             font-family: Sans-font;
-                            font-size: 12px;
+                            font-size: 14px;
                             font-weight: 900;
                             background: linear-gradient(160deg , #3dffc5b4 , white);
                             border-radius: 10px;
@@ -188,6 +219,81 @@ $colorBoderBottonData : #3bc69c;
                     }
                     .body {
                         padding: 2px;
+                        display: flex;
+                        align-items: center;
+
+                        .list-manage-doctor[state_success="0"] {
+                            background-color: rgb(230, 247, 134);
+                            box-shadow: 0px 2px 2px rgb(142, 164, 13);
+                        }
+
+                        .list-manage-doctor[state_success="1"] {
+                            background-color: rgb(27, 255, 255);
+                            box-shadow: 0px 2px 2px rgb(8, 78, 78);
+                        }
+
+                        .list-manage-doctor {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 5px;
+                            border-radius: 5px;
+                            width: 95%;
+                            overflow: hidden;
+
+                            .row {
+                                display: flex;
+                                width: 100%;
+                                justify-content: space-between;
+                                align-items: start;
+                                margin: 2px 0px;
+
+                                .field {
+                                    display: flex;
+
+                                    span {
+                                        font-weight: 900;
+                                        margin-right: 2px;
+                                    }
+
+                                    div {
+                                        background-color: white;
+                                        padding: 0px 4px;
+                                        border-radius: 5px;
+                                    }
+                                }
+
+                                .date {
+                                    flex-direction: column;
+                                    align-items: end;
+                                    background-color: white;
+                                    padding-right: 5px;
+                                    padding-top: 2px;
+                                    width: 150px;
+                                    border-radius: 0px 5px 0px 50px;
+                                    span {
+                                        font-size: 13px;
+                                        text-align: start;
+                                        width: 100%;
+                                        padding: 0;
+                                        padding-top: 1px;
+                                        padding-left: 8px;
+                                        margin-bottom: -8px;
+                                    }
+
+                                    input {
+                                        border: 0;
+                                        outline: 0;
+                                        font-family: Sans-font;
+                                        font-size: 13px;
+                                        background-color: transparent;
+                                        padding: 0;
+                                        text-align: end;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -486,6 +592,215 @@ $colorBoderBottonData : #3bc69c;
             button[not=""] {
                 background-color: #43a269c0;
                 color: rgba(255, 255, 255, 0.614);
+            }
+        }
+    }
+
+    .insert-manage-doctor {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 250px;
+        font-family: Sans-font;
+        background-color: white;
+        box-shadow: 0px 4px 4px rgb(202, 202, 202);
+        border-radius: 15px;
+        padding: 0px 0px;
+
+        .head-content {
+            font-weight: 900;
+            font-size: 20px;
+            width: 100%;
+            text-align: center;
+            background-color: #22C7A9;
+            border-radius: 15px;
+            color: white;
+            padding: 5px 0px;
+        }
+
+        .content-insert {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            // margin-top: 10px;
+
+            .date {
+                width: 100%;
+                input {
+                    width: 100%;
+                    text-align: end;
+                    font-family: Sans-font;
+                    font-size: 16px;
+                    border: 0;
+                    outline: 0;
+                    font-weight: 900;
+                }
+            }
+
+            textarea {
+                width: 100%;
+                height: 80px;
+                border-radius: 10px;
+                border: 0;
+                background-color: #93cec37a;
+                font-family: Sans-font;
+                font-size: 18px;
+                color: black;
+                outline: 0;
+                padding: 5px;
+            }
+
+            textarea::placeholder {
+                // color: ;
+            }
+
+            .name-doctor {
+                border: 0;
+                outline: 0;
+                width: 100%;
+                text-align: end;
+                font-family: Sans-font;
+                font-size: 14px;
+                font-weight: 900;
+                margin-top: 5px;
+            }
+
+            .report {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 10px;
+                width: 100%;
+            }
+
+            .check , .form {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 10px;
+                width: 100%;
+
+                .result {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    flex-direction: column;
+                    padding: 4px 0px;
+
+                    .box-result {
+                        display: flex;
+                        justify-content: space-evenly;
+                        width: 100%;
+    
+                        a {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            width: 45%;
+                            height: 30px;
+                            border: 2px solid #22C7A9;
+                            border-radius: 8px;
+                        }
+
+                        a[select=""] {
+                            background-color: #22C7A9;
+                        }
+    
+                        input {
+                            margin-top: 5px;
+                            text-align: center;
+                            width: 100%;
+                            font-family: Sans-font;
+                            padding: 0;
+                            border: 0;
+                            outline: 0;
+                            font-size: 18px;
+                            padding-left: 15px;
+                            height: 40px;
+                            background-color: #22c7a95e;
+                            border-radius: 10px;
+                        }
+                    }
+
+                    select {
+                        width: 100%;
+                        text-align: center;
+                        font-family: Sans-font;
+                        font-weight: 900;
+                        font-size: 16px;
+                        border-radius: 10px;
+                        border: 2px solid #22C7A9;
+                    }
+                }
+            }
+        }
+
+        .appove {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            border-radius: 15px;
+            width: 100%;
+            background-color: #22c7a99e;
+            // height: 60px;
+
+            input {
+                border: 0;
+                outline: 0;
+                border-radius: 8px;
+                text-align: center;
+                font-family: main-font;
+                font-size: 16px;
+                font-weight: 900;
+                padding: 3px 0px;
+                margin: 5px 0px;
+            }
+
+            input::placeholder {
+                font-family: Sans-font;
+            }
+
+            .bt-insert {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                margin: 5px 0px;
+                margin-bottom: 10px;
+                width: 100%;
+
+                button {
+                    border: 0;
+                    outline: 0;
+                    box-shadow: 0px 2px 2px gray;
+                    border-radius: 15px;
+                    font-family: Sans-font;
+                    font-weight: 900;
+                    font-size: 16px;
+                    width: 30%;
+                    color: white;
+                }
+
+                button.submit {
+                    background-color: #93e7be;
+                    color: rgb(180, 180, 180);
+                    box-shadow: none;
+                }
+
+                button.submit[pass=""] {
+                    color: white;
+                    background-color: #00d26d;
+                    box-shadow: 0px 2px 2px gray;
+                }
+
+                button.cancel {
+                    background-color: red;
+                }
             }
         }
     }

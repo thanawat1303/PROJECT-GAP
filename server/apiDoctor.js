@@ -985,6 +985,19 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     ) as countStatus
                     ${ req.query.type === '0' ?
                         `
+                        ,
+                        (
+                            SELECT id_table
+                            FROM acc_farmer , 
+                            (
+                                SELECT link_user
+                                FROM housefarm
+                                WHERE id_farmHouse = formplant.id_farmHouse
+                            ) as house
+                            WHERE acc_farmer.link_user = house.link_user
+                            ORDER BY date_register
+                            LIMIT 1
+                        ) as id_farmer
                         , (
                             SELECT type_plant
                             FROM plant_list
@@ -1138,11 +1151,39 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 : "date_check";
                 con.query(
                     `
-                        SELECT *
+                        SELECT * , 
+                        (
+                            SELECT fullname_doctor
+                            FROM acc_doctor
+                            WHERE id_table_doctor = ${req.query.typePage}.id_table_doctor
+                        ) name_doctor ,
+                        (
+                            SELECT id_doctor
+                            FROM acc_doctor
+                            WHERE id_table_doctor = ${req.query.typePage}.id_table_doctor
+                        ) id_doctor
+                        ${ req.query.typePage === "success_detail" ?
+                            `
+                            , (
+                                SELECT id
+                                FROM check_plant_detail
+                                WHERE id_plant = ? and state_check = 0
+                                LIMIT 1
+                            ) as check_plant_before 
+                            , 
+                            (
+                                SELECT id
+                                FROM check_plant_detail
+                                WHERE id_plant = ? and state_check = 1
+                                LIMIT 1
+                            ) as check_plant_after
+                            ` : ""
+
+                        }
                         FROM ${req.query.typePage}
                         WHERE id_plant = ?
                         ORDER BY ${Order}
-                    ` , [ req.query.id_plant ] ,
+                    ` , [ req.query.id_plant , req.query.id_plant , req.query.id_plant ] ,
                     (err, result ) => {
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
@@ -1163,7 +1204,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     })
 
-    app.put('/api/doctor/form/manage/success/insert' , async (req , res)=>{
+    app.post('/api/doctor/form/manage/success/insert' , async (req , res)=>{
         let username = req.session.user_doctor
         let password = req.body.password
     
@@ -1230,14 +1271,158 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 return 0;
                             }
     
-                            con.end()
-                            res.send("113")
+                            if(req.body.type == 0) {
+                                con.query(
+                                    `
+                                    UPDATE formplant 
+                                    SET submit = 1
+                                    WHERE id = ? and submit = 0
+                                    ` , [ req.body.id_plant ] , 
+                                    (err , update)=>{
+                                        con.end()
+                                        res.send("113")
+                                    }
+                                )
+                            } else if (req.body.type == 1) {
+                                // con.query(
+                                //     `
+                                //     UPDATE formplant 
+                                //     SET submit = 2
+                                //     WHERE id = ? and submit = 1
+                                //     ` , [ req.body.id_plant ] , 
+                                //     (err , update)=>{
+                                        
+                                //     }
+                                // )
+                                con.end()
+                                res.send("113")
+                            }
                         }
                     )
                 } else {
                     con.end()
                     res.send("not")
                 }
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        }
+    })
+
+    app.post('/api/doctor/form/manage/report/insert' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                        INSERT report_detail
+                        (id_plant , report_text , id_table_doctor)
+                        VALUES
+                        (? , ? , ?)
+                    ` , [ req.body.id_plant , req.body.report_text , result.data.id_table_doctor ] ,
+                    (err , result) =>{
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("insert report");
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send("113")
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        }
+    })
+
+    app.post('/api/doctor/form/manage/checkplant/insert' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                        INSERT check_plant_detail
+                        (id_plant , status_check , state_check , note_text , id_table_doctor)
+                        VALUES
+                        (? , ? , ? , ? , ?)
+                    ` , [ req.body.id_plant , req.body.statusCheck , req.body.stateCheck , req.body.report_text , result.data.id_table_doctor ] ,
+                    (err , result) =>{
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("insert plant check");
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send("113")
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        }
+    })
+
+    app.post('/api/doctor/form/manage/checkform/insert' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                        INSERT check_form_detail
+                        (id_plant , status_check , note_text , id_table_doctor)
+                        VALUES
+                        (? , ? , ? , ?)
+                    ` , [ req.body.id_plant , req.body.statusCheck , req.body.report_text , result.data.id_table_doctor ] ,
+                    (err , result) =>{
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("insert form check");
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send("113")
+                    }
+                )
             }
         } catch (err) {
             con.end()

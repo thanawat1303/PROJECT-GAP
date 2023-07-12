@@ -6,6 +6,7 @@ import DetailEdit from "./DetailEdit"
 
 const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad , Fecth , RefData}) => {
     const [Content , setContent] = useState(<></>)
+    const [ID_farmer , setID_farmer] = useState("")
     const [LoadContent , setLoadContent] = useState(true)
 
     const [BodyPopupEdit , setBodyPopupEdit] = useState(<></>)
@@ -29,6 +30,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                 JsonData.map((data , key)=>
                     {
                         if(type_form === 0) {
+                            setID_farmer(data.id_farmer)
                             setCountEdit(data.countStatus)
                             return (
                                 <section key={key} className="detail-main-form">
@@ -305,6 +307,8 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
 
     const [StatePage , SetStatePage] = useState("success")
 
+    const [DataFormManage , setDataFormManage] = useState([])
+
     const MenuManageFormByDoctor = async (type_page , e = "") => {
         const Type = (type_page === "success" ? "success_detail" 
                     : type_page === "report" ? "report_detail"
@@ -324,9 +328,40 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
             SetStatePage(type_page)
             const Data = JSON.parse(context)
 
+            console.log(Data)
+            setDataFormManage(Data)
             setContent(Data.map((data , key)=> 
-                <section key={key} className="list-manage-doctor">
-                    {data.id}
+                <section key={key} className="list-manage-doctor" 
+                    state_success={type_page === "success" ? data.type_success : null}>
+                    {
+                        type_page === "success" ? 
+                        <>
+                        <div className="row">
+                            <div className="field">
+                                <span>ไอดีเก็บเกี่ยว :</span>
+                                <div>{data.id_success}</div>
+                            </div>
+                            <div className="field date">
+                                <span>วันที่</span>
+                                <DayJSX DATE={data.date_of_doctor} TYPE="small"/>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="field">
+                                <span>เจ้าหน้าที่ :</span>
+                                <div>{data.name_doctor}</div>
+                            </div>
+                            <div className="field">
+                                <span>ไอดีเจ้าหน้าที่ :</span>
+                                <div>{data.id_doctor}</div>
+                            </div>
+                        </div>
+                        </>
+                        :
+                        type_page === "report" ? data.report_text :
+                        type_page === "CheckForm" ? data.status_check ? "ผ่าน" : "ไม่ผ่าน" :
+                        type_page === "CheckPlant" ? data.status_check : ""
+                    }
                 </section>
             ))
         }
@@ -351,7 +386,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
         const context = await clientMo.get('/api/doctor/name')
         if(context) {
             setManagePop(<InsertManage Ref={RefManagePopup} setPopup={setManagePop}
-                session={session} FetchData={()=>MenuManageFormByDoctor("success")} NameDoctor={context} typeInsert={typeClick} id_plant={id_form}/>)
+                session={session} FetchData={()=>MenuManageFormByDoctor(typeClick)} NameDoctor={context} typeInsert={typeClick} id_plant={id_form}/>)
         }
         else session()
     }
@@ -452,18 +487,25 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                     <div className="bt-add-content">
                                         { StatePage === "success" ?
                                             <>
-                                            <a onClick={()=>SuccessResult(0)}>
-                                                <div>สั่งเก็บผลผลิต</div>
-                                                <div>ตัวอย่าง</div>
-                                            </a>
-                                            <a onClick={()=>SuccessResult(1)}>
-                                                <div>สั่งเก็บผลผลิต</div>
-                                                <div>ทั้งหมด</div>
-                                            </a>
+                                            <div className="item-2">
+                                                <a className="success-0" 
+                                                    not={DataFormManage[0].check_plant_after == null ? null : ""} 
+                                                    onClick={DataFormManage[0].check_plant_after == null ? ()=>SuccessResult(0) : null}>
+                                                        <div>สั่งเก็บผลผลิตตัวอย่าง</div>
+                                                    {/* <div>ตัวอย่าง</div> */}
+                                                </a>
+                                                <a className="success-1" 
+                                                    not={DataFormManage[0].check_plant_before != null ? null : ""} 
+                                                    onClick={DataFormManage[0].check_plant_before != null ? ()=>SuccessResult(1) : null}>
+                                                        <div>สั่งเก็บผลผลิตทั้งหมด</div>
+                                                    {/* <div>ทั้งหมด</div> */}
+                                                </a>
+                                            </div>
                                             </> 
                                             : StatePage === "report" ? 
-                                            <a onClick={()=>PopupReport()}>เพิ่มข้อแนะนำ</a>
-                                            : <></>
+                                            <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
+                                            : StatePage === "CheckForm" ? <a onClick={()=>PopupReport("CheckForm")}>เพิ่มผลตรวจสอบ</a>
+                                            : StatePage === "CheckPlant" ? <a onClick={()=>PopupReport("CheckPlant")}>เพิ่มผลตรวจสอบ</a> : <></>
                                         }
                                     </div>
                                     </>
@@ -495,7 +537,7 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
 
     const Confirm = async () => {
         if(CheckEmply()) {
-            const result = await clientMo.put("/api/doctor/form/manage/success/insert" , {
+            const result = await clientMo.post("/api/doctor/form/manage/success/insert" , {
                 type : Result,
                 id_plant : id_plant,
                 password : Password.current.value
@@ -548,6 +590,17 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
 }
 
 const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeInsert , id_plant}) => {
+    const NoteText = useRef()
+    
+    const StateCheckBefore = useRef()
+    const StateCheckAfter = useRef()
+
+    const [StateCheck , setStateCheck] = useState("")
+
+    const StatusCheck = useRef()
+    
+    const Password = useRef()
+    const BtConfirm = useRef()
 
     useEffect(()=>{
         Ref.current.style.opacity = "1"
@@ -563,38 +616,130 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
         })
     }
 
+    const CheckData = (state = "") => {
+        const noteText = NoteText.current
+        const statusCheck = StatusCheck.current
+        let stateCheck = StateCheck
+        const Pw = Password.current
+
+        if(state) {
+            stateCheck = state
+            setStateCheck(state)
+            if(state === 1) {
+                StateCheckBefore.current.setAttribute("select" , "")
+                StateCheckAfter.current.removeAttribute("select")
+            }
+            else {
+                StateCheckAfter.current.setAttribute("select" , "")
+                StateCheckBefore.current.removeAttribute("select")
+            }
+        }
+
+        const check = 
+                        typeInsert === "report" ? noteText.value : 
+                        typeInsert === "CheckPlant" ? stateCheck && statusCheck.value 
+                        :
+                        statusCheck.value
+
+        if(check && Pw.value) {
+            BtConfirm.current.setAttribute("pass" , "")
+            return typeInsert === "report" ? 
+                { 
+                    report_text : noteText.value , 
+                    password : Pw.value , 
+                    id_plant : id_plant
+                } : 
+                typeInsert === "CheckPlant" ?
+                { 
+                    report_text : noteText.value , 
+                    statusCheck : statusCheck.value , 
+                    stateCheck : stateCheck == 1 ? 0 : 1 , 
+                    password : Pw.value , 
+                    id_plant : id_plant 
+                } :
+                {
+                    report_text : noteText.value , 
+                    statusCheck : statusCheck.value ,
+                    password : Pw.value , 
+                    id_plant : id_plant 
+                }
+        } else {
+            BtConfirm.current.removeAttribute("pass")
+            return false
+        }
+    }
+
+    const Confirm = async () => {
+        const Data = CheckData()
+        if(Data) {
+            const url = typeInsert === "report" ? '/api/doctor/form/manage/report/insert' : typeInsert === "CheckPlant" ? '/api/doctor/form/manage/checkplant/insert' : '/api/doctor/form/manage/checkform/insert';
+            const result = await clientMo.post(url , Data)
+            
+            if(result === "113") {
+                FetchData()
+                close()
+            } else if (result === "password") {
+                Password.current.value = ""
+                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+            } else if (result === "not") {
+                console.log("not")
+            } else session()
+        } 
+    }
+
     return(
         <div className="insert-manage-doctor">
             <div className="head-content">
-                {typeInsert === "report" ? "เพิ่มข้อแนะนำ" : "เพิ่มผลการตรวจสอบ" }
+                {typeInsert === "report" ? "เพิ่มข้อแนะนำ" : typeInsert === "CheckPlant" ? "เพิ่มผลตรวจสอบผลผลิต" : "เพิ่มผลตรวจสอบแบบบันทึก" }
             </div>
             <div className="content-insert">
                 { typeInsert === "report" ? 
                     <div className="report">
-                        <input type="date"></input>
-                        <textarea placeholder="กรอกข้อความ"></textarea>
-                        <input value={NameDoctor} readOnly className="name-doctor" type="text"></input>
+                        <div className="date">
+                            <DayJSX DATE={new Date()} TYPE="small"/>
+                        </div>
+                        <textarea onChange={()=>CheckData()} ref={NoteText} placeholder="กรอกข้อความ"></textarea>
+                        <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div> :
+                    typeInsert === "CheckPlant" ? 
                     <div className="check">
-                        <input type="date"></input>
+                        <div className="date">
+                            <DayJSX DATE={new Date()} TYPE="small"/>
+                        </div>
                         <div className="result">
                             <div className="box-result">
-                                <a>ก่อน</a>
-                                <a>หลัง</a>
+                                <a ref={StateCheckBefore} onClick={()=>CheckData(1)}>ก่อน</a>
+                                <a ref={StateCheckAfter} onClick={()=>CheckData(2)}>หลัง</a>
                             </div>
                             <div className="box-result">
-                                <input type="number"></input>
-                                <input type="number"></input>
+                                <input placeholder="ผลตรวจสอบ" onChange={()=>CheckData()} ref={StatusCheck} type="number"></input>
                             </div>
                         </div>
-                        <input value={NameDoctor} readOnly className="name-doctor" type="text"></input>
-                        <textarea placeholder="หมายเหตุ"></textarea>
+                        <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
+                        <textarea ref={NoteText} placeholder="หมายเหตุ"></textarea>
+                    </div> : 
+                    <div className="form">
+                        <div className="date">
+                            <DayJSX DATE={new Date()} TYPE="small"/>
+                        </div>
+                        <div className="result">
+                            <select ref={StatusCheck} defaultValue={""}>
+                                <option disabled value={""}>เลือกผลตรวจสอบ</option>
+                                <option value={"0"}>ไม่ผ่าน</option>
+                                <option value={"1"}>ผ่าน</option>
+                            </select>
+                        </div>
+                        <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
+                        <textarea ref={NoteText} placeholder="หมายเหตุ"></textarea>
                     </div>
                 }
             </div>
-            <div className="bt-insert">
-                <button onClick={close}>ยกเลิก</button>
-                <button>ยืนยัน</button>
+            <div className="appove">
+                <input onChange={()=>CheckData()} placeholder="รหัสผ่านเจ้าหน้าที่" ref={Password} type="password"></input>
+                <div className="bt-insert">
+                    <button onClick={close} className="cancel">ยกเลิก</button>
+                    <button ref={BtConfirm} className="submit" onClick={Confirm}>ยืนยัน</button>
+                </div>
             </div>
         </div>
     )

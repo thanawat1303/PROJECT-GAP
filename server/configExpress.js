@@ -24,12 +24,11 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     const app = express();
     const upload = multer()
     const server = 
-                // (process.argv[2] == process.env.BUILD) ? https.createServer({
-                //     key: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/key.pem`),
-                //     cert: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/cert.pem`)
-                // } , app) 
-                // : 
-                http.createServer(app)
+                (process.argv[2] == process.env.BUILD) ? https.createServer({
+                    key: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/key.pem`),
+                    cert: fs.readFileSync(`${__dirname.replace('\server' , 'SSL')}/cert.pem`)
+                } , app) 
+                : http.createServer(app)
     // set Server
 
     const listDB = dbpacket.listConfig(username , password)

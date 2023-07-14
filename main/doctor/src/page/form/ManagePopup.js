@@ -310,13 +310,13 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
     const [DataFormManage , setDataFormManage] = useState([])
 
     const MenuManageFormByDoctor = async (type_page , e = "") => {
-        const Type = (type_page === "success" ? "success_detail" 
+        const Type = type_page === "success" ? "success_detail" 
                     : type_page === "report" ? "report_detail"
                     : type_page === "CheckForm" ? "check_form_detail"
                     : type_page === "CheckPlant" ? "check_plant_detail" 
-                    : ""
-                    )
-        const context = await clientMo.get(`/api/doctor/form/manage/get?id_plant=${id_form}&typePage=${Type}`)
+                    : "";
+        Fecth(countLoad);
+        const context = await clientMo.get(`/api/doctor/form/manage/get?id_plant=${id_form}&typePage=${Type}`);
         if(context) {
             if(e) {
                 for(let x in MenuBTManage) {
@@ -326,41 +326,137 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
             }
             setTypePage(3)
             SetStatePage(type_page)
-            const Data = JSON.parse(context)
-
-            console.log(Data)
-            setDataFormManage(Data)
+            console.log(JSON.parse(context))
+            const Data = JSON.parse(context).list
+            setDataFormManage(JSON.parse(context))
             setContent(Data.map((data , key)=> 
                 <section key={key} className="list-manage-doctor" 
-                    state_success={type_page === "success" ? data.type_success : null}>
+                    state_success={type_page === "success" ? data.type_success : null}
+                    status_check={type_page === "CheckForm" ? data.status_check : null}>
                     {
                         type_page === "success" ? 
                         <>
+                            <div className="row">
+                                <div className="field">
+                                    <span>ไอดีเก็บเกี่ยว</span>
+                                    <div>{data.id_success}</div>
+                                </div>
+                                <div className="field date">
+                                    <span>วันที่</span>
+                                    <DayJSX DATE={data.date_of_doctor} TYPE="small"/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="field">
+                                    <span>เจ้าหน้าที่</span>
+                                    <div>{data.name_doctor}</div>
+                                </div>
+                                <div className="field">
+                                    <span>ไอดีเจ้าหน้าที่</span>
+                                    <div>{data.id_doctor}</div>
+                                </div>
+                            </div>
+                        </>
+                        :
+                        type_page === "report" ? 
+                        <>
+                            <div className="row">
+                                <div className="field">
+                                    <span>ครั้งที่</span>
+                                    <div>{key + 1}</div>
+                                </div>
+                                <div className="field date">
+                                    <span>วันที่</span>
+                                    <DayJSX DATE={data.date_report} TYPE="small"/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="field column">
+                                    <span>ข้อแนะนำ</span>
+                                    <div>{data.report_text}</div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="field">
+                                    <span>เจ้าหน้าที่</span>
+                                    <div>{data.name_doctor}</div>
+                                </div>
+                                <div className="field">
+                                    <span>ไอดีเจ้าหน้าที่</span>
+                                    <div>{data.id_doctor}</div>
+                                </div>
+                            </div>
+                            {
+                                data.check_doctor ?
+                                <div className="row end">
+                                    <div className="field">
+                                        <button>แก้ไข</button>
+                                    </div>
+                                </div> : <></>
+                            }
+                        </> :
+                        type_page === "CheckForm" ? 
+                        <>
                         <div className="row">
                             <div className="field">
-                                <span>ไอดีเก็บเกี่ยว :</span>
-                                <div>{data.id_success}</div>
+                                <span>ผลตรวจสอบ</span>
+                                <div>{data.status_check ? "ผ่าน" : "ไม่ผ่าน"}</div>
                             </div>
                             <div className="field date">
                                 <span>วันที่</span>
-                                <DayJSX DATE={data.date_of_doctor} TYPE="small"/>
+                                <DayJSX DATE={data.date_check} TYPE="small"/>
                             </div>
                         </div>
+                        { data.status_check ? <></> :
+                            <div className="row">
+                                <div className="field column">
+                                    <span>การแก้ไข</span>
+                                    <div>{data.note_text ? data.note_text : "ไม่ระบุ"}</div>
+                                </div>
+                            </div>
+                        }
                         <div className="row">
                             <div className="field">
-                                <span>เจ้าหน้าที่ :</span>
+                                <span>เจ้าหน้าที่</span>
                                 <div>{data.name_doctor}</div>
                             </div>
                             <div className="field">
-                                <span>ไอดีเจ้าหน้าที่ :</span>
+                                <span>ไอดีเจ้าหน้าที่</span>
                                 <div>{data.id_doctor}</div>
                             </div>
                         </div>
                         </>
                         :
-                        type_page === "report" ? data.report_text :
-                        type_page === "CheckForm" ? data.status_check ? "ผ่าน" : "ไม่ผ่าน" :
-                        type_page === "CheckPlant" ? data.status_check : ""
+                        type_page === "CheckPlant" ?  
+                        <>
+                        <div className="row">
+                            <div className="field">
+                                <span>ผลวิเคราะห์</span>
+                                <div>{!data.state_check ? "ก่อน" : "หลัง"} : {data.status_check}</div>
+                            </div>
+                            <div className="field date">
+                                <span>วันที่</span>
+                                <DayJSX DATE={data.date_check} TYPE="small"/>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="field column">
+                                <span>หมายเหตุ</span>
+                                <div>{data.note_text ? data.note_text : "ไม่ระบุ"}</div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="field">
+                                <span>เจ้าหน้าที่</span>
+                                <div>{data.name_doctor}</div>
+                            </div>
+                            <div className="field">
+                                <span>ไอดีเจ้าหน้าที่</span>
+                                <div>{data.id_doctor}</div>
+                            </div>
+                        </div>
+                        </>
+                        : ""
                     }
                 </section>
             ))
@@ -382,11 +478,11 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
     }
 
     // report
-    const PopupReport = async (typeClick) => {
+    const PopupReport = async (typeClick , statusCheck = "") => {
         const context = await clientMo.get('/api/doctor/name')
         if(context) {
             setManagePop(<InsertManage Ref={RefManagePopup} setPopup={setManagePop}
-                session={session} FetchData={()=>MenuManageFormByDoctor(typeClick)} NameDoctor={context} typeInsert={typeClick} id_plant={id_form}/>)
+                session={session} FetchData={()=>MenuManageFormByDoctor(typeClick)} NameDoctor={context} typeInsert={typeClick} id_plant={id_form} statusSuccess={statusCheck}/>)
         }
         else session()
     }
@@ -464,7 +560,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                 ) : <></>
                             }
                         </div>
-                        <div className={`frame-body ${TypePage !== 0 ? TypePage === 3 ? "manage" : "p-1" : ''}`}>
+                        <div className={`frame-body ${TypePage !== 0 ? TypePage === 3 ? "manage" : "factor" : ''}`}>
                             { TypePage === 3 ?
                                 (
                                     <>
@@ -480,7 +576,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                             <div>แบบบันทึก</div>
                                         </div>
                                         <div className="flex-center" onClick={(e)=>MenuManageFormByDoctor("CheckPlant" , e)} ref={MenuBTManage.CheckPlant}>
-                                            <div>ตรวจสอบ</div>
+                                            <div>วิเคราะห์</div>
                                             <div>ผลผลิต</div>
                                         </div>
                                     </div>
@@ -489,30 +585,44 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                             <>
                                             <div className="item-2">
                                                 <a className="success-0" 
-                                                    not={DataFormManage[0].check_plant_after == null ? null : ""} 
-                                                    onClick={DataFormManage[0].check_plant_after == null ? ()=>SuccessResult(0) : null}>
+                                                    not={!DataFormManage.option[0].Check_success_after ? null : ""} 
+                                                    onClick={!DataFormManage.option[0].Check_success_after ? ()=>SuccessResult(0) : null}>
                                                         <div>สั่งเก็บผลผลิตตัวอย่าง</div>
                                                     {/* <div>ตัวอย่าง</div> */}
                                                 </a>
                                                 <a className="success-1" 
-                                                    not={DataFormManage[0].check_plant_before != null ? null : ""} 
-                                                    onClick={DataFormManage[0].check_plant_before != null ? ()=>SuccessResult(1) : null}>
+                                                    not={(DataFormManage.option[0].check_plant_before && !DataFormManage.option[0].Check_success_after) ? null : ""} 
+                                                    onClick={(DataFormManage.option[0].check_plant_before && !DataFormManage.option[0].Check_success_after) ? ()=>SuccessResult(1) : null}>
                                                         <div>สั่งเก็บผลผลิตทั้งหมด</div>
                                                     {/* <div>ทั้งหมด</div> */}
                                                 </a>
                                             </div>
                                             </> 
                                             : StatePage === "report" ? 
-                                            <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
-                                            : StatePage === "CheckForm" ? <a onClick={()=>PopupReport("CheckForm")}>เพิ่มผลตรวจสอบ</a>
-                                            : StatePage === "CheckPlant" ? <a onClick={()=>PopupReport("CheckPlant")}>เพิ่มผลตรวจสอบ</a> : <></>
+                                                <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
+                                            : StatePage === "CheckForm" ? 
+                                                DataFormManage.list.length === 0 ? 
+                                                    <a onClick={()=>PopupReport("CheckForm")}>เพิ่มผลตรวจสอบ</a> : <></>
+                                            : StatePage === "CheckPlant" ? 
+                                                !DataFormManage.option[0].check_plant_after ?
+                                                    <a not={!DataFormManage.option[0].check_success_before ? "" : null} 
+                                                        onClick={!DataFormManage.option[0].check_success_before ? null : ()=>PopupReport("CheckPlant" , DataFormManage.option[0])}
+                                                        >เพิ่มผลวิเคราะห์</a> 
+                                                : <></>
+                                            : <></>
+                                                     
                                         }
                                     </div>
                                     </>
                                 ) : <></>
                             }
                             <div className="body">
-                                {Content}
+                                { TypePage === 0 ?
+                                    Content :
+                                    <div className="frame-content-scroll">
+                                        {Content}
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -589,13 +699,14 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
     )
 }
 
-const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeInsert , id_plant}) => {
+const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeInsert , id_plant , statusSuccess}) => {
     const NoteText = useRef()
     
     const StateCheckBefore = useRef()
     const StateCheckAfter = useRef()
 
     const [StateCheck , setStateCheck] = useState("")
+    const [StateShowNote , setStateShowNote] = useState(!typeInsert === "CheckForm")
 
     const StatusCheck = useRef()
     
@@ -605,6 +716,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
+        console.log(statusSuccess)
     } , [])
 
     const close = () => {
@@ -639,7 +751,14 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                         typeInsert === "report" ? noteText.value : 
                         typeInsert === "CheckPlant" ? stateCheck && statusCheck.value 
                         :
-                        statusCheck.value
+                        !parseInt(statusCheck.value) ? 
+                            noteText ? 
+                                statusCheck.value && noteText.value 
+                                : false 
+                            : statusCheck.value;
+        
+        if(typeInsert === "CheckForm") 
+            (!parseInt(statusCheck.value)) ? setStateShowNote(true) : setStateShowNote(false);
 
         if(check && Pw.value) {
             BtConfirm.current.setAttribute("pass" , "")
@@ -658,7 +777,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                     id_plant : id_plant 
                 } :
                 {
-                    report_text : noteText.value , 
+                    report_text : noteText ? noteText.value : "" , 
                     statusCheck : statusCheck.value ,
                     password : Pw.value , 
                     id_plant : id_plant 
@@ -669,8 +788,14 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
         }
     }
 
+    const CheckOffsetNumber = (e) => {
+        const value = e.target.value[e.target.value.length - 1];
+        StatusCheck.current.value = (value < 0) ? 0 : (value > 5) ? 5 : value;
+    }
+
     const Confirm = async () => {
         const Data = CheckData()
+        console.log(Data)
         if(Data) {
             const url = typeInsert === "report" ? '/api/doctor/form/manage/report/insert' : typeInsert === "CheckPlant" ? '/api/doctor/form/manage/checkplant/insert' : '/api/doctor/form/manage/checkform/insert';
             const result = await clientMo.post(url , Data)
@@ -708,29 +833,32 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                         </div>
                         <div className="result">
                             <div className="box-result">
-                                <a ref={StateCheckBefore} onClick={()=>CheckData(1)}>ก่อน</a>
-                                <a ref={StateCheckAfter} onClick={()=>CheckData(2)}>หลัง</a>
+                                <a ref={StateCheckBefore} not={!statusSuccess.check_success_before ? "" : null} onClick={!statusSuccess.check_success_before ? null : ()=>CheckData(1)}>ก่อน</a>
+                                <a ref={StateCheckAfter} not={!statusSuccess.check_plant_after && !statusSuccess.check_success_after ? "" : null} onClick={!statusSuccess.check_plant_after && !statusSuccess.check_success_after ? null : ()=>CheckData(2)}>หลัง</a>
                             </div>
                             <div className="box-result">
-                                <input placeholder="ผลตรวจสอบ" onChange={()=>CheckData()} ref={StatusCheck} type="number"></input>
+                                <input placeholder="ผลตรวจสอบ 0-5" min={0} max={5} onInput={CheckOffsetNumber} onChange={()=>CheckData()} ref={StatusCheck} type="number"></input>
                             </div>
                         </div>
+                        <textarea ref={NoteText} onChange={()=>CheckData()} placeholder="หมายเหตุ"></textarea>
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
-                        <textarea ref={NoteText} placeholder="หมายเหตุ"></textarea>
                     </div> : 
                     <div className="form">
                         <div className="date">
                             <DayJSX DATE={new Date()} TYPE="small"/>
                         </div>
                         <div className="result">
-                            <select ref={StatusCheck} defaultValue={""}>
+                            <select onChange={()=>CheckData()} ref={StatusCheck} defaultValue={""}>
                                 <option disabled value={""}>เลือกผลตรวจสอบ</option>
                                 <option value={"0"}>ไม่ผ่าน</option>
                                 <option value={"1"}>ผ่าน</option>
                             </select>
                         </div>
+                        { StateShowNote ?
+                            <textarea onChange={()=>CheckData()} ref={NoteText} placeholder="การแก้ไข"></textarea>
+                            : <></>
+                        }
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
-                        <textarea ref={NoteText} placeholder="หมายเหตุ"></textarea>
                     </div>
                 }
             </div>

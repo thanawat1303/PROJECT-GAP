@@ -1146,7 +1146,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                const Order = req.query.typePage === "success_detail" ? "date_of_doctor" 
+                const Order = req.query.typePage === "success_detail" ? "date_of_doctor DESC" 
                                 : req.query.typePage === "report_detail" ? "date_report"
                                 : "date_check";
                 con.query(
@@ -1156,34 +1156,23 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             SELECT fullname_doctor
                             FROM acc_doctor
                             WHERE id_table_doctor = ${req.query.typePage}.id_table_doctor
-                        ) name_doctor ,
+                        ) as name_doctor ,
                         (
                             SELECT id_doctor
                             FROM acc_doctor
                             WHERE id_table_doctor = ${req.query.typePage}.id_table_doctor
-                        ) id_doctor
-                        ${ req.query.typePage === "success_detail" ?
-                            `
-                            , (
-                                SELECT id
-                                FROM check_plant_detail
-                                WHERE id_plant = ? and state_check = 0
-                                LIMIT 1
-                            ) as check_plant_before 
-                            , 
-                            (
-                                SELECT id
-                                FROM check_plant_detail
-                                WHERE id_plant = ? and state_check = 1
-                                LIMIT 1
-                            ) as check_plant_after
-                            ` : ""
-
-                        }
+                        ) as id_doctor ,
+                        (
+                            SELECT EXISTS (
+                                SELECT id_table_doctor
+                                FROM acc_doctor
+                                WHERE id_table_doctor = ? and id_table_doctor = ${req.query.typePage}.id_table_doctor
+                            )
+                        ) as check_doctor
                         FROM ${req.query.typePage}
                         WHERE id_plant = ?
                         ORDER BY ${Order}
-                    ` , [ req.query.id_plant , req.query.id_plant , req.query.id_plant ] ,
+                    ` , [result.data.id_table_doctor , req.query.id_plant ] ,
                     (err, result ) => {
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
@@ -1191,8 +1180,90 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             return 0;
                         }
 
-                        con.end()
-                        res.send(result)
+                        if(req.query.typePage === "success_detail" || req.query.typePage === "check_plant_detail") {
+                            con.query(
+                                `
+                                SELECT 
+                                ${ req.query.typePage === "success_detail" ?
+                                    `
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM check_plant_detail
+                                            WHERE id_plant = ? and state_check = 0
+                                            LIMIT 1
+                                        )
+                                    ) as check_plant_before 
+                                    , 
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM check_plant_detail
+                                            WHERE id_plant = ? and state_check = 1
+                                            LIMIT 1
+                                        )
+                                    ) as check_plant_after ,
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM success_detail
+                                            WHERE id_plant = ? and type_success = 1
+                                            LIMIT 1
+                                        )
+                                    ) as Check_success_after
+                                    ` : 
+                                    req.query.typePage === "check_plant_detail" ? 
+                                    `
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM success_detail
+                                            WHERE id_plant = ? and type_success = 0
+                                            LIMIT 1
+                                        )
+                                    ) as check_success_before 
+                                    , 
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM success_detail
+                                            WHERE id_plant = ? and type_success = 1
+                                            LIMIT 1
+                                        )
+                                    ) as check_success_after ,
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM check_plant_detail
+                                            WHERE id_plant = ? and state_check = 1
+                                            LIMIT 1
+                                        )
+                                    ) as check_plant_after
+                                    ` 
+                                    : ""
+                                }
+                                ` , [ req.query.id_plant , req.query.id_plant , req.query.id_plant ] ,
+                                (err , optionCheck) => {
+                                    if (err) {
+                                        dbpacket.dbErrorReturn(con, err, res);
+                                        console.log("get manage");
+                                        return 0;
+                                    }
+    
+                                    con.end()
+                                    res.send({
+                                        list : result,
+                                        option : optionCheck
+                                    })
+                                }
+                            )
+                        } else {
+                            con.end()
+                            res.send({
+                                list : result,
+                                option : []
+                            })
+                        }
                     }
                 )
             }
@@ -1218,45 +1289,78 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                const Result= req.body.type == 1 ? await new Promise((resole , reject)=>{
+                
+                const CheckInsert = req.body.type == 1 ? await new Promise((resole , reject)=>{
                     con.query(
                         `
-                            SELECT id
-                            FROM check_plant_detail
-                            WHERE id_plant = ? and status_check = 0
+                            SELECT EXISTS (
+                                SELECT id
+                                FROM check_plant_detail
+                                WHERE id_plant = ? and status_check = 0
+                            ) as ResultAfter
                         ` , [ req.body.id_plant ] , 
                         (err, result ) => {
-                            resole(result)
+                            resole(parseInt(result[0].ResultAfter))
+                        }
+                    )
+                }) : req.body.type == 0 ? await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                            SELECT EXISTS (
+                                SELECT id
+                                FROM check_plant_detail
+                                WHERE id_plant = ? and state_check = 1
+                            ) as ResultBefore
+                        ` , [ req.body.id_plant ] , 
+                        (err, result ) => {
+                            resole(!parseInt(result[0].ResultBefore))
                         }
                     )
                 }) : "";
 
-                const Check = req.body.type == 1 ? Result[0] ? true : false : true;
-
-                const Random = await new Promise( async (resole , reject)=>{
-                    while(true) {
-                        let random = apifunc.generateID(8)
-                        let resultFound= await new Promise((resole , reject)=> {
-                            con.query(
-                                `
+                const CheckSuccess = await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                        SELECT
+                        (
+                            SELECT EXISTS (
                                 SELECT id
                                 FROM success_detail
-                                WHERE id_success = ?
-                                ` , [ random ] , 
-                                (err, result ) => {
-                                    resole(result)
-                                }
+                                WHERE id_plant = ? and type_success = 1
+                                LIMIT 1
                             )
-                        })
-
-                        if(resultFound.length === 0) {
-                            resole(random)
-                            break;
+                        ) as Check_success_after
+                        ` , [req.body.id_plant] ,
+                        (err , resultCheck)=>{
+                            resole(parseInt(resultCheck[0].Check_success_after))
                         }
-                    }
+                    )
                 })
                 
-                if(Check) {
+                if(CheckInsert && !CheckSuccess) {
+                    const Random = await new Promise( async (resole , reject)=>{
+                        while(true) {
+                            let random = apifunc.generateID(8)
+                            let resultFound= await new Promise((resole , reject)=> {
+                                con.query(
+                                    `
+                                    SELECT id
+                                    FROM success_detail
+                                    WHERE id_success = ?
+                                    ` , [ random ] , 
+                                    (err, result ) => {
+                                        resole(result)
+                                    }
+                                )
+                            })
+    
+                            if(resultFound.length === 0) {
+                                resole(random)
+                                break;
+                            }
+                        }
+                    })
+
                     con.query(
                         `
                             INSERT success_detail
@@ -1365,24 +1469,61 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                con.query(
-                    `
-                        INSERT check_plant_detail
-                        (id_plant , status_check , state_check , note_text , id_table_doctor)
-                        VALUES
-                        (? , ? , ? , ? , ?)
-                    ` , [ req.body.id_plant , req.body.statusCheck , req.body.stateCheck , req.body.report_text , result.data.id_table_doctor ] ,
-                    (err , result) =>{
-                        if (err) {
-                            dbpacket.dbErrorReturn(con, err, res);
-                            console.log("insert plant check");
-                            return 0;
-                        }
 
-                        con.end()
-                        res.send("113")
-                    }
-                )
+                const Check = await new Promise((resolve , reject)=>{
+                    con.query(
+                        `
+                        SELECT (
+                            SELECT EXISTS (
+                                SELECT id
+                                FROM success_detail
+                                WHERE type_success = ? and id_plant = ?
+                            )
+                        ) as check_success
+                        ` , [ req.body.stateCheck , req.body.id_plant ] , 
+                        (err , result) => {
+                            resolve(result[0].check_success)
+                        }
+                    )
+                })
+
+                if(parseInt(Check)) {
+                    con.query(
+                        `
+                            INSERT check_plant_detail
+                            (id_plant , status_check , state_check , note_text , id_table_doctor)
+                            VALUES
+                            (? , ? , ? , ? , ?)
+                        ` , [ req.body.id_plant , req.body.statusCheck , req.body.stateCheck , req.body.report_text , result.data.id_table_doctor ] ,
+                        (err , result) =>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("insert plant check");
+                                return 0;
+                            }
+
+                            if(req.body.stateCheck == 1) {
+                                con.query(
+                                    `
+                                    UPDATE formplant 
+                                    SET submit = 2
+                                    WHERE id = ? and submit = 1
+                                    ` , [ req.body.id_plant ] , 
+                                    (err , update)=>{
+                                        con.end()
+                                        res.send("113")
+                                    }
+                                )
+                            } else {
+                                con.end()
+                                res.send("113")
+                            }
+                        }
+                    )
+                } else {
+                    con.end()
+                    res.send("not")
+                }
             }
         } catch (err) {
             con.end()
@@ -1407,20 +1548,42 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             if(result['result'] === "pass") {
                 con.query(
                     `
-                        INSERT check_form_detail
-                        (id_plant , status_check , note_text , id_table_doctor)
-                        VALUES
-                        (? , ? , ? , ?)
-                    ` , [ req.body.id_plant , req.body.statusCheck , req.body.report_text , result.data.id_table_doctor ] ,
-                    (err , result) =>{
+                    SELECT EXISTS (
+                        SELECT id
+                        FROM check_form_detail
+                        WHERE id_plant = ?
+                    ) as CheckResult
+                    ` , [ req.body.id_plant ] , 
+                    (err , check) => {
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
                             console.log("insert form check");
                             return 0;
                         }
 
-                        con.end()
-                        res.send("113")
+                        if(!parseInt(check[0].CheckResult)) {
+                            con.query(
+                                `
+                                    INSERT check_form_detail
+                                    (id_plant , status_check , note_text , id_table_doctor)
+                                    VALUES
+                                    (? , ? , ? , ?)
+                                ` , [ req.body.id_plant , req.body.statusCheck , req.body.report_text , result.data.id_table_doctor ] ,
+                                (err , result) =>{
+                                    if (err) {
+                                        dbpacket.dbErrorReturn(con, err, res);
+                                        console.log("insert form check");
+                                        return 0;
+                                    }
+            
+                                    con.end()
+                                    res.send("113")
+                                }
+                            )
+                        } else {
+                            con.end()
+                            res.send("not") 
+                        }
                     }
                 )
             }

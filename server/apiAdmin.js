@@ -536,7 +536,6 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   app.all('/api/admin/auth' , async (req , res)=>{
     
     // เช็คการเข้าสู่ระบบจริงๆ
-    console.log(req.hostname)
     let username = req.session.user_admin ?? req.body['username'] ?? '';
     let password = req.session.pass_admin ?? req.body['password'] ?? '';
   
@@ -545,7 +544,6 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       return 0
     }
   
-    console.log(listDB)
     let con = Database.createConnection(listDB)
   
     // Database.resume()

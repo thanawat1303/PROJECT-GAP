@@ -112,7 +112,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                     }
 
                     if(!search[0]) {
-                        con.query(`INSERT INTO line_chat_gap.acc_farmer(
+                        con.query(`INSERT INTO acc_farmer(
                             id_farmer,
                             fullname,
                             img,

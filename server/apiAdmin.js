@@ -545,6 +545,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       return 0
     }
   
+    console.log(listDB)
     let con = Database.createConnection(listDB)
   
     // Database.resume()

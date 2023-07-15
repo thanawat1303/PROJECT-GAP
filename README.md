@@ -44,6 +44,8 @@
       npm i file-saver sheetjs-style
 
       npm i ts-node
+
+      npm i @react-pdf/renderer
       ```
 
 ### Build Project

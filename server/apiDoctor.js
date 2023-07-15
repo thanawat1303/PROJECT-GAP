@@ -1594,6 +1594,193 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             }
         }
     })
+
+    // export
+    app.post('/api/doctor/form/export' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+
+                // select out table
+                const TextInsert = req.body.textInput ?? "";
+                const TypePlant = req.body.typePlant ?? null ;
+                const Submit = (req.body.statusForm >= 0 && req.body.statusForm <= 2) ? req.body.statusForm : null ;
+                const StatusFarmer = (req.body.statusFarmer >= 0 && req.body.statusFarmer <= 1) ? req.body.statusFarmer : null;
+                
+                const TypeDate = (req.body.typeDate == 1) ? "date_success" : (req.body.typeDate == 0) ? "date_plant" : null;
+                const StartDate = (new Date(req.body.StartDate).toString() !== "Invalid Date") ? req.body.StartDate : null ;
+                const EndDate = (new Date(req.body.EndDate).toString() !== "Invalid Date") ? req.body.EndDate : null ;
+
+                const OrderBy = (req.body.typeDate == 1) ? "date_success" : "date_plant";
+
+                con.query(
+                    `
+                    SELECT fromInsert.* 
+                    FROM formplant ,
+                    (
+                        SELECT formplant.* ,
+                            (
+                                SELECT id_plant
+                                FROM success_detail
+                                WHERE id_plant = formplant.id and INSTR(id_success , ?)
+                                GROUP BY id_plant
+                            ) as success_id_plant
+                        FROM formplant , 
+                            (
+                                SELECT id_farmHouse
+                                FROM housefarm , 
+                                    (
+                                        SELECT uid_line , link_user
+                                        FROM acc_farmer
+                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
+                                    ) as farmer
+                                WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
+                            ) as house
+                        WHERE formplant.id_farmHouse = house.id_farmHouse
+                                ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
+                                ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
+                                ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
+                                
+                        ORDER BY ${OrderBy}
+                    ) as fromInsert
+                    WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
+                    `
+                    , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
+                    async (err , listFarm)=>{
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("select form");
+                        }
+
+                        const DataExport = await new Promise( async (resole , reject)=>{
+                            const Data = new Array
+                            for(let val of listFarm){
+
+                                const Farmer = await new Promise((resole , reject)=>{
+                                    con.query(
+                                        `
+                                        SELECT acc_farmer.id_farmer
+                                        FROM acc_farmer , 
+                                            (
+                                                SELECT link_user
+                                                FROM housefarm , 
+                                                (
+                                                    SELECT id_farmHouse
+                                                    FROM formplant
+                                                    WHERE id = ?
+                                                ) as plant
+                                                WHERE housefarm.id_farmHouse = plant.id_farmHouse
+                                            ) as house
+                                        WHERE acc_farmer.link_user = house.link_user
+                                        ORDER BY date_register
+                                        LIMIT 1
+                                        ` , [val.id] ,
+                                        (err , result) => {
+                                            resole(result)
+                                        }
+                                    )
+                                })
+
+                                const Fertirizer = await new Promise((resole , reject)=>{
+                                    con.query(
+                                        `
+                                            SELECT * 
+                                            FROM formfertilizer
+                                            WHERE id_plant = ?
+                                        ` , [val.id] ,
+                                        (err , result) => {
+                                            resole(result)
+                                        }
+                                    )
+                                })
+    
+                                const chemical = await new Promise((resole , reject)=>{
+                                    con.query(
+                                        `
+                                            SELECT * 
+                                            FROM formchemical
+                                            WHERE id_plant = ?
+                                        ` , [val.id] ,
+                                        (err , result) => {
+                                            resole(result)
+                                        }
+                                    )
+                                })
+    
+                                const Report = await new Promise((resole , reject)=>{
+                                    con.query(
+                                        `
+                                            SELECT * 
+                                            FROM report_detail
+                                            WHERE id_plant = ?
+                                        ` , [val.id] ,
+                                        (err , result) => {
+                                            resole(result)
+                                        }
+                                    )
+                                })
+    
+                                const CheckForm = await new Promise((resole , reject)=>{
+                                    con.query(
+                                        `
+                                            SELECT * 
+                                            FROM check_form_detail
+                                            WHERE id_plant = ?
+                                        ` , [val.id] ,
+                                        (err , result) => {
+                                            resole(result)
+                                        }
+                                    )
+                                })
+    
+                                const CheckPlant = await new Promise((resole , reject)=>{
+                                    con.query(
+                                        `
+                                            SELECT * 
+                                            FROM check_plant_detail
+                                            WHERE id_plant = ?
+                                        ` , [val.id] ,
+                                        (err , result) => {
+                                            resole(result)
+                                        }
+                                    )
+                                })
+    
+                                Data.push({
+                                    dataForm : val,
+                                    farmer : Farmer,
+                                    ferti : Fertirizer,
+                                    chemi : chemical,
+                                    report : Report,
+                                    checkForm : CheckForm,
+                                    checkPlant : CheckPlant
+                                })
+                            }
+                            con.end()
+                            resole(Data)
+                        })
+
+                        res.send(DataExport)
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
     // end formplant
     
     // app.post("/doctor/api/doctor/pull" , (req , res)=>{
@@ -1826,132 +2013,4 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     //     })
     // })
     // manage farmer
-
-    app.post('/api/doctor/export' , (req , res)=>{
-        let username = req.session.user_doctor
-        let password = req.session.pass_doctor
-    
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
-            res.redirect('/api/logout')
-            return 0
-        }
-    
-        let con = Database.createConnection(listDB)
-    
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
-            if(result['result'] === "pass") {
-
-                // select out table
-                let Req = req.body
-                let WHERE = new Array()
-                let WhereFarmer = ""
-                if(Req.submit !== undefined) WHERE.push(`submit = ${Req.submit}`)
-                if(Req.dateStart !== undefined && Req.dateEnd !== undefined) {
-                    WHERE.push(`UNIX_TIMESTAMP("${Req.dateStart}") <= UNIX_TIMESTAMP(date_plant) 
-                                and UNIX_TIMESTAMP(date_plant) <= UNIX_TIMESTAMP("${Req.dateEnd}")`)
-                }
-
-                if(Req.register !== undefined) WhereFarmer = `and register_auth = ${Req.register}`
-                else WhereFarmer = ` and (register_auth = 0 or register_auth = 0)`
-
-                let where = WHERE.join(" and ")
-
-                con.query(`
-                        SELECT
-                            (
-                                SELECT COUNT(formfertilizer.id_plant)
-                                FROM formfertilizer
-                                WHERE formplant.id = formfertilizer.id_plant
-                            ) as ctFer , 
-                            (
-                                SELECT COUNT(formchemical.id_plant)
-                                FROM formchemical
-                                WHERE formplant.id = formchemical.id_plant
-                            ) as Ctche , 
-                            formplant.* , House.id_farmer , House.fullname
-                        FROM formplant ,
-                            (
-                                SELECT id_farmHouse , acc_farmer.id_farmer , acc_farmer.fullname 
-                                FROM housefarm , 
-                                    (
-                                        SELECT id_farmer , uid_line , fullname FROM acc_farmer 
-                                        WHERE station = ? ${WhereFarmer}
-                                    ) AS acc_farmer
-                                WHERE (housefarm.uid_line = acc_farmer.uid_line) or (housefarm.id_farmer = acc_farmer.id_farmer)
-                            ) as House
-                        WHERE House.id_farmHouse = formplant.id_farmHouse ${where ? `and ${where}` : ""}
-                        ORDER BY date_plant
-                        ` , 
-                        [result['data']['station_doctor']] , (err , listForm)=>{
-                            if (err) {
-                                dbpacket.dbErrorReturn(con, err, res);
-                                console.log("query");
-                            }
-
-                            let qtyReq = listForm.length ** 2
-                            let num = 0
-                            let Form = new Map()
-                            listForm.map((val, key )=>{
-                                let fertiliMap = {}
-                                let chemiMap = {}
-                                con.query(
-                                            `
-                                                SELECT formfertilizer.*
-                                                FROM formfertilizer
-                                                WHERE formfertilizer.id_plant = ?
-                                                ORDER BY id
-                                            `
-                                        , [val.id] , (err, fertili )=>{
-                                            if (err) {
-                                                dbpacket.dbErrorReturn(con, err, res);
-                                                console.log("fertili");
-                                            }
-                                            num++
-                                            if(fertili[0]) {
-                                                fertiliMap = fertili
-                                                Form.set(val.id , {"data" : listForm[key] , "chemi" : chemiMap , "ferti" : fertiliMap})
-                                            }
-                                            if(num == qtyReq) {
-                                                const DataArr = Array.from(Form);
-                                                const JsonOb = Object.fromEntries(DataArr);
-                                                con.end()
-                                                res.send(JsonOb)
-                                            }
-                                        })
-                                con.query(
-                                            `
-                                                SELECT formchemical.*
-                                                FROM formchemical
-                                                WHERE formchemical.id_plant = ?
-                                                ORDER BY id
-                                            `
-                                        , [val.id] , (err, chemi )=>{
-                                            if (err) {
-                                                dbpacket.dbErrorReturn(con, err, res);
-                                                console.log("chemical");
-                                            }
-                                            num++
-                                            if(chemi[0]) {
-                                                chemiMap = chemi
-                                                Form.set(val.id , {"data" : listForm[key] , "chemi" : chemiMap , "ferti" : fertiliMap})
-                                            }
-
-                                            if(num == qtyReq) {
-                                                const DataArr = Array.from(Form);
-                                                const JsonOb = Object.fromEntries(DataArr);
-                                                con.end()
-                                                res.send(JsonOb)
-                                            }
-                                        })
-                            })
-                        })
-            }
-        }).catch((err)=>{
-            con.end()
-            if(err == "not pass") {
-                res.redirect('/api/logout')
-            }
-        })
-    })
-
 }

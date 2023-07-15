@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/form/PageFormPlant.scss"
 import "../../assets/style/TemplantList.scss"
-import { DayJSX, LoadOtherDom, Loading, PopupDom } from "../../../../../src/assets/js/module";
+import { DayJSX, ExportPDF, LoadOtherDom, Loading, PopupDom } from "../../../../../src/assets/js/module";
 import ManagePopup from "./ManagePopup";
 
 const PageFormPlant = ({setMain , session , socket , type = false , eleImageCover , LoadType , eleBody , setTextStatus}) => {
@@ -249,8 +249,10 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
         })
 
         const ExportFetch = await clientMo.post('/api/doctor/form/export' , JsonData)
-        const DataExport = JSON.parse(ExportFetch)
-        console.log(DataExport)
+        if(ExportFetch) {
+            const DataExport = JSON.parse(ExportFetch)
+            ExportPDF(DataExport)
+        } else session()
     }
 
     return(

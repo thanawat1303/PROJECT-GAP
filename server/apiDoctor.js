@@ -1630,6 +1630,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     (
                         SELECT formplant.* ,
                             (
+                                SELECT type_plant
+                                FROM plant_list
+                                WHERE name = formplant.name_plant
+                            ) as type_main ,
+                            (
                                 SELECT id_plant
                                 FROM success_detail
                                 WHERE id_plant = formplant.id and INSTR(id_success , ?)
@@ -1669,7 +1674,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 const Farmer = await new Promise((resole , reject)=>{
                                     con.query(
                                         `
-                                        SELECT acc_farmer.id_farmer
+                                        SELECT acc_farmer.id_farmer , acc_farmer.fullname
                                         FROM acc_farmer , 
                                             (
                                                 SELECT link_user

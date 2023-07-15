@@ -228,6 +228,83 @@ const ExportExcel = ({ excelData , fileName , nameBT}) => {
     )
 }
 
+import {Document,Page,Text,View,StyleSheet,PDFViewer,PDFDownloadLink} from "@react-pdf/renderer";
+import {jsPDF} from 'jspdf'
+// import autoTable from 'jspdf-autotable';
+const TextBoxDot = (pdf , count , xStart , y , textOnDot) => {
+    let posi = xStart
+    for(let x = 1; x <= count;x++) {
+        pdf.circle(posi - 1, y + 1, 1, 'F');
+        posi += 3
+    }
+    pdf.text(textOnDot , xStart + textOnDot.length * 2 , y - 1)
+}
+
+const ExportPDF = async (Data) => {
+    const pdf = new jsPDF("portrait", "pt", "a4");
+    
+    pdf.addFileToVFS("/THSarabunNew.ttf");
+    pdf.addFont('/THSarabunNew.ttf', 'THSarabunNew', 'normal');
+    pdf.setFont('THSarabunNew'); // set font
+
+    var width = pdf.internal.pageSize.getWidth();
+    var height = pdf.internal.pageSize.getHeight();
+    for(let detail of Data){
+        // ระยะบรรทัด 30 
+        console.log(detail)
+        pdf.setFontSize(18).text('แบบบันทึกเกษตรกร ระบบการผลิตพืชผักและสมุนไพรภายใต้มาตรฐาน GAP มูลนิธิโครงการหลวง' , width / 2 , 40 , {align : "center"})
+        
+        pdf.setFontSize(18).text(detail.dataForm.type_main , width/2/3 + 30, 70 )
+        pdf.setFontSize(18).text("รหัสเกษตรกร",width/2 - 70 , 70)
+
+        let startId = width/2
+        let positionDot = 0
+        for(let x = 0; x < 10 ; x++) {
+            pdf.rect(startId , 57 , 20 , 20 , "S");
+            (detail.farmer[0].id_farmer[x]) ? pdf.text(detail.farmer[0].id_farmer[x] , startId + 7 , 70 ) : null;
+            if(x === 7) {
+                startId += 28;
+                pdf.text("_" , startId - 7 , 65 )
+            }
+            else startId += 22;
+        }
+        
+        pdf.text('๑.' , 50 , 100)
+        pdf.text('ชื่อ/สกุล เกษตรกร' , 70 , 100)
+        TextBoxDot(pdf , 70 , 160 , 100 , detail.farmer[0].fullname)
+
+        pdf.text('ศูนย์ฯ' , 368 , 100)
+        TextBoxDot(pdf , 45 , 398 , 100 , "แม่กำปอง")
+        
+        
+        pdf.addPage()
+    }
+
+    window.open(pdf.output('dataurlnewwindow' , "แบบบันทึกข้อมูล"))
+
+    // const data = document.createElement("section");
+    // data.innerHTML = 
+    // `
+    // 555
+    // `
+    // pdf.addPage().html(data)
+    // pdf.html(data).then(() => {
+    //     pdf.save("shipping_label.pdf");
+    // });
+    // return (
+    //     <PDFViewer>
+    //         <Document>
+    //             <Page size={"A4"}>
+
+    //             </Page>
+    //             <Page size={"A4"}>
+
+    //             </Page>
+    //         </Document>
+    //     </PDFViewer>
+    // )
+}
+
 const ButtonMenu = ({type , textRow1 , textRow2 , action}) => {
     return(
         <div onClick={action} className={`bt-menu-frame ${type}`}>
@@ -482,4 +559,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ExportPDF , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , TabLoad , HrefData}

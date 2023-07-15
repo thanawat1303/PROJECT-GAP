@@ -46,6 +46,7 @@
       npm i ts-node
 
       npm i @react-pdf/renderer
+      npm install jspdf jspdf-autotable
       ```
 
 ### Build Project

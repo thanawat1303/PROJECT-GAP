@@ -1152,6 +1152,12 @@ const authCheck = (con , dbpacket , res , req , LINE) => {
                         }
                     }
                     else {
+                        try {
+                            LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
+                            LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
+                        } catch (e) {
+                            console.log(e)
+                        }
                         reject("no account")
                     }
             })

@@ -47,6 +47,7 @@
 
       npm i @react-pdf/renderer
       npm install jspdf jspdf-autotable
+      npm i wordcut
       ```
 
 ### Build Project

@@ -326,7 +326,6 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
             }
             setTypePage(3)
             SetStatePage(type_page)
-            console.log(JSON.parse(context))
             const Data = JSON.parse(context).list
             setDataFormManage(JSON.parse(context))
             setContent(Data.map((data , key)=> 
@@ -599,7 +598,9 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                             </div>
                                             </> 
                                             : StatePage === "report" ? 
-                                                <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
+                                                DataFormManage.list.length != 2 ?
+                                                    <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
+                                                : <></>
                                             : StatePage === "CheckForm" ? 
                                                 DataFormManage.list.length === 0 ? 
                                                     <a onClick={()=>PopupReport("CheckForm")}>เพิ่มผลตรวจสอบ</a> : <></>
@@ -701,6 +702,7 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
 
 const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeInsert , id_plant , statusSuccess}) => {
     const NoteText = useRef()
+    const [QtyNote , setQtyNote] = useState(0)
     
     const StateCheckBefore = useRef()
     const StateCheckAfter = useRef()
@@ -823,7 +825,8 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                         <div className="date">
                             <DayJSX DATE={new Date()} TYPE="small"/>
                         </div>
-                        <textarea onChange={()=>CheckData()} ref={NoteText} placeholder="กรอกข้อความ"></textarea>
+                        <div className="show-max-text">{QtyNote}/70</div>
+                        <textarea onChange={()=>CheckData()} onInput={(e)=>setQtyNote(e.target.value.length)} ref={NoteText} maxLength={70} placeholder="กรอกข้อความ"></textarea>
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div> :
                     typeInsert === "CheckPlant" ? 
@@ -840,7 +843,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                                 <input placeholder="ผลตรวจสอบ 0-5" min={0} max={5} onInput={CheckOffsetNumber} onChange={()=>CheckData()} ref={StatusCheck} type="number"></input>
                             </div>
                         </div>
-                        <textarea ref={NoteText} onChange={()=>CheckData()} placeholder="หมายเหตุ"></textarea>
+                        <input className="note" ref={NoteText} onChange={()=>CheckData()} placeholder="หมายเหตุ"></input>
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div> : 
                     <div className="form">
@@ -855,7 +858,10 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                             </select>
                         </div>
                         { StateShowNote ?
-                            <textarea onChange={()=>CheckData()} ref={NoteText} placeholder="การแก้ไข"></textarea>
+                            <>
+                            <div className="show-max-text">{QtyNote}/70</div>
+                            <textarea onInput={(e)=>setQtyNote(e.target.value.length)} onChange={()=>CheckData()} maxLength={70} ref={NoteText} placeholder="การแก้ไข"></textarea>
+                            </>
                             : <></>
                         }
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>

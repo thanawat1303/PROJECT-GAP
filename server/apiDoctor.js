@@ -1,4 +1,6 @@
 require('dotenv').config().parsed
+const wordcut = require('thai-wordcut')
+wordcut.init()
 module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
 
     app.post('/api/doctor/check' , (req , res)=>{
@@ -1431,20 +1433,34 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             if(result['result'] === "pass") {
                 con.query(
                     `
-                        INSERT report_detail
-                        (id_plant , report_text , id_table_doctor)
-                        VALUES
-                        (? , ? , ?)
-                    ` , [ req.body.id_plant , req.body.report_text , result.data.id_table_doctor ] ,
-                    (err , result) =>{
-                        if (err) {
-                            dbpacket.dbErrorReturn(con, err, res);
-                            console.log("insert report");
-                            return 0;
+                    SELECT COUNT(id) as count
+                    FROM report_detail
+                    WHERE id_plant = ?
+                    ` , [req.body.id_plant] ,
+                    (err , reportChk)=> {
+                        if(reportChk.count < 2) {
+                            con.query(
+                                `
+                                    INSERT report_detail
+                                    (id_plant , report_text , id_table_doctor)
+                                    VALUES
+                                    (? , ? , ?)
+                                ` , [ req.body.id_plant , req.body.report_text , result.data.id_table_doctor ] ,
+                                (err , result) =>{
+                                    if (err) {
+                                        dbpacket.dbErrorReturn(con, err, res);
+                                        console.log("insert report");
+                                        return 0;
+                                    }
+            
+                                    con.end()
+                                    res.send("113")
+                                }
+                            )
+                        } else {
+                            con.end()
+                            res.send("max")
                         }
-
-                        con.end()
-                        res.send("113")
                     }
                 )
             }
@@ -1674,7 +1690,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 const Farmer = await new Promise((resole , reject)=>{
                                     con.query(
                                         `
-                                        SELECT acc_farmer.id_farmer , acc_farmer.fullname
+                                        SELECT acc_farmer.id_farmer , acc_farmer.fullname , 
+                                            (
+                                                SELECT name
+                                                FROM station_list
+                                                WHERE id = acc_farmer.station
+                                            ) as station
                                         FROM acc_farmer , 
                                             (
                                                 SELECT link_user
@@ -1725,12 +1746,21 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 const Report = await new Promise((resole , reject)=>{
                                     con.query(
                                         `
-                                            SELECT * 
+                                            SELECT * , 
+                                            (
+                                                SELECT fullname_doctor
+                                                FROM acc_doctor
+                                                WHERE id_table_doctor = report_detail.id_table_doctor
+                                            ) as name_doctor
                                             FROM report_detail
                                             WHERE id_plant = ?
                                         ` , [val.id] ,
                                         (err , result) => {
-                                            resole(result)
+                                            const ResultEx = result.map((val , key)=>{
+                                                val.report_text = wordcut.cut(val.report_text)
+                                                return val
+                                            })
+                                            resole(ResultEx)
                                         }
                                     )
                                 })

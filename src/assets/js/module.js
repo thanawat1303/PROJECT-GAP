@@ -232,16 +232,33 @@ import {Document,Page,Text,View,StyleSheet,PDFViewer,PDFDownloadLink} from "@rea
 import {jsPDF} from 'jspdf'
 // import autoTable from 'jspdf-autotable';
 const TextBoxDot = (pdf , count , xStart , y , textOnDot) => {
-    let posi = xStart
-    for(let x = 1; x <= count;x++) {
-        pdf.circle(posi - 1, y + 1, 1, 'F');
-        posi += 3
+    let posi = parseInt(xStart);
+    for(let x = 1; x <= parseInt(count);x++) {
+        let gidx = posi - 1
+        let gidy = parseInt(y) + 1
+        pdf.circle( gidx , gidy , 0.7 , 'F');
+        posi += 4
     }
-    pdf.text(textOnDot , xStart + textOnDot.length * 2 , y - 1)
+    pdf.text(textOnDot , xStart + (((posi - 3) - xStart) / 2) - (textOnDot.length * 3.5) , parseInt(y) - 1)
+    return posi - 3
+}
+
+const TableBox = (pdf = new jsPDF() , posiStartX = 0 , posiStartY = 0 , headers = {} , body = {} , heightRow = 0) => {
+
+    let startHeadX = posiStartX
+    let startHeadY = posiStartY
+    for(let [headerName , headerSize] of Object.entries(headers)) {
+        pdf.line(startHeadX , startHeadY , startHeadX + parseInt(headerSize.size) , startHeadY)
+        pdf.line(startHeadX , startHeadY + heightRow , startHeadX + parseInt(headerSize.size) , startHeadY + heightRow)
+        pdf.line(startHeadX , startHeadY , startHeadX , startHeadY + heightRow)
+        startHeadX += parseInt(headerSize.size)
+    }
 }
 
 const ExportPDF = async (Data) => {
-    const pdf = new jsPDF("portrait", "pt", "a4");
+    const pdf = new jsPDF("portrait", "pt", "a4" , {
+        compress: false
+    });
     
     pdf.addFileToVFS("/THSarabunNew.ttf");
     pdf.addFont('/THSarabunNew.ttf', 'THSarabunNew', 'normal');
@@ -249,19 +266,24 @@ const ExportPDF = async (Data) => {
 
     var width = pdf.internal.pageSize.getWidth();
     var height = pdf.internal.pageSize.getHeight();
-    for(let detail of Data){
+
+    for(let index in Data){
+
         // ระยะบรรทัด 30 
-        console.log(detail)
-        pdf.setFontSize(18).text('แบบบันทึกเกษตรกร ระบบการผลิตพืชผักและสมุนไพรภายใต้มาตรฐาน GAP มูลนิธิโครงการหลวง' , width / 2 , 40 , {align : "center"})
+        // ย่อหน้า 70
+        const Export = Data[index]
+        console.log(Export)
+        pdf.setFontSize(18).text('แบบบันทึกเกษตรกร ระบบการผลิตพืชผักและสมุนไพรภายใต้มาตรฐาน  GAP  มูลนิธิโครงการหลวง' , width / 2 , 40 , {align : "center"})
         
-        pdf.setFontSize(18).text(detail.dataForm.type_main , width/2/3 + 30, 70 )
+        pdf.setFontSize(18).text(Export.dataForm.type_main , width/2/3 + 30, 70 )
         pdf.setFontSize(18).text("รหัสเกษตรกร",width/2 - 70 , 70)
 
         let startId = width/2
+        let newX = 0
         let positionDot = 0
         for(let x = 0; x < 10 ; x++) {
             pdf.rect(startId , 57 , 20 , 20 , "S");
-            (detail.farmer[0].id_farmer[x]) ? pdf.text(detail.farmer[0].id_farmer[x] , startId + 7 , 70 ) : null;
+            (Export.farmer[0].id_farmer[x]) ? pdf.text(Export.farmer[0].id_farmer[x] , startId + 7 , 70 ) : null;
             if(x === 7) {
                 startId += 28;
                 pdf.text("_" , startId - 7 , 65 )
@@ -269,15 +291,166 @@ const ExportPDF = async (Data) => {
             else startId += 22;
         }
         
-        pdf.text('๑.' , 50 , 100)
-        pdf.text('ชื่อ/สกุล เกษตรกร' , 70 , 100)
-        TextBoxDot(pdf , 70 , 160 , 100 , detail.farmer[0].fullname)
 
-        pdf.text('ศูนย์ฯ' , 368 , 100)
-        TextBoxDot(pdf , 45 , 398 , 100 , "แม่กำปอง")
+        pdf.text('๑.' , 30 , 100)
+        pdf.text('ชื่อ/สกุล เกษตรกร' , 50 , 100)
+        newX = TextBoxDot(pdf , 60 , 139 , 100 , Export.farmer[0].fullname)
+
+        pdf.text('ศูนย์ฯ' , newX , 100)
+        TextBoxDot(pdf , 38 , newX + 30 , 100 , Export.farmer[0].station)
+
+
+        pdf.text('๒.' , 30 , 130)
+        pdf.text('ชนิดพืช' , 50 , 130)
+        newX = TextBoxDot(pdf , 24 , 89 , 130 , Export.dataForm.name_plant)
+
+        pdf.text('รุ่นที่ปลูก' , newX , 130)
+        newX = TextBoxDot(pdf , 14 , newX + 45 , 130 , Export.dataForm.generation.toString())
+
+        pdf.text('วันที่เพาะกล้า' , newX , 130)
+        const DateGlow = Export.dataForm.date_glow.split("-")
+        newX = TextBoxDot(pdf , 21 , newX + 68 , 130 , `${DateGlow[2].split(" ")[0]}/${DateGlow[1]}/${parseInt(DateGlow[0]) + 543}` )
+
+        pdf.text('วันที่ปลูก' , newX , 130)
+        const DatePlant = Export.dataForm.date_plant.split("-")
+        TextBoxDot(pdf , 21 , newX + 45 , 130 , `${DatePlant[2].split(" ")[0]}/${DatePlant[1]}/${parseInt(DatePlant[0]) + 543}` )
+
+
+        pdf.text('ระยะการปลูก' , 50 , 160)
+        newX = TextBoxDot(pdf , 20 , 117 , 160 , Export.dataForm.posi_w.toString()+"X"+Export.dataForm.posi_h.toString())
+
+        pdf.text('จำนวนต้น' , newX , 160)
+        newX = TextBoxDot(pdf , 13 , newX + 51 , 160 , Export.dataForm.qty.toString())
         
+        pdf.text('พื้นที่' , newX , 160)
+        newX = TextBoxDot(pdf , 13 , newX + 26 , 160 , Export.dataForm.area.toString())
+
+        pdf.text('วันที่คาดว่าจะเก็บเกี่ยว' , newX , 160)
+        const DateOut = Export.dataForm.date_harvest.split("-")
+        newX = TextBoxDot(pdf , 20 , newX + 110 , 160 , `${DateOut[2].split(" ")[0]}/${DateOut[1]}/${parseInt(DateOut[0]) + 543}`)
         
-        pdf.addPage()
+
+        pdf.text('๓.' , 30 , 190)
+        pdf.text('ระบบการปลูก' , 50 , 190)
+        TextBoxDot(pdf , 110 , 120 , 190 , Export.dataForm.system_glow)
+
+
+        pdf.text('๔.' , 30 , 220)
+        pdf.text('แหล่งน้ำ' , 50 , 220)
+        TextBoxDot(pdf , 117 , 92 , 220 , Export.dataForm.water)
+
+
+        pdf.text('๕.' , 30 , 250)
+        pdf.text('วิธีการให้น้ำ' , 50 , 250)
+        TextBoxDot(pdf , 113 , 107 , 250 , Export.dataForm.water_flow)
+
+
+        pdf.text('๖.' , 30 , 280)
+        pdf.text('ประวัติการใช้พื้นที่และการเกิดโรคระบาด ชนิดพืชก่อนหน้านี้' , 50 , 280)
+        
+
+        pdf.text('ชนิดพืชที่ปลูก' , 50 , 310)
+        newX = TextBoxDot(pdf , 30 , 118 , 310 , Export.dataForm.history)
+
+        pdf.text('โรค/แมลงที่พบ' , newX , 310)
+        newX = TextBoxDot(pdf , 30 , newX + 74 , 310 , Export.dataForm.history)
+
+        pdf.text('ปริมาณที่พบ' , newX , 310)
+        newX = TextBoxDot(pdf , 18 , newX + 63 , 310 , Export.dataForm.qtyInsect)
+
+
+        pdf.text('๗.' , 30 , 340)
+        pdf.text('ข้อแนะนำจากที่ปรึกษา' , 50 , 340)
+
+        let startReport = 370
+        if(Export.report.length !== 0) {
+            for(let index in Export.report) {
+                pdf.text(`ครั้งที่ ${parseInt(index) + 1} คำแนะนำ` , 50 , startReport);
+
+                const Text = Export.report[index].report_text.split("|")
+
+                let qtyText = 0
+                let qtyMaxTextonRow = 15 // จำนวนตัวอักษรมากสุดในแถว
+                let RowText = 1
+
+                let newTextRow = new Array //ประโยคที่แบ่งแถวแล้ว
+                let keyNewText = 0
+                let keyPre = 0
+
+                // หาจำนวนแถว และแบ่งประโยคเป็นแต่ละแถว
+                for(const [key , val] of Object.entries(Text)) {
+                    newTextRow[keyNewText] = Text.slice(keyPre , parseInt(key) + 1)
+                    if(qtyText + val.length >= qtyMaxTextonRow) {
+                        keyNewText += 1
+                        keyPre = parseInt(key) + 1
+                    }
+                    
+                    qtyText += val.length
+
+                    if(qtyText >= qtyMaxTextonRow) {
+                        qtyText = 0
+                        qtyMaxTextonRow = 40
+                        RowText += 1
+                    }
+                }
+
+                // การใส่บรรทัด และเขียนตัวอักษร ในแต่ละบรรทัด
+                for(let x = 0; x < RowText ;x++) {
+                    if(x === 0) {
+                        const startRowFirst = 138
+                        pdf.setFontSize(16)
+                        pdf.text( newTextRow[x] ? newTextRow[x].join("") : "" , startRowFirst + 4 , startReport - 1);
+                        pdf.setFontSize(18)
+                        TextBoxDot(pdf , 31 , startRowFirst , startReport , "")
+                    }
+                    else {
+                        const startRowFirst = 50
+                        pdf.setFontSize(16)
+                        pdf.text( newTextRow[x] ? newTextRow[x].join("") : "" , startRowFirst , startReport - 1);
+                        pdf.setFontSize(18)
+                        TextBoxDot(pdf , 53 , startRowFirst , startReport , "")
+                    }
+                    startReport += 30
+                }
+                pdf.text("ลงชื่อ" , 50 , startReport);
+                pdf.setFontSize(15)
+                pdf.text(Export.report[index].name_doctor , 80 , startReport - 1)
+                pdf.setFontSize(18)
+                newX = TextBoxDot(pdf , 25 , 78 , startReport , "")
+
+                pdf.text("วันที่" , newX , startReport);
+                const DateReport = Export.report[index].date_report.split("T")[0].split("-");
+                pdf.setFontSize(15)
+                pdf.text(`${DateReport[2].split(" ")[0]}/${DateReport[1]}/${parseInt(DateReport[0]) + 543}` , newX + 23 , startReport - 1)
+                pdf.setFontSize(18)
+                TextBoxDot(pdf , 16 , newX + 23 , startReport , "")
+
+                startReport += 30
+
+                // วัดข้อความตามขอบเขตก่อน แล้วแบ่งเป็น array ตามขอบเขต โดยขอบเขตอยู่กลางคำใด จะตัดคำนั้นไปบรรทัดใหม่
+            }
+        } else {
+            pdf.text(`ไม่พบคำแนะนำ` , 165 , 340)
+        }
+
+        // pdf.text('๘.' , 30 , 340)
+        // pdf.text('ผลตรวจสอบแบบบันทึก' , 50 , 340)
+
+        pdf.text('๙.' , width / 2 - 20 , 340)
+        pdf.text('ผลการวิเคราะห์สารตกค้างในผลผลิต ก่อน/หลังการเก็บเกี่ยว' , width / 2 , 340)
+
+        const headers = {
+            "ครั้งที่" : {size : 30},
+            "วันที่วิเคราะห์" : {size : 70},
+            "ผลวิเคราะห์" : {size : 70 , "ก่อน" : 50 , "หลัง" : 520} ,
+            "ผู้วิเคราะห์" : {size : 70} ,
+            "หมายเหตุ" : {size : 60}
+        }
+
+        TableBox(pdf , width / 2 - 30 , 350 , headers , {} , 28)
+
+
+        if(parseInt(index) + 1 !== Data.length) pdf.addPage()
     }
 
     window.open(pdf.output('dataurlnewwindow' , "แบบบันทึกข้อมูล"))

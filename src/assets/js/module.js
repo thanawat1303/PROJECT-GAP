@@ -239,20 +239,73 @@ const TextBoxDot = (pdf , count , xStart , y , textOnDot) => {
         pdf.circle( gidx , gidy , 0.7 , 'F');
         posi += 4
     }
-    pdf.text(textOnDot , xStart + (((posi - 3) - xStart) / 2) - (textOnDot.length * 3.5) , parseInt(y) - 1)
+    const widthText = pdf.getStringUnitWidth(textOnDot) * 18
+    pdf.text(textOnDot , xStart + ((posi - 3 - xStart) / 2) - widthText / 2 , parseInt(y) - 1)
     return posi - 3
 }
 
-const TableBox = (pdf = new jsPDF() , posiStartX = 0 , posiStartY = 0 , headers = {} , body = {} , heightRow = 0) => {
+const TableBox = (pdf = new jsPDF() , posiStartX = 0 , posiStartY = 0 , headers = {} , body = {} , heightHeader = 0 , heightBody = 0) => {
 
+    pdf.setFontSize(14)
     let startHeadX = posiStartX
     let startHeadY = posiStartY
-    for(let [headerName , headerSize] of Object.entries(headers)) {
-        pdf.line(startHeadX , startHeadY , startHeadX + parseInt(headerSize.size) , startHeadY)
-        pdf.line(startHeadX , startHeadY + heightRow , startHeadX + parseInt(headerSize.size) , startHeadY + heightRow)
-        pdf.line(startHeadX , startHeadY , startHeadX , startHeadY + heightRow)
-        startHeadX += parseInt(headerSize.size)
+    const ObjectText = {
+        fontSize: 14,
+        fontName: "THSarabunNew",
     }
+    for(let headerData of headers) {
+        const widthText = pdf.getStringUnitWidth(headerData.name) * 14
+        const lineHeight = pdf.getTextDimensions(headerData.name, ObjectText).h;
+        const endX = startHeadX + parseInt(headerData.size)
+        const endY = startHeadY + heightHeader
+
+        pdf.line(startHeadX , startHeadY , endX , startHeadY) //line ขอบบน
+        // pdf.line(startHeadX , endY , endX , endY) //line ขอบล่าง
+        pdf.line(startHeadX , startHeadY , startHeadX , endY) //line แบ่งช่องแนวตั้ง
+        pdf.text(headerData.name , startHeadX + ((endX - startHeadX) / 2) - widthText / 2 , startHeadY + ((endY - startHeadY) / ((headerData.headSup) ? (headerData.headSup.length + 1) : 1)/2) + (lineHeight / 3.5))
+        if(headerData.headSup) {
+            const findCenter = startHeadY + ((endY - startHeadY) / (headerData.headSup.length + 1))
+            const findXCenter = startHeadX + ((endX - startHeadX) / (headerData.headSup.length + 1))
+            pdf.line(startHeadX , findCenter , endX , findCenter)
+            pdf.line(findXCenter , findCenter , findXCenter , findCenter + heightHeader / (headerData.headSup.length + 1))
+            
+            let startSubX = startHeadX
+            let endSubX = findXCenter
+            for(let data of headerData.headSup) {
+                const widthTextSub = pdf.getStringUnitWidth(data.name) * 14
+                const lineHeightSub = pdf.getTextDimensions(data.name, ObjectText).h;
+                pdf.text(data.name,startSubX + ((endSubX - startSubX) / 2) - widthTextSub / 2, findCenter + heightHeader / (headerData.headSup.length + 1) - (lineHeightSub / 3.5))
+                let newPosi = endSubX - startSubX
+                startSubX += newPosi
+                endSubX += newPosi
+            }
+
+        }
+        startHeadX += parseInt(headerData.size)
+    }
+    pdf.line(startHeadX , startHeadY , startHeadX , startHeadY + heightHeader)
+    
+    let startBodyY = startHeadY + heightHeader
+    for(let Row of body) {
+        let startBodyX = posiStartX
+        for(let Body of Row) {
+            console.log(Body)
+            const widthText = pdf.getStringUnitWidth(Body.name) * 14
+            const lineHeight = pdf.getTextDimensions(Body.name, ObjectText).h;
+            const endX = startBodyX + parseInt(Body.size)
+            const endY = startBodyY + heightBody
+    
+            pdf.line(startBodyX , startBodyY , endX , startBodyY) //line ขอบบน
+            pdf.line(startBodyX , endY , endX , endY) //line ขอบล่าง
+            pdf.line(startBodyX , startBodyY , startBodyX , endY) //line แบ่งช่องแนวตั้ง
+            pdf.text(Body.name , startBodyX + ((endX - startBodyX) / 2) - widthText / 2 , startBodyY + ((endY - startBodyY) / 2) + (lineHeight / 3.5))
+            startBodyX += parseInt(Body.size)
+        }
+        pdf.line(startBodyX , startBodyY , startBodyX , startBodyY + heightBody)
+        startBodyY += heightBody
+    }
+
+    pdf.setFontSize(18)
 }
 
 const ExportPDF = async (Data) => {
@@ -439,15 +492,44 @@ const ExportPDF = async (Data) => {
         pdf.text('๙.' , width / 2 - 20 , 340)
         pdf.text('ผลการวิเคราะห์สารตกค้างในผลผลิต ก่อน/หลังการเก็บเกี่ยว' , width / 2 , 340)
 
-        const headers = {
-            "ครั้งที่" : {size : 30},
-            "วันที่วิเคราะห์" : {size : 70},
-            "ผลวิเคราะห์" : {size : 70 , "ก่อน" : 50 , "หลัง" : 520} ,
-            "ผู้วิเคราะห์" : {size : 70} ,
-            "หมายเหตุ" : {size : 60}
+        const headers = [
+            {name : "ครั้งที่", size : 30},
+            {name :"วันที่วิเคราะห์" , size : 70},
+            {name :"ผลวิเคราะห์" , size : 90, headSup : [{name : "ก่อน" , size : 45 ,name : "หลัง" , size : 45}]} ,
+            {name :"ผู้วิเคราะห์" , size : 70} ,
+            {name : "หมายเหตุ" , size : 65}
+        ]
+
+        const body = new Array
+        for(let index = 0; index < 15; index++) {
+            const Data = Export.checkPlant[index]
+            if(Data) {
+                const DateCheck = Data.date_check.split("T")[0].split("-");
+                body.push(
+                    [
+                        {name : (index + 1).toString() , size : 30},
+                        {name : `${DateCheck[2].split(" ")[0]}/${DateCheck[1]}/${parseInt(DateCheck[0]) + 543}` , size : 70},
+                        {name : !Data.state_check ? (Data.status_check).toString() : "" , size : 45} ,
+                        {name : Data.state_check ? (Data.status_check).toString() : "" , size : 45} ,
+                        {name : Data.name_doctor.split(" ")[0], size : 70} ,
+                        {name : Data.note_text , size : 65}
+                    ]
+                )
+            } else {
+                body.push(
+                    [
+                        {name : (index + 1).toString() , size : 30},
+                        {name : "" , size : 70},
+                        {name : "" , size : 45} ,
+                        {name : "" , size : 45} ,
+                        {name : "", size : 70} ,
+                        {name : "" , size : 65}
+                    ]
+                )
+            }
         }
 
-        TableBox(pdf , width / 2 - 30 , 350 , headers , {} , 28)
+        TableBox(pdf , width / 2 - 33 , 350 , headers , body , 33 , 20)
 
 
         if(parseInt(index) + 1 !== Data.length) pdf.addPage()

@@ -843,7 +843,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                                 <input placeholder="ผลตรวจสอบ 0-5" min={0} max={5} onInput={CheckOffsetNumber} onChange={()=>CheckData()} ref={StatusCheck} type="number"></input>
                             </div>
                         </div>
-                        <input className="note" ref={NoteText} onChange={()=>CheckData()} placeholder="หมายเหตุ"></input>
+                        <input maxLength={10} className="note" ref={NoteText} onChange={()=>CheckData()} placeholder="หมายเหตุ"></input>
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div> : 
                     <div className="form">

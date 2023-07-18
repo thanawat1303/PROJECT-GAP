@@ -1768,12 +1768,21 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 const CheckForm = await new Promise((resole , reject)=>{
                                     con.query(
                                         `
-                                            SELECT * 
+                                            SELECT * , 
+                                            (
+                                                SELECT fullname_doctor
+                                                FROM acc_doctor
+                                                WHERE id_table_doctor = check_form_detail.id_table_doctor
+                                            ) as name_doctor
                                             FROM check_form_detail
                                             WHERE id_plant = ?
                                         ` , [val.id] ,
                                         (err , result) => {
-                                            resole(result)
+                                            const ResultEx = result.map((val , key)=>{
+                                                val.note_text = wordcut.cut(val.note_text)
+                                                return val
+                                            })
+                                            resole(ResultEx)
                                         }
                                     )
                                 })

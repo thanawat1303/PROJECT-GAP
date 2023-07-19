@@ -1831,6 +1831,55 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     })
     // end formplant
+
+    //data
+    app.get('/api/doctor/data/get' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const From = req.query.type == "plant" ? "plant_list" : 
+                                req.query.type == "fertilizer" ? "fertilizer_list" : 
+                                req.query.type == "chemical" ? "chemical_list" :
+                                req.query.type == "source" ? "source_list" : ""
+                const Limit = !isNaN(req.query.limit) ? req.query.limit : 0
+                if(From) {
+                    con.query(
+                        `
+                        SELECT * 
+                        FROM ${From}
+                        ${req.query.name ? `WHERE INSTR( name , ${req.query.name} )` : ""}
+                        ORDER BY is_use DESC
+                        LIMIT ${Limit}
+                        ` , 
+                        (err , list) => {
+                            if(err) console.log(err)
+    
+                            con.end()
+                            res.send(list)
+                        }
+                    )
+                } else {
+                    con.end()
+                    res.send("error")
+                }
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
     
     // app.post("/doctor/api/doctor/pull" , (req , res)=>{
     //     let username = req.session.user_doctor

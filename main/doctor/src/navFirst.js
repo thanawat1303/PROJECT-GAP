@@ -7,6 +7,7 @@ import PageFarmer from "./page/farmer/PageFarmer"
 
 import { clientMo } from "../../../src/assets/js/moduleClient"
 import { ButtonMenu } from "./page/modules"
+import PageData from "./page/data/PageData"
 const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) => {
     useEffect(()=>{
         if(type === 1) window.history.pushState({} , "" , "/doctor")
@@ -34,18 +35,15 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
         else setSession()
     }
 
-    const data = () => {
-        console.log(123)
-    }
-
-    const exportData = async () => {
+    const data = async () => {
         const context = await clientMo.post('/api/doctor/check')
-        if(context) 
-            setdoctor(<PageExport setMain={setMain} 
-                        socket={socket} setBodyDoctor={setdoctor} session={setSession} type={1} typeDataForm={"all"}
-                        eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)
+        if(context)
+            setdoctor(<PageData setMain={setMain}
+                        socket={socket} LoadType={"plant"} session={setSession} type={true} 
+                        eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus} />)
         else setSession()
     }
+
     return (
         <section className="nav-first" onLoad={clientMo.unLoadingPage}>
             <div className="head">
@@ -55,7 +53,6 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
                 <ButtonMenu type={"farmer"} textRow1={"ลงทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
                 <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
                 <ButtonMenu type={"data"} textRow1={"เพิ่มเติม"} textRow2={"ข้อมูล"} action={data}/>
-                {/* <ButtonMenu type={"exportData"} textRow1={"Export"} textRow2={"ข้อมูล"} action={exportData}/> */}
             </div>
         </section>
     )

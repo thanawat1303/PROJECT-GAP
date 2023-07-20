@@ -249,7 +249,36 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 const select = (req.body.id_formplant) ? 
                                     `formplant.*` :
                                     `formplant.id , formplant.name_plant , formplant.submit , 
-                                        formplant.date_plant , formplant.generation , formplant.qty`
+                                        formplant.date_plant , formplant.generation , formplant.qty , 
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM report_detail
+                                            WHERE report_detail.id_plant = formplant.id
+                                        ) 
+                                    ) as report ,
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM check_form_detail
+                                            WHERE check_form_detail.id_plant = formplant.id
+                                        ) 
+                                    ) as form , 
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM check_plant_detail
+                                            WHERE check_plant_detail.id_plant = formplant.id
+                                        ) 
+                                    ) as plant , 
+                                    (
+                                        SELECT EXISTS (
+                                            SELECT id
+                                            FROM success_detail
+                                            WHERE id_plant = formplant.id and date_of_farmer = ""
+                                        )
+                                    ) as success
+                                    `
                 con.query(`
                             SELECT ${select} ,
                             (
@@ -1132,7 +1161,14 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             FROM check_plant_detail
                             WHERE check_plant_detail.id_plant = formplant.id
                         ) 
-                    ) as plant
+                    ) as plant ,
+                    (
+                        SELECT EXISTS (
+                            SELECT id
+                            FROM success_detail
+                            WHERE id_plant = formplant.id and date_of_farmer = ""
+                        )
+                    ) as success
                     FROM formplant , 
                         (
                             SELECT id_farmHouse , (

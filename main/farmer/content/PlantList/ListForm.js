@@ -28,7 +28,26 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
         const auth = await clientMo.post('/api/farmer/formplant/select' , {id_farmhouse : id_house})
         if(await CloseAccount(auth)) {
             setBodyList(JSON.parse(auth).map((val , key)=>
-                        <div key={key} className="plant-content">
+                        <div key={key} className="plant-content" style={
+                            val.report || val.form || val.plant || val.success ? {
+                            marginTop : "25px",
+                            position : "relative"
+                            } : {}}>
+                            { val.report || val.form || val.plant || val.success ?
+                                <div className="report-of-doctor" style={{
+                                    position : "absolute",
+                                    bottom : "100%",
+                                    right : "0.5em"
+                                }}>
+                                    <span style={{
+                                        backgroundColor : "red",
+                                        padding : "1px 4px",
+                                        borderRadius : "5px",
+                                        fontWeight : "900",
+                                        color : "white"
+                                    }}>มีข้อความจากผู้ส่งเสริม</span>
+                                </div> : <></>
+                            }
                             <div className="top">
                                 <div className="type-main">
                                     <input readOnly value={val.type_plant ? val.type_plant : "ไม่ระบุ"}></input>

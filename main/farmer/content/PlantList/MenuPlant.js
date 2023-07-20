@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import "./assets/Menu.scss"
 import { clientMo } from "../../../../src/assets/js/moduleClient";
@@ -10,14 +10,24 @@ import Report from "../Report/Report";
 
 const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     const NavBody = useRef()
+    const [DotReport , setDotReport] = useState([])
 
     useEffect(()=>{
         setPage("MENU ON LIST")
         if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/p/${id_plant}`)
 
+        FetchCheck()
+
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
     } , [])
+
+    const FetchCheck = async () => {
+        const result = await clientMo.get(`/api/farmer/report/check?id_farmhouse=${id_house}&id_plant=${id_plant}`)
+        if(await CloseAccount(result , setPage)) {
+            setDotReport(JSON.parse(result))
+        }
+    }
 
     const selectMenu = async (page) => {
         const result = await clientMo.post("/api/farmer/account/check")
@@ -65,12 +75,14 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                             <img src="/เก็บ.png"></img>
                         </div>
                         <span>การเก็บเกี่ยว</span>
+                        {DotReport[0] ? DotReport[0].success ? <div className="dot-someting"></div> : <></> : <></>}
                     </div>
                 </div>
                 <div className="report-farm" 
                     onClick={()=>selectMenu("r")}
                     >
                     <img src="/report.png"></img>
+                    {DotReport[0] ? DotReport[0].report || DotReport[0].form || DotReport[0].plant ? <div className="dot-someting"></div> : <></> : <></>}
                 </div>
             </div>
         </section>

@@ -32,6 +32,7 @@
                 justify-content: center;
                 align-items: center;
                 flex-direction: column;
+                position: relative;
                 border-radius: 15px;
                 padding: 10px;
                 box-shadow: 0px 4px 4px rgb(179, 179, 179);
@@ -57,6 +58,17 @@
                     font-weight: 900;
                     width: 28vw;
                 }
+
+                .dot-someting {
+                    position: absolute;
+                    background-color: rgb(255, 0, 0);
+                    width: 1.2em;
+                    height: 1.2em;
+                    border-radius: 50%;
+                    top : 0.2em;
+                    right: 0.2em;
+                    box-shadow: 0px 2px 2px rgb(106, 0, 0);
+                }
             }
 
             .frame-plant {
@@ -77,10 +89,22 @@
         }
 
         .report-farm {
+            position: relative;
             padding: 10px;
             img {
                 width: 100%;
                 border-radius: 15px;
+            }
+
+            .dot-someting {
+                position: absolute;
+                background-color: rgb(255, 0, 0);
+                width: 1.2em;
+                height: 1.2em;
+                border-radius: 50%;
+                top : 1em;
+                right: 1em;
+                box-shadow: 0px 2px 2px rgb(106, 0, 0);
             }
         }
     }

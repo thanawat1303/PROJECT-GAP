@@ -1102,6 +1102,124 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             }
         } else res.send("error auth")
     })
+
+    //report 
+    app.get('/api/farmer/report/check' , async (req , res)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+
+            try {
+                const auth = await authCheck(con , dbpacket , res , req , LINE)
+                con.query(
+                    `
+                    SELECT (
+                        SELECT EXISTS (
+                            SELECT id
+                            FROM report_detail
+                            WHERE report_detail.id_plant = formplant.id
+                        ) 
+                    ) as report ,
+                    (
+                        SELECT EXISTS (
+                            SELECT id
+                            FROM check_form_detail
+                            WHERE check_form_detail.id_plant = formplant.id
+                        ) 
+                    ) as form , 
+                    (
+                        SELECT EXISTS (
+                            SELECT id
+                            FROM check_plant_detail
+                            WHERE check_plant_detail.id_plant = formplant.id
+                        ) 
+                    ) as plant
+                    FROM formplant , 
+                        (
+                            SELECT id_farmHouse , (
+                                SELECT name FROM station_list WHERE station_list.id = ?
+                            ) as name_station
+                            FROM housefarm
+                            WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
+                        ) as houseFarm
+                    WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
+                    ` , [ auth.data.station , auth.data.uid_line , auth.data.link_user , req.query.id_farmhouse , req.query.id_plant ] ,
+                    (err  , check) => {
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log(`select success ${req.query.id_plant}`);
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send(check)
+                    }
+                )
+            } catch (err) {
+                con.end()
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+
+        } else res.send("error auth")
+    })
+
+    app.get('/api/farmer/report/list' , async (req , res)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+
+            try {
+                const auth = await authCheck(con , dbpacket , res , req , LINE)
+                const Type = req.query.type === "g" ? "report_detail" :
+                                req.query.type === "cf" ? "check_form_detail" :
+                                req.query.type === "cp" ? "check_plant_detail" : ""
+                if(Type) {
+                    con.query(
+                        `
+                        SELECT ${Type}.* , 
+                        (
+                            SELECT fullname_doctor
+                            FROM acc_doctor
+                            WHERE acc_doctor.id_table_doctor = ${Type}.id_table_doctor
+                        ) as name_doctor
+                        FROM ${Type} , 
+                        (
+                            SELECT formplant.id , houseFarm.name_station
+                            FROM formplant , 
+                                (
+                                    SELECT id_farmHouse , (
+                                        SELECT name FROM station_list WHERE station_list.id = ?
+                                    ) as name_station
+                                    FROM housefarm
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farmHouse = ?
+                                ) as houseFarm
+                            WHERE formplant.id_farmHouse = houseFarm.id_farmHouse && formplant.id = ?
+                        ) as formPlant
+                        WHERE ${Type}.id_plant = formPlant.id
+                        ` , [ auth.data.station , auth.data.uid_line , auth.data.link_user , req.query.id_farmhouse , req.query.id_plant ] ,
+                        (err  , list) => {
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log(`select success ${req.query.id_plant}`);
+                                return 0;
+                            }
+    
+                            con.end()
+                            res.send(list)
+                        }
+                    )
+                } else {
+                    con.end()
+                    res.send("error auth")
+                }
+                
+            } catch (err) {
+                con.end()
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+
+        } else res.send("error auth")
+    })
     
 }
 

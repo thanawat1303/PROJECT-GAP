@@ -6,6 +6,7 @@ import { CloseAccount } from "../../method";
 import ListFactor from "../Factor/ListFactor";
 import Success from "../Success/Success";
 import DataForm from "../DataForm/DataForm";
+import Report from "../Report/Report";
 
 const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     const NavBody = useRef()
@@ -27,6 +28,9 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
             }
             else if (page === "s") {
                 setBody(<Success setBody={setBody} setPage={setPage} id_house={id_house} id_plant={id_plant} isClick={1} liff={liff}/>)
+            }
+            else if (page === "r") {
+                setBody(<Report setBody={setBody} setPage={setPage} id_house={id_house} id_plant={id_plant} type={"menu:g"} isClick={1} liff={liff}/>)
             }
         } 
     }
@@ -64,7 +68,7 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                     </div>
                 </div>
                 <div className="report-farm" 
-                    onClick={()=>selectMenu("report")}
+                    onClick={()=>selectMenu("r")}
                     >
                     <img src="/report.png"></img>
                 </div>

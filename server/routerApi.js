@@ -101,6 +101,9 @@ module.exports = function router(app) {
     app.get('/farmer/form/:id_farm/:page/:id_form_plant' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
     });
+    app.get('/farmer/form/:id_farm/:page/:id_form_plant/:sub_page' , function(req, res) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_farmer.html'));
+    });
 
     // page error 404
     app.get('/' , function(req, res) {

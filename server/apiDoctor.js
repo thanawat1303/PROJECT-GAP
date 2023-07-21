@@ -1851,13 +1851,19 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 req.query.type == "fertilizer" ? "fertilizer_list" : 
                                 req.query.type == "chemical" ? "chemical_list" :
                                 req.query.type == "source" ? "source_list" : ""
+                const QuerySearch = req.query.type == "plant" ? `INSTR( name , '${req.query.textInput}' )` : 
+                                        req.query.type == "fertilizer" ? `INSTR( name , '${req.query.textInput}' ) || INSTR( name_formula , '${req.query.textInput}' )` : 
+                                        req.query.type == "chemical" ? `INSTR( name , '${req.query.textInput}' ) || INSTR( name_formula , '${req.query.textInput}' )` :
+                                        req.query.type == "source" ? `INSTR( name , '${req.query.textInput}' )` : ""
                 const Limit = !isNaN(req.query.limit) ? req.query.limit : 0
                 if(From) {
                     con.query(
                         `
                         SELECT * 
                         FROM ${From}
-                        ${req.query.name ? `WHERE INSTR( name , ${req.query.name} )` : ""}
+                        ${req.query.other || req.query.textInput ? 
+                        `WHERE ${req.query.textInput ? QuerySearch : ""} ${req.query.other && req.query.textInput ? "and" : ""} ${req.query.other ? `type_plant = '${req.query.other}'` : ""}
+                        ` : ""}
                         ORDER BY is_use DESC
                         LIMIT ${Limit}
                         ` , 
@@ -1868,6 +1874,64 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             res.send(list)
                         }
                     )
+                } else {
+                    con.end()
+                    res.send("error")
+                }
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.post('/api/doctor/data/check/overlape' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const From = req.body.type == "plant" ? "plant_list" : 
+                                req.body.type == "fertilizer" ? "fertilizer_list" : 
+                                req.body.type == "chemical" ? "chemical_list" :
+                                req.body.type == "source" ? "source_list" : ""
+                if(From) {
+                    try {
+                        const where = Object.entries(req.body.check).map((data)=>{
+                            data[1] = `"${data[1].trim()}"`
+                            return data.join(" = ")
+                        }).join(" , ")
+                        con.query(
+                            `
+                            SELECT (
+                                SELECT EXISTS (
+                                    SELECT id 
+                                    FROM ${From}
+                                    WHERE ${where}
+                                )
+                            ) as checkData
+                            ` , 
+                            (err , data) => {
+                                if(err) console.log(err)
+        
+                                con.end()
+                                res.send(data[0].checkData.toString())
+                            }
+                        )
+                    } catch (err) {
+                        con.end()
+                        res.send("error")
+                    }
                 } else {
                     con.end()
                     res.send("error")

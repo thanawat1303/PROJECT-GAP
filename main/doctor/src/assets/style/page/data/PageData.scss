@@ -52,6 +52,8 @@
         right: 0em;
         transform: translateX(100%);
         transition: 0.5s transform;
+        max-width: 250px;
+        width: 80%;
 
         .bt-select-option {
             display: flex;
@@ -124,22 +126,40 @@
             .field-option {
                 display: flex;
                 flex-direction: column;
+
+                .head {
+                    width: 100%;
+                    font-size: 18px;
+                    font-weight: 900;
+                    text-align: center;
+                    font-family: Sans-font;
+                    background-color: #74c1b3;
+                    // border-radius:0px 0px 8px 8px;
+                    border-radius: 20px;
+                    padding-top: 3px;
+                    color: white;
+                }
                 
                 .row {
                     display: flex;
                     justify-content: space-between;
                     width: 100%;
+                    margin-top: 10px;
 
                     input {
                         width: 100%;
                         border-radius: 8px;
-                        padding: 2px 8px;
+                        padding: 4px 8px;
+                        // padding-bottom: 0;
                         font-family: Sans-font;
                         font-size: 18px;
+                        // background-color: rgb(215, 140, 140);
                         background-color: #22C7A9;
                         color: white;
                         border: 0;
                         outline: 0;
+                        margin-top: 0px;
+                        box-shadow:0px 0px 5px inset #416963;
                     }
 
                     input::placeholder {
@@ -153,26 +173,38 @@
                         align-items: start;
                         font-family: Sans-font;
                         font-size: 16px; //media query
-                        margin: 4px 0px;
                         width: 100%;
     
                         span {
+                            display: flex;
+                            justify-content: space-between;
                             font-family: Sans-font;
                             font-weight: 900;
                             font-size: 16px; //media query
+                            width: 100%;
+
+                            span {
+                                width: auto;
+                            }
                         }
     
                         select {
                             font-family: Sans-font;
-                            font-size: 14px; //media query
+                            font-size: 16px; //media query
                             border-radius: 10px;
                             padding: 0px 2px;
                             margin: 0px 2px;
                             border:2px solid #22C7A9;
+                            width: 100%;
+                            text-align: center;
 
                             option.on {
                                 background-color: #22C7A9;
                             }
+                        }
+
+                        input {
+                            width: 100%;
                         }
 
                         select:focus-visible {
@@ -182,100 +214,78 @@
                         select.width-100 {
                             width: 90%;
                         }
+
+                        .box-input-number {
+                            display: flex;
+                            justify-content: space-evenly;
+                            align-items: center;
+                            width: 100%;
+                            span {
+                                width: auto;
+                            }
+                            input {
+                                width: 25%;
+                                height: 30px;
+                                padding: 0px 0px;
+                                padding-top: 2px;
+                                text-align: center;
+                            }
+
+                            input::-webkit-inner-spin-button,
+                            input::-webkit-outer-spin-button {
+                                -webkit-appearance: none;
+                                margin: 0;
+                            }
+                        }
+
+                        .err-text-overlape {
+                            color: red;
+                        }
                     }
                 }
 
-                .export {
+                .line-area {
+                    background-color: #22C7A9;
+                    height: 2px;
+                    width: 100%;
+                    margin-top: 2px;
+                }
+
+                .bt-insert {
                     display: flex;
-                    flex-direction: column;
-                    width: 150px;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    width: 100%;
+                    margin-top: 8px;
 
-                    .head {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        position: relative;
-                        border-bottom: 2px solid #49d184;
-                        margin-bottom: 2px;
-                        span {
-                            font-family: Sans-font;
-                            font-size: 16px;
-                            font-weight: 900;
-                        }
-                        .quesion_mask {
-                            position: absolute;
-                            right: 0;
-                            .desciption {
-                                position: absolute;
-                                right: 110%;
-                                width: 80vw;
-                                max-width: 268px;
-                                font-family: Sans-font;
-                                background-color: white;
-                                // backdrop-filter: blur(50px);
-                                z-index: 1;
-                                padding: 2px 4px;
-                                font-size: 15px;
-                                border-radius: 8px;
-                                box-shadow: 0px 2px 2px #0C7238;
-                                opacity: 0;
-                                visibility: hidden;
-                                transition: 0.5s opacity , 0.5s visibility;
-                            }
-
-                            svg {
-                                fill: #22C7A9;
-                                width: 18px;
-                            }
-                        }
-
-                        .quesion_mask:hover {
-                            .desciption {
-                                opacity: 1;
-                                visibility: visible;
-                            }
-
-                            .desciption:hover {
-                                opacity: 0;
-                                visibility: hidden;
-                            }
-                        }
-                    }
-
-                    a {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 34px;
-                        border-radius: 8px;
+                    button {
                         color: white;
+                        border: 0;
+                        outline: 0;
+                        border-radius: 10px;
+                        font-family: Sans-font;
+                        font-size: 18px;
                         font-weight: 900;
-                        font-size: 20px;
-                        margin: 2px 0px;
+                        cursor: pointer;
                     }
 
-                    .pdf {
-                        background-color: #E53935;
+                    .cancel {
+                        background-color: rgb(223, 101, 101);
+                        box-shadow: 0px 2px 2px rgb(99, 6, 6);
                     }
 
-                    .excel {
-                        background: linear-gradient(120deg , #0C7238 , #29C27F);
+                    .submit {
+                        background-color: #22C7A9;
+                        box-shadow: 0px 2px 2px #16604a;
+                        color: white;
                     }
 
-                    // select {
-                    //     font-family: Sans-font;
-                    //     font-size: 14px;
-                    //     border-radius: 10px;
-                    //     padding: 0px 2px;
-                    //     padding-top: 1px;
-                    //     margin: 0px 2px;
-                    //     border: 2px solid #22C7A9;
-                    //     margin: 2px 0px;
-                    // }
-
-                    // select:focus-visible {
-                    //     outline: #176f3f auto 2px;
-                    // }
+                    .submit[no=""] {
+                        background-color: #22c7a99a;
+                        box-shadow: none;
+                        color: rgba(255, 255, 255, 0.759);
+                        cursor: not-allowed;
+                    }
                 }
             }
         }

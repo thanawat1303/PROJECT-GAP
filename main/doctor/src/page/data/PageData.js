@@ -28,7 +28,10 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     const nameInsert = useRef()
     const typeInsert = useRef()
     const DateQtyInsert = useRef()
+
     const formulaFertilizer = [useRef() , useRef() , useRef()]
+    const formulaChemical = useRef()
+
     const UseText = useRef()
     const SubmitInsert = useRef()
     
@@ -59,6 +62,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
             }
             else {
                 nameInsert.current.value = ""
+                if(UseText.current) UseText.current.value = ""
                 SubmitInsert.current.setAttribute("no" , "")
             }
             if(e.target.value !== "plant") DataSelect.delete("other")
@@ -83,7 +87,12 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                 UseText.current.value
                             ] : 
                         DataProcess.get("type") === "chemical"  ? 
-                            [] : 
+                            [
+                                nameInsert.current.value , 
+                                formulaChemical.current.value,
+                                UseText.current.value,
+                                DateQtyInsert.current.value
+                            ] : 
                         DataProcess.get("type") === "source"  ? 
                             [] : []
 
@@ -116,7 +125,20 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                         type : "fertilizer"
                     } : 
                 DataProcess.get("type") === "chemical"  ? 
-                    [] : 
+                    {
+                        data : 
+                        {
+                            name : nameInsert.current.value ,
+                            name_formula : formulaChemical.current.value , 
+                            how_use : UseText.current.value,
+                            date_sefe : DateQtyInsert.current.value
+                        },
+                        check : {
+                            name : nameInsert.current.value ,
+                            name_formula : formulaChemical.current.value
+                        },
+                        type : "fertilizer"
+                    } : 
                 DataProcess.get("type") === "source"  ? 
                     [] : []
             )
@@ -187,7 +209,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     }
 
     const InputKeyDownNext = (e , next = false , previous = false) => {
-        if(e.keyCode === 13 && next) next.focus()
+        if(e.keyCode === 13 && next && e.target.value) next.focus()
         else if(e.keyCode === 8 && previous && !e.target.value) {
             e.preventDefault();
             previous.focus()
@@ -303,14 +325,14 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                         onKeyDown={(e)=>InputKeyDownNext(e , 
                                             DataProcess.get("type") === "plant" ? typeInsert.current : 
                                             DataProcess.get("type") === "fertilizer" ? formulaFertilizer[0].current : 
-                                            DataProcess.get("type") === "chemical" ? "" :
+                                            DataProcess.get("type") === "chemical" ? formulaChemical.current :
                                             DataProcess.get("type") === "source" ? "" : "")
                                         }
                                         placeholder={
-                                            DataProcess.get("type") === "plant" ? "ชื่อพืช เช่น เมล่อน" : 
-                                            DataProcess.get("type") === "fertilizer" ? "ชื่อปุ๋ย/ตรา เช่น กระต่าย" : 
-                                            DataProcess.get("type") === "chemical" ? "ชื่อสารเคมี เช่น พรีวาธอน" :
-                                            DataProcess.get("type") === "source" ? "แหล่งที่ซื่อ เช่น สหกรณ์แม่เตียน" : ""
+                                            DataProcess.get("type") === "plant" ? "เช่น เมล่อน" : 
+                                            DataProcess.get("type") === "fertilizer" ? "เช่น กระต่าย" : 
+                                            DataProcess.get("type") === "chemical" ? "เช่น พรีวาธอน" :
+                                            DataProcess.get("type") === "source" ? "เช่น สหกรณ์แม่เตียน" : ""
                                         }></input>
                                 </label>
                                 { DataProcess.get("type") === "plant" ?
@@ -335,7 +357,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                         <span>จำนวนวันที่คาดว่าจะเก็บเกี่ยว</span>
                                         <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
                                                 ref={DateQtyInsert} 
-                                                onChange={CheckInsert} placeholder="จำนวนวันที่ เช่น 10 30" type="number"></input>
+                                                onChange={CheckInsert} placeholder="เช่น 10 30" type="number"></input>
                                     </label>
                                 </div>
                             : 
@@ -356,29 +378,29 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                 <div className="row">
                                     <label className="field-select">
                                         <span>วิธีการใช้</span>
-                                        <input ref={UseText} onChange={CheckInsert} placeholder="กรอกวิธีการใช้ เช่น หว่านโคนต้น"></input>
+                                        <input ref={UseText} onChange={CheckInsert} placeholder="เช่น หว่านโคนต้น"></input>
                                     </label>
                                 </div> 
                                 </>
                             : 
-                            DataProcess.get("type") === "fertilizer" ?
+                            DataProcess.get("type") === "chemical" ?
                                 <>
                                 <div className="row">
                                     <label className="field-select">
-                                        <span>สูตรปุ๋ย</span>
-                                        <div className="box-input-number">
-                                            <input ref={formulaFertilizer[0]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                                            <span>-</span>
-                                            <input ref={formulaFertilizer[1]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[2].current , formulaFertilizer[0].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                                            <span>-</span>
-                                            <input ref={formulaFertilizer[2]} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                                        </div>
+                                        <span>ชื่อสามัญสารเคมี</span>
+                                        <input ref={formulaChemical} onChange={CheckInsert} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current)} placeholder="เช่น "></input>
                                     </label>
                                 </div> 
                                 <div className="row">
-                                    <label className="field-select">
+                                    <label className="field-select not1">
                                         <span>วิธีการใช้</span>
-                                        <input ref={UseText} onChange={CheckInsert} placeholder="กรอกวิธีการใช้ เช่น หว่านโคนต้น"></input>
+                                        <input ref={UseText} onChange={CheckInsert} onKeyDown={(e)=>InputKeyDownNext(e , DateQtyInsert.current)} placeholder="เช่น ฉีดพ้น"></input>
+                                    </label>
+                                    <label className="field-select not1">
+                                        <span>จำนวนวันปลอดภัย</span>
+                                        <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
+                                                ref={DateQtyInsert} 
+                                                onChange={CheckInsert} placeholder="เช่น 10 30" type="number"></input>
                                     </label>
                                 </div>
                                 </>

@@ -13,3 +13,6 @@
 -- ALTER TABLE line_chat_gap.plant_list
 -- MODIFY type_plant VARCHAR(20) NOT NULL
 -- UPDATE line_chat_gap.station_list SET location = POINT(14.0366751,100.725087)
+
+-- ALTER TABLE line_chat_gap.plant_list
+-- ADD qty_harvest INT NOT NULL

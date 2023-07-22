@@ -27,6 +27,9 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
 
     const nameInsert = useRef()
     const typeInsert = useRef()
+    const DateQtyInsert = useRef()
+    const formulaFertilizer = [useRef() , useRef() , useRef()]
+    const UseText = useRef()
     const SubmitInsert = useRef()
     
     useEffect(()=>{
@@ -51,7 +54,13 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         if(e.target === SelectType.current) {
             DataSelect.set("statusClick" , true)
             DataSelect.delete("textInput")
-            SearchInput.current.value = ""
+            if(!TypeSelectMenu) {
+                SearchInput.current.value = ""
+            }
+            else {
+                nameInsert.current.value = ""
+                SubmitInsert.current.setAttribute("no" , "")
+            }
             if(e.target.value !== "plant") DataSelect.delete("other")
         }
         else DataSelect.set("statusClick" , false)
@@ -61,11 +70,18 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         ]))
     }
 
+    // insert
     const CheckInsert = () => {
         const value = DataProcess.get("type") === "plant"  ? 
-                            [ nameInsert.current.value , typeInsert.current.value ] :
+                            [ nameInsert.current.value , typeInsert.current.value , DateQtyInsert.current.value ] :
                         DataProcess.get("type") === "fertilizer"  ? 
-                            [] : 
+                            [ 
+                                nameInsert.current.value , 
+                                formulaFertilizer[0].current.value,
+                                formulaFertilizer[1].current.value,
+                                formulaFertilizer[2].current.value,
+                                UseText.current.value
+                            ] : 
                         DataProcess.get("type") === "chemical"  ? 
                             [] : 
                         DataProcess.get("type") === "source"  ? 
@@ -76,12 +92,29 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
             return (
                 DataProcess.get("type") === "plant"  ? 
                     {
-                        data : {name : nameInsert.current.value ,type_plant : typeInsert.current.value },
+                        data : 
+                        {
+                            name : nameInsert.current.value ,
+                            type_plant : typeInsert.current.value , 
+                            qty_harvest : parseInt(DateQtyInsert.current.value)
+                        },
                         check : {name : nameInsert.current.value},
                         type : "plant"
                     } :
                 DataProcess.get("type") === "fertilizer"  ? 
-                    [] : 
+                    {
+                        data : 
+                        {
+                            name : nameInsert.current.value ,
+                            name_formula : `${formulaFertilizer[0].current.value}-${formulaFertilizer[1].current.value}-${formulaFertilizer[2].current.value}` , 
+                            how_use : UseText.current.value
+                        },
+                        check : {
+                            name : nameInsert.current.value ,
+                            name_formula : `${formulaFertilizer[0].current.value}-${formulaFertilizer[1].current.value}-${formulaFertilizer[2].current.value}`
+                        },
+                        type : "fertilizer"
+                    } : 
                 DataProcess.get("type") === "chemical"  ? 
                     [] : 
                 DataProcess.get("type") === "source"  ? 
@@ -96,28 +129,29 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     const SubmitConfirmInsert = async () => {
         const Data = CheckInsert()
         if(Data) {
-            const result = await clientMo.post(`/api/doctor/data/check/overlape` , Data)
-            if(!parseInt(result)) {
-                setErrReport(false)
-            } else {
-                const Element = DataProcess.get("type") === "plant"  ? 
-                            [ nameInsert.current ] :
-                        DataProcess.get("type") === "fertilizer"  ? 
-                            [] : 
-                        DataProcess.get("type") === "chemical"  ? 
-                            [] : 
-                        DataProcess.get("type") === "source"  ? 
-                            [] : 
-                            []
-                Element.forEach((val)=>val.value = "")
-                setErrReport(true)
-            }
+            console.log(Data)
+            // const result = await clientMo.post(`/api/doctor/data/check/overlape` , Data)
+            // if(!parseInt(result)) {
+            //     setErrReport(false)
+            // } else {
+            //     const Element = DataProcess.get("type") === "plant"  ? 
+            //                 [ nameInsert.current ] :
+            //             DataProcess.get("type") === "fertilizer"  ? 
+            //                 [] : 
+            //             DataProcess.get("type") === "chemical"  ? 
+            //                 [] : 
+            //             DataProcess.get("type") === "source"  ? 
+            //                 [] : 
+            //                 []
+            //     Element.forEach((val)=>val.value = "")
+            //     setErrReport(true)
+            // }
         }
     }
 
     const CancelInsert = () => {
         const value = DataProcess.get("type") === "plant"  ? 
-                            [ nameInsert.current , typeInsert.current ] :
+                            [ nameInsert.current , typeInsert.current , DateQtyInsert.current ] :
                         DataProcess.get("type") === "fertilizer"  ? 
                             [] : 
                         DataProcess.get("type") === "chemical"  ? 
@@ -126,6 +160,42 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                             [] : []
         value.forEach((val)=>val.value = "")
         Search.current.removeAttribute("show")
+    }
+
+    const setMaxText = (e , max , typeElementNext = "") => {
+        // const text = e.target.value.slice(0 , max)
+        e.target.value = e.target.value.slice(0 , max)
+        if(typeElementNext) {
+            if(e.target.value.length === max) {
+                let next = e.target.nextElementSibling
+                if(next){
+                    while(next.tagName != typeElementNext){
+                        next = next.nextElementSibling
+                    }
+                    next.focus()
+                }
+            } else if(e.target.value.length === 0) {
+                let next = e.target.previousElementSibling
+                if(next){
+                    while(next.tagName != typeElementNext){
+                        next = next.previousElementSibling
+                    }
+                    next.focus()
+                }
+            }
+        }
+    }
+
+    const InputKeyDownNext = (e , next = false , previous = false) => {
+        if(e.keyCode === 13 && next) next.focus()
+        else if(e.keyCode === 8 && previous && !e.target.value) {
+            e.preventDefault();
+            previous.focus()
+        }
+    }
+
+    const SelectElementNext = (next = false) => {
+        if(next) next.focus()
     }
 
     return(
@@ -146,6 +216,17 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                 </div>
                 <div className="content-option">
                     <div className="field-option">
+                        <div className="row head-row">
+                            <label className="field-select">
+                                <span>ชนิดข้อมูล</span>
+                                <select onChange={(e)=>searchList(e , "type")} ref={SelectType} defaultValue={DataProcess.get("type")}>
+                                    <option value={"plant"}>ขนิดพืช</option>
+                                    <option value={"fertilizer"}>ปัจจัยการผลิต</option>
+                                    <option value={"chemical"}>สารเคมี</option>
+                                    <option value={"source"}>แหล่งที่ซื้อ</option>
+                                </select>
+                            </label>
+                        </div>
                         { !TypeSelectMenu ? 
                             <>
                             <span className="head">
@@ -156,18 +237,12 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                 DataProcess.get("type") === "source" ? "แหล่งที่ซื้อ" : ""
                             }</span>
                             <div className="row">
-                                <input onChange={(e)=>searchList(e , "textInput")} type="search" ref={SearchInput} placeholder="กรอกชื่อพืช" defaultValue={DataProcess.get("textInput")}></input>
-                            </div>
-                            <div className="row">
-                                <label className="field-select">
-                                    <span>ชนิดข้อมูล</span>
-                                    <select onChange={(e)=>searchList(e , "type")} ref={SelectType} defaultValue={DataProcess.get("type")}>
-                                        <option value={"plant"}>ขนิดพืช</option>
-                                        <option value={"fertilizer"}>ปัจจัยการผลิต</option>
-                                        <option value={"chemical"}>สารเคมี</option>
-                                        <option value={"source"}>แหล่งที่ซื้อ</option>
-                                    </select>
-                                </label>
+                                <input onChange={(e)=>searchList(e , "textInput")} type="search" ref={SearchInput} placeholder={
+                                            DataProcess.get("type") === "plant" ? "กรอกชื่อพืช เช่น เมล่อน" : 
+                                            DataProcess.get("type") === "fertilizer" ? "กรอกชื่อปุ๋ย/ตรา เช่น กระต่าย" : 
+                                            DataProcess.get("type") === "chemical" ? "กรอกชื่อสารเคมี เช่น พรีวาธอน" :
+                                            DataProcess.get("type") === "source" ? "กรอกแหล่งที่ซื่อ เช่น สหกรณ์แม่เตียน" : ""
+                                        } defaultValue={DataProcess.get("textInput")}></input>
                             </div>
                             { DataProcess.get("type") === "plant" ?
                                 <>
@@ -175,7 +250,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                 <div className="row">
                                     <label className="field-select">
                                         <span>ประเภทพืช</span>
-                                        <select onChange={(e)=>searchList(e , "other")} ref={Other} defaultValue={""}>
+                                        <select onChange={(e)=>searchList(e , "other")} ref={Other} defaultValue={DataProcess.get("other")}>
                                             <option value={""}>ทั้งหมด</option>
                                             <option value={"พืชผัก"}>พืชผัก</option>
                                             <option value={"สมุนไพร"}>สมุนไพร</option>
@@ -195,7 +270,8 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                 DataProcess.get("type") === "fertilizer" ? "ปัจจัยการผลิต" : 
                                 DataProcess.get("type") === "chemical" ? "สารเคมี" :
                                 DataProcess.get("type") === "source" ? "แหล่งที่ซื้อ" : ""
-                            }</span>
+                            }
+                            </span>
                             <>
                             {/* <div className="row">
                                 <input onChange={(e)=>searchList(e , "textInput")} type="search" ref={SearchInput} placeholder="รหัสการเก็บเกี่ยว/รหัสแบบฟอร์ม" defaultValue={DataProcess.get("textInput")}></input>
@@ -206,7 +282,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                         <span>
                                         {
                                             DataProcess.get("type") === "plant" ? "ชื่อชนิดพืช" : 
-                                            DataProcess.get("type") === "fertilizer" ? "ชื่อปัจจัยการผลิต" : 
+                                            DataProcess.get("type") === "fertilizer" ? "ชื่อปัจจัยการผลิต/ตรา" : 
                                             DataProcess.get("type") === "chemical" ? "ชื่อสารเคมี" :
                                             DataProcess.get("type") === "source" ? "ชื่อแหล่งที่ซื้อ" : ""
                                         }
@@ -223,36 +299,90 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                             : <></>
                                         }
                                     </span>
-                                    <input ref={nameInsert} onChange={CheckInsert} placeholder="กรอกชนิดพืช"></input>
+                                    <input ref={nameInsert} onChange={CheckInsert} 
+                                        onKeyDown={(e)=>InputKeyDownNext(e , 
+                                            DataProcess.get("type") === "plant" ? typeInsert.current : 
+                                            DataProcess.get("type") === "fertilizer" ? formulaFertilizer[0].current : 
+                                            DataProcess.get("type") === "chemical" ? "" :
+                                            DataProcess.get("type") === "source" ? "" : "")
+                                        }
+                                        placeholder={
+                                            DataProcess.get("type") === "plant" ? "ชื่อพืช เช่น เมล่อน" : 
+                                            DataProcess.get("type") === "fertilizer" ? "ชื่อปุ๋ย/ตรา เช่น กระต่าย" : 
+                                            DataProcess.get("type") === "chemical" ? "ชื่อสารเคมี เช่น พรีวาธอน" :
+                                            DataProcess.get("type") === "source" ? "แหล่งที่ซื่อ เช่น สหกรณ์แม่เตียน" : ""
+                                        }></input>
                                 </label>
+                                { DataProcess.get("type") === "plant" ?
+                                    <label className="field-select">
+                                        <span>ประเภท</span>
+                                        <select ref={typeInsert} onChange={()=>{
+                                                CheckInsert()
+                                                SelectElementNext(DateQtyInsert.current)
+                                            }
+                                        } defaultValue={""}>
+                                            <option disabled value={""}>เลือกประเภท</option>
+                                            <option value={"พืชผัก"}>พืชผัก</option>
+                                            <option value={"สมุนไพร"}>สมุนไพร</option>
+                                        </select>
+                                    </label> : <></>
+                                }
                             </div>
                             { 
                             DataProcess.get("type") === "plant" ?
                                 <div className="row">
                                     <label className="field-select">
-                                        <span>ประเภท</span>
-                                        <select ref={typeInsert} onChange={CheckInsert} defaultValue={""}>
-                                            <option disabled value={""}>เลือกประเภท</option>
-                                            <option value={"พืชผัก"}>พืชผัก</option>
-                                            <option value={"สมุนไพร"}>สมุนไพร</option>
-                                        </select>
+                                        <span>จำนวนวันที่คาดว่าจะเก็บเกี่ยว</span>
+                                        <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
+                                                ref={DateQtyInsert} 
+                                                onChange={CheckInsert} placeholder="จำนวนวันที่ เช่น 10 30" type="number"></input>
                                     </label>
-                                </div> 
+                                </div>
                             : 
                             DataProcess.get("type") === "fertilizer" ?
+                                <>
                                 <div className="row">
                                     <label className="field-select">
                                         <span>สูตรปุ๋ย</span>
                                         <div className="box-input-number">
-                                            <input type="number"></input>
+                                            <input ref={formulaFertilizer[0]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
                                             <span>-</span>
-                                            <input type="number"></input>
+                                            <input ref={formulaFertilizer[1]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[2].current , formulaFertilizer[0].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
                                             <span>-</span>
-                                            <input type="number"></input>
+                                            <input ref={formulaFertilizer[2]} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
                                         </div>
                                     </label>
                                 </div> 
-                            :   
+                                <div className="row">
+                                    <label className="field-select">
+                                        <span>วิธีการใช้</span>
+                                        <input ref={UseText} onChange={CheckInsert} placeholder="กรอกวิธีการใช้ เช่น หว่านโคนต้น"></input>
+                                    </label>
+                                </div> 
+                                </>
+                            : 
+                            DataProcess.get("type") === "fertilizer" ?
+                                <>
+                                <div className="row">
+                                    <label className="field-select">
+                                        <span>สูตรปุ๋ย</span>
+                                        <div className="box-input-number">
+                                            <input ref={formulaFertilizer[0]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
+                                            <span>-</span>
+                                            <input ref={formulaFertilizer[1]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[2].current , formulaFertilizer[0].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
+                                            <span>-</span>
+                                            <input ref={formulaFertilizer[2]} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
+                                        </div>
+                                    </label>
+                                </div> 
+                                <div className="row">
+                                    <label className="field-select">
+                                        <span>วิธีการใช้</span>
+                                        <input ref={UseText} onChange={CheckInsert} placeholder="กรอกวิธีการใช้ เช่น หว่านโคนต้น"></input>
+                                    </label>
+                                </div>
+                                </>
+                            :  
                                 <></>
                             }
                             </>

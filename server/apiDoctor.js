@@ -1907,9 +1907,9 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 req.body.type == "source" ? "source_list" : ""
                 if(From) {
                     try {
-                        const where = Object.entries(req.body.check).map((data)=>{
-                            data[1] = `"${data[1].trim()}"`
-                            return data.join(" = ")
+                        const where = Object.entries(req.body.check).map((checkData)=>{
+                            checkData[1] = `"${checkData[1].trim()}"`
+                            return checkData.join(" = ")
                         }).join(" , ")
                         con.query(
                             `

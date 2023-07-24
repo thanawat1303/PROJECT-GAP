@@ -1870,7 +1870,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         SELECT * 
                         FROM ${From}
                         ${QuerySearch.join(" and ") ? `WHERE ${QuerySearch.join(" and ")}` : ""}
-                        ORDER BY is_use DESC
+                        ORDER BY is_use DESC , id DESC
                         LIMIT ${Limit} OFFSET ${StartRow}
                         ` , 
                         (err , list) => {
@@ -1928,7 +1928,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT EXISTS (
                                     SELECT id 
                                     FROM ${From}
-                                    WHERE ${where}
+                                    WHERE ${where} and is_use = 1
                                 )
                             ) as checkData
                             ` , 
@@ -1952,6 +1952,92 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.post('/api/doctor/data/insert' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const From = req.body.type == "plant" ? "plant_list" : 
+                                req.body.type == "fertilizer" ? "fertilizer_list" : 
+                                req.body.type == "chemical" ? "chemical_list" :
+                                req.body.type == "source" ? "source_list" : ""
+                if(From) {
+                    try {
+                        const where = Object.entries(req.body.check).map((checkData)=>{
+                            checkData[1] = `"${checkData[1].trim()}"`
+                            return checkData.join(" = ")
+                        }).join(" and ")
+                        con.query(
+                            `
+                            SELECT (
+                                SELECT EXISTS (
+                                    SELECT id 
+                                    FROM ${From}
+                                    WHERE ${where} and is_use = 1
+                                )
+                            ) as checkData
+                            ` , 
+                            (err , data) => {
+                                if(err) console.log(err)
+        
+                                if(!data[0].checkData) {
+                                    const Key = Object.entries(req.body.data).map(val=>val[0])
+                                    const dataInsert = Object.entries(req.body.data).map(val=>val[1])
+                                    try {
+                                        con.query(
+                                            `
+                                                INSERT INTO ${From} 
+                                                ( ${Key.join(" , ")} ) 
+                                                VALUES 
+                                                ( ${dataInsert.map(val=>"?").join(" , ")} )
+                                            ` , dataInsert , (err , result)=>{
+                                                if(err){
+                                                    console.log(err)
+                                                    con.end()
+                                                    res.send("err")
+                                                    return 0
+                                                }
+    
+                                                con.end()
+                                                res.send("insert")
+                                            }
+                                        )
+                                    } catch(err) {
+                                        con.end()
+                                        res.send("error")
+                                    }
+                                } else {
+                                    con.end()
+                                    res.send("over")
+                                }
+                            }
+                        )
+                    } catch (err) {
+                        con.end()
+                        res.send("error")
+                    }
+                } else {
+                    con.end()
+                    res.send("error")
+                }
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
             }
         }
     })

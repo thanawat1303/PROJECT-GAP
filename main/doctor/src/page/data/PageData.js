@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/TemplantList.scss"
 import "../../assets/style/page/data/PageData.scss"
-import { DayJSX , LoadOtherDom, Loading, PopupDom } from "../../../../../src/assets/js/module";
+import { DayJSX , LoadOtherDom, LoadOtherOffset, Loading, PopupDom } from "../../../../../src/assets/js/module";
+import { InsertChemical, InsertFertilizer, InsertPlant, InsertSource } from "./Insert/InsertPage";
+import { SearchChemical, SearchFertilizer, SearchPlant } from "./search/SearchPage";
+import PopupConfirm from "./Insert/ConfirmInsert";
 
 const PageData = ({setMain , session , socket , type = false , eleImageCover , LoadType , eleBody , setTextStatus}) => {
     // const [Body , setBody] = useState(<></>)
@@ -18,6 +21,10 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         ["statusClick" , type]
     ]))
     const [ErrReport , setErrReport] = useState(false)
+    const [StateOnInsert , setStateOnInsert] = useState(false)
+
+    const [StartData , setStartData] = useState(0)
+    const [Reload , setReload] = useState(false)
 
 
     const Search = useRef()
@@ -32,8 +39,14 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     const formulaFertilizer = [useRef() , useRef() , useRef()]
     const formulaChemical = useRef()
 
+    const position = [useRef() , useRef()]
+
     const UseText = useRef()
     const SubmitInsert = useRef()
+
+    //popup
+    const RefPopup = useRef()
+    const [BodyPopup , setBodyPopup] = useState(<></>)
     
     useEffect(()=>{
         eleImageCover.current.style.height = "30%"
@@ -48,24 +61,25 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         else if(Ref.current.getAttribute("show") == null) Ref.current.toggleAttribute("show")
     }
 
-    const searchList = (e , keyMap) => {
+    const searchList = (target , value , keyMap) => {
         const DataSelect = new Map([...DataProcess])
-        // if(e.target === SelectType.current) SelectType.current.value = 
-        DataSelect.set(keyMap , e.target.value)
-        if(!e.target.value) DataSelect.delete(keyMap)
+        // if(target === SelectType.current) SelectType.current.value = 
+        DataSelect.set(keyMap , value)
+        if(!value) DataSelect.delete(keyMap)
 
-        if(e.target === SelectType.current) {
+        if(target === SelectType.current) {
             DataSelect.set("statusClick" , true)
-            DataSelect.delete("textInput")
             if(!TypeSelectMenu) {
                 SearchInput.current.value = ""
             }
             else {
-                nameInsert.current.value = ""
-                if(UseText.current) UseText.current.value = ""
                 SubmitInsert.current.setAttribute("no" , "")
             }
-            if(e.target.value !== "plant") DataSelect.delete("other")
+            setStartData(0)
+            setErrReport(false)
+            DataSelect.forEach((val , key)=>{
+                if(key != "statusClick" && key != "type") DataSelect.delete(key)
+            })
         }
         else DataSelect.set("statusClick" , false)
         console.log(DataSelect)
@@ -94,7 +108,9 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                                 DateQtyInsert.current.value
                             ] : 
                         DataProcess.get("type") === "source"  ? 
-                            [] : []
+                            [
+                                nameInsert.current.value
+                            ] : []
 
         if(value.filter(val=>!val).length == 0) {
             SubmitInsert.current.removeAttribute("no")
@@ -137,10 +153,20 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                             name : nameInsert.current.value ,
                             name_formula : formulaChemical.current.value
                         },
-                        type : "fertilizer"
+                        type : "chemical"
                     } : 
                 DataProcess.get("type") === "source"  ? 
-                    [] : []
+                {
+                    data : 
+                    {
+                        name : nameInsert.current.value,
+                        location : `POINT(${position[0].current.value} , ${position[1].current.value})`
+                    },
+                    check : {
+                        name : nameInsert.current.value
+                    },
+                    type : "source"
+                } : []
             )
         } else {
             SubmitInsert.current.setAttribute("no" , "")
@@ -151,73 +177,21 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     const SubmitConfirmInsert = async () => {
         const Data = CheckInsert()
         if(Data) {
-            console.log(Data)
-            // const result = await clientMo.post(`/api/doctor/data/check/overlape` , Data)
-            // if(!parseInt(result)) {
-            //     setErrReport(false)
-            // } else {
-            //     const Element = DataProcess.get("type") === "plant"  ? 
-            //                 [ nameInsert.current ] :
-            //             DataProcess.get("type") === "fertilizer"  ? 
-            //                 [] : 
-            //             DataProcess.get("type") === "chemical"  ? 
-            //                 [] : 
-            //             DataProcess.get("type") === "source"  ? 
-            //                 [] : 
-            //                 []
-            //     Element.forEach((val)=>val.value = "")
-            //     setErrReport(true)
-            // }
-        }
-    }
-
-    const CancelInsert = () => {
-        const value = DataProcess.get("type") === "plant"  ? 
-                            [ nameInsert.current , typeInsert.current , DateQtyInsert.current ] :
-                        DataProcess.get("type") === "fertilizer"  ? 
-                            [] : 
-                        DataProcess.get("type") === "chemical"  ? 
-                            [] : 
-                        DataProcess.get("type") === "source"  ? 
-                            [] : []
-        value.forEach((val)=>val.value = "")
-        Search.current.removeAttribute("show")
-    }
-
-    const setMaxText = (e , max , typeElementNext = "") => {
-        // const text = e.target.value.slice(0 , max)
-        e.target.value = e.target.value.slice(0 , max)
-        if(typeElementNext) {
-            if(e.target.value.length === max) {
-                let next = e.target.nextElementSibling
-                if(next){
-                    while(next.tagName != typeElementNext){
-                        next = next.nextElementSibling
-                    }
-                    next.focus()
-                }
-            } else if(e.target.value.length === 0) {
-                let next = e.target.previousElementSibling
-                if(next){
-                    while(next.tagName != typeElementNext){
-                        next = next.previousElementSibling
-                    }
-                    next.focus()
-                }
+            const result = await clientMo.post(`/api/doctor/data/check/overlape` , Data)
+            if(!parseInt(result)) {
+                setBodyPopup(<PopupConfirm Ref={RefPopup} setPopup={setBodyPopup} session={session} Data={Data} Reload={Reload} setReload={setReload}/>)
+                setErrReport(false)
+            } else {
+                setStateOnInsert(!StateOnInsert)
+                setErrReport(true)
             }
         }
     }
 
-    const InputKeyDownNext = (e , next = false , previous = false) => {
-        if(e.keyCode === 13 && next && e.target.value) next.focus()
-        else if(e.keyCode === 8 && previous && !e.target.value) {
-            e.preventDefault();
-            previous.focus()
-        }
-    }
-
-    const SelectElementNext = (next = false) => {
-        if(next) next.focus()
+    const CancelInsert = () => {
+        setStateOnInsert(!StateOnInsert)
+        SubmitInsert.current.setAttribute("no" , "")
+        Search.current.removeAttribute("show")
     }
 
     return(
@@ -241,7 +215,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                         <div className="row head-row">
                             <label className="field-select">
                                 <span>ชนิดข้อมูล</span>
-                                <select onChange={(e)=>searchList(e , "type")} ref={SelectType} defaultValue={DataProcess.get("type")}>
+                                <select onChange={(e)=>searchList(e.target , e.target.value , "type")} ref={SelectType} defaultValue={DataProcess.get("type")}>
                                     <option value={"plant"}>ขนิดพืช</option>
                                     <option value={"fertilizer"}>ปัจจัยการผลิต</option>
                                     <option value={"chemical"}>สารเคมี</option>
@@ -251,212 +225,116 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                         </div>
                         { !TypeSelectMenu ? 
                             <>
-                            <span className="head">
-                            ค้นหา{
-                                DataProcess.get("type") === "plant" ? "พืช" : 
-                                DataProcess.get("type") === "fertilizer" ? "ปัจจัยการผลิต" : 
-                                DataProcess.get("type") === "chemical" ? "สารเคมี" :
-                                DataProcess.get("type") === "source" ? "แหล่งที่ซื้อ" : ""
-                            }</span>
-                            <div className="row">
-                                <input onChange={(e)=>searchList(e , "textInput")} type="search" ref={SearchInput} placeholder={
-                                            DataProcess.get("type") === "plant" ? "กรอกชื่อพืช เช่น เมล่อน" : 
-                                            DataProcess.get("type") === "fertilizer" ? "กรอกชื่อปุ๋ย/ตรา เช่น กระต่าย" : 
-                                            DataProcess.get("type") === "chemical" ? "กรอกชื่อสารเคมี เช่น พรีวาธอน" :
-                                            DataProcess.get("type") === "source" ? "กรอกแหล่งที่ซื่อ เช่น สหกรณ์แม่เตียน" : ""
-                                        } defaultValue={DataProcess.get("textInput")}></input>
-                            </div>
-                            { DataProcess.get("type") === "plant" ?
-                                <>
-                                {/* <div className="line-area"></div> */}
+                                <span className="head">
+                                ค้นหา{
+                                    DataProcess.get("type") === "plant" ? "พืช" : 
+                                    DataProcess.get("type") === "fertilizer" ? "ปัจจัยการผลิต" : 
+                                    DataProcess.get("type") === "chemical" ? "สารเคมี" :
+                                    DataProcess.get("type") === "source" ? "แหล่งที่ซื้อ" : ""
+                                }</span>
                                 <div className="row">
-                                    <label className="field-select">
-                                        <span>ประเภทพืช</span>
-                                        <select onChange={(e)=>searchList(e , "other")} ref={Other} defaultValue={DataProcess.get("other")}>
-                                            <option value={""}>ทั้งหมด</option>
-                                            <option value={"พืชผัก"}>พืชผัก</option>
-                                            <option value={"สมุนไพร"}>สมุนไพร</option>
-                                        </select>
-                                    </label>
-                                </div> 
-                                </>
-                                : <></>
-
-                            }
+                                    <input onChange={(e)=>searchList(e.target , e.target.value , "name")} type="search" ref={SearchInput} placeholder={
+                                                DataProcess.get("type") === "plant" ? "ชื่อพืช เช่น เมล่อน" : 
+                                                DataProcess.get("type") === "fertilizer" ? "ชื่อปุ๋ย/ตรา เช่น กระต่าย" : 
+                                                DataProcess.get("type") === "chemical" ? "ชื่อสารเคมี เช่น พรีวาธอน" :
+                                                DataProcess.get("type") === "source" ? "แหล่งที่ซื่อ เช่น สหกรณ์แม่เตียน" : ""
+                                            } defaultValue={DataProcess.get("name")}></input>
+                                </div>
+                                { 
+                                    DataProcess.get("type") === "plant" ?
+                                        <SearchPlant searchList={searchList} DataProcess={DataProcess}/> :
+                                    DataProcess.get("type") === "fertilizer" ? 
+                                        <SearchFertilizer searchList={searchList} DataProcess={DataProcess}/>
+                                    :
+                                    DataProcess.get("type") === "chemical" ? 
+                                        <SearchChemical searchList={searchList} DataProcess={DataProcess}/>
+                                    : <></>
+                                }
                             </>
                             :
                             <>
-                            <span className="head">
-                            เพิ่ม{
-                                DataProcess.get("type") === "plant" ? "ชนิดพืช" : 
-                                DataProcess.get("type") === "fertilizer" ? "ปัจจัยการผลิต" : 
-                                DataProcess.get("type") === "chemical" ? "สารเคมี" :
-                                DataProcess.get("type") === "source" ? "แหล่งที่ซื้อ" : ""
-                            }
-                            </span>
-                            <>
-                            {/* <div className="row">
-                                <input onChange={(e)=>searchList(e , "textInput")} type="search" ref={SearchInput} placeholder="รหัสการเก็บเกี่ยว/รหัสแบบฟอร์ม" defaultValue={DataProcess.get("textInput")}></input>
-                            </div> */}
-                            <div className="row">
-                                <label className="field-select">
-                                    <span>
-                                        <span>
-                                        {
-                                            DataProcess.get("type") === "plant" ? "ชื่อชนิดพืช" : 
-                                            DataProcess.get("type") === "fertilizer" ? "ชื่อปัจจัยการผลิต/ตรา" : 
-                                            DataProcess.get("type") === "chemical" ? "ชื่อสารเคมี" :
-                                            DataProcess.get("type") === "source" ? "ชื่อแหล่งที่ซื้อ" : ""
-                                        }
-                                        </span>
-                                        { ErrReport ? 
-                                            <span className="err-text-overlape">
-                                            {
-                                                DataProcess.get("type") === "plant" ? "ชนิดพืชซ้ำ" : 
-                                                DataProcess.get("type") === "fertilizer" ? "ปัจจัยการผลิตซ้ำ" : 
-                                                DataProcess.get("type") === "chemical" ? "สารเคมีซ้ำ" :
-                                                DataProcess.get("type") === "source" ? "แหล่งที่ซื้อซ้ำ" : ""
-                                            }
-                                            </span>
-                                            : <></>
-                                        }
-                                    </span>
-                                    <input ref={nameInsert} onChange={CheckInsert} 
-                                        onKeyDown={(e)=>InputKeyDownNext(e , 
-                                            DataProcess.get("type") === "plant" ? typeInsert.current : 
-                                            DataProcess.get("type") === "fertilizer" ? formulaFertilizer[0].current : 
-                                            DataProcess.get("type") === "chemical" ? formulaChemical.current :
-                                            DataProcess.get("type") === "source" ? "" : "")
-                                        }
-                                        placeholder={
-                                            DataProcess.get("type") === "plant" ? "เช่น เมล่อน" : 
-                                            DataProcess.get("type") === "fertilizer" ? "เช่น กระต่าย" : 
-                                            DataProcess.get("type") === "chemical" ? "เช่น พรีวาธอน" :
-                                            DataProcess.get("type") === "source" ? "เช่น สหกรณ์แม่เตียน" : ""
-                                        }></input>
-                                </label>
-                                { DataProcess.get("type") === "plant" ?
-                                    <label className="field-select">
-                                        <span>ประเภท</span>
-                                        <select ref={typeInsert} onChange={()=>{
-                                                CheckInsert()
-                                                SelectElementNext(DateQtyInsert.current)
-                                            }
-                                        } defaultValue={""}>
-                                            <option disabled value={""}>เลือกประเภท</option>
-                                            <option value={"พืชผัก"}>พืชผัก</option>
-                                            <option value={"สมุนไพร"}>สมุนไพร</option>
-                                        </select>
-                                    </label> : <></>
+                                <span className="head">
+                                เพิ่ม{
+                                    DataProcess.get("type") === "plant" ? "ชนิดพืช" : 
+                                    DataProcess.get("type") === "fertilizer" ? "ปัจจัยการผลิต" : 
+                                    DataProcess.get("type") === "chemical" ? "สารเคมี" :
+                                    DataProcess.get("type") === "source" ? "แหล่งที่ซื้อ" : ""
                                 }
-                            </div>
-                            { 
-                            DataProcess.get("type") === "plant" ?
-                                <div className="row">
-                                    <label className="field-select">
-                                        <span>จำนวนวันที่คาดว่าจะเก็บเกี่ยว</span>
-                                        <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
-                                                ref={DateQtyInsert} 
-                                                onChange={CheckInsert} placeholder="เช่น 10 30" type="number"></input>
-                                    </label>
+                                </span>
+                                { 
+                                    DataProcess.get("type") === "plant" ?
+                                        <InsertPlant nameInsert={nameInsert} typeInsert={typeInsert} DateQtyInsert={DateQtyInsert} ErrReport={ErrReport} CheckInsert={CheckInsert} stateOn={StateOnInsert}/>
+                                    : 
+                                    DataProcess.get("type") === "fertilizer" ?
+                                        <InsertFertilizer nameInsert={nameInsert} formulaFertilizer={formulaFertilizer} UseText={UseText} ErrReport={ErrReport} CheckInsert={CheckInsert} stateOn={StateOnInsert}/>
+                                    : 
+                                    DataProcess.get("type") === "chemical" ?
+                                        <InsertChemical nameInsert={nameInsert} formulaChemical={formulaChemical} UseText={UseText} DateQtyInsert={DateQtyInsert} ErrReport={ErrReport} CheckInsert={CheckInsert} stateOn={StateOnInsert}/>
+                                    :  
+                                    DataProcess.get("type") === "source" ?
+                                        <InsertSource nameInsert={nameInsert} position={position} ErrReport={ErrReport} CheckInsert={CheckInsert} stateOn={StateOnInsert}/>
+                                    :
+                                        <></>
+                                }
+                                <div className="bt-insert">
+                                    <button className="cancel" onClick={CancelInsert}>ยกเลิก</button>
+                                    <button className="submit" no="" ref={SubmitInsert} onClick={SubmitConfirmInsert}>ยืนยัน</button>
                                 </div>
-                            : 
-                            DataProcess.get("type") === "fertilizer" ?
-                                <>
-                                <div className="row">
-                                    <label className="field-select">
-                                        <span>สูตรปุ๋ย</span>
-                                        <div className="box-input-number">
-                                            <input ref={formulaFertilizer[0]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                                            <span>-</span>
-                                            <input ref={formulaFertilizer[1]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[2].current , formulaFertilizer[0].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                                            <span>-</span>
-                                            <input ref={formulaFertilizer[2]} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current , formulaFertilizer[1].current)} onChange={CheckInsert} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                                        </div>
-                                    </label>
-                                </div> 
-                                <div className="row">
-                                    <label className="field-select">
-                                        <span>วิธีการใช้</span>
-                                        <input ref={UseText} onChange={CheckInsert} placeholder="เช่น หว่านโคนต้น"></input>
-                                    </label>
-                                </div> 
-                                </>
-                            : 
-                            DataProcess.get("type") === "chemical" ?
-                                <>
-                                <div className="row">
-                                    <label className="field-select">
-                                        <span>ชื่อสามัญสารเคมี</span>
-                                        <input ref={formulaChemical} onChange={CheckInsert} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current)} placeholder="เช่น "></input>
-                                    </label>
-                                </div> 
-                                <div className="row">
-                                    <label className="field-select not1">
-                                        <span>วิธีการใช้</span>
-                                        <input ref={UseText} onChange={CheckInsert} onKeyDown={(e)=>InputKeyDownNext(e , DateQtyInsert.current)} placeholder="เช่น ฉีดพ้น"></input>
-                                    </label>
-                                    <label className="field-select not1">
-                                        <span>จำนวนวันปลอดภัย</span>
-                                        <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
-                                                ref={DateQtyInsert} 
-                                                onChange={CheckInsert} placeholder="เช่น 10 30" type="number"></input>
-                                    </label>
-                                </div>
-                                </>
-                            :  
-                                <></>
-                            }
-                            </>
-                            <div className="bt-insert">
-                                <button className="cancel" onClick={CancelInsert}>ยกเลิก</button>
-                                <button className="submit" no="" ref={SubmitInsert} onClick={SubmitConfirmInsert}>ยืนยัน</button>
-                            </div>
                             </>
                         }
                     </div>
                 </div>
             </div>
             <div className="data-list-content">
-                <List session={session} socket={socket} DataFillter={DataProcess} setTextStatus={setTextStatus}/>
+                <List session={session} socket={socket} DataFillter={DataProcess} setTextStatus={setTextStatus} StartData={StartData} setStartData={setStartData} Reload={Reload}/>
+                {
+                    TypeSelectMenu ? <PopupDom Ref={RefPopup} Body={BodyPopup} zIndex={2}/> : <></>
+                }
             </div>
         </section>
     )
 }
 
-const List = ({ session , socket , DataFillter , setTextStatus}) => {
+const List = ({ session , socket , DataFillter , setTextStatus , StartData , setStartData , Reload}) => {
     const [Data , setData] = useState([])
-    const [Count , setCount] = useState(10)
     const [timeOut , setTimeOut] = useState()
     const [LoadingList , setLoadList ] = useState(true)
+    const [Limit , setLimit] = useState(2)
     
     useEffect(()=>{
         setLoadList(true)
         clearTimeout(timeOut)
         setTimeOut(setTimeout(()=>{
-            FetchList(10)
+            FetchList(StartData)
         } , 1500))
+    } , [DataFillter , Reload])
 
-    } , [DataFillter])
-
-    const FetchList = async (Limit) => {
+    const FetchList = async (StartRow) => {
         try {
             let JsonData = {}
-            const stringUrl = new Array
+            let JsonCheck = {}
             DataFillter.forEach((data , key)=>{
                 if(key != "statusClick") { 
-                    JsonData[key] = data 
-                    stringUrl.push(`${key}=${data}`)
+                    if(key != "type") JsonCheck[key] = data
+                    else JsonData[key] = data
                 }
             })
+            JsonData["check"] = JsonCheck
+            JsonData["StartRow"] = StartRow
+            JsonData["Limit"] = Limit
 
-            if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form${stringUrl.join("&") ? `?${stringUrl.join("&")}` : ""}`)
+            if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form${JsonData["type"] ? `?type=${JsonData["type"]}` : ""}`)
 
-            const list = await clientMo.get(`/api/doctor/data/get?${stringUrl.join("&")}&limit=${Limit}`)
+            const list = await clientMo.post(`/api/doctor/data/get` , JsonData)
             const data = JSON.parse(list)
-            console.log(data)
 
-            setData(data)
+            if(StartRow !== 0) { 
+                setData([...Data , ...data])
+                setStartData([...Data , ...data].length)
+            } else {
+                setData(data)
+            }
+
             setLoadList(false)
             setTextStatus(["หน้าหลัก" , "ข้อมูล" , 
                 DataFillter.get("type") === "plant" ? "รายการชนิดพืช" : 
@@ -480,10 +358,10 @@ const List = ({ session , socket , DataFillter , setTextStatus}) => {
             <Loading size={"45px"} border={"5px"} color="rgb(24 157 133)" animetion={true}/>
         </div> 
         :
-        <ManageList Data={Data} session={session} fetch={FetchList} count={Count} setCount={setCount}/>)
+        <ManageList Data={Data} session={session} fetch={FetchList} setRow={setStartData} Limit={Limit}/>)
 }
 
-const ManageList = ({Data , session , fetch , count , setCount}) => {
+const ManageList = ({Data , session , fetch , setRow , Limit}) => {
     const [Body , setBody] = useState(<></>)
     const RefPop = useRef()
     const [PopBody , setPop] = useState(<></>)
@@ -522,7 +400,7 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
             // const Row = new Array
             // for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
 
-            // let countKey = 0
+            // let StartDataKey = 0
             const body = Data.map((Data , keyRow)=>{
                 const Ref = refData[keyRow]
                 return (
@@ -542,8 +420,8 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
                     //         }}>
                     //         {
                     //             Data.map((val , key)=>{
-                    //                 const Ref = refData[countKey]
-                    //                 countKey++
+                    //                 const Ref = refData[StartDataKey]
+                    //                 StartDataKey++
                     //                 return (
                     //                     <section key={key} className="list-some-data-on-page"
                     //                         ref={Ref}
@@ -613,7 +491,7 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
             {Body}
         </div>
         <div className="footer">
-            <LoadOtherDom Fetch={fetch} count={count} setCount={setCount} Limit={5}
+            <LoadOtherOffset Fetch={fetch} Data={Data} setRow={setRow} Limit={Limit}
                             style={{backgroundColor : "rgb(24 157 133)"}}/>
             <div id="popup-detail-form">
                 <PopupDom Ref={RefPop} Body={PopBody} zIndex={2}/>

@@ -1,0 +1,134 @@
+.data-list-content-page.data-page {
+    .data-list-content {
+        .content-confirm-insert {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            box-shadow: 0px 4px 4px rgb(0, 131, 72);
+            border-radius: 8px;
+            padding:0px;
+            width: 95%;
+            max-width: 270px;
+            .header {
+                font-size: 18px;
+                font-weight: 900;
+                font-family: Sans-font;
+                padding-top: 7px;
+                padding-bottom: 5px;
+                background-color: #22C7A9;
+                color: white;
+                border-radius: 8px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                margin: 15px 0px;
+                padding: 0px 10px;
+
+                .row {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                    margin: 5px 0px;
+                    padding: 2px 4px;
+                    background-color: #22C7A9;
+                    border-radius: 8px;
+
+                    span {
+                        font-family: Sans-font;
+                        font-size: 16px;
+                        font-weight: 900;
+                        color: white;
+                        height: 20px;
+                        margin-top: 3px;
+                    }
+
+                    .data {
+                        font-family: Sans-font;
+                        font-size: 16px;
+                        padding: 0;
+                        margin: 4px 3px;
+                        padding: 0px 4px;
+                        border-radius: 8px;
+                        background-color: white;
+                    }
+
+                    iframe {
+                        border-radius: 8px;
+                        padding: 2px 0px;
+                    }
+                } 
+            }
+
+            .bt-insert {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background-color: #22C7A9;
+                width: 100%;
+                border-radius: 8px;
+                padding: 5px 0px;
+                padding-bottom: 2.5px;
+
+                input {
+                    border-radius: 8px;
+                    border: 0;
+                    outline: 0;
+                    box-shadow: 0px 2px 2px #0d6252;
+                    font-family: main-font;
+                    font-size: 18px;
+                    text-align: center;
+                    padding: 2px 0px;
+                    margin: 5px 0px;
+                }
+
+                input::placeholder {
+                    font-family: Sans-font;
+                }
+
+                .bt-content {
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    width: 100%;
+                    margin: 5px 0px;
+
+                    button {
+                        border: 0;
+                        border-radius: 8px;
+                        font-family: Sans-font;
+                        font-weight: 900;
+                        font-size: 18px;
+                        color: white;
+                        width: 30%;
+                        box-shadow: 0px 2px 2px #ffffff;
+                    }
+
+                    .submit {
+                        background-color: #0d6252;
+                        box-shadow: 0px 2px 2px #ffffff;
+                        color: white;
+                        cursor: pointer;
+                    }
+
+                    .submit[not=""] {
+                        background-color: #0d62527a;
+                        box-shadow: none;
+                        color: #ffffff9c;
+                        cursor: not-allowed;
+                    }
+
+                }
+            }
+        }
+    }
+}

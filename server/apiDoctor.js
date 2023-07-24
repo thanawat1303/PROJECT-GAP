@@ -1833,7 +1833,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     // end formplant
 
     //data
-    app.get('/api/doctor/data/get' , async (req , res)=>{
+    app.post('/api/doctor/data/get' , async (req , res)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -1847,28 +1847,39 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                const From = req.query.type == "plant" ? "plant_list" : 
-                                req.query.type == "fertilizer" ? "fertilizer_list" : 
-                                req.query.type == "chemical" ? "chemical_list" :
-                                req.query.type == "source" ? "source_list" : ""
-                const QuerySearch = req.query.type == "plant" ? `INSTR( name , '${req.query.textInput}' )` : 
-                                        req.query.type == "fertilizer" ? `INSTR( name , '${req.query.textInput}' ) || INSTR( name_formula , '${req.query.textInput}' )` : 
-                                        req.query.type == "chemical" ? `INSTR( name , '${req.query.textInput}' ) || INSTR( name_formula , '${req.query.textInput}' )` :
-                                        req.query.type == "source" ? `INSTR( name , '${req.query.textInput}' )` : ""
-                const Limit = !isNaN(req.query.limit) ? req.query.limit : 0
-                if(From) {
+                const From = req.body.type == "plant" ? "plant_list" : 
+                                req.body.type == "fertilizer" ? "fertilizer_list" : 
+                                req.body.type == "chemical" ? "chemical_list" :
+                                req.body.type == "source" ? "source_list" : ""
+                
+                const QuerySearch = Object.entries(req.body.check).map((Data)=>{
+                    const Check = req.body.type == "plant" ? { name : 1 , type_plant : 1 } : 
+                                    req.body.type == "fertilizer" ? { name : 1 , name_formula : 1 } : 
+                                    req.body.type == "chemical" ? { name : 1 , name_formula : 1 } :
+                                    req.body.type == "source" ? { name : 1 } : ""
+                    if(!Check || !Check[Data[0]]) return null
+                    else if(Data[0] == "name_formula" && req.body.type == "fertilizer") return `( ${Data[0]} LIKE '${Data[1]}' )`
+                    else return `INSTR( ${Data[0]} , '${Data[1]}' )`
+                })
+
+                const StartRow = !isNaN(req.body.StartRow) ? req.body.StartRow : 0
+                const Limit = !isNaN(req.body.Limit) ? req.body.Limit : 0
+                if(From && QuerySearch.filter(val => val == null).length === 0) {
                     con.query(
                         `
                         SELECT * 
                         FROM ${From}
-                        ${req.query.other || req.query.textInput ? 
-                        `WHERE ${req.query.textInput ? QuerySearch : ""} ${req.query.other && req.query.textInput ? "and" : ""} ${req.query.other ? `type_plant = '${req.query.other}'` : ""}
-                        ` : ""}
+                        ${QuerySearch.join(" and ") ? `WHERE ${QuerySearch.join(" and ")}` : ""}
                         ORDER BY is_use DESC
-                        LIMIT ${Limit}
+                        LIMIT ${Limit} OFFSET ${StartRow}
                         ` , 
                         (err , list) => {
-                            if(err) console.log(err)
+                            if(err) {
+                                console.log(err)
+                                con.end()
+                                res.send("error")
+                                return 0
+                            }
     
                             con.end()
                             res.send(list)
@@ -1910,7 +1921,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         const where = Object.entries(req.body.check).map((checkData)=>{
                             checkData[1] = `"${checkData[1].trim()}"`
                             return checkData.join(" = ")
-                        }).join(" , ")
+                        }).join(" and ")
                         con.query(
                             `
                             SELECT (

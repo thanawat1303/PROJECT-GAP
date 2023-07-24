@@ -355,8 +355,8 @@ const PopupDom = ({Ref , Body , zIndex}) => {
             backgroundColor : "transparent" ,
             backdropFilter : "blur(8px)",
             position : "fixed" ,
-            width : "100%",
-            height : "100%",
+            width : "100vw",
+            height : "100vh",
             top : "0" ,
             left : "0" ,
             zIndex : zIndex ,
@@ -379,6 +379,46 @@ const LoadOtherDom = ({Fetch , count , setCount , Limit , style = {
         const newCount = count + Limit
         setLoad(false)
         if((await Fetch(newCount)).length === newCount) setCount(newCount)
+        setLoad(true)
+    }
+
+    return (
+        <div style={{
+            display : "flex",
+            justifyContent : "center",
+            alignItems : "center",
+            width : "100%",
+            marginTop : "5px"
+        }}>
+            {Load ? 
+                <button style={{
+                    backgroundColor : style.backgroundColor,
+                    outline : 0,
+                    border : 0,
+                    borderRadius : "15px",
+                    color : "white",
+                    fontFamily : "Sans-font",
+                    fontWeight : "900",
+                    fontSize : style.fontSize ? style.fontSize : "18px",
+                    padding : "2px 15px"
+                }} onClick={Other}>โหลดเพิ่มเติม</button>
+                : <Loading size={style.sizeLoading ? style.sizeLoading : "31.2px"} border={7} color={style.backgroundColor} animetion={true}/>
+
+            }
+        </div>
+    )
+}
+
+const LoadOtherOffset = ({Fetch , Data , setRow , style = {
+    backgroundColor : "",
+    fontSize : "18px",
+    sizeLoading : "31.2px",
+}}) => {
+    const [Load , setLoad] = useState(true)
+    const Other = async () => {
+        setLoad(false)
+        const Row = await Fetch(Data.length)
+        if(Row.length !== 0) setRow(Row.length)
         setLoad(true)
     }
 
@@ -482,4 +522,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , TabLoad , HrefData}

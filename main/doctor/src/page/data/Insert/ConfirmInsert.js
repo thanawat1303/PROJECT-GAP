@@ -1,34 +1,34 @@
 import React, { useEffect, useRef } from "react"
 import "../../../assets/style/page/data/Insert/ConfirmInsert.scss"
 import { MapsJSX } from "../../../../../../src/assets/js/module"
-const PopupConfirm = ({Ref , setPopup , session , Data , Reload , setReload}) => {
+import { clientMo } from "../../../../../../src/assets/js/moduleClient"
+const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit , Reload , setReload}) => {
     const BtConfirm = useRef()
     const Password = useRef()
     
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
+        console.log(Data)
     } , [])
 
     const Confirm = async () => {
         if(CheckEmply()) {
-            setReload(!Reload)
-            close()
-            // const result = await clientMo.post("/api/doctor/form/manage/success/insert" , {
-            //     type : Result,
-            //     id_plant : id_plant,
-            //     password : Password.current.value
-            // })
+            Data["password"] = Password.current.value
+            Data["data"]["is_use"] = 1
+            const result = await clientMo.post("/api/doctor/data/insert" , Data)
 
-            // if(result === "113") {
-            //     FetchData()
-            //     close()
-            // } else if (result === "password") {
-            //     Password.current.value = ""
-            //     Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
-            // } else if (result === "not") {
-            //     console.log("not")
-            // } else session()
+            if(result === "insert") {
+                setLimit(RowPresent)
+                setReload(!Reload)
+                close()
+            } else if (result === "password") {
+                Password.current.value = ""
+                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+                BtConfirm.current.setAttribute("not" , "")
+            } else if (result === "not") {
+                console.log("not")
+            } else session()
         }
     }
 
@@ -81,12 +81,13 @@ const PopupConfirm = ({Ref , setPopup , session , Data , Reload , setReload}) =>
                                     val[0] === "location" ? "map"
                                     : ""
                                 );
-                        const Location = (HEAD === "map") ? val[1].slice(6 , val[1].length - 1).split(",") : "";
+                        const Location = (HEAD === "map") ? val[1] ? val[1].slice(6 , val[1].length - 1).split(" ") : 1 :"";
                         return(
                             (Location) ?
+                                val[1] ?
                                 <div className="row" key={key}>
                                     <MapsJSX lat={Location[0]} lng={Location[1]}/>
-                                </div>
+                                </div> : <div key={key} hidden></div>
                             :
                                 <div className="row" key={key}>
                                     <span>{HEAD}</span>

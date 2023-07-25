@@ -218,7 +218,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
         } else {
             setBody(
                 <section>
-                    <div>ไม่พบข้อมูล</div>
+                    <div style={{textAlign : "center" , fontFamily : "Sans-font" , fontWeight : 900 , fontSize : "18px"}}>ไม่พบข้อมูล</div>
                 </section>
             )
         }

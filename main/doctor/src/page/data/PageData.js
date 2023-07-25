@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/TemplantList.scss"
 import "../../assets/style/page/data/PageData.scss"
-import { DayJSX , LoadOtherDom, LoadOtherOffset, Loading, PopupDom } from "../../../../../src/assets/js/module";
+import { DayJSX , LoadOtherDom, LoadOtherOffset, Loading, MapsJSX, PopupDom } from "../../../../../src/assets/js/module";
 import { InsertChemical, InsertFertilizer, InsertPlant, InsertSource } from "./Insert/InsertPage";
 import { SearchChemical, SearchFertilizer, SearchPlant } from "./search/SearchPage";
 import PopupConfirm from "./Insert/ConfirmInsert";
 
+const MaxLimit = 5
 const PageData = ({setMain , session , socket , type = false , eleImageCover , LoadType , eleBody , setTextStatus}) => {
     // const [Body , setBody] = useState(<></>)
     const [Loading , setLoading] = useState(false)
@@ -24,7 +25,8 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     const [StateOnInsert , setStateOnInsert] = useState(false)
 
     const [StartData , setStartData] = useState(0)
-    const [Reload , setReload] = useState(false)
+    const [Limit , setLimit] = useState(MaxLimit)
+    const [Reload , setReload] = useState(2)
 
 
     const Search = useRef()
@@ -160,7 +162,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                     data : 
                     {
                         name : nameInsert.current.value,
-                        location : `POINT(${position[0].current.value} , ${position[1].current.value})`
+                        location : position[0].current.value != 0 && position[1].current.value != 0 ? `POINT(${position[0].current.value} ${position[1].current.value})` : null
                     },
                     check : {
                         name : nameInsert.current.value
@@ -179,7 +181,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         if(Data) {
             const result = await clientMo.post(`/api/doctor/data/check/overlape` , Data)
             if(!parseInt(result)) {
-                setBodyPopup(<PopupConfirm Ref={RefPopup} setPopup={setBodyPopup} session={session} Data={Data} Reload={Reload} setReload={setReload}/>)
+                setBodyPopup(<PopupConfirm Ref={RefPopup} setPopup={setBodyPopup} session={session} Data={Data} RowPresent={StartData} setLimit={setLimit} Reload={Reload} setReload={setReload}/>)
                 setErrReport(false)
             } else {
                 setStateOnInsert(!StateOnInsert)
@@ -286,7 +288,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                 </div>
             </div>
             <div className="data-list-content">
-                <List session={session} socket={socket} DataFillter={DataProcess} setTextStatus={setTextStatus} StartData={StartData} setStartData={setStartData} Reload={Reload}/>
+                <List session={session} socket={socket} DataFillter={DataProcess} setTextStatus={setTextStatus} StartData={StartData} setStartData={setStartData} Limit={Limit} setLimit={setLimit} Reload={Reload}/>
                 {
                     TypeSelectMenu ? <PopupDom Ref={RefPopup} Body={BodyPopup} zIndex={2}/> : <></>
                 }
@@ -295,21 +297,21 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     )
 }
 
-const List = ({ session , socket , DataFillter , setTextStatus , StartData , setStartData , Reload}) => {
+const List = ({ session , socket , DataFillter , setTextStatus , StartData , setStartData , Limit , setLimit , Reload}) => {
     const [Data , setData] = useState([])
     const [timeOut , setTimeOut] = useState()
     const [LoadingList , setLoadList ] = useState(true)
-    const [Limit , setLimit] = useState(2)
     
     useEffect(()=>{
         setLoadList(true)
         clearTimeout(timeOut)
         setTimeOut(setTimeout(()=>{
-            FetchList(StartData)
+            FetchList(0 , Limit)
+            setLimit(MaxLimit)
         } , 1500))
     } , [DataFillter , Reload])
 
-    const FetchList = async (StartRow) => {
+    const FetchList = async (StartRow , Limit) => {
         try {
             let JsonData = {}
             let JsonCheck = {}
@@ -321,12 +323,13 @@ const List = ({ session , socket , DataFillter , setTextStatus , StartData , set
             })
             JsonData["check"] = JsonCheck
             JsonData["StartRow"] = StartRow
-            JsonData["Limit"] = Limit
+            JsonData["Limit"] = Limit ? Limit : MaxLimit;
 
             if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form${JsonData["type"] ? `?type=${JsonData["type"]}` : ""}`)
 
             const list = await clientMo.post(`/api/doctor/data/get` , JsonData)
             const data = JSON.parse(list)
+            console.log(data , StartRow , Limit)
 
             if(StartRow !== 0) { 
                 setData([...Data , ...data])
@@ -358,10 +361,10 @@ const List = ({ session , socket , DataFillter , setTextStatus , StartData , set
             <Loading size={"45px"} border={"5px"} color="rgb(24 157 133)" animetion={true}/>
         </div> 
         :
-        <ManageList Data={Data} session={session} fetch={FetchList} setRow={setStartData} Limit={Limit}/>)
+        <ManageList Data={Data} session={session} fetch={FetchList} setRow={setStartData} Limit={Limit} Type={DataFillter.get("type")}/>)
 }
 
-const ManageList = ({Data , session , fetch , setRow , Limit}) => {
+const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
     const [Body , setBody] = useState(<></>)
     const RefPop = useRef()
     const [PopBody , setPop] = useState(<></>)
@@ -401,14 +404,85 @@ const ManageList = ({Data , session , fetch , setRow , Limit}) => {
             // for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
 
             // let StartDataKey = 0
-            const body = Data.map((Data , keyRow)=>{
+            const body = Data.map((DataIn , keyRow)=>{
                 const Ref = refData[keyRow]
                 return (
                     <a key={keyRow} className="list-some-data-on-page"
-                        ref={Ref} status={Data.is_use}
+                        ref={Ref} status={DataIn.is_use}
                         >
                         <div className="frame-data-list">
-                            
+                            <div className="row">
+                                <div className="field-text">
+                                    <span>
+                                        {
+                                            Type === "plant" ? "ชนิดพืช" :
+                                            Type === "fertilizer" ? "ชื่อปุ๋ย" :
+                                            Type === "chemical" ? "ชื่อสารเคมี" :
+                                            Type === "source" ? "แหล่งที่ซื้อ" : ""
+                                        }
+                                    </span>
+                                    <div className="data-text">{DataIn.name}</div>
+                                </div>
+                                {
+                                    Type === "plant" ?
+                                        <div className="field-text">
+                                            <span>ประเภท</span>
+                                            <div className="data-text">{DataIn.type_plant}</div>
+                                        </div> :
+                                    Type === "fertilizer" ? 
+                                        <div className="field-text">
+                                            <span>สูตรปุ๋ย</span>
+                                            <div className="data-text">{DataIn.name_formula}</div>
+                                        </div> :
+                                    Type === "chemical" ? 
+                                        <div className="field-text">
+                                            <span>วิธีการใช้</span>
+                                            <div className="data-text">{DataIn.how_use}</div>
+                                        </div>  : <></> 
+                                }
+                            </div>
+                            { 
+                                Type === "plant" ?
+                                    <div className="row">
+                                        <div className="field-text max-box">
+                                            <span>จำนวนวันที่คาดว่าจะเก็บเกี่ยว</span>
+                                            <div className="data-text">{DataIn.qty_harvest} วัน</div>
+                                        </div> 
+                                    </div> :
+                                Type === "fertilizer" ?
+                                    <div className="row">
+                                        <div className="field-text">
+                                            <span>สูตรปุ๋ย</span>
+                                            <div className="data-text">{DataIn.name_formula}</div>
+                                        </div>
+                                    </div> :
+                                Type === "chemical" ?
+                                    <>
+                                    <div className="row">
+                                        <div className="field-text">
+                                            <span>ชื่อสามัญสารเคมี</span>
+                                            <div className="data-text">{DataIn.name_formula}</div>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="field-text">
+                                            <span>จำนวนวันปลอดภัย</span>
+                                            <div className="data-text">{DataIn.date_sefe} วัน</div>
+                                        </div>
+                                    </div>
+                                    </>
+                                     :
+                                Type === "source" ?
+                                    DataIn.location ?
+                                    <div className="row">
+                                        <div className="field-text">
+                                            <MapsJSX lat={DataIn.location.x} lng={DataIn.location.y} w={"100%"} h={"80px"}/>
+                                        </div>
+                                    </div> : <></> : <></>
+                            }
+                        </div>
+                        <div className="frame-manage-list">
+                            <svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 448a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H608zM160 896a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H608z"/></svg>
                         </div>
                     </a>
                     // <section className={`row ${keyRow}`} key={keyRow}>

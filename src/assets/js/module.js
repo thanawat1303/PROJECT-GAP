@@ -409,7 +409,7 @@ const LoadOtherDom = ({Fetch , count , setCount , Limit , style = {
     )
 }
 
-const LoadOtherOffset = ({Fetch , Data , setRow , style = {
+const LoadOtherOffset = ({Fetch , Data , setRow , Limit , style = {
     backgroundColor : "",
     fontSize : "18px",
     sizeLoading : "31.2px",
@@ -417,7 +417,7 @@ const LoadOtherOffset = ({Fetch , Data , setRow , style = {
     const [Load , setLoad] = useState(true)
     const Other = async () => {
         setLoad(false)
-        const Row = await Fetch(Data.length)
+        const Row = await Fetch(Data.length , Limit)
         if(Row.length !== 0) setRow(Row.length)
         setLoad(true)
     }

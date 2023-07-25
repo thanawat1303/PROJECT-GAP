@@ -40,11 +40,13 @@ const apifunc = {
     });
   },
 
-  generateID : (length) => {
-      var result = '';
-      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var charactersLength = characters.length;
-      for (var i = 0; i < length; i++) {
+  generateID : (length , type = "text") => {
+      let result = '';
+      let charText = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let charNumber = "0123456789"
+      let characters = (type === "num") ? charNumber : charText ;
+      let charactersLength = characters.length;
+      for (let i = 0; i < length; i++) {
           result += characters.charAt(Math.floor(Math.random() * charactersLength));
       }
       return result;

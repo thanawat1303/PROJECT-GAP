@@ -1342,7 +1342,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 if(CheckInsert && !CheckSuccess) {
                     const Random = await new Promise( async (resole , reject)=>{
                         while(true) {
-                            let random = apifunc.generateID(8)
+                            let random = apifunc.generateID(4 , "num")
                             let resultFound= await new Promise((resole , reject)=> {
                                 con.query(
                                     `
@@ -1995,6 +1995,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         
                                 if(!data[0].checkData) {
                                     const Key = Object.entries(req.body.data).map(val=>val[0])
+                                    const InsertArray = Object.entries(req.body.data).map(val=> val[0] === "location" && val[1] ? "ST_PointFromText(?)" : "?")
                                     const dataInsert = Object.entries(req.body.data).map(val=>val[1])
                                     try {
                                         con.query(
@@ -2002,7 +2003,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                 INSERT INTO ${From} 
                                                 ( ${Key.join(" , ")} ) 
                                                 VALUES 
-                                                ( ${dataInsert.map(val=>"?").join(" , ")} )
+                                                ( ${InsertArray.join(" , ")} )
                                             ` , dataInsert , (err , result)=>{
                                                 if(err){
                                                     console.log(err)

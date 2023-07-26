@@ -20,6 +20,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     const DateSafe = useRef()
 
     const [DataFactor , setDataFactor] = useState([])
+    const [DataSource , setSource] = useState([])
 
     const ListSearchName = useRef()
     const [ListSelectName , setListName] = useState(<></>)
@@ -34,6 +35,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
 
     useEffect(()=>{
         RefPop.current.setAttribute("show" , "");
+        FetchSource()
         // (type_path === "z") ? FetchFactor("fertilizer") : FetchFactor("chemical")
     } , [])
 
@@ -43,6 +45,14 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
             const LIST = JSON.parse(Data)
             setDataFactor(LIST)
             return LIST
+        }
+    }
+
+    const FetchSource = async () => {
+        const Data = await clientMo.post("/api/farmer/source/get")
+        if(await CloseAccount(Data , setPage)) {
+            const LIST = JSON.parse(Data)
+            setSource(LIST)
         }
     }
 
@@ -385,7 +395,16 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
-                                                <input onChange={ChangeFerti} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
+                                                {/* <input onChange={ChangeFerti} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
+                                                <select onChange={ChangeFerti} ref={Source} defaultValue={""}>
+                                                    <option value={""} disabled>เลือก</option>
+                                                        { 
+                                                            DataSource ?
+                                                                DataSource.map((val , key)=>
+                                                                    <option value={val.name}>{val.name}</option>
+                                                                ) : <></>
+                                                        }
+                                                </select>
                                             </label>
                                         </div>
                                         </> :
@@ -471,7 +490,16 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
-                                                <input onChange={ChangeChemi} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
+                                                {/* <input onChange={ChangeChemi} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
+                                                <select onChange={ChangeChemi} ref={Source} defaultValue={""}>
+                                                    <option value={""} disabled>เลือก</option>
+                                                    { 
+                                                        DataSource ?
+                                                            DataSource.map((val , key)=>
+                                                                <option value={val.name}>{val.name}</option>
+                                                            ) : <></>
+                                                    }
+                                                </select>
                                             </label>
                                         </div>
                                         </>

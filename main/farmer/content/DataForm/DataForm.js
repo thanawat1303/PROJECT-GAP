@@ -500,7 +500,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                     <select onChange={ChangeEdit} ref={Insect} defaultValue={Data.insect}>
                                                         <option disabled value="">เลือก</option>
                                                         <option value={"แมลง"}>แมลง</option>
-                                                        <option value={"ใบกุด"}>ใบกุด</option>
+                                                        <option value={"ใบจุด"}>ใบจุด</option>
                                                         <option value={"เพี้ย"}>เพี้ย</option>
                                                     </select>
                                                     : <input readOnly defaultValue={Data.insect}></input>

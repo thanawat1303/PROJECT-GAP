@@ -28,8 +28,9 @@ const MainFarmer = ({socket , idLiff , Path}) => {
                     liff.login()
                 }
             } else {
-                let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
-                LoadPage(UID)
+                // let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
+                // LoadPage(UID)
+                setBody(<ErrorPage text={"กรุณาเข้าผ่าน LINE Appication"}/>)
             }
         }).catch(err=>{
             console.log(err)
@@ -50,14 +51,13 @@ const MainFarmer = ({socket , idLiff , Path}) => {
 
             } else if (Path === "form" && result !== "error auth") {
                 const auth = window.location.pathname.split("/")[3]
-                if(auth) {
+                if(auth && result !== "close") {
                     setBody(<MenuMain liff={liff} uid={uid}/>)
                 } else {
                     setBody(<ErrorPage text={"ไม่พบฟาร์ม"}/>)
                 }
             }
             else if (result === "error auth") setBody(<ErrorPage text={"ERR"}/>)
-
         })
     }
 

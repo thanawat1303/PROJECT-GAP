@@ -25,6 +25,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                             LIMIT 1
                                         ) as farmer 
                                     WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
+                                    ORDER BY id_farmHouse DESC
                                     ` , 
                             [req["body"]['events'][0]["source"]["userId"]] ,
                             (err , result)=>{

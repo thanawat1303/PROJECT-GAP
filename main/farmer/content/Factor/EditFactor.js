@@ -21,6 +21,7 @@ ObjectData}) => {
     const DateSafe = useRef()
 
     const [DataFactor , setDataFactor] = useState([])
+    const [DataSource , setSource] = useState([])
 
     const ListSearchName = useRef()
     const [ListSelectName , setListName] = useState(<></>)
@@ -35,6 +36,7 @@ ObjectData}) => {
 
     useEffect(()=>{
         RefPop.current.setAttribute("show" , "");
+        FetchSource()
         // (type_path === "z") ? FetchFactor("fertilizer") : FetchFactor("chemical")
     } , [])
 
@@ -44,6 +46,14 @@ ObjectData}) => {
             const LIST = JSON.parse(Data)
             setDataFactor(LIST)
             return LIST
+        }
+    }
+
+    const FetchSource = async () => {
+        const Data = await clientMo.post("/api/farmer/source/get")
+        if(await CloseAccount(Data , setPage)) {
+            const LIST = JSON.parse(Data)
+            setSource(LIST)
         }
     }
 
@@ -480,7 +490,18 @@ ObjectData}) => {
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
-                                                <input onChange={ChangeFerti} defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
+                                                {/* <input onChange={ChangeFerti} defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
+                                                {
+                                                    DataSource.length != 0 && ObjectData.source ?
+                                                        <select onChange={ChangeFerti} ref={Source} defaultValue={ObjectData.source}>
+                                                            <option value={""} disabled>เลือก</option>
+                                                            {
+                                                                DataSource.map((val , key)=>
+                                                                    <option value={val.name}>{val.name}</option>
+                                                                )
+                                                            }
+                                                        </select> : <></>
+                                                }
                                             </label>
                                         </div>
                                         </> :
@@ -573,8 +594,19 @@ ObjectData}) => {
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
-                                                <input onChange={ChangeChemi} 
-                                                    defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input>
+                                                {/* <input onChange={ChangeChemi} 
+                                                    defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
+                                                {
+                                                    DataSource.length != 0 && ObjectData.source ?
+                                                        <select onChange={ChangeChemi} ref={Source} defaultValue={ObjectData.source}>
+                                                            <option value={""} disabled>เลือก</option>
+                                                            {
+                                                                DataSource.map((val , key)=>
+                                                                    <option value={val.name}>{val.name}</option>
+                                                                )
+                                                            }
+                                                        </select> : <></>
+                                                }
                                             </label>
                                         </div>
                                         </>

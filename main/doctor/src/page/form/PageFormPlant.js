@@ -404,7 +404,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
 
 const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
     const [Data , setData] = useState([])
-    const [Count , setCount] = useState(10)
+    const [Count , setCount] = useState(20)
     const [timeOut , setTimeOut] = useState()
     const [LoadingList , setLoadList ] = useState(true)
     
@@ -514,10 +514,26 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
             // let countKey = 0
             const body = Data.map((Data , keyRow)=>{
                 const Ref = refData[keyRow]
+                const DateHarvestDiff = ((new Date(Data.date_harvest) - new Date()) / (24 * 60 * 60 * 1000)).toString().split(".")[0]
                 return (
                     <a key={keyRow} className="list-some-data-on-page" title="เปิดแบบฟอร์ม"
                         ref={Ref} status={Data.submit} onClick={()=>showPopup(Data.id , Ref)}
                         >
+                        { Data.submit == 0 && (DateHarvestDiff <= 15 || DateHarvestDiff < 0) ?
+                            <div className="report-list">
+                                <div className="text">
+                                {
+                                    (DateHarvestDiff < 0) ?
+                                        `เลยกำหนดเก็บเกี่ยว ${Math.abs(DateHarvestDiff)} วัน` :
+                                    (DateHarvestDiff == 0) ? 
+                                        "ครบกำหนดเก็บเกี่ยว" :
+                                    (DateHarvestDiff <= 15) ?
+                                        `เก็บเกี่ยวในอีก ${DateHarvestDiff} วัน`
+                                        : <></>
+                                }
+                                </div>
+                            </div> : <></>
+                        }
                         <div className="frame-data-list">
                             <div className="inrow">
                                 <div className="column">

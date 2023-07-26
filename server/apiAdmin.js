@@ -311,7 +311,8 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
         let data = req.body
         con.query(
           `
-          SELECT * FROM ${data.type}_list LIMIT 25;
+          SELECT * FROM ${data.type}_list
+          ORDER BY is_use DESC;
           `
          , (err , result)=>{
           if(err) {
@@ -405,7 +406,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                             name , 
                             is_use 
                             ${
-                              data.type === "plant" ? ", type_plant" : 
+                              data.type === "plant" ? ", type_plant , qty_harvest" : 
                               data.type === "station" ? ", location" : ""
                             }
                           ) 
@@ -414,7 +415,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                             ? , 
                             1 
                             ${
-                              data.type === "plant" ? `, '${data.type_plant}'` :
+                              data.type === "plant" ? `, '${data.type_plant}' , '${data.qtyDate}'` :
                               data.type === "station" ? `, POINT(${data.lat},${data.lng})` : ""
                             }
                           )` , 

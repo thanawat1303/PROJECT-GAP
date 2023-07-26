@@ -802,7 +802,8 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
             const url = typeInsert === "report" ? '/api/doctor/form/manage/report/insert' : typeInsert === "CheckPlant" ? '/api/doctor/form/manage/checkplant/insert' : '/api/doctor/form/manage/checkform/insert';
             const result = await clientMo.post(url , Data)
             
-            if(result === "113") {
+            console.log(result)
+            if(result === "113" || result === "max") {
                 FetchData()
                 close()
             } else if (result === "password") {

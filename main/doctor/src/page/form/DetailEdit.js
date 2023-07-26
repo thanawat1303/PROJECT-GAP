@@ -109,8 +109,8 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , session}) =
             })
 
             if(result) {
-                setStatusReport(1)
-                setTextReport(result ? "อนุมัติสำเร็จ" : "ไม่อนุมัติสำเร็จ")
+                setStatusReport(resultBt)
+                setTextReport(resultBt == 1 ? "อนุมัติสำเร็จ" : "ไม่อนุมัติสำเร็จ")
             } else session()
         }
     }

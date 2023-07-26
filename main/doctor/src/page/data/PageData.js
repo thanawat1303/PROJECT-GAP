@@ -386,28 +386,10 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
 
     const ManageShow = (Data) => {
         if(Data.length !== 0) {
-            // let Max = 0 , SizeFont = 0 , SizeFontDate = 0
-            // // console.log(Data)
-            // if(window.innerWidth >= 920) {
-            //     Max = 4
-            //     SizeFont = 1.8
-            //     SizeFontDate = 1.2
-            // }
-            // else if (window.innerWidth < 920) {
-            //     Max = 2
-            //     SizeFont = 2.8
-            //     SizeFontDate = 1.8
-            // }
-
-            // // const text = [ ...Data , ...Data , ...Data ]
-            // const Row = new Array
-            // for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
-
-            // let StartDataKey = 0
             const body = Data.map((DataIn , keyRow)=>{
                 const Ref = refData[keyRow]
                 return (
-                    <a key={keyRow} className="list-some-data-on-page"
+                    <div key={keyRow} className="list-some-data-on-page"
                         ref={Ref} status={DataIn.is_use}
                         >
                         <div className="frame-data-list">
@@ -444,17 +426,27 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
                             { 
                                 Type === "plant" ?
                                     <div className="row">
-                                        <div className="field-text max-box">
-                                            <span>จำนวนวันที่คาดว่าจะเก็บเกี่ยว</span>
+                                        <div className="field-text max-box row-text">
+                                            <span>จำนวนวันที่จะเก็บเกี่ยว</span>
                                             <div className="data-text">{DataIn.qty_harvest} วัน</div>
                                         </div> 
+                                        <a onClick={()=>OpenManageData(DataIn)} className="frame-manage-list" title="จัดการข้อมูล">
+                                            <svg viewBox="0 0 20 20">
+                                                <path d="M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z"/>
+                                            </svg>
+                                        </a>
                                     </div> :
                                 Type === "fertilizer" ?
                                     <div className="row">
                                         <div className="field-text">
-                                            <span>สูตรปุ๋ย</span>
-                                            <div className="data-text">{DataIn.name_formula}</div>
+                                            <span>วิธีการใช้</span>
+                                            <div className="data-text">{DataIn.how_use}</div>
                                         </div>
+                                        <a onClick={()=>OpenManageData(DataIn)} className="frame-manage-list position bottom" title="จัดการข้อมูล">
+                                            <svg viewBox="0 0 20 20">
+                                                <path d="M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z"/>
+                                            </svg>
+                                        </a>
                                     </div> :
                                 Type === "chemical" ?
                                     <>
@@ -465,10 +457,15 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
                                         </div>
                                     </div>
                                     <div className="row">
-                                        <div className="field-text">
+                                        <div className="field-text row-text">
                                             <span>จำนวนวันปลอดภัย</span>
                                             <div className="data-text">{DataIn.date_sefe} วัน</div>
                                         </div>
+                                        <a onClick={()=>OpenManageData(DataIn)} className="frame-manage-list position bottom" title="จัดการข้อมูล">
+                                            <svg viewBox="0 0 20 20">
+                                                <path d="M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z"/>
+                                            </svg>
+                                        </a>
                                     </div>
                                     </>
                                      :
@@ -478,75 +475,15 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
                                         <div className="field-text">
                                             <MapsJSX lat={DataIn.location.x} lng={DataIn.location.y} w={"100%"} h={"80px"}/>
                                         </div>
+                                        <a onClick={()=>OpenManageData(DataIn)} className="frame-manage-list position top" title="จัดการข้อมูล">
+                                            <svg viewBox="0 0 20 20">
+                                                <path d="M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z"/>
+                                            </svg>
+                                        </a>
                                     </div> : <></> : <></>
                             }
                         </div>
-                        <div className="frame-manage-list">
-                            <svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 448a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H608zM160 896a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H608z"/></svg>
-                        </div>
-                    </a>
-                    // <section className={`row ${keyRow}`} key={keyRow}>
-                    //     <div className="row-content" style={{
-                    //         '--item-in-row-doctor' : `${Max}`,
-                    //         '--margin-in-row-doctor' : '10px',
-                    //         '--font-size-in-row-doctor' : `${SizeFont}vw`,
-                    //         '--font-size-date-in-row-doctor' : `${SizeFontDate}vw`,
-                    //         }}>
-                    //         {
-                    //             Data.map((val , key)=>{
-                    //                 const Ref = refData[StartDataKey]
-                    //                 StartDataKey++
-                    //                 return (
-                    //                     <section key={key} className="list-some-data-on-page"
-                    //                         ref={Ref}
-                    //                         >
-                    //                         <div className="frame-data-list">
-                    //                             <div className="inrow">
-                    //                                 <div className="type-main">
-                    //                                     {val.type_main}
-                    //                                 </div>
-                    //                                 <div className="type">
-                    //                                     {val.name_plant}
-                    //                                 </div>
-                    //                                 <div className="date">
-                    //                                     <span>ปลูก</span>
-                    //                                     <DayJSX DATE={val.date_plant} TYPE="SMALL"/>
-                    //                                 </div>
-                    //                             </div>
-                    //                             <div className="inrow">
-                    //                                 <div className="system-glow">
-                    //                                     ระบบการปลูก {val.system_glow}
-                    //                                 </div>
-                    //                                 <div className="factor">
-                    //                                     <span>
-                    //                                         ปุ๋ย {val.ctFer} ครั้ง
-                    //                                     </span>
-                    //                                     <span className="dot">|</span>
-                    //                                     <span>
-                    //                                         สารเคมี {val.ctChe} ครั้ง
-                    //                                     </span>
-                    //                                 </div>
-                    //                             </div>
-                    //                             <div className="inrow">
-                    //                                 <div className="insect">
-                    //                                     ศัตรูพืช {val.insect}
-                    //                                 </div>
-                    //                                 <div className="factor">
-                    //                                     <span className="generation">
-                    //                                         รุ่น {val.generation}
-                    //                                     </span>
-                    //                                     <span className="qty">
-                    //                                         จำนวน {val.qty} ต้น
-                    //                                     </span>
-                    //                                 </div>
-                    //                             </div>
-                    //                         </div>
-                    //                     </section>
-                    //                 )
-                    //             })
-                    //         }
-                    //     </div>
-                    // </section>
+                    </div>
                 )
             })
             setBody(body)
@@ -557,6 +494,11 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
                 </section>
             )
         }
+    }
+
+    const OpenManageData = (Data) => {
+        console.log(Data)
+        setPop(<>111</>)
     }
 
     return(

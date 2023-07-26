@@ -897,7 +897,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     FROM formplant ,
                     (
                         SELECT formplant.id , formplant.submit , formplant.name_plant , formplant.date_plant ,
-                        formplant.system_glow , formplant.insect , formplant.generation , formplant.qty ,
+                        formplant.system_glow , formplant.insect , formplant.generation , formplant.qty , formplant.date_harvest ,
                             (
                                 SELECT COUNT(id)
                                 FROM formfertilizer
@@ -938,6 +938,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         ORDER BY ${OrderBy}
                     ) as fromInsert
                     WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
+                    ORDER BY submit ASC
                     ${(Limit !== null) ? `LIMIT ${Limit}` : "LIMIT 0"}
                     `
                     , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
@@ -1281,7 +1282,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -1422,7 +1423,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -1438,7 +1439,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     WHERE id_plant = ?
                     ` , [req.body.id_plant] ,
                     (err , reportChk)=> {
-                        if(reportChk.count < 2) {
+                        if(reportChk[0].count < 2) {
                             con.query(
                                 `
                                     INSERT report_detail
@@ -1476,7 +1477,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }
@@ -1553,7 +1554,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         let username = req.session.user_doctor
         let password = req.body.password
     
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
             res.redirect('/api/logout')
             return 0
         }

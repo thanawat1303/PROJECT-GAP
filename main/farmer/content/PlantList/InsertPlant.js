@@ -7,6 +7,7 @@ let TimeOut = 0
 
 const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage}) =>{
     const DateNowOnForm = `${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`
+    const [DateHarvest , setDateHarvest] = useState("")
 
     const FormContent = useRef()
 
@@ -65,21 +66,27 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
             if(await CloseAccount(Data , setPage)) {
                 try {
                     const Object = JSON.parse(Data)
-                    Generation.current.value = parseInt(Object[0].generation) + 1
-                    // DateGlow.current.value = Object[0].date_glow
-                    // DatePlant.current.value = Object[0].date_plant
-                    PositionW.current.value = Object[0].posi_w
-                    PositionH.current.value = Object[0].posi_h
-                    Qty.current.value = Object[0].qty
-                    Area.current.value = Object[0].area
-                    // DateOut.current.value = Object[0].date_harvest
-                    System.current.value = Object[0].system_glow
-                    Water.current.value = Object[0].water
-                    WaterStep.current.value = Object[0].water_flow
-                    History.current.value = Object[0].history
-                    Insect.current.value = Object[0].insect
-                    QtyInsect.current.value = Object[0].qtyInsect
-                    Seft.current.value = Object[0].seft
+                    if(Object.qtyDate.length !== 0) {
+                        MathDateHarvest(DatePlant.current.value , Object.qtyDate[0].qty_harvest)
+                        setDateHarvest(Object.qtyDate[0].qty_harvest)
+                    }
+
+                    if(Object.FromHistory.length !== 0) {
+                        Generation.current.value = parseInt(Object.FromHistory[0].generation) + 1
+                        // DateGlow.current.value = Object.FromHistory[0].date_glow
+                        // DatePlant.current.value = Object.FromHistory[0].date_plant
+                        PositionW.current.value = Object.FromHistory[0].posi_w
+                        PositionH.current.value = Object.FromHistory[0].posi_h
+                        Qty.current.value = Object.FromHistory[0].qty
+                        Area.current.value = Object.FromHistory[0].area
+                        System.current.value = Object.FromHistory[0].system_glow
+                        Water.current.value = Object.FromHistory[0].water
+                        WaterStep.current.value = Object.FromHistory[0].water_flow
+                        History.current.value = Object.FromHistory[0].history
+                        Insect.current.value = Object.FromHistory[0].insect
+                        QtyInsect.current.value = Object.FromHistory[0].qtyInsect
+                        Seft.current.value = Object.FromHistory[0].seft
+                    }
                 } catch (err) {
                     // Generation.current.value = ""
                     // DateGlow.current.value = ""
@@ -227,6 +234,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         // ResetListPopup()
     }
 
+    const MathDateHarvest = (DatePlant , DateQty) => {
+        const DatePlantQty = new Date(DatePlant)
+        DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(DateQty))
+        DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
+    }
+
     // const ResetListPopup = () => {
     //     setListOther(<></>)
     //     ListSearch.current.setAttribute("remove" , "")
@@ -291,7 +304,10 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                                 : <></>
                                             }
                                             <span>วันที่ปลูก</span>
-                                            <input onInput={ChangeCHK} defaultValue={DateNowOnForm} ref={DatePlant} type="date" placeholder="ว/ด/ป"></input>
+                                            <input onInput={(e)=>{
+                                                ChangeCHK()
+                                                MathDateHarvest(e.target.value , DateHarvest)
+                                            }} defaultValue={DateNowOnForm} ref={DatePlant} type="date" placeholder="ว/ด/ป"></input>
                                         </label>
                                     </div>
                                     <div className="row">
@@ -445,7 +461,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                             <select onChange={ChangeCHK} ref={Insect} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
                                                 <option value={"แมลง"}>แมลง</option>
-                                                <option value={"ใบกุด"}>ใบกุด</option>
+                                                <option value={"ใบจุด"}>ใบจุด</option>
                                                 <option value={"เพี้ย"}>เพี้ย</option>
                                             </select>
                                         </label>

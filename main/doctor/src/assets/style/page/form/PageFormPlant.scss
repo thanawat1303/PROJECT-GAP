@@ -52,6 +52,7 @@
         right: 0em;
         transform: translateX(100%);
         transition: 0.5s transform;
+        z-index: 1;
 
         .bt-select-option {
             display: flex;
@@ -310,11 +311,33 @@
 
             .list-some-data-on-page {
                 display: inline-flex;
+                position: relative;
                 max-width: 260px;
                 width: 97%;
                 padding: 1px 5px;
                 border-radius: 10px;
-                margin: 5px 5px;
+                margin: 20px 5px;
+
+                .report-list {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: absolute;
+                    color: #E53935;
+                    bottom: 98%;
+                    right: 0.4em;
+                    font-family: Sans-font;
+                    font-weight: 900;
+                    font-size: 15px;
+                    background-color: rgb(230, 247, 134);
+                    padding: 2px 8px;
+                    z-index: -1;
+                    border-radius: 8px 8px 0px 0px;
+
+                    .text {
+                        height: 20px;
+                    }
+                }
                 
                 .frame-data-list {
                     width: 100%;
@@ -377,9 +400,15 @@
                             display: flex;
                             flex-direction: column;
                             align-items: start;
+                            width: 40%;
 
                             div {
                                 margin-left: 5px;
+                                text-align: start;
+                                text-wrap: nowrap;
+                                text-overflow: ellipsis;
+                                width: 100%;
+                                overflow: hidden;
                             }
                         }
                         .factor {

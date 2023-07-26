@@ -383,6 +383,19 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
+                const QtyDate = await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                        SELECT qty_harvest
+                        FROM plant_list
+                        WHERE name = ?
+                        ` , [req.body.name_plant_list] , 
+                        (err , result)=>{
+                            resole(result)
+                        }
+                    )
+                })
+
                 con.query(`
                             SELECT formplant.*
                             FROM formplant , 
@@ -404,7 +417,10 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                 return 0;
                             }
                             con.end()
-                            res.send(result)
+                            res.send({
+                                FromHistory : result,
+                                qtyDate : QtyDate
+                            })
                         })
             } catch (err) {
                 con.end()
@@ -1248,6 +1264,33 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                     res.send("error auth")
                 }
                 
+            } catch (err) {
+                con.end()
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+
+        } else res.send("error auth")
+    })
+
+
+    //start source 
+    app.post('/api/farmer/source/get' , async (req , res)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+
+            try {
+                const auth = await authCheck(con , dbpacket , res , req , LINE)
+                con.query(`SELECT name FROM source_list WHERE is_use = 1` , (err , result)=>{
+                    if (err) {
+                        dbpacket.dbErrorReturn(con, err, res);
+                        console.log("select list source");
+                        return 0;
+                    }
+
+                    con.end()
+                    res.send(result)
+                })
             } catch (err) {
                 con.end()
                 if(err === "no" || err === "no account") res.send("close")

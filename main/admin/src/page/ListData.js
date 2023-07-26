@@ -252,6 +252,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
         Data2 : useRef(),
         Data3 : useRef()
     }
+    const QtyDate = useRef()
 
     useEffect(()=>{
         setSize(PageAddRef.current.clientHeight * 0.3)
@@ -286,10 +287,11 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                         passwordDT : Data2.value,
                         passwordAd : PWadmin.value
                     }
-                } else {
+                } else if (QtyDate.current.value != 0 && QtyDate.current.value) {
                     data = {
                         name : Data1.value,
                         type_plant : Data2.value,
+                        qtyDate : QtyDate.current.value,
                         type : type ,
                         passwordAd : PWadmin.value
                     }
@@ -436,7 +438,10 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                 </span>
                 <div className="detail-data">
                     <label>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"/></svg>
+                        { type === "default" ?
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"/></svg>
+                            : <></>
+                        }
                         <input ref={RefData.Data1} 
                                 placeholder={
                                     type === "default" ? "รหัสประจำตัวผู้ส่งเสริม" : 
@@ -453,18 +458,24 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                             </label>
                             </> :
                         type === "plant" ?
+                            <>
                             <label>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg>
-                                <select ref={RefData.Data2} defaultValue={""}>
+                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
+                                <select ref={RefData.Data2} defaultValue={""} style={{width : "100%"}}>
                                     <option value={""} disabled>เลือกชนิดพืช</option>
                                     <option value={"พืชผัก"}>พืชผัก</option>
                                     <option value={"สมุนไพร"}>สมุนไพร</option>
                                 </select>
-                            </label> : 
+                            </label>
+                            <label>
+                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
+                                <input ref={QtyDate} placeholder="จำนวนวันที่จะเก็บเกี่ยว" type="number"></input>
+                            </label>
+                            </> : 
                         type === "station" ?
                             <>
                             <label>
-                                <svg fill="white" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
+                                {/* <svg fill="white" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
                                     width="1em" height="1em" viewBox="0 0 395.71 395.71"
                                     >
                                     <g>
@@ -473,7 +484,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                                             C335.179,61.609,273.569,0,197.849,0z M197.849,88.138c27.13,0,49.191,22.062,49.191,49.191c0,27.115-22.062,49.191-49.191,49.191
                                             c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
                                     </g>
-                                </svg>
+                                </svg> */}
                                 <input ref={InputMap} placeholder="ลิ้งค์ปักหมุดจาก Google Map" type="text" onInput={GenerateMap}></input>
                             </label>
                             <label className="station">

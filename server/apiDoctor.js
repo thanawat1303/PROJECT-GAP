@@ -2043,6 +2043,55 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             }
         }
     })
+
+    app.post('/api/doctor/data/change' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const From = req.body.type == "plant" ? "plant_list" : 
+                                req.body.type == "fertilizer" ? "fertilizer_list" : 
+                                req.body.type == "chemical" ? "chemical_list" :
+                                req.body.type == "source" ? "source_list" : ""
+                const state = req.body.state == 0 ? 0 : 1; 
+                if(From) {
+                    con.query(
+                        `
+                        UPDATE ${From} SET is_use = ? WHERE id = ? and is_use != ?
+                        ` , [ state , req.body.id_list , state ] ,
+                        (err , list) => {
+                            if(err) {
+                                console.log(err)
+                                con.end()
+                                res.send("error")
+                                return 0
+                            }
+    
+                            con.end()
+                            res.send('113')
+                        }
+                    )
+                } else {
+                    con.end()
+                    res.send("error")
+                }
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
     
     // app.post("/doctor/api/doctor/pull" , (req , res)=>{
     //     let username = req.session.user_doctor

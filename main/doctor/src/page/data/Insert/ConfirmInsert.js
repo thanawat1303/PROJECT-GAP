@@ -9,7 +9,6 @@ const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit ,
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
-        console.log(Data)
     } , [])
 
     const Confirm = async () => {

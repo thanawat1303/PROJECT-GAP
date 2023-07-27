@@ -6,6 +6,7 @@ import { DayJSX , LoadOtherDom, LoadOtherOffset, Loading, MapsJSX, PopupDom } fr
 import { InsertChemical, InsertFertilizer, InsertPlant, InsertSource } from "./Insert/InsertPage";
 import { SearchChemical, SearchFertilizer, SearchPlant } from "./search/SearchPage";
 import PopupConfirm from "./Insert/ConfirmInsert";
+import ManageData from "./ManageData";
 
 const MaxLimit = 5
 const PageData = ({setMain , session , socket , type = false , eleImageCover , LoadType , eleBody , setTextStatus}) => {
@@ -180,13 +181,13 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         const Data = CheckInsert()
         if(Data) {
             const result = await clientMo.post(`/api/doctor/data/check/overlape` , Data)
-            if(!parseInt(result)) {
+            if(parseInt(result) === 0) {
                 setBodyPopup(<PopupConfirm Ref={RefPopup} setPopup={setBodyPopup} session={session} Data={Data} RowPresent={StartData} setLimit={setLimit} Reload={Reload} setReload={setReload}/>)
                 setErrReport(false)
-            } else {
+            } else if (parseInt(result) === 1) {
                 setStateOnInsert(!StateOnInsert)
                 setErrReport(true)
-            }
+            } else session()
         }
     }
 
@@ -496,9 +497,11 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
         }
     }
 
-    const OpenManageData = (Data) => {
-        console.log(Data)
-        setPop(<>111</>)
+    const OpenManageData = async (DataIn) => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context)
+            setPop(<ManageData Ref={RefPop} setPopup={setPop} Data={DataIn} Type={Type} Fetch={fetch} RowPresent={Data.length} session={session}/>)
+        else session()
     }
 
     return(

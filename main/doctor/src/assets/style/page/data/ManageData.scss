@@ -128,8 +128,9 @@
                     font-family: Sans-font;
                     font-size: 15px;
                     // background-color: rgb(215, 140, 140);
-                    background-color: #22C7A9;
-                    color: white;
+                    background-color: #22c7a9c4;
+                    color: black;
+                    font-weight: 900;
                     border: 0;
                     outline: 0;
                     margin-top: 0px;
@@ -139,6 +140,7 @@
 
                 input::placeholder {
                     color: rgba(255, 255, 255, 0.893);
+                    font-weight: 500;
                 }
 
                 input[type="number"]::-webkit-inner-spin-button,
@@ -243,8 +245,6 @@
 
                     .err-text-overlape {
                         color: red;
-                        margin-left: auto;
-                        margin-right: auto;
                     }
                 }
 
@@ -264,14 +264,17 @@
                 input {
                     background-color: transparent;
                     color: black;
-                    border: 2px solid #22C7A9;
+                    border: 2px solid #22c7a98b;
                     box-shadow: none;
+                    font-weight: 500;
+                    cursor: default;
                 }
 
                 select {
                     appearance: none; /* สำหรับ WebKit บน iOS */
                     -webkit-appearance: none; /* สำหรับ WebKit บน iOS */
                     -moz-appearance: none; /* สำหรับ Firefox */
+                    cursor: default;
                     // padding: 0;
                 }
 

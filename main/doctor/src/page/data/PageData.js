@@ -471,17 +471,19 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
                                     </>
                                      :
                                 Type === "source" ?
-                                    DataIn.location ?
                                     <div className="row">
-                                        <div className="field-text">
-                                            <MapsJSX lat={DataIn.location.x} lng={DataIn.location.y} w={"100%"} h={"80px"}/>
-                                        </div>
+                                        {
+                                            DataIn.location ? 
+                                                <div className="field-text">
+                                                    <MapsJSX lat={DataIn.location.x} lng={DataIn.location.y} w={"100%"} h={"80px"}/>
+                                                </div> : <div className="not-map">ไม่พบตำแหน่ง</div>
+                                        }
                                         <a onClick={()=>OpenManageData(DataIn)} className="frame-manage-list position top" title="จัดการข้อมูล">
                                             <svg viewBox="0 0 20 20">
                                                 <path d="M19 4a1 1 0 01-1 1H2a1 1 0 010-2h16a1 1 0 011 1zm0 6a1 1 0 01-1 1H2a1 1 0 110-2h16a1 1 0 011 1zm-1 7a1 1 0 100-2H2a1 1 0 100 2h16z"/>
                                             </svg>
                                         </a>
-                                    </div> : <></> : <></>
+                                    </div> : <></>
                             }
                         </div>
                     </div>

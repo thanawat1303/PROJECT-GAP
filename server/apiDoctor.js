@@ -2087,7 +2087,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
                         if(!resultCheck) {
                             const update = Object.entries(req.body.data).map(data=>{
-                                data[1] = `"${data[1].trim()}"`
+                                if(data[0] === "location") data[1] = data[1] != "0" ? `ST_PointFromText("${data[1].trim()}")` : "NULL"
+                                else data[1] = `"${data[1].trim()}"`
                                 return data.join(" = ")
                             }).join(' , ')
 

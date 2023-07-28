@@ -33,7 +33,7 @@ const ManageData = ({Ref , setPopup , DataOfPage , Type , Fetch , RowPresent , s
 
     const Submit = async () => {
         if(DataEdit.size > 1 && DataEdit.has("password")) {
-            console.log("submit")
+            console.log(DataEdit)
             const JsonData = {}
             JsonData.check = {}
             JsonData.data = {}
@@ -156,7 +156,15 @@ const ManageData = ({Ref , setPopup , DataOfPage , Type , Fetch , RowPresent , s
                     Type === 'fertilizer' ?   
                         !StateEdit ?
                             <DetailFertilizer Data={Data}/> : 
-                            <EditFertilizer CheckEdit={CheckEdit} Data={Data} ErrReport={ErrReport}/>     
+                            <EditFertilizer CheckEdit={CheckEdit} Data={Data} ErrReport={ErrReport}/> :
+                    Type === 'chemical' ?   
+                        !StateEdit ?
+                            <DetailChemical Data={Data}/> : 
+                            <EditChemical CheckEdit={CheckEdit} Data={Data} ErrReport={ErrReport}/> :
+                    Type === 'source' ?   
+                        !StateEdit ?
+                            <DetailSource Data={Data}/> : 
+                            <EditSource CheckEdit={CheckEdit} Data={Data} ErrReport={ErrReport}/>     
                     : <></>
                 }
             </div>
@@ -208,7 +216,6 @@ const DetailPlant = ({Data}) => {
     )
 }
 const EditPlant = ({CheckEdit , Data , ErrReport}) => {
-    const nameInsert = useRef()
     const typeInsert = useRef()
     const DateQtyInsert = useRef()
     
@@ -227,7 +234,7 @@ const EditPlant = ({CheckEdit , Data , ErrReport}) => {
                             : <></>
                         }
                     </span>
-                    <input ref={nameInsert} onChange={(e)=>CheckEdit(e.target.value , "name")} 
+                    <input onChange={(e)=>CheckEdit(e.target.value , "name")} 
                         onKeyDown={(e)=>InputKeyDownNext(e , typeInsert.current)}
                         placeholder="เช่น เมล่อน" defaultValue={Data.name}></input>
                 </label>
@@ -290,7 +297,6 @@ const DetailFertilizer = ({Data}) => {
     )
 } 
 const EditFertilizer = ({CheckEdit , Data , ErrReport}) => {
-    const nameInsert = useRef()
     const formulaFertilizer = [useRef() , useRef() , useRef() ]
     const UseText = useRef()
     
@@ -305,16 +311,7 @@ const EditFertilizer = ({CheckEdit , Data , ErrReport}) => {
                     }
                     next.focus()
                 }
-            } 
-            // else if(e.target.value.length === 0) {
-            //     let next = e.target.previousElementSibling
-            //     if(next){
-            //         while(next.tagName != typeElementNext){
-            //             next = next.previousElementSibling
-            //         }
-            //         next.focus()
-            //     }
-            // }
+            }
         }
     }
 
@@ -336,7 +333,7 @@ const EditFertilizer = ({CheckEdit , Data , ErrReport}) => {
                             : <></>
                         }
                     </span>
-                    <input ref={nameInsert} onChange={(e)=>CheckEdit(e.target.value , "name")} 
+                    <input onChange={(e)=>CheckEdit(e.target.value , "name")} 
                         onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[0].current)}
                         placeholder="เช่น กระต่าย" defaultValue={Data.name}></input>
                 </label>
@@ -363,64 +360,107 @@ const EditFertilizer = ({CheckEdit , Data , ErrReport}) => {
     )
 }
 
-const EditChemical = ({nameInsert , formulaChemical , UseText , DateQtyInsert , ErrReport , CheckEdit , stateOn}) => {
-    useEffect(()=>{
-        nameInsert.current.value  = "" 
-        formulaChemical.current.value = ""
-        UseText.current.value = ""
-        DateQtyInsert.current.value = ""
-    } , [stateOn])
+const DetailChemical = ({Data}) => {
+    return(
+        <div className="body">
+            <div className="row">
+                <label className="field-select">
+                    <span>
+                        <span>ชื่อสารเคมี</span>
+                    </span>
+                    <input readOnly defaultValue={Data.name}></input>
+                </label>
+            </div>
+            <div className="row">
+                <label className="field-select">
+                    <span>ชื่อสามัญสารเคมี</span>
+                    <input readOnly defaultValue={Data.name_formula}></input>
+                </label>
+            </div> 
+            <div className="row">
+                <label className="field-select not1">
+                    <span>วิธีการใช้</span>
+                    <input readOnly defaultValue={Data.how_use}></input>
+                </label>
+                <label className="field-select not1">
+                    <span className="important ab">จำนวนวันปลอดภัย</span>
+                    <input readOnly defaultValue={Data.date_sefe}></input>
+                </label>
+            </div>
+        </div>
+    )
+} 
+const EditChemical = ({CheckEdit , Data , ErrReport}) => {
+    const formulaChemical = useRef()
+    const UseText = useRef()
+    const DateQtyInsert = useRef()
     
     return (
-        <>
-        <div className="row">
-            <label className="field-select">
-                <span>
-                    <span className="important">ชื่อสารเคมี</span>
-                    { ErrReport ? 
-                        <span className="err-text-overlape">สารเคมีซ้ำ</span>
-                        : <></>
-                    }
-                </span>
-                <input ref={nameInsert} onChange={CheckEdit} 
-                    onKeyDown={(e)=>InputKeyDownNext(e , formulaChemical.current)}
-                    placeholder="เช่น พรีวาธอน"></input>
-            </label>
+        <div className="body">
+            <div className="row">
+                <label className="field-select">
+                    <span>
+                        <span className="important">ชื่อสารเคมี</span>
+                        { ErrReport ? 
+                            <span className="err-text-overlape">สารเคมีซ้ำ</span>
+                            : <></>
+                        }
+                    </span>
+                    <input onChange={(e)=>CheckEdit(e.target.value , "name")}
+                        onKeyDown={(e)=>InputKeyDownNext(e , formulaChemical.current)}
+                        placeholder="เช่น พรีวาธอน" defaultValue={Data.name}></input>
+                </label>
+            </div>
+            <div className="row">
+                <label className="field-select">
+                    <span className="important">ชื่อสามัญสารเคมี</span>
+                    <input ref={formulaChemical} onChange={(e)=>CheckEdit(e.target.value , "name_formula")} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current)} placeholder="เช่น " defaultValue={Data.name_formula}></input>
+                </label>
+            </div> 
+            <div className="row">
+                <label className="field-select not1">
+                    <span className="important">วิธีการใช้</span>
+                    <input ref={UseText} onChange={(e)=>CheckEdit(e.target.value , "how_use")} onKeyDown={(e)=>InputKeyDownNext(e , DateQtyInsert.current)} placeholder="เช่น ฉีดพ้น" defaultValue={Data.how_use}></input>
+                </label>
+                <label className="field-select not1">
+                    <span className="important ab">จำนวนวันปลอดภัย</span>
+                    <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
+                            ref={DateQtyInsert} 
+                            onChange={(e)=>CheckEdit(e.target.value , "date_sefe")} placeholder="เช่น 10 30" type="number" defaultValue={Data.date_sefe}></input>
+                </label>
+            </div>
         </div>
-        <div className="row">
-            <label className="field-select">
-                <span className="important">ชื่อสามัญสารเคมี</span>
-                <input ref={formulaChemical} onChange={CheckEdit} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current)} placeholder="เช่น "></input>
-            </label>
-        </div> 
-        <div className="row">
-            <label className="field-select not1">
-                <span className="important">วิธีการใช้</span>
-                <input ref={UseText} onChange={CheckEdit} onKeyDown={(e)=>InputKeyDownNext(e , DateQtyInsert.current)} placeholder="เช่น ฉีดพ้น"></input>
-            </label>
-            <label className="field-select not1">
-                <span className="important ab">จำนวนวันปลอดภัย</span>
-                <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
-                        ref={DateQtyInsert} 
-                        onChange={CheckEdit} placeholder="เช่น 10 30" type="number"></input>
-            </label>
-        </div>
-        </>
     )
 }
 
-const EditSource = ({nameInsert , position , ErrReport , CheckEdit , stateOn}) => {
-    const [Lag , setLag] = useState(0)
-    const [Lng , setLng] = useState(0)
 
+const DetailSource = ({Data}) => {
+    return(
+        <div className="body">
+            <div className="row">
+                <label className="field-select">
+                    <span>
+                        <span>ชื่อแหล่งที่ซื้อ</span>
+                    </span>
+                    <input readOnly defaultValue={Data.name}></input>
+                </label>
+            </div>
+            { Data.location != null ?
+                <div className="row">
+                    <label className="field-select">
+                        <MapsJSX lat={Data.location.x} lng={Data.location.y} w={"100%"} h={"150px"}/>
+                    </label>
+                </div> : <></>
+            }
+        </div>
+    )
+} 
+const EditSource = ({CheckEdit , Data , ErrReport}) => {
+    const [Lag , setLag] = useState(Data.location ? Data.location.x : 0)
+    const [Lng , setLng] = useState(Data.location ? Data.location.y : 0)
+
+    const nameInsert = useRef()
     const InputUrl = useRef()
-
-    useEffect(()=>{
-        nameInsert.current.value  = ""
-        InputUrl.current.value = ""
-        setLag(0)
-        setLng(0)
-    } , [stateOn])
 
     const GenerateMap = (e) => {
         let Location = e.target.value.split("/").filter((val)=>val.indexOf("data") >= 0)
@@ -447,45 +487,52 @@ const EditSource = ({nameInsert , position , ErrReport , CheckEdit , stateOn}) =
             if(!isNaN(Lagitude) && !isNaN(Longitude)) {
                 setLag(Lagitude)
                 setLng(Longitude)
+                ConvertLocation(Lagitude , Longitude)
             }
         } else {
             setLag(0)
             setLng(0)
+            ConvertLocation(0 , 0)
         }
     }
 
+    const ConvertLocation = (lag , lng) => {
+        if(lag && lng)
+            CheckEdit(`POINT(${lag} ${lng})` , "location")
+        else CheckEdit("0" , "location")
+    }
+
     return (
-        <>
-        <div className="row">
-            <label className="field-select">
-                <span>
-                    <span className="important">ชื่อแหล่งที่ซื้อ</span>
-                    { ErrReport ? 
-                        <span className="err-text-overlape">แหล่งซื้อซ้ำ</span>
-                        : <></>
-                    }
-                </span>
-                <input ref={nameInsert} onChange={CheckEdit} 
-                    onKeyDown={(e)=>InputKeyDownNext(e , "")}
-                    placeholder="เช่น สหกรณ์แม่เตียน"></input>
-            </label>
-        </div>
-        <div className="row">
-            <label className="field-select">
-                <span>ตำแหน่งใน Google Map</span>
-                <input ref={InputUrl} placeholder="URL ปักหมุดแดง" onInput={GenerateMap} type="search"></input>
-            </label>
-        </div>
-        { Lag && Lng ?
+        <div className="body">
             <div className="row">
                 <label className="field-select">
-                    <MapsJSX lat={Lag} lng={Lng} w={"100%"} h={"60px"}/>
+                    <span>
+                        <span className="important">ชื่อแหล่งที่ซื้อ</span>
+                        { ErrReport ? 
+                            <span className="err-text-overlape">แหล่งซื้อซ้ำ</span>
+                            : <></>
+                        }
+                    </span>
+                    <input ref={nameInsert} onChange={(e)=>CheckEdit(e.target.value , "name")} 
+                        onKeyDown={(e)=>InputKeyDownNext(e , "")}
+                        placeholder="เช่น สหกรณ์แม่เตียน" defaultValue={Data.name}></input>
                 </label>
-            </div> : <></>
-        }
-        <input hidden ref={position[0]} readOnly value={Lag}></input>
-        <input hidden ref={position[1]} readOnly value={Lng}></input>
-        </>
+            </div>
+            <div className="row">
+                <label className="field-select">
+                    <span>ตำแหน่งใน Google Map</span>
+                    <input ref={InputUrl} placeholder="URL ปักหมุดแดง" onInput={GenerateMap} type="search" 
+                        defaultValue={Lag && Lng ? `https://www.google.co.th/maps/place/${Lag.toString().split(".")[0]}%C2%B002'14.2%22N+${Lng.toString().split(".")[0]}%C2%B043'36.0%22E/@${Lag},${Lng},17z/data=!3m1!4b1!4m4!3m3!8m2!3d${Lag}!4d${Lng}?entry=ttu` : ""}></input>
+                </label>
+            </div>
+            { Lag && Lng ?
+                <div className="row">
+                    <label className="field-select">
+                        <MapsJSX lat={Lag} lng={Lng} w={"100%"} h={"150px"}/>
+                    </label>
+                </div> : <></>
+            }
+        </div>
     )
 }
 

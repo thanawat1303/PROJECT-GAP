@@ -72,15 +72,16 @@ const InsertFertilizer = ({nameInsert , formulaFertilizer , UseText , ErrReport 
                     }
                     next.focus()
                 }
-            } else if(e.target.value.length === 0) {
-                let next = e.target.previousElementSibling
-                if(next){
-                    while(next.tagName != typeElementNext){
-                        next = next.previousElementSibling
-                    }
-                    next.focus()
-                }
-            }
+            } 
+            // else if(e.target.value.length === 0) {
+            //     let next = e.target.previousElementSibling
+            //     if(next){
+            //         while(next.tagName != typeElementNext){
+            //             next = next.previousElementSibling
+            //         }
+            //         next.focus()
+            //     }
+            // }
         }
     }
 

@@ -5,7 +5,7 @@
     max-width: 250px;
     width: 100%;
     background-color: white;
-    padding: 4px;
+    padding: 4px 0px;
     border-radius: 8px;
     box-shadow: 0px 4px 4px #126c5ccb;
     z-index: 2;
@@ -111,6 +111,7 @@
     }
 
     .detail {
+        padding: 0px 4px;
         .body {
             .row {
                 display: flex;
@@ -284,8 +285,83 @@
     }
 
     .bt-manage{
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        border-top: 3px solid #2d965c;
+        padding: 0px 4px;
+        border-radius: 8px;
         .password {
-            margin: 4px 0px;
+            margin-top: 10px;
+            input {
+                background-color: #22C7A9;
+                box-shadow: 0px 0px 5px inset #176f3f;
+                border: 0;
+                outline: 0;
+                border-radius: 8px;
+                font-family: main-font;
+                font-size: 18px;
+                width: 100%;
+                text-align: center;
+                height: 30px;
+            }
+
+            input::placeholder {
+                color: rgba(0, 0, 0, 0.578);
+                font-family: Sans-font;
+                font-weight: 900;
+            }
+        }
+
+        .bt {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            button {
+                color: white;
+                border: 0;
+                outline: 0;
+                border-radius: 15px;
+                font-family: Sans-font;
+                font-size: 16px;
+                font-weight: 900;
+                width: 30%;
+                height: 26px;
+                cursor: pointer;
+            }
+    
+            //action button
+            .submit {
+                background-color: #17a188;
+                box-shadow: 0px 2px 2px #176f3f;
+            }
+            .submit:hover {
+                background-color: #49bea9;
+            }
+            .submit:active {
+                box-shadow: 0px 2px 2px inset #176f3f;
+                padding-top: 2px;
+            }
+            .submit[on=""] {
+                background-color: #17a1889e;
+                box-shadow: none;
+                padding: 0;
+                cursor: not-allowed;
+            }
+    
+            .cancel {
+                background-color: red;
+                box-shadow: 0px 2px 2px rgb(139, 0, 0);
+            }
+            .cancel:hover {
+                background-color: rgb(237, 80, 80);
+            }
+            .cancel:active {
+                box-shadow: 0px 2px 2px inset rgb(139, 0, 0);
+                padding-top: 2px;
+            }
         }
     }
 }

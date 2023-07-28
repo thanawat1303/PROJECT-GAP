@@ -500,7 +500,7 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
     const OpenManageData = async (DataIn) => {
         const context = await clientMo.post('/api/doctor/check')
         if(context)
-            setPop(<ManageData Ref={RefPop} setPopup={setPop} Data={DataIn} Type={Type} Fetch={fetch} RowPresent={Data.length} session={session}/>)
+            setPop(<ManageData Ref={RefPop} setPopup={setPop} DataOfPage={DataIn} Type={Type} Fetch={fetch} RowPresent={Data.length} session={session}/>)
         else session()
     }
 

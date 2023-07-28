@@ -1987,7 +1987,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT EXISTS (
                                     SELECT id 
                                     FROM ${From}
-                                    WHERE ${where} and is_use = 1
+                                    WHERE ${where}
                                 )
                             ) as checkData
                             ` , 
@@ -2040,6 +2040,114 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             con.end()
             if(err == "not pass") {
                 res.send("password")
+            }
+        }
+    })
+
+    app.post('/api/doctor/data/edit' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const From = req.body.type == "plant" ? "plant_list" : 
+                                req.body.type == "fertilizer" ? "fertilizer_list" : 
+                                req.body.type == "chemical" ? "chemical_list" :
+                                req.body.type == "source" ? "source_list" : ""
+                if(From) {
+                    try {
+                        const OverCheck = Object.entries(req.body.check).map((checkData)=>{
+                            checkData[1] = `"${checkData[1].trim()}"`
+                            return checkData.join(" = ")
+                        }).join(" and ")
+
+                        const resultCheck = OverCheck.length ? await new Promise((resole , reject)=>{
+                            con.query(
+                                `
+                                SELECT (
+                                    SELECT EXISTS (
+                                        SELECT id 
+                                        FROM ${From}
+                                        WHERE ${OverCheck}
+                                    )
+                                ) as checkData
+                                ` , (err , resultIn)=>{
+                                    resole(parseInt(resultIn[0].checkData))
+                                }
+                            )
+                        }) : false;
+
+                        if(!resultCheck) {
+                            const update = Object.entries(req.body.data).map(data=>{
+                                data[1] = `"${data[1].trim()}"`
+                                return data.join(" = ")
+                            }).join(' , ')
+
+                            await new Promise((resole , reject)=>{
+                                con.query(
+                                    `
+                                    UPDATE ${From}
+                                    SET ${update}
+                                    WHERE id = ?
+                                    ` , [req.body.id_list] , (err , updateData) => {
+                                        resole()
+                                    }
+                                )
+                            })
+
+                            con.query(
+                                `
+                                SELECT * 
+                                FROM ${From} 
+                                WHERE id = ?
+                                ` , [req.body.id_list] , (err , select) => {
+                                    if(err){
+                                        console.log(err)
+                                        con.end()
+                                        res.send("err select")
+                                        return 0
+                                    }
+
+                                    con.end()
+                                    res.send({
+                                        data : select,
+                                        result : "pass"
+                                    })
+                                }
+                            )
+                        } else {
+                            con.end()
+                            res.send({
+                                result : "over"
+                            })
+                        }
+                    } catch (err) {
+                        con.end()
+                        res.send({
+                            result : "error"
+                        })
+                    }
+                } else {
+                    con.end()
+                    res.send({
+                        result : "error"
+                    })
+                }
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.send({
+                    result : "password"
+                })
             }
         }
     })

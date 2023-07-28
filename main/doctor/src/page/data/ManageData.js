@@ -3,39 +3,80 @@ import "../../assets/style/page/data/ManageData.scss"
 import { MapsJSX } from "../../../../../src/assets/js/module";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
-const ManageData = ({Ref , setPopup , Data , Type , Fetch , RowPresent , session}) => {
+const ManageData = ({Ref , setPopup , DataOfPage , Type , Fetch , RowPresent , session}) => {
     const StatusRef = useRef()
     const Password = useRef()
     
+    const [Data , setData] = useState(DataOfPage)
     const [StateEdit , setStateEdit] = useState(false)
-    const [DataEdit , setDataEdit] = useState([])
+    const [DataEdit , setDataEdit] = useState(new Map())
     const [Status , setStatus] = useState(Data.is_use)
-    const [BtSubmit , setBtSubmit] = useState(true)
+    const [BtSubmit , setBtSubmit] = useState("")
+
+    const [ErrReport , setErrReport] = useState(false)
 
     useEffect(()=>{
         Ref.current.style.opacity = 1
         Ref.current.style.visibility = "visible"
     } , [])
 
-    const CheckEdit = (data = {}) => {
-        if(data.type) {
-            const checkChange = data.check.filter(val=>(Data[val[0]] != val[1] && val[1]))
-            data.password = Password.current.value
-            setDataEdit(data)
-            if(checkChange.length != 0 && Password.current.value) {
-                setBtSubmit(false)
-                return(true)
-            } else {
-                setBtSubmit(true)
-                return(false)
-            }
-        } else return(false)
+    const CheckEdit = (value , key) => {
+        const data = new Map([...DataEdit])
+
+        if(Data[key] != value && value) data.set(key , value)
+        else data.delete(key)
+
+        if(data.size > 1 && data.has("password")) setBtSubmit(null)
+        else setBtSubmit("")
+        setDataEdit(data)
     }
 
-    const Submit = () => {
-        if(CheckEdit(DataEdit)) {
-            const DataTo = DataEdit
-            delete DataTo.check
+    const Submit = async () => {
+        if(DataEdit.size > 1 && DataEdit.has("password")) {
+            console.log("submit")
+            const JsonData = {}
+            JsonData.check = {}
+            JsonData.data = {}
+            const check = Type === "plant" ? ["name"] : 
+                            Type === "fertilizer" ? ["name" , "name_formula"] :
+                            Type === "chemical" ? ["name" , "name_formula"] :
+                            Type === "source" ? ["name"] : [];
+
+            Array.from(DataEdit).forEach(val=>{
+                if(check.filter(valfilter=>valfilter == val[0]).length) 
+                    JsonData.check[val[0]] = val[1]
+
+                if(val[0] != "password")
+                    JsonData.data[val[0]] = val[1]
+                else JsonData["password"] = val[1]
+            })
+
+            JsonData["type"] = Type
+            JsonData["id_list"] = Data.id
+
+            const newData = await clientMo.post("/api/doctor/data/edit" , JsonData)
+            
+            Password.current.value = ""
+            const setdata = new Map([...DataEdit])
+            setdata.delete("password")
+            setDataEdit(setdata)
+            try {
+                const dataJson = JSON.parse(newData)
+                if(dataJson.result === "pass") {
+                    setData(dataJson.data[0])
+                    setStateEdit(0)
+                    ResetDataEdit()
+                    Fetch(0 , RowPresent)
+                } else if(dataJson.result === "over") {
+                    setErrReport(true)
+                    setBtSubmit("")
+                } else if(dataJson.result === "password") {
+                    Password.current.setAttribute("placeholder" , "รหัสผ่านไม่ถูกต้อง")
+                } else session()
+            } catch(e) {
+                console.log(e)
+                session()
+            }
         }
     }
 
@@ -64,16 +105,14 @@ const ManageData = ({Ref , setPopup , Data , Type , Fetch , RowPresent , session
     }
 
     const ResetDataEdit = () => {
-        setBtSubmit(true)
-        setDataEdit([])
+        setBtSubmit("")
+        setErrReport(false)
+        setDataEdit(new Map())
     }
 
     return (
         <section className="manage-data-popup">
             <a onClick={close} className="close">
-                {/* <svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M35.8125 8.98335C28.5 1.83335 16.5 1.83335 9.1875 8.98335C1.875 16.1334 1.875 27.8667 9.1875 35.0167C16.5 42.1667 28.3125 42.1667 35.625 35.0167C42.9375 27.8667 43.125 16.1334 35.8125 8.98335ZM27.75 29.7L22.5 24.5667L17.25 29.7L14.625 27.1333L19.875 22L14.625 16.8667L17.25 14.3L22.5 19.4333L27.75 14.3L30.375 16.8667L25.125 22L30.375 27.1333L27.75 29.7Z" fill="#FF0000"/>
-                </svg> */}
                 ปิด
             </a>
             <div className="head-form">
@@ -113,20 +152,26 @@ const ManageData = ({Ref , setPopup , Data , Type , Fetch , RowPresent , session
                     Type === 'plant' ?
                         !StateEdit ?
                             <DetailPlant Data={Data}/> : 
-                            <EditPlant CheckEdit={CheckEdit} Data={Data}/>
+                            <EditPlant CheckEdit={CheckEdit} Data={Data} ErrReport={ErrReport}/> :
+                    Type === 'fertilizer' ?   
+                        !StateEdit ?
+                            <DetailFertilizer Data={Data}/> : 
+                            <EditFertilizer CheckEdit={CheckEdit} Data={Data} ErrReport={ErrReport}/>     
                     : <></>
                 }
             </div>
             { StateEdit ?
                 <div className="bt-manage">
                     <div className="password">
-                        <input type="password" ref={Password} onChange={()=>CheckEdit(DataEdit)}></input>
+                        <input placeholder="รหัสผ่านเจ้าหน้าที่" type="password" ref={Password} onChange={(e)=>CheckEdit(e.target.value , "password")}></input>
                     </div>
-                    <button onClick={()=>{
-                        setStateEdit(0)
-                        ResetDataEdit()
-                    }}>ยกเลิก</button>
-                    <button onClick={Submit} on={BtSubmit}>ยืนยัน</button>
+                    <div className="bt">
+                        <button onClick={()=>{
+                            setStateEdit(0)
+                            ResetDataEdit()
+                        }} className="cancel">ยกเลิก</button>
+                        <button onClick={Submit} className="submit" on={BtSubmit}>ยืนยัน</button>
+                    </div>
                 </div>
                 : <></>
             }
@@ -162,36 +207,13 @@ const DetailPlant = ({Data}) => {
         </div>
     )
 }
-const EditPlant = ({CheckEdit , Data}) => {
+const EditPlant = ({CheckEdit , Data , ErrReport}) => {
     const nameInsert = useRef()
     const typeInsert = useRef()
     const DateQtyInsert = useRef()
     
-    const [ErrReport , setErrReport] = useState(false)
-    
     const SelectElementNext = (next = false) => {
         if(next) next.focus()
-    }
-
-    const SetData = () => {
-        const data = {
-            data : {
-                name : nameInsert.current.value,
-                type_plant : typeInsert.current.value,
-                qty_harvest : DateQtyInsert.current.value
-            },
-            check : [
-                ["name" , nameInsert.current.value],
-                ["type_plant" , typeInsert.current.value],
-                ["qty_harvest" , DateQtyInsert.current.value]
-            ],
-            checkDB : {
-                name : nameInsert.current.value
-            },
-            type : "plant"
-        }
-
-        CheckEdit(data)
     }
 
     return (
@@ -205,14 +227,14 @@ const EditPlant = ({CheckEdit , Data}) => {
                             : <></>
                         }
                     </span>
-                    <input ref={nameInsert} onChange={()=>SetData()} 
+                    <input ref={nameInsert} onChange={(e)=>CheckEdit(e.target.value , "name")} 
                         onKeyDown={(e)=>InputKeyDownNext(e , typeInsert.current)}
                         placeholder="เช่น เมล่อน" defaultValue={Data.name}></input>
                 </label>
                 <label className="field-select">
                     <span className="important">ประเภท</span>
-                    <select ref={typeInsert} onChange={()=>{
-                            SetData()
+                    <select ref={typeInsert} onChange={(e)=>{
+                            CheckEdit(e.target.value , "type_plant")
                             SelectElementNext(DateQtyInsert.current)
                         }
                     } defaultValue={Data.type_plant}>
@@ -227,21 +249,50 @@ const EditPlant = ({CheckEdit , Data}) => {
                     <span className="important">จำนวนวันที่คาดว่าจะเก็บเกี่ยว</span>
                     <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
                             ref={DateQtyInsert} defaultValue={Data.qty_harvest}
-                            onChange={()=>SetData()} placeholder="เช่น 10 30" type="number"></input>
+                            onChange={(e)=>CheckEdit(e.target.value , "qty_harvest")} placeholder="เช่น 10 30" type="number"></input>
                 </label>
             </div>
         </div>
     )
 }
 
-const EditFertilizer = ({nameInsert , formulaFertilizer , UseText , ErrReport , CheckEdit , stateOn}) => {
-    useEffect(()=>{
-        nameInsert.current.value  = "" 
-        formulaFertilizer[0].current.value = ""
-        formulaFertilizer[1].current.value = ""
-        formulaFertilizer[2].current.value = ""
-        UseText.current.value = ""
-    } , [stateOn])
+//
+const DetailFertilizer = ({Data}) => {
+    return(
+        <div className="body">
+            <div className="row">
+                <label className="field-select">
+                    <span>
+                        <span>ชื่อปัจจัยการผลิต/ตรา</span>
+                    </span>
+                    <input readOnly defaultValue={Data.name}></input>
+                </label>
+            </div>
+            <div className="row">
+                <label className="field-select">
+                    <span>สูตรปุ๋ย</span>
+                    <div className="box-input-number">
+                        <input readOnly defaultValue={Data.name_formula.split("-")[0]}></input>
+                        <span>-</span>
+                        <input readOnly defaultValue={Data.name_formula.split("-")[1]}></input>
+                        <span>-</span>
+                        <input readOnly defaultValue={Data.name_formula.split("-")[2]}></input>
+                    </div>
+                </label>
+            </div> 
+            <div className="row">
+                <label className="field-select">
+                    <span>วิธีการใช้</span>
+                    <input readOnly defaultValue={Data.how_use}></input>
+                </label>
+            </div> 
+        </div>
+    )
+} 
+const EditFertilizer = ({CheckEdit , Data , ErrReport}) => {
+    const nameInsert = useRef()
+    const formulaFertilizer = [useRef() , useRef() , useRef() ]
+    const UseText = useRef()
     
     const setMaxText = (e , max , typeElementNext = "") => {
         e.target.value = e.target.value.slice(0 , max)
@@ -254,53 +305,61 @@ const EditFertilizer = ({nameInsert , formulaFertilizer , UseText , ErrReport , 
                     }
                     next.focus()
                 }
-            } else if(e.target.value.length === 0) {
-                let next = e.target.previousElementSibling
-                if(next){
-                    while(next.tagName != typeElementNext){
-                        next = next.previousElementSibling
-                    }
-                    next.focus()
-                }
-            }
+            } 
+            // else if(e.target.value.length === 0) {
+            //     let next = e.target.previousElementSibling
+            //     if(next){
+            //         while(next.tagName != typeElementNext){
+            //             next = next.previousElementSibling
+            //         }
+            //         next.focus()
+            //     }
+            // }
         }
     }
 
+    const ConvertFormula = () => {
+        const formula = `${formulaFertilizer[0].current.value}-${formulaFertilizer[1].current.value}-${formulaFertilizer[2].current.value}`
+        if(formulaFertilizer[0].current.value && formulaFertilizer[1].current.value && formulaFertilizer[2].current.value)
+            CheckEdit(formula , "name_formula")
+        else CheckEdit("" , "name_formula")
+    }
+
     return (
-        <>
-        <div className="row">
-            <label className="field-select">
-                <span>
-                    <span className="important">ชื่อปัจจัยการผลิต/ตรา</span>
-                    { ErrReport ? 
-                        <span className="err-text-overlape">ปุ๋ยซ้ำ</span>
-                        : <></>
-                    }
-                </span>
-                <input ref={nameInsert} onChange={CheckEdit} 
-                    onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[0].current)}
-                    placeholder="เช่น กระต่าย"></input>
-            </label>
+        <div className="body">
+            <div className="row">
+                <label className="field-select">
+                    <span>
+                        <span className="important">ชื่อปัจจัยการผลิต/ตรา</span>
+                        { ErrReport ? 
+                            <span className="err-text-overlape">ปุ๋ยซ้ำ</span>
+                            : <></>
+                        }
+                    </span>
+                    <input ref={nameInsert} onChange={(e)=>CheckEdit(e.target.value , "name")} 
+                        onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[0].current)}
+                        placeholder="เช่น กระต่าย" defaultValue={Data.name}></input>
+                </label>
+            </div>
+            <div className="row">
+                <label className="field-select">
+                    <span className="important">สูตรปุ๋ย</span>
+                    <div className="box-input-number">
+                        <input ref={formulaFertilizer[0]} defaultValue={Data.name_formula.split("-")[0]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[1].current)} onChange={ConvertFormula} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
+                        <span>-</span>
+                        <input ref={formulaFertilizer[1]} defaultValue={Data.name_formula.split("-")[1]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[2].current , formulaFertilizer[0].current)} onChange={ConvertFormula} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
+                        <span>-</span>
+                        <input ref={formulaFertilizer[2]} defaultValue={Data.name_formula.split("-")[2]} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current , formulaFertilizer[1].current)} onChange={ConvertFormula} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
+                    </div>
+                </label>
+            </div> 
+            <div className="row">
+                <label className="field-select">
+                    <span className="important">วิธีการใช้</span>
+                    <input ref={UseText} onChange={(e)=>CheckEdit(e.target.value , "how_use")} placeholder="เช่น หว่านโคนต้น" defaultValue={Data.how_use}></input>
+                </label>
+            </div> 
         </div>
-        <div className="row">
-            <label className="field-select">
-                <span className="important">สูตรปุ๋ย</span>
-                <div className="box-input-number">
-                    <input ref={formulaFertilizer[0]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[1].current)} onChange={CheckEdit} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                    <span>-</span>
-                    <input ref={formulaFertilizer[1]} onKeyDown={(e)=>InputKeyDownNext(e , formulaFertilizer[2].current , formulaFertilizer[0].current)} onChange={CheckEdit} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                    <span>-</span>
-                    <input ref={formulaFertilizer[2]} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current , formulaFertilizer[1].current)} onChange={CheckEdit} placeholder="ตัวเลข" onInput={(e)=>setMaxText(e , 2 , "INPUT")} type="number"></input>
-                </div>
-            </label>
-        </div> 
-        <div className="row">
-            <label className="field-select">
-                <span className="important">วิธีการใช้</span>
-                <input ref={UseText} onChange={CheckEdit} placeholder="เช่น หว่านโคนต้น"></input>
-            </label>
-        </div> 
-        </>
     )
 }
 

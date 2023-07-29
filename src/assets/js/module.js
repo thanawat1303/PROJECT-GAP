@@ -24,7 +24,7 @@ const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
     useEffect(()=>{
         const DateIn = new Date(DATE)
         if(TYPE === "full") setDATE(`${DayWeek[DateIn.getDay()]} ที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ปี พ.ศ. ${DateIn.getFullYear() + 543}`)
-        else if (TYPE === "small") setDATE(`${TEXT ? `${TEXT} ` : ""}${DateIn.getUTCDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
+        else if (TYPE === "small") setDATE(`${TEXT ? `${TEXT} ` : ""}${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
         else setDATE(`วันที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
     })
 

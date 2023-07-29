@@ -109,7 +109,7 @@
                 height: 90%;
             }
     
-            .detail-content[type="wt"] {
+            .detail-content[type="wt"] , .detail-content[type="not"] {
                 height: 60%;
             }
     
@@ -294,10 +294,36 @@
                             }
                         }
                     }
+
+                    .close-account {
+                        margin-top: 15px;
+                        margin-bottom: 5px;
+                        width: 100%;
+
+                        button {
+                            background-color: rgb(208, 80, 80);
+                            border: 0;
+                            outline: 0;
+                            border-radius: 8px;
+                            font-family: Sans-font;
+                            font-size: 18px;
+                            font-weight: 900;
+                            width: 100%;
+                            color: white;
+                            height: 30px;
+                            min-height: 30px;
+                            box-shadow: 0px 2px 2px rgb(99, 11, 11);
+                        }
+
+                        button:active {
+                            padding-top: 3px;
+                            box-shadow: 0px 3px 3px inset rgb(99, 11, 11);
+                        }
+                    }
                 }
             }
     
-            .action-account {
+            .action-box-bt {
                 display: flex;
                 border-radius: 20px 20px 10px 10px;
                 background-color: white;
@@ -372,14 +398,6 @@
             }
 
             .submit-convert {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-                padding: 5px 0px;
-                background-color: white;
-                border-radius: 20px 20px 10px 10px;
-
                 button {
                     background-color: #068863;
                     border: 0;
@@ -388,9 +406,11 @@
                     color: white;
                     font-family: Sans-font;
                     font-weight: 900;
-                    padding: 0PX 15PX;
+                    padding: 0px 15px;
+                    padding-top: 2px;
                     border-radius: 10px;
-                    font-size: 18px;
+                    font-size: 14px !important;
+                    width: auto !important;
                 }
             }
 
@@ -453,6 +473,42 @@
                     button[not=""] {
                         background-color: #43a269c0;
                         color: rgba(255, 255, 255, 0.614);
+                    }
+                }
+            }
+
+            report-dom {
+                border-radius: 8px;
+                overflow: hidden;
+
+                body-report {
+                    text-report {
+                        font-family: Sans-font;
+                        font-size: 18px;
+                        font-weight: 900;
+                        background-color: white;
+                        padding: 0px 8px;
+                        border-radius: 8px;
+                    }
+
+                    status-report {
+                        margin: 8px 0px;
+                    }
+
+                    boxbutton-report {
+                        button {
+                            font-family: Sans-font;
+                            font-size: 18px;
+                            font-weight: 900;
+                            color: white;
+                            background-color: #36907f;
+                            box-shadow: 0px 4px 4px #0d562a;
+                            border-radius: 8px;
+                        }
+
+                        button:active {
+                            box-shadow: 0px 4px 4px inset #0d562a;
+                        }
                     }
                 }
             }

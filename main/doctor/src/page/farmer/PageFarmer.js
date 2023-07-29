@@ -36,6 +36,12 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
                 status : "wt",
                 open : 0
             })
+        } else if(LoadType.split(":")[0] === "not") {
+            setTextStatus(["หน้าหลัก" , "ทะเบียนเกษตรกร" , "บัญชีที่ถูกปิด"])
+            setStatus({
+                status : "not",
+                open : 0
+            })
         }
             
     }
@@ -43,7 +49,7 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
     const changeMenu = (e) => {
         // const typeClick = statusPage.status === "ap" ? "wt" : "ap"
         if(e.target.value !== statusPage.status) {
-            setTextStatus(["หน้าหลัก" , "ทะเบียนเกษตรกร" , (e.target.value === "ap") ? "ตรวจสอบแล้ว" : "รอการตรวจสอบ"])
+            setTextStatus(["หน้าหลัก" , "ทะเบียนเกษตรกร" , (e.target.value === "ap") ? "ตรวจสอบแล้ว" : (e.target.value === "wt") ? "รอการตรวจสอบ" : (e.target.value === "not") ? "บัญชีที่ถูกปิด" : ""])
             setStatus({
                 status : e.target.value,
                 open : 1
@@ -62,6 +68,7 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
                 <select value={statusPage.status} onChange={changeMenu}>
                     <option value={"ap"}>ตรวจสอบแล้ว</option>
                     <option value={"wt"}>ยังไม่ตรวจสอบ</option>
+                    <option value={"not"}>บัญชีที่ถูกปิด</option>
                 </select>
             </div>
             <div className="data-list-content">
@@ -89,7 +96,7 @@ const List = ({ session , socket , status}) => {
     const FetchList = async (limit) => {
         try {
             if(status.open === 1) window.history.pushState({} , "" , `/doctor/farmer/${status.status}`)
-            const list = await clientMo.post('/api/doctor/farmer/list' , {approve:(status.status == "wt") ? 0 : 1 , limit : limit})
+            const list = await clientMo.post('/api/doctor/farmer/list' , {approve:(status.status == "wt") ? 0 : (status.status == "ap") ? 1 : 2 , limit : limit})
             let data = JSON.parse(list)
             setData(data)
             setLoadList(false)
@@ -165,6 +172,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                                 Data.map((val , key)=>{
                                     const base64String = String.fromCharCode(...val.img.data); // แปลง charCode เป็น string
                                     const Ref = refData[countKey]
+                                    const Date_comfirm = val.date_doctor_confirm ? new Date(val.date_doctor_confirm) : ""
                                     countKey++
                                     return (
                                         <section key={key} className="list-some-data-on-page"
@@ -189,7 +197,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                                                     status.status === "ap" ?
                                                     <div className="flex">
                                                         <span>วันที่อนุมัติ</span>
-                                                        <DayJSX DATE={val.date_register} TYPE="small"/>
+                                                        <DayJSX DATE={new Date(Date_comfirm.setHours(Date_comfirm.getHours() + 7))} TYPE="small"/>
                                                     </div>
                                                     :
                                                     <div className="text date">

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
-import { DayJSX, Loading, MapsJSX, PopupDom, TimeJSX } from "../../../../../src/assets/js/module";
+import { DayJSX, Loading, MapsJSX, PopupDom, ReportAction, TimeJSX } from "../../../../../src/assets/js/module";
 import "../../assets/style/page/farmer/ManagePopup.scss"
 
 import SelectConvert from "./SelectConvert";
@@ -36,7 +36,8 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
 
     const RefOnType = status === "ap" ? 
     {
-
+        DoctorPw : useRef(),
+        ButtonRef : useRef()
     } 
     : 
     {
@@ -44,6 +45,13 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
         DoctorPw : useRef(),
         ButtonRef : useRef()
     }
+
+    const [OpenReport , setOpen] = useState(0)
+    const [StatusReport , setStatus] = useState(0)
+    const [TextReport , setText] = useState("")
+    const [ResultAction , setResultAction] = useState("")
+
+    const [StateActionConfirm , setStateActionConfirm] = useState("")
 
     useEffect(()=>{
         RefPop.current.style.opacity = "1"
@@ -64,7 +72,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
     const FetchCountList = async (link_user , id_table) => {
         const Data = (status === "ap") ?
                             await clientMo.post("/api/doctor/farmer/get/count" , {link_user : link_user , auth : 1})
-                            : await clientMo.post("/api/doctor/farmer/get/count" , {id_table : id_table , auth : 0})
+                            : await clientMo.post("/api/doctor/farmer/get/count" , {id_table : id_table , auth : (status === "wt") ? 0 : 2})
         const result = JSON.parse(Data)
         setConvert({
             id_table_convert : "" ,
@@ -79,27 +87,29 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
     }
 
     const FetchData = async (result) => {
-        setLoad(true)
-        const resultData = await clientMo.post("/api/doctor/farmer/get/detail" , {id_table : result.id_table , link_user : result.link_user})
+        if(result) {
+            setLoad(true)
+            const resultData = await clientMo.post("/api/doctor/farmer/get/detail" , {id_table : result.id_table , link_user : result.link_user})
 
-        try {
-            const data = JSON.parse(resultData)
-            if(data.length === 1) {
-                const Detail = data[0]
-                setDetailFarmer(Detail)
-            } else {
-                setDetailFarmer([])
+            try {
+                const data = JSON.parse(resultData)
+                if(data.length === 1) {
+                    const Detail = data[0]
+                    setDetailFarmer(Detail)
+                } else {
+                    setDetailFarmer([])
 
-                // <div className="detail">
-                //         {status === "ap" ? "บัญชีผ่านการตรวจสอบแล้ว" : "ไม่พบบัญชี"}
-                //     </div>
+                    // <div className="detail">
+                    //         {status === "ap" ? "บัญชีผ่านการตรวจสอบแล้ว" : "ไม่พบบัญชี"}
+                    //     </div>
+                }
+            } catch(e) {
+                session()
             }
-        } catch(e) {
-            session()
-        }
-        setDetailDoctor([])
-        setTypeDetail("farmer")
-        setLoad(false)
+            setDetailDoctor([])
+            setTypeDetail("farmer")
+            setLoad(false)
+        } else close()
     }
 
     // convert
@@ -124,19 +134,118 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
             img : ""
         })
     }
+    const ConfirmConvert = async (Detail , type) => {
+        if(CheckEmplyPassword()) {
+            const result = (type === "cancel") ? 
+                                await clientMo.post("/api/doctor/farmer/convert/cancel" , {
+                                    id_table : Detail.id_table,
+                                    password : RefOnType.DoctorPw.current.value
+                                })
+                                :
+                                await clientMo.post("/api/doctor/farmer/convert/comfirm" , {
+                                    id_table : Detail.id_table,
+                                    uid_line : Detail.uid_line,
+                                    id_table_convert : ProfileConvert.id_table_convert,
+                                    password : RefOnType.DoctorPw.current.value
+                                })
 
-    const ConfirmAction = async (Detail , type) => {
-        const context = await clientMo.post('/api/doctor/check')
-        if(context) 
-            setPopCancel(<PopupConfirmAction Ref={RefPopCancel} setPopup={setPopCancel} session={session} 
-                DetailFarmer={Detail} id_table_convert={ProfileConvert.id_table_convert}
-                setReload={setReload} FetchCountList={FetchCountList}
-                FetData={Fecth} CountFetch={countLoad}
-                type={type}/>)
-        else session()
+            if (result === "password") {
+                RefOnType.DoctorPw.current.value = ""
+                RefOnType.DoctorPw.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+                CheckEmplyPassword()
+            } else if(result === "over") {
+
+            } else if (result) {
+                setReload(true)
+                console.log(result)
+                await FetchCountList(result , ProfileConvert.id_table_convert)
+                await Fecth(countLoad)
+            } else session()
+
+            setStateActionConfirm("")
+        }
+    }
+    const CheckEmplyPassword = () => {
+        if(RefOnType.DoctorPw.current.value) {
+            RefOnType.ButtonRef.current.removeAttribute("not")
+            return true
+        }
+        else {
+            RefOnType.ButtonRef.current.setAttribute("not" , "")
+            return false
+        }
     }
     // convert
 
+    // account check
+    const ConfirmAppove = async () => {
+        const check = CheckEmply()
+        if(check) {
+            const id_table_convert = ProfileConvert.id_table_convert
+            const uid_line = DetailFarmer.uid_line
+            
+            setOpen(1)
+            const result = await clientMo.post("/api/doctor/farmer/account/comfirm" , {
+                id_table_convert : id_table_convert,
+                id_table : DetailFarmer.id_table,
+                uid_line : uid_line,
+                password : RefOnType.DoctorPw.current.value,
+                id_farmer : RefOnType.FarmerID.current.value,
+                status_change : status === "wt" ? 0 : 2
+            })
+            setResultAction(result)
+            if(result === "113") {
+                setStatus(1)
+                setText("ยืนยันบัญชี")
+            } else if (result === "password") {
+                setStatus(2)
+                setText("รหัสเจ้าหน้าที่ไม่ถูกต้อง")
+            } else if(result === "over") {
+                setStatus(2)
+                setText("มีบัญชียืนยันอยู่แล้ว")
+            } 
+            // else session()
+        }
+    }
+    const CancelAppove = async () => {
+        RefOnType.DoctorPw.current.removeAttribute("style")
+        if(RefOnType.DoctorPw.current.value) {
+            setOpen(1)
+            const result = await clientMo.post("/api/doctor/farmer/account/cancel" , {
+                id_table : DetailFarmer.id_table,
+                password : RefOnType.DoctorPw.current.value,
+            })
+            console.log(status)
+
+            setResultAction(result)
+            if(result === "113") {
+                setStatus(2)
+                setText("ไม่ยืนยันบัญชี")
+            } else if (result === "password") {
+                setStatus(2)
+                setText("รหัสเจ้าหน้าที่ไม่ถูกต้อง")
+            } 
+            // else session()
+        } else {
+            RefOnType.DoctorPw.current.style.outline = "2px solid red"
+            RefOnType.DoctorPw.current.style.boxShadow = "0px 0px 8px red"
+        }
+    }
+    const AfterReport = () => {
+        if(ResultAction === "113" || ResultAction === "over") {
+            close()
+            setTimeout(async ()=>{
+                await Fecth(countLoad)
+            } , 500)
+        } else if (ResultAction === "password") {
+            setOpen(0)
+            setStatus(0)
+            setText("")
+            RefOnType.DoctorPw.current.value = ""
+        } else window.location.href = '/doctor'
+
+        CheckEmply()
+    }
     const CheckEmply = () => {
         const farmerID = RefOnType.FarmerID.current
         const pw = RefOnType.DoctorPw.current
@@ -150,65 +259,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
             return false
         }
     }
-
-    const ConfirmAppove = async () => {
-        const check = CheckEmply()
-        if(check) {
-            const id_table_convert = ProfileConvert.id_table_convert
-            const uid_line = DetailFarmer.uid_line
-
-            const result = await clientMo.post("/api/doctor/farmer/account/comfirm" , {
-                id_table_convert : id_table_convert,
-                id_table : DetailFarmer.id_table,
-                uid_line : uid_line,
-                password : RefOnType.DoctorPw.current.value,
-                id_farmer : RefOnType.FarmerID.current.value
-            })
-
-            if(result === "113") {
-                close()
-                // RefData.current.style.opacity = "0"
-                // RefData.current.style.visibility = "hidden"
-                setTimeout(async ()=>{
-                    // RefData.current.style.transition = "0s"
-                    // RefData.current.removeAttribute("style")
-                    await Fecth(countLoad)
-                } , 500)
-            } else if (result === "password") {
-                RefOnType.DoctorPw.current.setAttribute("placeholder" , "รหัสผ่านไม่ถูกต้อง")
-                RefOnType.DoctorPw.current.value = ""
-            } else session()
-
-            CheckEmply()
-        }
-    }
-
-    const CancelAppove = async () => {
-        RefOnType.DoctorPw.current.removeAttribute("style")
-        if(RefOnType.DoctorPw.current.value) {
-            const result = await clientMo.post("/api/doctor/farmer/account/cancel" , {
-                id_table : DetailFarmer.id_table,
-                password : RefOnType.DoctorPw.current.value,
-            })
-
-            if(result === "113") {
-                close()
-                // RefData.current.style.opacity = "0"
-                // RefData.current.style.visibility = "hidden"
-                setTimeout(async ()=>{
-                    // RefData.current.style.transition = "0s"
-                    // RefData.current.removeAttribute("style")
-                    await Fecth(countLoad)
-                } , 500)
-            } else if (result === "password") {
-                RefOnType.DoctorPw.current.setAttribute("placeholder" , "รหัสผ่านไม่ถูกต้อง")
-                RefOnType.DoctorPw.current.value = ""
-            } else session()
-        } else {
-            RefOnType.DoctorPw.current.style.outline = "2px solid red"
-            RefOnType.DoctorPw.current.style.boxShadow = "0px 0px 8px red"
-        }
-    }
+    // account check
 
     // appove complete
     const SelectProfile = (e , profile , onClickTap) => {
@@ -218,6 +269,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
             })
             e.target.setAttribute("select" , "")
         }
+        setStateActionConfirm("")
         FetchData(profile)
     }
 
@@ -241,15 +293,29 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
         setLoad(false)
     }
 
+
+    //close account
+    const CloseAccount = async (Detail) => {
+        const context = await clientMo.post('/api/doctor/check')
+        if(context) 
+            setPopCancel(<PopupConfirmAction Ref={RefPopCancel} setPopup={setPopCancel} session={session} 
+                DetailFarmer={Detail} id_table_convert={ProfileConvert.id_table_convert}
+                setReload={setReload} FetchCountList={FetchCountList}
+                FetData={Fecth} CountFetch={countLoad}/>)
+        else session()
+    }
+
     return(
         <div className="popup-manage">
             <div className="head-popup">
                 ข้อมูลเกษตรกร
-                <div className="close" onClick={close}>
-                    <svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M35.8125 8.98335C28.5 1.83335 16.5 1.83335 9.1875 8.98335C1.875 16.1334 1.875 27.8667 9.1875 35.0167C16.5 42.1667 28.3125 42.1667 35.625 35.0167C42.9375 27.8667 43.125 16.1334 35.8125 8.98335ZM27.75 29.7L22.5 24.5667L17.25 29.7L14.625 27.1333L19.875 22L14.625 16.8667L17.25 14.3L22.5 19.4333L27.75 14.3L30.375 16.8667L25.125 22L30.375 27.1333L27.75 29.7Z" fill="#FF0000"/>
-                    </svg>
-                </div>
+                { !OpenReport ?
+                    <div className="close" onClick={close}>
+                        <svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M35.8125 8.98335C28.5 1.83335 16.5 1.83335 9.1875 8.98335C1.875 16.1334 1.875 27.8667 9.1875 35.0167C16.5 42.1667 28.3125 42.1667 35.625 35.0167C42.9375 27.8667 43.125 16.1334 35.8125 8.98335ZM27.75 29.7L22.5 24.5667L17.25 29.7L14.625 27.1333L19.875 22L14.625 16.8667L17.25 14.3L22.5 19.4333L27.75 14.3L30.375 16.8667L25.125 22L30.375 27.1333L27.75 29.7Z" fill="#FF0000"/>
+                        </svg>
+                    </div> : <></>
+                }
             </div>
             {
                 ReLoadAll ?
@@ -312,7 +378,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                     <div className="detail-account-data">
                         { TypeDetail === "farmer" ?
                             <></> :
-                            <div className="appove-account-head">ผู้อนุมัติ</div>
+                            <div className="appove-account-head">ผู้ยืนยัน</div>
                         }
                         <div className="img">
                             <img src={TypeDetail === "farmer" ? String.fromCharCode(...DetailFarmer.img.data) : DetailDoctor.img_doctor.data[0] ? String.fromCharCode(...DetailDoctor.img_doctor.data) : "/doctor-svgrepo-com.svg"}></img>
@@ -350,93 +416,122 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                         }
                         {
                             TypeDetail === "farmer" ? 
-                                resultDate.length === 1 ?
-                                    <div className="convert-user">
-                                        <div className="action-bt">
-                                            <span>เชื่อมต่อบัญชี</span>
-                                            <div className="bt-convert">
-                                                { LoadConvert ? 
-                                                    <Loading size={25} border={4} color="#068863" animetion={true}/>
-                                                    : <></>
-                                                }
-                                                <button onClick={()=>OpenListConvert(DetailFarmer.id_table)}>ค้นหาบัญชี</button>
+                                <>
+                                {
+                                    resultDate.length === 1 ?
+                                        <div className="convert-user">
+                                            <div className="action-bt">
+                                                <span>เชื่อมต่อบัญชี</span>
+                                                <div className="bt-convert">
+                                                    { LoadConvert ? 
+                                                        <Loading size={25} border={4} color="#068863" animetion={true}/>
+                                                        : <></>
+                                                    }
+                                                    <button onClick={()=>OpenListConvert(DetailFarmer.id_table)}>ค้นหาบัญชี</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="profile-preview">
                                             {
                                                 ProfileConvert.id_table_convert ?
-                                                    <>
-                                                    <div className="image">
-                                                        <img src={ProfileConvert.img}></img>
-                                                    </div> 
-                                                    <div className="detail">
-                                                        <span>{ProfileConvert.id_farmer}</span>
-                                                        <div>{ProfileConvert.fullname}</div>
+                                                    <div className="profile-preview">
+                                                        <div className="image">
+                                                            <img src={ProfileConvert.img}></img>
+                                                        </div> 
+                                                        <div className="detail">
+                                                            <span>{ProfileConvert.id_farmer}</span>
+                                                            <div>{ProfileConvert.fullname}</div>
+                                                        </div>
+                                                        <div className="bt-cancel" onClick={DeleteConvert}>
+                                                            <svg version="1.1"
+                                                                viewBox="0 0 60.167 60.167" >
+                                                                <path d="M54.5,11.667H39.88V3.91c0-2.156-1.754-3.91-3.91-3.91H24.196c-2.156,0-3.91,1.754-3.91,3.91v7.756H5.667
+                                                                c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.042v40.5c0,3.309,2.691,6,6,6h32.75c3.309,0,6-2.691,6-6v-40.5H54.5c0.552,0,1-0.448,1-1
+                                                                S55.052,11.667,54.5,11.667z M22.286,3.91c0-1.053,0.857-1.91,1.91-1.91H35.97c1.053,0,1.91,0.857,1.91,1.91v7.756H22.286V3.91z
+                                                                M50.458,54.167c0,2.206-1.794,4-4,4h-32.75c-2.206,0-4-1.794-4-4v-40.5h40.75V54.167z M38.255,46.153V22.847c0-0.552,0.448-1,1-1
+                                                                s1,0.448,1,1v23.306c0,0.552-0.448,1-1,1S38.255,46.706,38.255,46.153z M29.083,46.153V22.847c0-0.552,0.448-1,1-1s1,0.448,1,1
+                                                                v23.306c0,0.552-0.448,1-1,1S29.083,46.706,29.083,46.153z M19.911,46.153V22.847c0-0.552,0.448-1,1-1s1,0.448,1,1v23.306
+                                                                c0,0.552-0.448,1-1,1S19.911,46.706,19.911,46.153z"/>
+                                                            </svg>
+                                                        </div>
                                                     </div>
-                                                    <div className="bt-cancel" onClick={DeleteConvert}>
-                                                        <svg version="1.1"
-                                                            viewBox="0 0 60.167 60.167" >
-                                                            <path d="M54.5,11.667H39.88V3.91c0-2.156-1.754-3.91-3.91-3.91H24.196c-2.156,0-3.91,1.754-3.91,3.91v7.756H5.667
-                                                            c-0.552,0-1,0.448-1,1s0.448,1,1,1h2.042v40.5c0,3.309,2.691,6,6,6h32.75c3.309,0,6-2.691,6-6v-40.5H54.5c0.552,0,1-0.448,1-1
-                                                            S55.052,11.667,54.5,11.667z M22.286,3.91c0-1.053,0.857-1.91,1.91-1.91H35.97c1.053,0,1.91,0.857,1.91,1.91v7.756H22.286V3.91z
-                                                            M50.458,54.167c0,2.206-1.794,4-4,4h-32.75c-2.206,0-4-1.794-4-4v-40.5h40.75V54.167z M38.255,46.153V22.847c0-0.552,0.448-1,1-1
-                                                            s1,0.448,1,1v23.306c0,0.552-0.448,1-1,1S38.255,46.706,38.255,46.153z M29.083,46.153V22.847c0-0.552,0.448-1,1-1s1,0.448,1,1
-                                                            v23.306c0,0.552-0.448,1-1,1S29.083,46.706,29.083,46.153z M19.911,46.153V22.847c0-0.552,0.448-1,1-1s1,0.448,1,1v23.306
-                                                            c0,0.552-0.448,1-1,1S19.911,46.706,19.911,46.153z"/>
-                                                        </svg>
-                                                    </div>
-                                                    </>
                                                     : <></>
                                             }
-                                        </div>
-                                    </div> : 
-                                    <div className="convert-user">
-                                        <div className="action-bt" >
-                                            <div className="bt-convert" style={{
-                                                width : "100%",
-                                                justifyContent : "center"
-                                            }}>
-                                                { LoadConvert ? 
-                                                    <Loading size={25} border={4} color="#068863" animetion={true}/>
-                                                    : <></>
-                                                }
-                                                <button style={{
-                                                    marginLeft : "0px"
-                                                }} onClick={()=>ConfirmAction(DetailFarmer , "cancel")}>ยกเลิกเชื่อมบัญชี</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        </div> : 
+                                        !StateActionConfirm ? 
+                                            <div className="convert-user">
+                                                <div className="action-bt" >
+                                                    <div className="bt-convert" style={{
+                                                        width : "100%",
+                                                        justifyContent : "center"
+                                                    }}>
+                                                        { LoadConvert ? 
+                                                            <Loading size={25} border={4} color="#068863" animetion={true}/>
+                                                            : <></>
+                                                        }
+                                                        <button style={{
+                                                            marginLeft : "0px"
+                                                        }} onClick={()=>setStateActionConfirm("cancel-cvt")}>ยกเลิกเชื่อมบัญชี</button>   
+                                                    </div>
+                                                </div>
+                                            </div> : <></>
+                                }
+                                {
+                                    status === "ap" ? 
+                                        <div className="close-account">
+                                            <button onClick={()=>CloseAccount(DetailFarmer)}>ปิดบัญชี</button>
+                                        </div> : <></>
+                                }
+                                </>
                                 : <></>
                         }
                     </div>
                 }
             </div>
             {
-                status === "wt" ? 
-                    <div className="action-account">
+                status === "wt" || status === "not" ? 
+                    <div className="action-box-bt">
                         <div className="password">
                             <input  onChange={CheckEmply} type="password" ref={RefOnType.DoctorPw} placeholder="รหัสผ่านเจ้าหน้าที่"></input>
                         </div>
                         <div className="bt">
-                            <button className="cancel" onClick={CancelAppove}>ไม่อนุมัติ</button>
-                            <button className="submit" onClick={ConfirmAppove} ref={RefOnType.ButtonRef} not="">อนุมัติ</button>
+                            {
+                                status === "wt" ?
+                                    <button className="cancel" onClick={CancelAppove}>ไม่ยืนยัน</button> : <></>
+                            }
+                            <button className="submit" onClick={ConfirmAppove} ref={RefOnType.ButtonRef} not="">ยืนยัน</button>
                         </div>
                     </div> : 
-                ProfileConvert.id_table_convert ? 
-                    <div className="submit-convert">
+                ProfileConvert.id_table_convert && status === "ap" && resultDate.length === 1 ? 
+                    <div className="action-box-bt submit-convert">
+                        <div className="password">
+                            <input  onChange={CheckEmplyPassword} type="password" ref={RefOnType.DoctorPw} placeholder="รหัสผ่านเจ้าหน้าที่"></input>
+                        </div>
                         <div className="bt">
-                            <button onClick={()=>ConfirmAction(DetailFarmer , "convert")}>ยืนยัน</button>
+                            <button onClick={()=>ConfirmConvert(DetailFarmer , "convert")} className="submit" ref={RefOnType.ButtonRef} not="">เชื่อมต่อบัญชี</button>
+                        </div>
+                    </div> : 
+                resultDate.length > 1 && status === "ap" && StateActionConfirm === "cancel-cvt" ?
+                    <div className="action-box-bt submit-convert">
+                        <div className="password">
+                            <input  onChange={CheckEmplyPassword} type="password" ref={RefOnType.DoctorPw} placeholder="รหัสผ่านเจ้าหน้าที่"></input>
+                        </div>
+                        <div className="bt">
+                            <button className="cancel" onClick={()=>setStateActionConfirm("")}>ไม่ยกเลิก</button>
+                            <button onClick={()=>ConfirmConvert(DetailFarmer , "cancel")} className="submit" ref={RefOnType.ButtonRef} not="">ยกเลิกเชื่อมต่อ</button>
                         </div>
                     </div> : <></>
             }
             <PopupDom Ref={PopRefConvert} Body={PopupConvert} zIndex={2}/>
             <PopupDom Ref={RefPopCancel} Body={PopupCancel} zIndex={2}/>
+            <ReportAction Open={OpenReport} setOpen={setOpen}
+                            Status={StatusReport} setStatus={setStatus}
+                            Text={TextReport} setText={setText}
+                            sizeLoad={70} BorderLoad={10} color={"rgb(25 102 80)"}
+                            action={()=>AfterReport()}/>
         </div>
     )
 }
-
 const PopupConfirmAction = ({Ref , setPopup , session , DetailFarmer , id_table_convert , 
-    setReload , FetchCountList , FetData , CountFetch , type}) => {
+    setReload , FetchCountList , FetData , CountFetch}) => {
 
     const BtConfirm = useRef()
     const Password = useRef()
@@ -448,28 +543,34 @@ const PopupConfirmAction = ({Ref , setPopup , session , DetailFarmer , id_table_
 
     const Confirm = async () => {
         if(CheckEmply()) {
-            const result = (type === "cancel") ? 
-                                await clientMo.post("/api/doctor/farmer/convert/cancel" , {
-                                    id_table : DetailFarmer.id_table,
-                                    password : Password.current.value
-                                })
-                                :
-                                await clientMo.post("/api/doctor/farmer/convert/comfirm" , {
-                                    id_table : DetailFarmer.id_table,
-                                    uid_line : DetailFarmer.uid_line,
-                                    id_table_convert : id_table_convert,
-                                    password : Password.current.value
-                                })
+            const Data = {
+                id_table : DetailFarmer.id_table,
+                password : Password.current.value
+            }
+            const resultCloseConvert = await clientMo.post("/api/doctor/farmer/convert/cancel" , Data)
+            const resultCloseAccount = await clientMo.post("/api/doctor/farmer/account/cancel" , Data)
 
-            if (result === "password") {
+            if (resultCloseAccount === "password" || resultCloseConvert === "password") {
                 Password.current.value = ""
                 Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
-            } else if (result) {
+            } else if (resultCloseConvert && resultCloseAccount) {
                 setReload(true)
                 close()
-                await FetchCountList(result , id_table_convert)
+                await FetchCountList(resultCloseConvert , id_table_convert)
                 await FetData(CountFetch)
             } else session()
+            // const result = (type === "cancel") ? 
+            //                     await clientMo.post("/api/doctor/farmer/convert/cancel" , {
+            //                         id_table : DetailFarmer.id_table,
+            //                         password : Password.current.value
+            //                     })
+            //                     :
+            //                     await clientMo.post("/api/doctor/farmer/convert/comfirm" , {
+            //                         id_table : DetailFarmer.id_table,
+            //                         uid_line : DetailFarmer.uid_line,
+            //                         id_table_convert : id_table_convert,
+            //                         password : Password.current.value
+            //                     })
         }
     }
 
@@ -497,7 +598,7 @@ const PopupConfirmAction = ({Ref , setPopup , session , DetailFarmer , id_table_
 
     return (
         <div className="content-confirm-account">
-            <span>ยืนยันการยกเลิก</span>
+            <span>ยืนยันการปิดบัญชี</span>
             <input onChange={CheckEmply} ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่" type="password"></input>
             <div className="bt-content">
                 <button style={{backgroundColor : "red"}} onClick={close}>ยกเลิก</button>
@@ -506,5 +607,79 @@ const PopupConfirmAction = ({Ref , setPopup , session , DetailFarmer , id_table_
         </div>
     )
 }
+
+// const PopupConfirmAction = ({Ref , setPopup , session , DetailFarmer , id_table_convert , 
+//     setReload , FetchCountList , FetData , CountFetch , type}) => {
+
+//     const BtConfirm = useRef()
+//     const Password = useRef()
+    
+//     useEffect(()=>{
+//         Ref.current.style.opacity = "1"
+//         Ref.current.style.visibility = "visible"
+//     } , [])
+
+//     const Confirm = async () => {
+//         if(CheckEmply()) {
+//             const result = (type === "cancel") ? 
+//                                 await clientMo.post("/api/doctor/farmer/convert/cancel" , {
+//                                     id_table : DetailFarmer.id_table,
+//                                     password : Password.current.value
+//                                 })
+//                                 :
+//                                 await clientMo.post("/api/doctor/farmer/convert/comfirm" , {
+//                                     id_table : DetailFarmer.id_table,
+//                                     uid_line : DetailFarmer.uid_line,
+//                                     id_table_convert : id_table_convert,
+//                                     password : Password.current.value
+//                                 })
+
+//             if (result === "password") {
+//                 Password.current.value = ""
+//                 Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+//             } else if(result === "over") {
+
+//             } else if (result) {
+//                 setReload(true)
+//                 close()
+//                 await FetchCountList(result , id_table_convert)
+//                 await FetData(CountFetch)
+//             } else session()
+//         }
+//     }
+
+//     const close = () => {
+//         Ref.current.style.opacity = "0"
+//         Ref.current.style.visibility = "hidden"
+
+//         setTimeout(()=>{
+//             setPopup(<></>)
+//         })
+//     }
+
+//     const CheckEmply = () => {
+//         const pw = Password.current
+
+//         if(pw.value) {
+//             BtConfirm.current.removeAttribute("not")
+//             return true
+//         }
+//         else {
+//             BtConfirm.current.setAttribute("not" , "")
+//             return false
+//         }
+//     }
+
+//     return (
+//         <div className="content-confirm-account">
+//             <span>ยืนยันการยกเลิก</span>
+//             <input onChange={CheckEmply} ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่" type="password"></input>
+//             <div className="bt-content">
+//                 <button style={{backgroundColor : "red"}} onClick={close}>ยกเลิก</button>
+//                 <button ref={BtConfirm} not="" onClick={Confirm}>ยืนยัน</button>
+//             </div>
+//         </div>
+//     )
+// }
 
 export default ManagePopup

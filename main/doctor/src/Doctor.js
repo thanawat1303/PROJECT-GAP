@@ -62,6 +62,9 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
                     else if(path[2] === "wt") {
                         setBody(<PageFarmer setMain={setMain} socket={socket} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                     }
+                    else if(path[2] === "not") {
+                        setBody(<PageFarmer setMain={setMain} socket={socket} session={sessionoff} LoadType={`not:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    }
                 } else if(path[1].indexOf("export") >= 0) {
                     setBody(<PageExport setMain={setMain} 
                                 socket={socket} setBodyDoctor={setBody} session={sessionoff}

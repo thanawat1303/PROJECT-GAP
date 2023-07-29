@@ -277,7 +277,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
-                const queryType = req.body.auth ?
+                const queryType = req.body.auth === 1 ?
                                     `
                                     SELECT id_table , link_user
                                     FROM acc_farmer
@@ -287,7 +287,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     `
                                     SELECT id_table , link_user
                                     FROM acc_farmer
-                                    WHERE id_table = "${req.body.id_table}" and register_auth = 0 and station = "${result['data']['station_doctor']}"
+                                    WHERE id_table = "${req.body.id_table}" and register_auth = ${req.body.auth === 0 ? 0 : 2} and station = "${result['data']['station_doctor']}"
                                     ORDER BY date_register DESC
                                     `
 
@@ -396,17 +396,32 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
-                let queryType = (!req.body.approve) ?
+                const Limit = isNaN(parseInt(req.body.limit)) ? 0 : req.body.limit;
+                let queryType = req.body.approve === 0 ?
                     `
-                    SELECT id_table , img , date_register , fullname
-                    FROM acc_farmer 
-                    WHERE 
-                        station = "${result['data']['station_doctor']}" and 
-                        register_auth = 0
-                    ORDER BY date_register ASC
-                    LIMIT ${req.body.limit};
-                    `
-                    : 
+                    SELECT filterFarmer.*
+                    FROM acc_farmer , 
+                    (
+                        SELECT id_table , img , date_register , fullname , 
+                        (
+                            SELECT EXISTS (
+                                SELECT id_table 
+                                FROM acc_farmer as farmer
+                                WHERE farmer.uid_line = acc_farmer.uid_line and 
+                                        station = "${result['data']['station_doctor']}" and 
+                                        register_auth = 1
+                            )
+                        ) as CheckOver
+                        FROM acc_farmer 
+                        WHERE 
+                            station = "${result['data']['station_doctor']}" and 
+                            register_auth = 0
+                    ) as filterFarmer
+                    WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
+                    ORDER BY filterFarmer.date_register ASC
+                    LIMIT ${Limit};
+                    `: 
+                    req.body.approve === 1 ?
                     `
                     SELECT acc_farmer.id_table , acc_farmer.img , acc_farmer.fullname , acc_farmer.link_user , acc_farmer.date_register
                             , farmer_main.Count , acc_farmer.date_doctor_confirm ,
@@ -424,7 +439,30 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     WHERE acc_farmer.link_user = farmer_main.link_user 
                             and acc_farmer.date_register = farmer_main.DateLast
                     ORDER BY date_register DESC
-                    LIMIT ${req.body.limit};
+                    LIMIT ${Limit};
+                    ` :
+                    `
+                    SELECT filterFarmer.*
+                    FROM acc_farmer , 
+                    (
+                        SELECT id_table , img , date_register , fullname , 
+                        (
+                            SELECT EXISTS (
+                                SELECT id_table 
+                                FROM acc_farmer as farmer
+                                WHERE farmer.uid_line = acc_farmer.uid_line and 
+                                        station = "${result['data']['station_doctor']}" and 
+                                        register_auth = 1
+                            )
+                        ) as CheckOver
+                        FROM acc_farmer 
+                        WHERE 
+                            station = "${result['data']['station_doctor']}" and 
+                            register_auth = 2
+                    ) as filterFarmer
+                    WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
+                    ORDER BY filterFarmer.date_register ASC
+                    LIMIT ${Limit};
                     `
                 con.query(queryType, (err , result)=>{
                     if (err){
@@ -435,35 +473,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     con.end()
                     res.send(result)
                 })
-                // let queryType = (req.body['type'] === 'list') ? 
-                //                     `
-                //                     SELECT acc_farmer.id_farmer , acc_farmer.fullname , acc_farmer.img FROM acc_farmer , 
-                //                         (
-                //                             SELECT MAX(id_table) AS id_table , id_farmer , MAX(date_register) AS date_register
-                //                             FROM acc_farmer 
-                //                             WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 
-                //                             GROUP BY id_farmer 
-                //                             ORDER BY date_register
-                //                         ) AS MaxRowDate
-                //                     WHERE acc_farmer.id_table = MaxRowDate.id_table LIMIT 30;
-                //                     ` 
-                //                     :
-                //                 (req.body['type'] === 'push') ? 
-                //                     `
-                //                     SELECT acc_farmer.id_table , acc_farmer.fullname , acc_farmer.img , acc_farmer.date_register , LineID.countID
-                //                     FROM acc_farmer , (
-                //                         SELECT MAX(date_register) as DateLast , uid_line , MAX(id_table) as id_table , COUNT(uid_line) as countID
-                //                         FROM acc_farmer 
-                //                         WHERE station = "${result['data']['station_doctor']}" and register_auth = 0 
-                //                         GROUP BY uid_line
-                //                     ) AS LineID
-                //                     WHERE acc_farmer.id_table=LineID.id_table and acc_farmer.date_register=LineID.DateLast
-                //                     ORDER BY acc_farmer.date_register 
-                //                     DESC LIMIT 30;
-                //                     ` 
-                //                     : 
-                //                 (req.body['type'] === 'profile') ? 
-                //                     `SELECT id_table , date_register FROM acc_farmer WHERE station = "${result['data']['station_doctor']}" and register_auth = 1 and id_farmer=${req.body['farmer']} ORDER BY date_register DESC;` : ""
             }
         }).catch((err)=>{
             con.end()
@@ -487,103 +496,130 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result = await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                const convert= await new Promise((resole , reject)=> {
+                const OverAccount = await new Promise((resole , reject)=>{
                     con.query(
                         `
-                        SELECT link_user , uid_line
-                        FROM acc_farmer
-                        WHERE id_table = ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
-                        ` , [ req.body.id_table_convert ]
-                        , (err , result)=>{
-                        if (err){
-                            dbpacket.dbErrorReturn(con , err , res)
-                            return 0
-                        };
-    
-                        resole(result)
-                    })
+                        SELECT (
+                            SELECT EXISTS (
+                                SELECT id_table
+                                FROM acc_farmer ,
+                                (
+                                    SELECT uid_line 
+                                    FROM acc_farmer
+                                    WHERE id_table = ?
+                                ) as getUser
+                                WHERE acc_farmer.uid_line = getUser.uid_line and register_auth = 1
+                            )
+                        ) as checkOver
+                        ` , [ req.body.id_table ] , (err , check)=>{
+                            resole(parseInt(check[0].checkOver))
+                        }
+                    )
                 })
 
-                let Link_user = ""
-                if(convert[0]){
-                    if(convert[0].link_user.indexOf("cvpf-") >= 0) Link_user = convert[0].link_user
-                    else Link_user = `cvpf-${new Date().getTime()}${convert[0].link_user.slice(0 , 3)}`
-                    
-                    if(convert[0].link_user != Link_user) {
-                        await new Promise((resole , reject)=> {
-                            con.query(
-                                `
-                                UPDATE acc_farmer 
-                                SET link_user = ?
-                                WHERE register_auth = 1 and id_table = ? and station = "${result['data']['station_doctor']}"
-                                `,[ Link_user , req.body.id_table_convert ],
-                                (err, result )=>{
-                                    if (err){
-                                        dbpacket.dbErrorReturn(con , err , res)
-                                        return 0
-                                    };
+                if(!OverAccount) {
+                    const convert= await new Promise((resole , reject)=> {
+                        con.query(
+                            `
+                            SELECT link_user , uid_line
+                            FROM acc_farmer
+                            WHERE id_table = ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
+                            ` , [ req.body.id_table_convert ]
+                            , (err , result)=>{
+                            if (err){
+                                dbpacket.dbErrorReturn(con , err , res)
+                                return 0
+                            };
         
-                                    con.query(
-                                        `
-                                        UPDATE housefarm 
-                                        SET link_user = ?
-                                        WHERE uid_line = ?
-                                        ` , [ Link_user , convert[0].uid_line ] ,
-                                        (err, result ) => {
-                                            if (err){
-                                                dbpacket.dbErrorReturn(con , err , res)
-                                                return 0
-                                            };
-                                            
-                                            resole(1)
-                                        }
-                                    )
-                                }
-                            )
+                            resole(result)
                         })
-                    }
-                }
-
-                con.query(
-                    `
-                    UPDATE acc_farmer 
-                    SET 
-                        register_auth = 1 , 
-                        id_doctor = ? , 
-                        date_doctor_confirm = ? ,
-                        id_farmer = ?
-                        ${Link_user ? `, link_user = "${Link_user}"` : ""}
-                    WHERE register_auth = 0 and id_table = ? and station = "${result['data']['station_doctor']}"
-                    `,[ result['data']['id_table_doctor'] , new Date() , req.body.id_farmer , req.body.id_table ],
-                    (err, result )=>{
-                        if (err){
-                            dbpacket.dbErrorReturn(con , err , res)
-                            return 0
-                        };
-
-                        if(Link_user) {
-                            con.query(
-                                `
-                                UPDATE housefarm 
-                                SET link_user = ?
-                                WHERE uid_line = ?
-                                ` , [ Link_user , req.body.uid_line ] ,
-                                (err, result ) => {
-                                    if (err){
-                                        dbpacket.dbErrorReturn(con , err , res)
-                                        return 0
-                                    };
-
-                                    con.end()
-                                }
-                            )
-                        } else {
-                            con.end()
+                    })
+    
+                    let Link_user = ""
+                    if(convert[0]){
+                        if(convert[0].link_user.indexOf("cvpf-") >= 0) Link_user = convert[0].link_user
+                        else Link_user = `cvpf-${new Date().getTime()}${convert[0].link_user.slice(0 , 3)}`
+                        
+                        if(convert[0].link_user != Link_user) {
+                            await new Promise((resole , reject)=> {
+                                con.query(
+                                    `
+                                    UPDATE acc_farmer 
+                                    SET link_user = ?
+                                    WHERE register_auth = 1 and id_table = ? and station = "${result['data']['station_doctor']}"
+                                    `,[ Link_user , req.body.id_table_convert ],
+                                    (err, result )=>{
+                                        if (err){
+                                            dbpacket.dbErrorReturn(con , err , res)
+                                            return 0
+                                        };
+            
+                                        con.query(
+                                            `
+                                            UPDATE housefarm 
+                                            SET link_user = ?
+                                            WHERE uid_line = ?
+                                            ` , [ Link_user , convert[0].uid_line ] ,
+                                            (err, result ) => {
+                                                if (err){
+                                                    dbpacket.dbErrorReturn(con , err , res)
+                                                    return 0
+                                                };
+                                                
+                                                resole(1)
+                                            }
+                                        )
+                                    }
+                                )
+                            })
                         }
-
-                        res.send("113")
                     }
-                )
+    
+                    const statusChange = req.body.status_change === 0 ? 0 : 2;
+                    con.query(
+                        `
+                        UPDATE acc_farmer 
+                        SET 
+                            register_auth = 1 , 
+                            id_doctor = ? , 
+                            date_doctor_confirm = ? ,
+                            id_farmer = ?
+                            ${Link_user ? `, link_user = "${Link_user}"` : ""}
+                        WHERE register_auth = ? and id_table = ? and station = "${result['data']['station_doctor']}"
+                        `,[ result['data']['id_table_doctor'] , new Date() , req.body.id_farmer , statusChange , req.body.id_table ],
+                        (err, result )=>{
+                            if (err){
+                                dbpacket.dbErrorReturn(con , err , res)
+                                return 0
+                            };
+    
+                            if(Link_user) {
+                                con.query(
+                                    `
+                                    UPDATE housefarm 
+                                    SET link_user = ?
+                                    WHERE uid_line = ?
+                                    ` , [ Link_user , req.body.uid_line ] ,
+                                    (err, result ) => {
+                                        if (err){
+                                            dbpacket.dbErrorReturn(con , err , res)
+                                            return 0
+                                        };
+    
+                                        con.end()
+                                    }
+                                )
+                            } else {
+                                con.end()
+                            }
+    
+                            res.send("113")
+                        }
+                    )
+                } else {
+                    con.end()
+                    res.send("over")
+                }
             }
         } catch (err ) {
             con.end()
@@ -614,7 +650,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         register_auth = 2 , 
                         date_doctor_confirm = ? ,
                         id_doctor = ?
-                    WHERE id_table = ? and register_auth = 0
+                    WHERE id_table = ? and (register_auth = 0 || register_auth = 1)
                     ` , [new Date() , result['data']['id_table_doctor'] , req.body.id_table] , 
                     (err, result ) => {
                         if (err){

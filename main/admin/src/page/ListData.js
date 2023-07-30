@@ -1,36 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-import { MapsJSX, ReportAction } from "../../../../src/assets/js/module";
+import { LoadOtherOffset, MapsJSX, ReportAction } from "../../../../src/assets/js/module";
 
 import ShowBecause from "./doctor/ShowBecause";
 
 import ManageDoctorPage from "./doctor/ManagePage";
 import ManageDataPage from "./data/ManagePage";
 
-const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
-    const [Body , setBody] = useState(<></>)
-    const [List , setList] = useState(<></>)
+const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , setStateOnPage , modify}) => {
+    // const [Body , setBody] = useState(<></>)
+    // const [List , setList] = useState(<></>)
+
+    const [DataFetch , setDataFetch] = useState([])
     const [Because , setBecause] = useState(<></>)
     // const [ShBecause , setShBecause] = useState(<></>)
 
-    const ListRef = useRef()
+    const [ListCount , setListCount] = useState(0)
+    const [RowStart , setRowStart] = useState(0)
     const RefBe = useRef()
     // const ShowBecause = useRef()
 
     useEffect(()=>{
         if(status.changePath) window.history.pushState({} , "" , `/admin/${HrefPage.get().split("?")[0]}?${status.status}`)
 
-        setList(<></>)
-        LoadPageData()
         removePopup()
+        fetchDataList(0 , 5)
 
-        window.removeEventListener("resize" , sizeScreen)
-        window.addEventListener("resize" , sizeScreen)
-
-        return() => {
-            window.removeEventListener("resize" , sizeScreen)
-        }
     } , [status])
 
     const removePopup = () => {
@@ -42,17 +38,126 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
         }
     }
 
+    const fetchDataList = async (StartRow , Limit) => {
+        const ObjectData = 
+                HrefPage.get().split("?")[0] === "list" ? await clientMo.post("/api/admin/doctor/list" , {
+                    typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1) , 
+                    limit : Limit,
+                    startRow : StartRow
+                }) :
+                HrefPage.get().split("?")[0] === "data" ? await clientMo.post("/api/admin/data/list" , {
+                    type : status.status,
+                    limit : Limit,
+                    startRow : StartRow
+                }) : null
+
+        if(ObjectData) {
+            const List = JSON.parse(ObjectData)
+            if(StartRow != 0) {
+                setDataFetch([...DataFetch , ...List])
+                setRowStart([...DataFetch , ...List].length)
+            } else
+                setDataFetch(List)
+            
+            modify(70 , 30 , 
+                ["หน้าแรก" , 
+                    (HrefPage.get().split("?")[0] === "list") ? "บัญชีเจ้าหน้าที่ส่งเสริม" : 
+                    (HrefPage.get().split("?")[0] === "data") ? "ข้อมูลเพิ่มเติม" : "" 
+                    ,
+                    (HrefPage.get().indexOf("delete") >= 0) ? "บัญชีที่ถูกลบ" : 
+                    (HrefPage.get().indexOf("plant") >= 0) ? "ชนิดพืช" :
+                    (HrefPage.get().indexOf("station") >= 0) ? "ศูนย์ส่งเสริม" : ""
+                ])
+            setStateOnPage({status : status.status})
+            return List
+        } else {
+            session()
+            return 0
+        }
+    }
+
+    return(
+        <section className="body-list-manage">
+            {
+                status.status === "default" || status.status === "plant" || status.status === "station" ? 
+                <InsertPage PageAddRef={PageAddRef} ReloadAccount={()=>fetchDataList(0 , DataFetch.length)} type={status.status}/> : <></>
+            }
+            <div className="List-data" count={ListCount} style={{
+                '--count-list' : `${ListCount}`
+            }}>
+                { DataFetch.length != 0 ?
+                    <ManageList Data={DataFetch} setBecause={setBecause} ListCount={ListCount} setListCount={setListCount} 
+                                    TabOn={TabOn} HrefPage={HrefPage} status={status} 
+                                    auth={auth} session={session} RefBe={RefBe} Fetch={()=>fetchDataList(0 , DataFetch.length)}/>
+                    : <></>
+                }
+            </div>
+            <div className="load-other" style={{
+                padding : "5px 0px"
+            }}>
+                <LoadOtherOffset Fetch={fetchDataList} Data={DataFetch} setRow={setRowStart} Limit={5} style={{
+                    backgroundColor : "#22C7A9" 
+                }}/>
+            </div>
+            <div ref={RefBe} className="page-because-popup">
+                {Because}
+            </div>
+        </section>
+    )
+}
+
+const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , HrefPage , status , auth , RefBe , session , Fetch}) => {
+    const [List , setList] = useState(<></>)
+
+    useEffect(()=>{
+        setList(<></>)
+
+        LoadPageData()
+
+        window.removeEventListener("resize" , sizeScreen)
+        window.addEventListener("resize" , sizeScreen)
+
+        return() => {
+            window.removeEventListener("resize" , sizeScreen)
+        }
+    } , [Data])
+
+    const sizeScreen = () => {
+        if(window.innerWidth < 820) {
+            setBodyFromData(1)
+        } else if(window.innerWidth < 1100) {
+            setBodyFromData(2)
+        } else if (window.innerWidth >= 1100) {
+            setBodyFromData(3)
+        }
+    }
+    const LoadPageData = () => {
+        if(window.innerWidth < 820) {
+            setBodyFromData(1)
+        } else if(window.innerWidth < 1100) {
+            setBodyFromData(2)
+        } else if (window.innerWidth >= 1100) {
+            setBodyFromData(3)
+        }
+    }
+
+    const setBodyFromData = async (maxC) => {
+        TabOn.addTimeOut(TabOn.end())
+        manageList(maxC)
+    }
+
     const OpenConfirmDoctor = async (id_table_doctor , typeStatus) => {
         if(await auth(true)) {
             const status = parseInt(document.querySelector(`#data-list-content-${id_table_doctor} Action-bt Bt-status .frame`).getAttribute("status"))
-            setBecause(<ManageDoctorPage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} setBecause={setBecause} TabOn={TabOn}/>)
+            setBecause(<ManageDoctorPage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} 
+                        setBecause={setBecause} TabOn={TabOn} session={session} ReloadFetch={Fetch}/>)
         }
     }
 
     const OpenConfirmData = async (id , typeStatus) => {
         if(await auth(true)) {
             const status = parseInt(document.querySelector(`#data-list-content-${id} Action-bt Bt-status .frame`).getAttribute("status"))
-            setBecause(<ManageDataPage RefOnPage={RefBe} id_table={id} type={typeStatus} status={status} setBecause={setBecause} TabOn={TabOn}/>)
+            setBecause(<ManageDataPage RefOnPage={RefBe} id_table={id} type={typeStatus} status={status} setBecause={setBecause} TabOn={TabOn} session={session} ReloadData={Fetch}/>)
         }
     }
 
@@ -62,40 +167,15 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
         }
     }
 
-    const sizeScreen = () => {
-        const count = ListRef.current.getAttribute("count")
-        if(window.innerWidth < 1100 && count != 2) {
-            setBodyFromData(2)
-        } else if (window.innerWidth >= 1100 && count != 3) {
-            setBodyFromData(3)
-        }
-    }
-    const LoadPageData = () => {
-        if(window.innerWidth < 1100) {
-            setBodyFromData(2)
-        } else if (window.innerWidth >= 1100) {
-            setBodyFromData(3)
-        }
-    }
-
-    const setBodyFromData = async (maxC) => {
-        TabOn.addTimeOut(TabOn.end())
-        setList(await fetchDataList(maxC))
-    }
-
-    const fetchDataList = async (maxColumn) => {
-        const ObjectData = 
-                HrefPage.get().split("?")[0] === "list" ? await clientMo.post("/api/admin/doctor/list" , {typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1)}) :
-                HrefPage.get().split("?")[0] === "data" ? await clientMo.post("/api/admin/data/list" , {type : status.status}) : null
-        const List = JSON.parse(ObjectData)
+    const manageList = (maxColumn) => {
         const ListExport = new Array()
         const max = maxColumn
 
-        ListRef.current.setAttribute("count" , max)
+        setListCount(max)
 
-        for(let x=0;x<List.length;x += max) {
-            const account = JSON.parse(ObjectData)
-            ListExport.push(account.splice(x , max))
+        for(let x=0;x<Data.length;x += max) {
+            const account = Data
+            ListExport.push(account.slice(x , max + x))
         }
 
         const doctorList = 
@@ -107,7 +187,7 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
                         row.map((data , key)=>{
                             if(!data.data) 
                                 return(
-                                <List-data-dody key={key} 
+                                <List-data-body key={key} 
                                     id={`data-list-content-${
                                         HrefPage.get().split("?")[0] === "list" ? data.id_table_doctor :
                                         HrefPage.get().split("?")[0] === "data" ? data.id : ""
@@ -122,17 +202,15 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
                                                 </Detail-Image>
                                                 <Detail-data>
                                                     <Detail-in-fullname>
-                                                        <input value={data.fullname_doctor ? data.fullname_doctor : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"} readOnly></input>
+                                                        <span>{data.fullname_doctor ? data.fullname_doctor : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
                                                     </Detail-in-fullname>
                                                     <Detail-in>
                                                         <span className="head-data">รหัสประจำตัว</span>
-                                                        <span>:</span>
-                                                        <input className="input-id" value={data.id_doctor} readOnly></input>
+                                                        <div className="text-data">{data.id_doctor}</div>
                                                     </Detail-in>
                                                     <Detail-in>
-                                                        <span className="head-data station">ศูนย์</span> 
-                                                        <span>:</span>
-                                                        <input value={data.station ? data.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"} readOnly></input>
+                                                        <span className="head-data">ศูนย์</span>
+                                                        <div className="text-data">{data.station ? data.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
                                                     </Detail-in>
                                                 </Detail-data>
                                             </Detail-Data-main>
@@ -166,23 +244,35 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
                                         </> :
                                         HrefPage.get().split("?")[0] === "data" ?
                                         <>
-                                            <Detail-Data-main>
+                                            <Detail-Data-main column="">
                                                 <Detail-Data maxsize="" flex={status.status}>
                                                     <div className="name" w={status.status}>
-                                                        <span className={status.status}>ชื่อ{status.status === "plant" ? "พืช" : "ศูนย์ส่งเสริม"}</span>
-                                                        <input readOnly value={data.name}></input>
+                                                        { status.status === "plant" ?
+                                                            <span className={status.status}>ชื่อพืช</span> : <></>
+
+                                                        }
+                                                        <div className={`text-data ${status.status}`}>{data.name}</div>
                                                     </div>
                                                     <div className={status.status === "plant" ? "type_plant" : "location"}>
                                                         {
-                                                            status.status === "plant" ? <span>ชนิดพืช</span> : <></>
+                                                            status.status === "plant" ? <span>ชนิด</span> : <></>
                                                         }
                                                         {
-                                                            status.status === "plant" ? <input readOnly value={data.type_plant}></input> :
+                                                            status.status === "plant" ? <div className="text-data">{data.type_plant}</div> :
                                                             status.status === "station" ? 
                                                                 <MapsJSX lat={data.location.x} lng={data.location.y} w={"300vw"} h={"100vw"}/> : ""
                                                         }
                                                     </div>
                                                 </Detail-Data>
+                                                { status.status === "plant" ?
+                                                    <Detail-Data maxsize="">
+                                                        <div className="name">
+                                                            <span className={status.status}>จำนวนวันเก็บเกี่ยว</span>
+                                                            <div className={`text-data`}>{`${data.qty_harvest} วัน`}</div>
+                                                        </div>
+                                                    </Detail-Data>
+                                                    : <></>
+                                                }
                                             </Detail-Data-main>
                                             <Action-bt>
                                                 <content-status because={0}>
@@ -200,7 +290,7 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
                                         </> : <></>
                                     }
                                     
-                                </List-data-dody>
+                                </List-data-body>
                                 )
                             else 
                                 return(
@@ -212,29 +302,14 @@ const ListData = ({status , PageAddRef , auth , TabOn , HrefPage}) => {
                 </Row-List>
                 )
             })
-        
-        return doctorList
+
+        setList(doctorList)
     }
 
-    return(
-        <section className="body-list-manage">
-            {
-                status.status === "default" || status.status === "plant" || status.status === "station" ? 
-                <InsertPage PageAddRef={PageAddRef} ReloadAccount={LoadPageData} type={status.status}/> : <></>
-            }
-            <div className="List-data" ref={ListRef}>
-                {List}
-            </div>
-            <div ref={RefBe} className="page-because-popup">
-                {Because}
-            </div>
-        </section>
-    )
-
+    return (List)
 }
 
 const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
-
     const [Open , setOpen] = useState(0)
     const [Text , setText] = useState("")
     const [Status , setStatus] = useState(0)
@@ -253,6 +328,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
         Data3 : useRef()
     }
     const QtyDate = useRef()
+    const [stateOnBt , setstateOnBt] = useState(true)
 
     useEffect(()=>{
         setSize(PageAddRef.current.clientHeight * 0.3)
@@ -260,52 +336,64 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
         if(type === "station") GenerateMapAuto()
     } , [])
 
-    const ClickAdd = async (e) => {
-        let PWadmin = pwAdmin.current
+    const CheckEmply = () => {
+        const RefIsCheck = type === "default" ?
+                            [
+                                RefData.Data1.current.value,
+                                RefData.Data2.current.value,
+                            ] : 
+                            type === "station" ? 
+                            [
+                                RefData.Data1.current.value,
+                                RefData.Data2.current.value,
+                                RefData.Data3.current.value,
+                            ] : 
+                            type === "plant" ? 
+                            [
+                                QtyDate.current.value,
+                                RefData.Data1.current.value,
+                                RefData.Data2.current.value,
+                            ] : []
 
-        let Data1 = RefData.Data1.current
-        let Data2 = RefData.Data2.current
-        let Data3 = RefData.Data3.current
-
-        let data = null
-        
-        if(type === "station") {
-            if(Data1.value && Data2.value && Data3.value && PWadmin.value) {
-                data = {
-                    name : Data1.value,
-                    lat : Data2.value,
-                    lng : Data3.value,
+        if(RefIsCheck.filter(val=>!val).length == 0 && pwAdmin.current.value) {
+            setstateOnBt(false)
+            return (
+                type === "station" ? {
+                    name : RefData.Data1.current.value,
+                    lat : RefData.Data2.current.value,
+                    lng : RefData.Data3.current.value,
                     type : type,
-                    passwordAd : PWadmin.value
-                }
-            }
-        } else if (type === "default" || type === "plant") {
-            if(Data1.value && Data2.value && PWadmin.value) {
-                if(type === "default") {
-                    data = {
-                        id_doctor : Data1.value,
-                        passwordDT : Data2.value,
-                        passwordAd : PWadmin.value
-                    }
-                } else if (QtyDate.current.value != 0 && QtyDate.current.value) {
-                    data = {
-                        name : Data1.value,
-                        type_plant : Data2.value,
-                        qtyDate : QtyDate.current.value,
-                        type : type ,
-                        passwordAd : PWadmin.value
-                    }
-                }
-            } 
+                    passwordAd : pwAdmin.current.value
+                } : 
+                type === "default" ? {
+                    id_doctor : RefData.Data1.current.value,
+                    passwordDT : RefData.Data2.current.value,
+                    passwordAd : pwAdmin.current.value
+                } : 
+                type === "plant" ? {
+                    name : RefData.Data1.current.value,
+                    type_plant : RefData.Data2.current.value,
+                    qtyDate : QtyDate.current.value,
+                    type : type ,
+                    passwordAd : pwAdmin.current.value
+                } : {}
+            )
+        } else {
+            setstateOnBt(true)
+            return false
         }
+        
+    }
 
-        if(data) {
+    const ClickAdd = async (e) => {
+        const Data = CheckEmply()
+        if(Data) {
             setOpen(1)
             setText("")
             setStatus(0)
             let result = 
-                    type === "default" ? await clientMo.post("/api/admin/add" , data) :
-                    type === "plant" || type === "station" ? await clientMo.post("/api/admin/data/insert" , data) : ""
+                    type === "default" ? await clientMo.post("/api/admin/add" , Data) :
+                    type === "plant" || type === "station" ? await clientMo.post("/api/admin/data/insert" , Data) : ""
             if(result === "1") {
                 setText(`เพิ่ม${
                             type === "default" ? "บัญชีผู้ส่งเสริม" : 
@@ -313,23 +401,15 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                             type === "station" ? "ศูนย์ส่งเสริม" : ""
                         }สำเร็จ`)
                 setStatus(1)
+                Cancel()
                 setTimeout(()=>{
-                    Data1 ? Data1.value = "" : null;
-                    Data2 ? Data2.value = "" : null;
-                    Data3 ? Data3.value = "" : null;
-                    PWadmin.value = ""
-                    if(type === "station") {
-                        InputMap.current.value = ""
-                        setLag(0)
-                        setLng(0)
-                    }
                     ReloadAccount()
                 } , 100)
             }
             else if(result === "incorrect") {
                 setText("รหัสผู้ดูแลไม่ถูกต้อง")
                 setStatus(2)
-                PWadmin.value = ""
+                pwAdmin.current.value = ""
             } else if (result === "overflow") {
                 setText(`มี${
                             type === "default" ? "บัญชีผู้ส่งเสริม" : 
@@ -337,16 +417,8 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                             type === "station" ? "ศูนย์ส่งเสริม" : ""
                         }นี้แล้ว`)
                 setStatus(2)
+                Cancel()
                 setTimeout(()=>{
-                    Data1 ? Data1.value = "" : null;
-                    Data2 ? Data2.value = "" : null;
-                    Data3 ? Data3.value = "" : null;
-                    PWadmin.value = ""
-                    if(type === "station") {
-                        InputMap.current.value = ""
-                        setLag(0)
-                        setLng(0)
-                    }
                     ReloadAccount()
                 } , 100)
             }
@@ -354,21 +426,22 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                 setText(`มีปัญหาในการเพิ่มข้อมูล`)
                 setStatus(2)
             }
-        } else {
-            console.log("not")
         }
+        setstateOnBt(true)
         e.preventDefault()
     }
 
-    const Cancel = () => {
+    const Cancel = (e) => {
         let Data1 = RefData.Data1.current
         let Data2 = RefData.Data2.current
         let Data3 = RefData.Data3.current
+        let Qty = QtyDate.current
         let PWadmin = pwAdmin.current
 
         Data1 ? Data1.value = "" : null;
         Data2 ? Data2.value = "" : null;
         Data3 ? Data3.value = "" : null;
+        Qty ? Qty.value = "" : null;
         PWadmin.value = ""
         if(type === "station") {
             InputMap.current.value = ""
@@ -376,7 +449,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
             setLng(0)
         }
 
-        PageAddRef.current.toggleAttribute("show")
+        if(e) PageAddRef.current.toggleAttribute("show")
     }
 
     const GenerateMap = (e) => {
@@ -437,41 +510,57 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                     }
                 </span>
                 <div className="detail-data">
-                    <label>
-                        { type === "default" ?
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"/></svg>
+                    <label className={type === "plant" ? "two-box" : null}>
+                        <div className="field-text">
+                            <span className="head-text">
+                                { 
+                                    type === "default" ?
+                                        "รหัสประจำตัวผู้ส่งเสริม" :
+                                    type === "plant" ?
+                                        "ชื่อพืช" :
+                                    type === "station" ?
+                                        "ชื่อศูนย์ส่งเสริม" 
+                                    // <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"/></svg>
+                                    : <></>
+                                }
+                            </span>
+                            <input onChange={CheckEmply} ref={RefData.Data1} 
+                                    placeholder={
+                                        type === "default" ? "กรอกรหัสประจำตัว" : 
+                                        type === "plant" ? "เช่น มะเขือเทศ" :
+                                        type === "station" ? "เช่น ศูนย์โครงการหลวง" : ""
+                                    }></input>
+                        </div>
+                        { type === "plant" ?
+                            <div className="field-text">
+                                <span className="head-text">ประเภทพืช</span>
+                                <select onChange={CheckEmply} ref={RefData.Data2} defaultValue={""} style={{width : "100%"}}>
+                                    <option value={""} disabled>เลือกชนิดพืช</option>
+                                    <option value={"พืชผัก"}>พืชผัก</option>
+                                    <option value={"สมุนไพร"}>สมุนไพร</option>
+                                </select>
+                            </div>
                             : <></>
                         }
-                        <input ref={RefData.Data1} 
-                                placeholder={
-                                    type === "default" ? "รหัสประจำตัวผู้ส่งเสริม" : 
-                                    type === "plant" ? "ชื่อพืช" :
-                                    type === "station" ? "ชื่อศูนย์ส่งเสริม" : ""
-                                }></input>
                     </label>
                     {
                         type === "default" ?
                             <>
                             <label>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg>
-                                <input ref={RefData.Data2} placeholder="รหัสผ่านบัญชีผู้ส่งเสริม" type="password"></input>
+                                <div className="field-text">
+                                    <span className="head-text">รหัสผ่านบัญชีผู้ส่งเสริม</span>
+                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
+                                    <input onChange={CheckEmply} ref={RefData.Data2} placeholder="กรอกรหัสผ่าน" type="password"></input>
+                                </div>
                             </label>
                             </> :
                         type === "plant" ?
-                            <>
                             <label>
-                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
-                                <select ref={RefData.Data2} defaultValue={""} style={{width : "100%"}}>
-                                    <option value={""} disabled>เลือกชนิดพืช</option>
-                                    <option value={"พืชผัก"}>พืชผัก</option>
-                                    <option value={"สมุนไพร"}>สมุนไพร</option>
-                                </select>
-                            </label>
-                            <label>
-                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
-                                <input ref={QtyDate} placeholder="จำนวนวันที่จะเก็บเกี่ยว" type="number"></input>
-                            </label>
-                            </> : 
+                                <div className="field-text">
+                                    <span className="head-text">จำนวนวันที่จะเก็บเกี่ยว</span>
+                                    <input onChange={CheckEmply} ref={QtyDate} placeholder="เช่น 10 , 30" type="number"></input>
+                                </div>
+                            </label> : 
                         type === "station" ?
                             <>
                             <label>
@@ -485,24 +574,29 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                                             c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
                                     </g>
                                 </svg> */}
-                                <input ref={InputMap} placeholder="ลิ้งค์ปักหมุดจาก Google Map" type="text" onInput={GenerateMap}></input>
+                                <div className="field-text">
+                                    <span className="head-text">ลิ้งค์ปักหมุดจาก Google Map</span>
+                                    <input ref={InputMap} placeholder="URL ที่ทำการปักหมุดสีแดง" type="text" onChange={CheckEmply} onInput={GenerateMap}></input>
+                                </div>
                             </label>
                             <label className="station">
-                                <input style={{display : "none"}} readOnly ref={RefData.Data2} value={Lag}></input>
-                                <input style={{display : "none"}} readOnly ref={RefData.Data3} value={Lng}></input>
-                                <MapsJSX lat={Lag} lng={Lng}/>
-                                <button onClick={GenerateMapAuto}>รีโหลดพิกัด</button>
+                                <div className="field-text">
+                                    <input style={{display : "none"}} readOnly ref={RefData.Data2} value={Lag}></input>
+                                    <input style={{display : "none"}} readOnly ref={RefData.Data3} value={Lng}></input>
+                                    <MapsJSX lat={Lag} lng={Lng} w={"100%"}/>
+                                    <button onClick={GenerateMapAuto}>รีโหลดพิกัด</button>
+                                </div>
                             </label>
                             </> :
                             <></>
                     }
                 </div>
                 <label className="admin-confirm">
-                    <input ref={pwAdmin} placeholder="รหัสผ่านผู้ดูแลระบบ" type="password"></input>
+                    <input ref={pwAdmin} onChange={CheckEmply} placeholder="รหัสผ่านผู้ดูแลระบบ" type="password"></input>
                 </label>
                 <div className="bt-submit">
                     <button className="cancel" onClick={Cancel}>ยกเลิก</button>
-                    <button className="submit" onClick={ClickAdd}>เพิ่มข้อมูล</button>
+                    <button className="submit" onClick={ClickAdd} no={stateOnBt ? "" : null}>เพิ่มข้อมูล</button>
                 </div>
             </div>
         </section>

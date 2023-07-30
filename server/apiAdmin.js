@@ -20,6 +20,8 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       if(result['result'] === "pass") {
         let data = req.body
         let select = data.typeDelete === 0 ? ", status_account" : ""
+        const Limit = isNaN(parseInt(data.limit)) ? 0 : parseInt(data.limit)
+        const StartRow = isNaN(parseInt(data.startRow)) ? 0 : parseInt(data.startRow)
         con.query(
           `
             SELECT 
@@ -28,7 +30,9 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             ) as station
             , id_table_doctor , fullname_doctor , id_doctor , img_doctor ${select}
             FROM acc_doctor
-            WHERE status_delete=? LIMIT 25;
+            WHERE status_delete=? 
+            ORDER BY status_account DESC
+            LIMIT ${Limit} OFFSET ${StartRow};
           ` 
         , 
         [data.typeDelete] ,
@@ -309,10 +313,13 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
+        const Limit = isNaN(parseInt(data.limit)) ? 0 : parseInt(data.limit)
+        const StartRow = isNaN(parseInt(data.startRow)) ? 0 : parseInt(data.startRow)
         con.query(
           `
           SELECT * FROM ${data.type}_list
-          ORDER BY is_use DESC;
+          ORDER BY is_use DESC
+          LIMIT ${Limit} OFFSET ${StartRow}
           `
          , (err , result)=>{
           if(err) {

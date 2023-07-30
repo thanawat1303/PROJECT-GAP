@@ -1171,6 +1171,60 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     })
 
+    //profile farmer
+    app.get('/api/doctor/form/get/farmer' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    SELECT acc_farmer.*
+                    FROM acc_farmer , 
+                        (
+                            SELECT link_user
+                            FROM housefarm , 
+                            (
+                                SELECT id_farmHouse
+                                FROM formplant
+                                WHERE id = ?
+                            ) as plant
+                            WHERE housefarm.id_farmHouse = plant.id_farmHouse
+                        ) as house
+                    WHERE acc_farmer.link_user = house.link_user
+                    ORDER BY date_register
+                    LIMIT 1
+                    ` , [req.query.id_form] ,
+                    (err , result) => {
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("get profile");
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send(result)
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    //manage
     app.get('/api/doctor/form/manage/get' , async (req , res)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor

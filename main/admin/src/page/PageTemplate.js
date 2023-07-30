@@ -4,7 +4,7 @@ import "../assets/style/page/List.scss"
 
 import ListData from "./ListData";
 
-const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , TabOn}) => {
+const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , session , TabOn}) => {
     const [StatusPage , setStatus] = useState({
         status :    HrefData.get() === "list?default" ? "default" : 
                     HrefData.get() === "list?delete" ? "delete" : 
@@ -13,18 +13,18 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , Tab
         changePath : addHref
     }) 
 
+    const [StateOnPage , setStateOnPage] = useState({
+        status :    HrefData.get() === "list?default" ? "default" : 
+                    HrefData.get() === "list?delete" ? "delete" : 
+                    HrefData.get() === "data?plant" ? "plant" : 
+                    HrefData.get() === "data?station" ? "station" : "",
+    })
+
     const PageAddRef = useRef()
 
     useEffect(()=>{
-        modify(70 , 30 , 
-                        ["หน้าแรก" , 
-                            (HrefData.get().split("?")[0] === "list") ? "บัญชีเจ้าหน้าที่ส่งเสริม" : 
-                            (HrefData.get().split("?")[0] === "data") ? "ข้อมูลเพิ่มเติม" : "" 
-                            ,
-                            (HrefData.get().indexOf("delete") >= 0) ? "บัญชีที่ถูกลบ" : 
-                            (HrefData.get().indexOf("plant") >= 0) ? "ชนิดพืช" :
-                            (HrefData.get().indexOf("station") >= 0) ? "ศูนย์ส่งเสริม" : ""
-                        ])
+        // modify(70 , 30 , 
+        //                 ["หน้าแรก"])
 
         if(HrefData.get().split("=")[1] === "pop") {
             state()
@@ -55,21 +55,21 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , Tab
     return (
         <section className="page-manage">
             <div className="menu-page">
-                {StatusPage.status === "default" || StatusPage.status === "plant" || StatusPage.status === "station" ?
+                {StateOnPage.status === "default" || StateOnPage.status === "plant" || StateOnPage.status === "station" ?
                 <div className="bt-add">
                     <svg onClick={()=>PageAddRef.current.toggleAttribute("show")} xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32"><path fill="currentColor" d="M16 2A14.172 14.172 0 0 0 2 16a14.172 14.172 0 0 0 14 14a14.172 14.172 0 0 0 14-14A14.172 14.172 0 0 0 16 2Zm8 15h-7v7h-2v-7H8v-2h7V8h2v7h7Z"/><path fill="none" d="M24 17h-7v7h-2v-7H8v-2h7V8h2v7h7v2z"/></svg>
                 </div>
                 : <></>
                 }
                 {
-                StatusPage.status === "default" ? 
+                StateOnPage.status === "default" ? 
                     <button className="bt-delete" onClick={()=>ChangeStatus("delete")}>แสดงบัญชีที่ถูกลบ</button> : 
-                StatusPage.status === "delete" ? 
+                StateOnPage.status === "delete" ? 
                     <button className="bt-default" onClick={()=>ChangeStatus("default")}>แสดงบัญชีที่ยังไม่ถูกลบ</button> :
                 
-                StatusPage.status === "plant" ? 
+                StateOnPage.status === "plant" ? 
                     <button className="bt-station" onClick={()=>ChangeStatus("station")}>แสดงรายการศูนย์ส่งเสริม</button> :
-                StatusPage.status === "station" ? 
+                StateOnPage.status === "station" ? 
                     <button className="bt-plant" onClick={()=>ChangeStatus("plant")}>แสดงรายการชนิดพืช</button> :
                 <></>
                 }
@@ -86,7 +86,7 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , Tab
                 </div>
             </div>
             <div className="list-manage">
-                <ListData status={StatusPage} PageAddRef={PageAddRef} auth={auth} TabOn={TabOn} HrefPage={HrefData}/>
+                <ListData status={StatusPage} PageAddRef={PageAddRef} auth={auth} session={session} TabOn={TabOn} HrefPage={HrefData} setStateOnPage={setStateOnPage} modify={modify}/>
             </div>
         </section>
     )

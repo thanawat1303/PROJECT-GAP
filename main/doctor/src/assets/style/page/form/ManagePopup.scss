@@ -29,12 +29,21 @@ $colorBoderBottonData : #3bc69c;
 
         .menu-content {
             display: flex;
+            flex-direction: column;
             position: absolute;
-            top: -2.8em;
+            top: -3em;
             left: 0em;
+            background-color: transparent;
+            height: 50px;
+            width: 50px;
+            padding: 5px;
+            z-index: 1;
+            border-radius: 20px;
+            transition: 0.2s background-color , 0.5s height;
 
             a {
-                margin: 0px 5px;
+                // margin: 0px 5px;
+                position: absolute;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -46,13 +55,50 @@ $colorBoderBottonData : #3bc69c;
                 min-height: 36.9px;
                 border-radius: 50%;
                 background-color: white;
-                box-shadow:0px 0px 8px #196658b2;
-                // box-shadow: 0px 2px 2px gray;
+                box-shadow:0px 0px 5px #22C7A9;
+                transform: translateY(0px);
+                transition: 0.5s;
 
                 svg {
                     width: 60%;
                     fill: #196658b2;
                 }
+
+                svg.menu-90 {
+                    width: 90%;
+                }
+
+                svg.menu-80 {
+                    width: 80%;
+                }
+            }
+
+            a:nth-child(1) {
+                z-index: 1;
+            }
+            
+        }
+
+        .menu-content[show=""] {
+            background-color: white;
+            height: 320px;
+            a:nth-child(2) {
+                transform: translateY(45px);
+            }
+            a:nth-child(3) {
+                transform: translateY(90px);
+            }
+            a:nth-child(4) {
+                transform: translateY(135px);
+            }
+            a:nth-child(5) {
+                transform: translateY(180px);
+            }
+            a:nth-child(6) {
+                transform: translateY(225px);
+            }
+            a:nth-child(7) {
+                transform: translateY(270px);
             }
         }
 
@@ -489,6 +535,69 @@ $colorBoderBottonData : #3bc69c;
                             }
                         }
 
+                        .profile-farmer {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            max-width: 240px;
+                            background-color: #22C7A9;
+                            border-radius: 8px;
+                            padding: 10px;
+                            // margin-top: 5px;
+                            // outline: 5px solid white;
+                            width: 100%;
+                            .img {
+                                display: flex;
+                                padding: 8px;
+                                border-radius: 50%;
+                                background-color: white;
+                                img {
+                                    border-radius: 50%;
+                                    width: 150px;
+                                }
+                            }
+
+                            .detail-text {
+                                width: 100%;
+                                font-size: 18px;
+                                // margin-top: 5px;
+                                .row {
+                                    display: flex;
+                                    flex-direction: column;
+                                    margin-top: 10px;
+                                    .head-text {
+                                        font-weight: 900;
+                                    }
+
+                                    .body-text {
+                                        display: flex;
+                                        background-color: white;
+                                        border-radius: 8px;
+                                        padding: 0px 5px;
+                                        padding-top: 2px;
+                                        font-size: 16px;
+
+                                        input {
+                                            border: 0;
+                                            outline: 0;
+                                            font-family: Sans-font;
+                                            font-size: 16px;
+                                            padding: 0;
+                                        }
+
+                                        iframe {
+                                            width: 100%;
+                                        }
+                                    }
+
+                                    .body-text.map {
+                                        padding: 5px;
+                                    }
+                                }
+                            }
+                        }
+
                         .row-factor {
                             display: flex;
                             flex-direction: column;
@@ -564,6 +673,16 @@ $colorBoderBottonData : #3bc69c;
                                 position: absolute;
                                 right: 0.2em;
                                 top: 0.2em;
+
+                                .dot-report {
+                                    position: absolute;
+                                    background-color: red;
+                                    width: 10px;
+                                    height: 10px;
+                                    border-radius: 50%;
+                                    right: -0.15em;
+                                    top: -0.15em;
+                                }
 
                                 button {
                                     border-radius: 15px;

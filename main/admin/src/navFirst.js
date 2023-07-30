@@ -5,7 +5,7 @@ import { ButtonMenu } from "../../../src/assets/js/module"
 
 import PageTemplate from "./page/PageTemplate"
 
-const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn , selectPage , HrefData}) => {
+const NavFirst = ({setBodyFileAdmin , auth , session , socket , modify , type = 0 , TabOn , selectPage , HrefData}) => {
     useEffect(()=>{
         if(type === 1 && HrefData.get() !== "HOME") window.history.pushState({} , "" , "/admin")
 
@@ -19,14 +19,14 @@ const NavFirst = ({setBodyFileAdmin , auth , socket , modify , type = 0 , TabOn 
     const doctor = async () => {
         if(await auth(true)) {
             HrefData.set("list?default")
-            setBodyFileAdmin(<PageTemplate socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
+            setBodyFileAdmin(<PageTemplate session={session} socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
         }
     }
 
     const data = async () => {
         if(await auth(true)) {
             HrefData.set("data?plant")
-            setBodyFileAdmin(<PageTemplate socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
+            setBodyFileAdmin(<PageTemplate session={session} socket={socket} auth={auth} addHref={true} modify={modify} TabOn={TabOn} HrefData={HrefData}/>)
         }
     }
 

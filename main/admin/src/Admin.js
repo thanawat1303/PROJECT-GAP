@@ -46,7 +46,7 @@ const Admin = ({setBodyFileMain , socket}) => {
         let path = window.location.href.replace(window.location.origin , "").split("/").filter(val=>(val))
         const type = e ? "=pop" : ''
         if(path.length === 1 && path[0] === "admin") 
-            setBody(<NavFirst setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn} HrefData={Href}/>)
+            setBody(<NavFirst session={sessionoff} setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn} HrefData={Href}/>)
         else if(path.length >= 2 && path[0] === "admin") {
 
             let seconPath = path[1].split("?")
@@ -55,11 +55,11 @@ const Admin = ({setBodyFileMain , socket}) => {
                 let query = seconPath[1]
                 if(query.indexOf("default") == 0) {
                     Href.set(`list?default${type}`)
-                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                    setBody(<PageTemplate session={sessionoff} TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
                 } 
                 else if (query.indexOf("delete") == 0) {
                     Href.set(`list?delete${type}`)
-                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                    setBody(<PageTemplate session={sessionoff} TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
                 }
             }
 
@@ -67,11 +67,11 @@ const Admin = ({setBodyFileMain , socket}) => {
                 let query = seconPath[1]
                 if(query.indexOf("plant") == 0) {
                     Href.set(`data?plant${type}`)
-                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                    setBody(<PageTemplate session={sessionoff} TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
                 } 
                 else if (query.indexOf("station") == 0) {
                     Href.set(`data?station${type}`)
-                    setBody(<PageTemplate TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
+                    setBody(<PageTemplate session={sessionoff} TabOn={TabOn} socket={socket} modify={modifyMainPage} auth={Auth} HrefData={Href}/>)
                 }
             }
             

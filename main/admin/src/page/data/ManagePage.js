@@ -3,7 +3,7 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
 import "../../assets/style/page/PopupManage.scss"
 import { Loading, MapsJSX, ReportAction } from "../../../../../src/assets/js/module";
-const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , TabOn}) => {
+const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , TabOn , session , ReloadData}) => {
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
@@ -81,16 +81,17 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
                 setText("รหัสผ่านไม่ถูกต้อง")
                 setStatus(3)
                 PasswordRef.current.value = ""
-            }
+            } else session()
         }
     }
 
     let Time = 0
     const AfterConfirm = () => {
         if(Status === 1) {
-            document.querySelector(`#data-list-content-${id_table} Action-bt content-status Bt-status .frame`)
-                    .setAttribute("status" , status ? 0 : 1)
+            // document.querySelector(`#data-list-content-${id_table} Action-bt content-status Bt-status .frame`)
+            //         .setAttribute("status" , status ? 0 : 1)
             close()
+            ReloadData()
         }
         else {
             if(Status != 0) {

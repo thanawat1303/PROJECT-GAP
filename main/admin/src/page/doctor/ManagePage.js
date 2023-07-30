@@ -3,7 +3,7 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
 import "../../assets/style/page/PopupManage.scss"
 import { Loading, ReportAction } from "../../../../../src/assets/js/module";
-const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , TabOn}) => {
+const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , TabOn , session , ReloadFetch}) => {
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
@@ -22,7 +22,7 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
         fullname : "",
         img : "",
         station : "",
-        isdelete : true
+        isdelete : false
     })
 
     useEffect(()=>{
@@ -96,7 +96,7 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                 setText("รหัสผ่านไม่ถูกต้อง")
                 setStatus(3)
                 PasswordRef.current.value = ""
-            }
+            } else session()
         }
     }
 
@@ -104,19 +104,17 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
     const AfterConfirm = () => {
         if(Status === 1 || Status === 2) {
             if(type === "status_delete" || Status === 2) {
-                const block = document.getElementById(`data-list-content-${id_table}`)
-                block.setAttribute("remove" , "")
+                // const block = document.getElementById(`data-list-content-${id_table}`)
+                // block.setAttribute("remove" , "")
                 setTimeout(()=>{
-                    const Emply = document.createElement("List-Data-null")
-                    const parent = block.parentElement
-                    block.remove()
-                    parent.appendChild(Emply)
+                    ReloadFetch()
                 } , 600)
                 // document.querySelector(`#data-list-content-${id_table} Action-bt content-status bt-because`).innerHTML = `<button onclick=\"()=>${methodOpenManage(2 , 'status_account')}\">เหตุผล</button>`
                     // <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
             } else if (type === "status_account") {
-                document.querySelector(`#data-list-content-${id_table} Action-bt content-status Bt-status .frame`)
-                    .setAttribute("status" , status ? 0 : 1)
+                // document.querySelector(`#data-list-content-${id_table} Action-bt content-status Bt-status .frame`)
+                //     .setAttribute("status" , status ? 0 : 1)
+                ReloadFetch()
             }
             close()
         }
@@ -151,31 +149,35 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                     : <></>
                 }
                 <div onLoad={OnLoad} className="detail-data-report">
-                    {Profile.isdelete ? 
-                    <div className="data-delete">
-                        <img src="/error-cross-svgrepo-com.svg"></img>
-                        <div>บัญชีนี้ถูกลบไปแล้ว</div>
-                    </div>
-                    :<>
-                    <div className="img">
-                        <img src={Profile.img}></img>
-                    </div>
-                    <div className="detail-text">
-                        <div className="text-preview fullname">
-                            <input value={Profile.fullname ? Profile.fullname : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"} readOnly></input>
-                        </div>
-                        <div className="text-preview">
-                            <span className="head-data id">รหัสประจำตัว</span>
-                            <span className="dot">:</span>
-                            <input value={Profile.id} readOnly></input>
-                        </div>
-                        <div className="text-preview">
-                            <span className="head-data">ศูนย์</span> 
-                            <span className="dot">:</span>
-                            <input value={Profile.station ? Profile.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"} readOnly></input>
-                        </div>
-                    </div>
-                    </>
+                    {
+                    Profile.id_table ?
+                        Profile.isdelete ? 
+                            <div className="data-delete">
+                                <img src="/error-cross-svgrepo-com.svg"></img>
+                                <div>บัญชีนี้ถูกลบไปแล้ว</div>
+                            </div>
+                            :
+                            <>
+                                <div className="img">
+                                    <img src={Profile.img}></img>
+                                </div>
+                                <div className="detail-text">
+                                    <div className="text-preview fullname">
+                                        <input value={Profile.fullname ? Profile.fullname : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"} readOnly></input>
+                                    </div>
+                                    <div className="text-preview">
+                                        <span className="head-data id">รหัสประจำตัว</span>
+                                        <span className="dot">:</span>
+                                        <input value={Profile.id} readOnly></input>
+                                    </div>
+                                    <div className="text-preview">
+                                        <span className="head-data">ศูนย์</span> 
+                                        <span className="dot">:</span>
+                                        <input value={Profile.station ? Profile.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"} readOnly></input>
+                                    </div>
+                                </div>
+                            </> 
+                    : <></>
                     }
                 </div>
             </div>

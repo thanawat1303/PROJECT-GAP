@@ -413,7 +413,7 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
 
         clearTimeout(timeOut)
         setTimeOut(setTimeout(()=>{
-            FetchList(10)
+            FetchList(3)
         } , 1500))
 
     } , [DataFillter])
@@ -432,11 +432,11 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
             if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form${stringUrl ? `?${stringUrl}` : ""}`)
 
             JsonData["limit"] = Limit
-            console.log(JsonData)
             const list = await clientMo.post('/api/doctor/form/list' , JsonData)
             const data = JSON.parse(list)
 
             delete JsonData['typePlant']
+            delete JsonData['limit']
             const listPlant = await clientMo.post('/api/doctor/form/list' , JsonData)
             const dataTypePlant = JSON.parse(listPlant)
 
@@ -579,68 +579,6 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                             </div>
                         </div>
                     </a>
-                    // <section className={`row ${keyRow}`} key={keyRow}>
-                    //     <div className="row-content" style={{
-                    //         '--item-in-row-doctor' : `${Max}`,
-                    //         '--margin-in-row-doctor' : '10px',
-                    //         '--font-size-in-row-doctor' : `${SizeFont}vw`,
-                    //         '--font-size-date-in-row-doctor' : `${SizeFontDate}vw`,
-                    //         }}>
-                    //         {
-                    //             Data.map((val , key)=>{
-                    //                 const Ref = refData[countKey]
-                    //                 countKey++
-                    //                 return (
-                    //                     <section key={key} className="list-some-data-on-page"
-                    //                         ref={Ref}
-                    //                         >
-                    //                         <div className="frame-data-list">
-                    //                             <div className="inrow">
-                    //                                 <div className="type-main">
-                    //                                     {val.type_main}
-                    //                                 </div>
-                    //                                 <div className="type">
-                    //                                     {val.name_plant}
-                    //                                 </div>
-                    //                                 <div className="date">
-                    //                                     <span>ปลูก</span>
-                    //                                     <DayJSX DATE={val.date_plant} TYPE="SMALL"/>
-                    //                                 </div>
-                    //                             </div>
-                    //                             <div className="inrow">
-                    //                                 <div className="system-glow">
-                    //                                     ระบบการปลูก {val.system_glow}
-                    //                                 </div>
-                    //                                 <div className="factor">
-                    //                                     <span>
-                    //                                         ปุ๋ย {val.ctFer} ครั้ง
-                    //                                     </span>
-                    //                                     <span className="dot">|</span>
-                    //                                     <span>
-                    //                                         สารเคมี {val.ctChe} ครั้ง
-                    //                                     </span>
-                    //                                 </div>
-                    //                             </div>
-                    //                             <div className="inrow">
-                    //                                 <div className="insect">
-                    //                                     ศัตรูพืช {val.insect}
-                    //                                 </div>
-                    //                                 <div className="factor">
-                    //                                     <span className="generation">
-                    //                                         รุ่น {val.generation}
-                    //                                     </span>
-                    //                                     <span className="qty">
-                    //                                         จำนวน {val.qty} ต้น
-                    //                                     </span>
-                    //                                 </div>
-                    //                             </div>
-                    //                         </div>
-                    //                     </section>
-                    //                 )
-                    //             })
-                    //         }
-                    //     </div>
-                    // </section>
                 )
             })
             setBody(body)
@@ -658,7 +596,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
         if(context) 
             setPop(<ManagePopup RefData={Ref} setPopup={setPop} RefPop={RefPop} 
                     id_form={id_form}
-                    status={status.status} session={session} countLoad={count} Fecth={fetch}/>)
+                    status={status.status} session={session} Fecth={()=>fetch(count)}/>)
         else session()
     }
 

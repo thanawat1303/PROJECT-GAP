@@ -5,9 +5,9 @@ import { DayJSX, Loading, MapsJSX, PopupDom } from "../../../../../src/assets/js
 import DetailEdit from "./DetailEdit"
 import { ExportPDF } from "../../../../../src/assets/js/Export"
 
-const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad , Fecth , RefData}) => {
+const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , RefData}) => {
     const [Content , setContent] = useState(<></>)
-    const [ID_farmer , setID_farmer] = useState("")
+    // const [ID_farmer , setID_farmer] = useState("")
     const [LoadContent , setLoadContent] = useState(true)
 
     const [BodyPopupEdit , setBodyPopupEdit] = useState(<></>)
@@ -34,7 +34,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                 JsonData.map((data , key)=>
                     {
                         if(type_form === 0) {
-                            setID_farmer(data.id_farmer)
+                            // setID_farmer(data.id_farmer)
                             setCountEdit(data.countStatus)
                             return (
                                 <section key={key} className="detail-main-form">
@@ -373,21 +373,22 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
     const [StatePage , SetStatePage] = useState("success")
     const [DataFormManage , setDataFormManage] = useState([])
     const MenuManageFormByDoctor = async (type_page , e = "") => {
-        if(!e) setLoadContent(true)
         const Type = type_page === "success" ? "success_detail" 
                     : type_page === "report" ? "report_detail"
                     : type_page === "CheckForm" ? "check_form_detail"
                     : type_page === "CheckPlant" ? "check_plant_detail" 
                     : "";
-        Fecth(countLoad);
+        Fecth();
         const context = await clientMo.get(`/api/doctor/form/manage/get?id_plant=${id_form}&typePage=${Type}`);
         if(context) {
-            if(e) {
+
+            try {
                 for(let x in MenuBTManage) {
                     MenuBTManage[x].current.removeAttribute("select")
                 }
                 MenuBTManage[type_page].current.setAttribute("select" , "")
-            }
+            } catch(e) {}
+
             setTypePage(4)
             SetStatePage(type_page)
             const Data = JSON.parse(context).list
@@ -453,7 +454,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                                 data.check_doctor ?
                                 <div className="row end">
                                     <div className="field">
-                                        <button>แก้ไข</button>
+                                        <button className="edit-report" onClick={()=>PopupEditReport(data , "report")}>แก้ไข</button>
                                     </div>
                                 </div> : <></>
                             }
@@ -523,7 +524,6 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                     }
                 </section>
             ))
-            if(!e) setLoadContent(false)
         }
         else session()
     }
@@ -541,12 +541,22 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
         else session()
     }
 
-    // report
+    //popup manage
     const PopupReport = async (typeClick , statusCheck = "") => {
         const context = await clientMo.get('/api/doctor/name')
         if(context) {
             setManagePop(<InsertManage Ref={RefManagePopup} setPopup={setManagePop}
                 session={session} FetchData={()=>MenuManageFormByDoctor(typeClick)} NameDoctor={context} typeInsert={typeClick} id_plant={id_form} statusSuccess={statusCheck}/>)
+        }
+        else session()
+    }
+
+    // report
+    const PopupEditReport = async (Data , typeClick) => {
+        const context = await clientMo.get('/api/doctor/name')
+        if(context) {
+            setManagePop(<EditReport Ref={RefManagePopup} setPopup={setManagePop} session={session} 
+                            FetchData={()=>MenuManageFormByDoctor(typeClick)} Data={Data}/>)
         }
         else session()
     }
@@ -620,9 +630,11 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , countLoad
                         <g id="SVGRepo_iconCarrier"> <g> <path d="M113.986,209.155c-2.197,0-4.361,0.889-5.909,2.447c-1.558,1.558-2.457,3.723-2.457,5.919c0,2.196,0.899,4.351,2.457,5.919 c1.548,1.557,3.712,2.447,5.909,2.447c2.206,0,4.361-0.89,5.919-2.447c1.557-1.558,2.447-3.713,2.447-5.919 c0-2.207-0.89-4.361-2.447-5.919C118.347,210.043,116.192,209.155,113.986,209.155z"/> <path d="M267.206,185.582c-2.057-16.465-11.21-30.85-24.486-38.482l-49.029-28.182c10.546-11.153,17.033-26.182,17.033-42.707 c0-1.178-0.042-2.354-0.109-3.529h58.672c5.775,0,10.458-4.682,10.458-10.458s-4.682-10.458-10.458-10.458h-46.3 C211.528,20.982,181.782,0,148.5,0S85.472,20.982,74.013,51.766h-46.3c-5.775,0-10.458,4.682-10.458,10.458 s4.682,10.458,10.458,10.458h58.672c-0.067,1.175-0.109,2.352-0.109,3.529c0,16.525,6.487,31.554,17.033,42.707L54.28,147.1 c-13.274,7.63-22.428,22.016-24.487,38.482l-12.457,99.663c-0.372,2.976,0.553,5.969,2.537,8.218 c1.985,2.249,4.841,3.537,7.84,3.537h241.574c2.999,0,5.855-1.288,7.84-3.537c1.985-2.249,2.909-5.242,2.537-8.218L267.206,185.582 z M89.937,193.468h117.127v82.616H89.937V193.468z M107.192,172.553v-31.742l14.619-8.403c8.093,3.859,17.142,6.026,26.69,6.026 s18.596-2.167,26.69-6.026l14.619,8.403v31.742H107.192z M148.5,20.915c21.248,0,40.54,11.606,50.806,29.456H97.694 C107.96,32.521,127.252,20.915,148.5,20.915z M189.656,72.681c0.101,1.174,0.152,2.351,0.152,3.529 c0,22.777-18.531,41.308-41.308,41.308s-41.308-18.531-41.308-41.308c0-1.179,0.051-2.355,0.152-3.529H189.656z M50.547,188.176 c1.249-9.989,6.54-18.566,14.156-22.943l21.573-12.4v19.72h-6.798c-5.775,0-10.458,4.683-10.458,10.458v93.074H39.56 L50.547,188.176z M227.979,276.085v-93.074c0-5.775-4.682-10.458-10.458-10.458h-6.798v-19.72l21.573,12.4 c7.616,4.377,12.907,12.955,14.155,22.943l10.989,87.908H227.979z"/> <path d="M183.007,209.155c-2.197,0-4.361,0.889-5.909,2.447c-1.558,1.558-2.457,3.712-2.457,5.919c0,2.206,0.899,4.361,2.457,5.919 c1.548,1.557,3.712,2.447,5.909,2.447c2.206,0,4.361-0.89,5.919-2.447c1.557-1.558,2.447-3.724,2.447-5.919 c0-2.207-0.89-4.361-2.447-5.919C187.368,210.043,185.213,209.155,183.007,209.155z"/> </g> </g>
                     </svg>
                 </a>
-                <a title="ส่วนเจ้าหน้าที่" onClick={()=>{
-                        MenuManageFormByDoctor("success")
+                <a title="ส่วนเจ้าหน้าที่" onClick={async ()=>{
+                        setLoadContent(true)
+                        await MenuManageFormByDoctor("success")
                         setStateMenuShow(false)
+                        setLoadContent(false)
                     }}>
                     <svg id="Layer_1" data-name="Layer 1" viewBox="0 0 111.56 122.88">
                         <path style={{fillRule : "evenodd"}} d="M79.86,65.67a25,25,0,0,1,20.89,38.62l10.81,11.78-7.46,6.81L93.68,111.42A25,25,0,1,1,79.86,65.67Zm-42.65.26a2.74,2.74,0,0,1-2.6-2.84,2.71,2.71,0,0,1,2.6-2.84h15.4a2.76,2.76,0,0,1,2.6,2.84,2.71,2.71,0,0,1-2.6,2.84ZM22.44,57.22a5.67,5.67,0,1,1-5.67,5.67,5.67,5.67,0,0,1,5.67-5.67Zm2-18.58a2,2,0,0,1,2.85,0,2.07,2.07,0,0,1,0,2.89l-2,2,2,2a2,2,0,0,1,0,2.87,2,2,0,0,1-2.84,0l-2-2-2,2a2,2,0,0,1-2.86,0,2.07,2.07,0,0,1,0-2.89l2-2-2-2.05a2,2,0,0,1,2.87-2.86l2,2,2-2ZM16.85,21.52a2.29,2.29,0,0,1,3.16.63l1.13,1.36,4-5.05a2.27,2.27,0,1,1,3.51,2.88l-5.86,7.34a2.48,2.48,0,0,1-.55.52,2.28,2.28,0,0,1-3.16-.63l-2.84-3.89a2.28,2.28,0,0,1,.63-3.16Zm66.51-4.25h9.32a6.69,6.69,0,0,1,6.66,6.65v30.9c-.2,2.09-5.31,2.11-5.75,0V23.92a.93.93,0,0,0-.27-.67.91.91,0,0,0-.67-.27H83.32V54.82c-.49,1.89-4.75,2.18-5.71,0V6.66A1,1,0,0,0,77.34,6a.93.93,0,0,0-.67-.27h-70A.93.93,0,0,0,6,6a1,1,0,0,0-.27.68V85.79a1,1,0,0,0,.27.68.93.93,0,0,0,.67.27H44.74c2.88.29,3,5.27,0,5.71H21.66v10.61a.92.92,0,0,0,.94.94H44.74c2.09.24,2.76,5,0,5.71H22.64a6.54,6.54,0,0,1-4.7-2,6.63,6.63,0,0,1-2-4.7V92.45H6.66A6.69,6.69,0,0,1,0,85.79V6.66A6.54,6.54,0,0,1,2,2a6.61,6.61,0,0,1,4.7-2h70a6.55,6.55,0,0,1,4.7,2,6.65,6.65,0,0,1,2,4.7V17.27ZM37.18,26.44a2.75,2.75,0,0,1-2.6-2.84,2.71,2.71,0,0,1,2.6-2.84H63.86a2.74,2.74,0,0,1,2.6,2.84,2.71,2.71,0,0,1-2.6,2.84Zm0,19.74a2.74,2.74,0,0,1-2.6-2.83,2.71,2.71,0,0,1,2.6-2.84H63.86a2.74,2.74,0,0,1,2.6,2.84,2.7,2.7,0,0,1-2.6,2.83ZM70.45,93a3.46,3.46,0,0,1-.34-.44,3.4,3.4,0,0,1-.26-.5,3.18,3.18,0,0,1,4.57-4,2.93,2.93,0,0,1,.49.38h0c.87.83,1.15,1,2.11,1.87l.84.74,6.79-7.29c2.87-3,7.45,1.37,4.58,4.4l-8.47,9.06-.43.45a3.19,3.19,0,0,1-4.43.19l0,0c-.22-.19-.44-.4-.66-.6-.52-.46-1.06-.94-1.61-1.41-1.26-1.09-2-1.69-3.17-2.87Zm9.43-22.09A19.86,19.86,0,1,1,60,90.74,19.86,19.86,0,0,1,79.88,70.88Z"/>
@@ -986,6 +998,90 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div>
                 }
+            </div>
+            <div className="appove">
+                <input onChange={()=>CheckData()} placeholder="รหัสผ่านเจ้าหน้าที่" ref={Password} type="password"></input>
+                <div className="bt-insert">
+                    <button onClick={close} className="cancel">ยกเลิก</button>
+                    <button ref={BtConfirm} className="submit" onClick={Confirm}>ยืนยัน</button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
+    const NoteText = useRef()
+    const [QtyNote , setQtyNote] = useState(Data.report_text.length)
+    
+    const Password = useRef()
+    const BtConfirm = useRef()
+
+    useEffect(()=>{
+        Ref.current.style.opacity = "1"
+        Ref.current.style.visibility = "visible"
+    } , [])
+
+    const close = () => {
+        Ref.current.style.opacity = "0"
+        Ref.current.style.visibility = "hidden"
+
+        setTimeout(()=>{
+            setPopup(<></>)
+        })
+    }
+
+    const CheckData = () => {
+        const noteText = NoteText.current
+        const Pw = Password.current
+
+        if(noteText.value && noteText.value != Data.report_text && Pw.value) {
+            BtConfirm.current.setAttribute("pass" , "")
+            return(
+                { 
+                    id : Data.id,
+                    id_plant : Data.id_plant,
+                    report_text : noteText.value , 
+                    password : Pw.value
+                } 
+            )
+        } else {
+            BtConfirm.current.removeAttribute("pass")
+            return false
+        }
+    }
+
+    const Confirm = async () => {
+        const Data = CheckData()
+        if(Data) {
+            console.log(Data)
+            const result = await clientMo.post("/api/doctor/form/manage/report/edit" , Data)
+
+            console.log(result)
+            if(result === "113") {
+                FetchData()
+                close()
+            } else if (result === "password") {
+                Password.current.value = ""
+                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+            } else if (result === "not") {
+                console.log("not")
+            } else session()
+        } 
+    }
+
+    return(
+        <div className="insert-manage-doctor">
+            <div className="head-content">แก้ไขข้อแนะนำ</div>
+            <div className="content-insert">
+                <div className="report">
+                    <div className="date">
+                        <DayJSX DATE={new Date()} TYPE="small"/>
+                    </div>
+                    <div className="show-max-text">{QtyNote}/70</div>
+                    <textarea defaultValue={Data.report_text} onChange={()=>CheckData()} onInput={(e)=>setQtyNote(e.target.value.length)} ref={NoteText} maxLength={70} placeholder="กรอกข้อความ"></textarea>
+                    <input value={`ผู้บันทึก ${Data.name_doctor}`} readOnly className="name-doctor" type="text"></input>
+                </div>
             </div>
             <div className="appove">
                 <input onChange={()=>CheckData()} placeholder="รหัสผ่านเจ้าหน้าที่" ref={Password} type="password"></input>

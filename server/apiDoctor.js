@@ -975,7 +975,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     ) as fromInsert
                     WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
                     ORDER BY submit ASC
-                    ${(Limit !== null) ? `LIMIT ${Limit}` : "LIMIT 0"}
+                    ${(Limit !== null) ? `LIMIT ${Limit}` : ""}
                     `
                     , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
                     (err , listFarm)=>{
@@ -1552,6 +1552,46 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             con.end()
                             res.send("max")
                         }
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            }
+        }
+    })
+
+    app.post('/api/doctor/form/manage/report/edit' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const DateNew = apifunc.DateTime(new Date())
+                con.query(
+                    `
+                    UPDATE report_detail
+                    SET report_text = ? , date_report = ?
+                    WHERE id_plant = ? and id = ? and id_table_doctor = ?
+                    ` , [ req.body.report_text , DateNew , req.body.id_plant , req.body.id , result.data.id_table_doctor ],
+                    (err , resultEdit) => {
+                        if (err) {
+                            dbpacket.dbErrorReturn(con, err, res);
+                            console.log("edit report");
+                            return 0;
+                        }
+
+                        con.end()
+                        res.send("113")
                     }
                 )
             }

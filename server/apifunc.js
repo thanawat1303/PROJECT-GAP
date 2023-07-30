@@ -50,6 +50,17 @@ const apifunc = {
           result += characters.charAt(Math.floor(Math.random() * charactersLength));
       }
       return result;
+  },
+
+  DateTime : (DateCurrent) => {
+    const year = DateCurrent.getFullYear();
+    const month = String(DateCurrent.getMonth() + 1).padStart(2, '0');
+    const day = String(DateCurrent.getDate()).padStart(2, '0');
+    const hours = String(DateCurrent.getHours()).padStart(2, '0');
+    const minutes = String(DateCurrent.getMinutes()).padStart(2, '0');
+    const seconds = String(DateCurrent.getSeconds()).padStart(2, '0');
+  
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 };
 

@@ -255,7 +255,7 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
                                                     </div>
                                                     <div className={status.status === "plant" ? "type_plant" : "location"}>
                                                         {
-                                                            status.status === "plant" ? <span>ชนิด</span> : <></>
+                                                            status.status === "plant" ? <span>ประเภท</span> : <></>
                                                         }
                                                         {
                                                             status.status === "plant" ? <div className="text-data">{data.type_plant}</div> :
@@ -267,7 +267,7 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
                                                 { status.status === "plant" ?
                                                     <Detail-Data maxsize="">
                                                         <div className="name">
-                                                            <span className={status.status}>จำนวนวันเก็บเกี่ยว</span>
+                                                            <span className={status.status}>จำนวนวันที่จะเก็บเกี่ยว</span>
                                                             <div className={`text-data`}>{`${data.qty_harvest} วัน`}</div>
                                                         </div>
                                                     </Detail-Data>

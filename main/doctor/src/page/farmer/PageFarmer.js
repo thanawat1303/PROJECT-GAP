@@ -4,6 +4,7 @@ import "../../assets/style/page/farmer/PageFarmer.scss"
 import "../../assets/style/TemplantList.scss"
 import { DayJSX, LoadOtherDom, Loading, PopupDom, TimeJSX } from "../../../../../src/assets/js/module";
 import ManagePopup from "./ManagePopup";
+import ListProfile from "./ListProfile";
 const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , LoadType , eleBody , setTextStatus}) => {
     const [statusPage , setStatus] = useState({
         status : LoadType.split(":")[0],
@@ -91,7 +92,17 @@ const List = ({ session , socket , status}) => {
         setLoadList(true)
 
         FetchList(10)
+
+        return(()=>{
+            socket.removeListener("reload-farmer-list")
+        })
     } , [status])
+
+    useEffect(()=>{
+        socket.on("reload-farmer-list" , ()=>{
+            FetchList(Count)
+        })
+    } , [Count])
 
     const FetchList = async (limit) => {
         try {
@@ -116,10 +127,10 @@ const List = ({ session , socket , status}) => {
                     <Loading size={"45px"} border={"5px"} color="rgb(24 157 133)" animetion={true}/>
                 </div> 
                 :
-                <ManageList Data={Data} status={status} session={session} fetch={FetchList} count={Count} setCount={setCount}/>)
+                <ManageList Data={Data} status={status} session={session} fetch={FetchList} count={Count} setCount={setCount} socket={socket}/>)
 }
 
-const ManageList = ({Data , status , session , fetch , count , setCount}) => {
+const ManageList = ({Data , status , session , fetch , count , setCount , socket}) => {
     const [Body , setBody] = useState(<></>)
     const RefPop = useRef()
     const [PopBody , setPop] = useState(<></>)
@@ -139,7 +150,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
 
     const Resize = () => ManageShow(Data)
 
-    const ManageShow = (Data) => {
+    const ManageShow = async (Data) => {
         if(Data.length !== 0) {
             let Max = 0 , SizeFont = 0 , SizeFontDate = 0
             // console.log(Data)
@@ -155,10 +166,10 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
             }
 
             // const text = [ ...Data , ...Data , ...Data ]
+
             const Row = new Array
             for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
 
-            let countKey = 0
             const body = Row.map((Data , keyRow)=>{
                 return (
                     <section className={`row ${keyRow}`} key={keyRow}>
@@ -169,54 +180,11 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                             '--font-size-date-in-row-doctor' : `${SizeFontDate}vw`,
                             }}>
                             {
-                                Data.map((val , key)=>{
-                                    const base64String = String.fromCharCode(...val.img.data); // แปลง charCode เป็น string
-                                    const Ref = refData[countKey]
-                                    const Date_comfirm = val.date_doctor_confirm ? new Date(val.date_doctor_confirm) : ""
-                                    countKey++
-                                    return (
-                                        <section key={key} className="list-some-data-on-page"
-                                            ref={Ref}
-                                            >
-                                            <div className="img">
-                                                <img src={base64String}></img>
-                                            </div>
-                                            <div className="detail">
-                                                <div className="text fullname">
-                                                    <input readOnly value={val.fullname}></input>
-                                                </div>
-                                                {
-                                                    status.status === "ap" ? 
-                                                    <div className="flex">
-                                                        <span>ตรวจสอบโดย</span>
-                                                        <div>{val.name_doctor}</div> 
-                                                    </div>
-                                                    : <></>
-                                                }
-                                                {
-                                                    status.status === "ap" ?
-                                                    <div className="flex">
-                                                        <span>วันที่อนุมัติ</span>
-                                                        <DayJSX DATE={new Date(Date_comfirm.setHours(Date_comfirm.getHours() + 7))} TYPE="small"/>
-                                                    </div>
-                                                    :
-                                                    <div className="text date">
-                                                        <DayJSX DATE={val.date_register} TYPE="normal"/>
-                                                        <TimeJSX DATE={val.date_register} MAX={false}/>
-                                                    </div>
-                                                }
-                                            </div>
-                                            <div className="bt">
-                                                <button onClick={()=>showPopup(val.id_table , val.link_user , Ref)}>{status.status === "ap" ? "ดูข้อมูล" : "ตรวจสอบ"}</button>
-                                            </div>
-                                            { status.status === "ap" ?
-                                                <div className="count-account" show={val.Count !== 1 ? "s" : ""}>
-                                                    {val.Count !== 1 ? val.Count : ""}
-                                                </div> : <></>
-                                            }
-                                        </section>
-                                    )
-                                })
+                                Data.map((val , key)=>
+                                    <section key={key} className="list-some-data-on-page">
+                                        <ListProfile data={val} status={status} showPopup={showPopup}/>
+                                    </section>
+                                )
                             }
                         </div>
                     </section>
@@ -232,13 +200,13 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
         }
     }
 
-    const showPopup = async (id_table , link_user , Ref) => {
+    const showPopup = async (id_table , link_user) => {
         const context = await clientMo.post('/api/doctor/check')
         if(context) 
-            setPop(<ManagePopup RefData={Ref} setPopup={setPop} RefPop={RefPop} resultPage={{
+            setPop(<ManagePopup setPopup={setPop} RefPop={RefPop} resultPage={{
                 id_table : id_table ,
                 link_user : link_user
-            }} status={status.status} session={session} countLoad={count} Fecth={fetch}/>)
+            }} status={status.status} session={session} countLoad={count} Fecth={fetch} socket={socket}/>)
         else session()
     }
 

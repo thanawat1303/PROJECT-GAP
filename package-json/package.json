@@ -28,7 +28,8 @@
   "nodemonConfig": {
     "watch": [
       "server",
-      "webpack.dev.config.ts"
+      "webpack.dev.config.ts",
+      ".env"
     ],
     "ignore": [
       "/main",

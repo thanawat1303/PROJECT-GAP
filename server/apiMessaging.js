@@ -1,86 +1,211 @@
 require('dotenv').config().parsed
 const line = require('./configLine')
 const fs = require('fs')
-module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , LINE = line , UrlApi) {
 
-    app.post('/messageAPI' , (req , res)=>{
+const {Server} = require('socket.io')
+const io = new Server()
+
+module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io) {
+
+    app.post('/messageAPI' , async (req , res)=>{
         
         if(req.body.events.length > 0) {
-            if(req.body.events[0].postback) {
+            if(req.body.events[0].type === "postback") {
                 if(req.body.events[0].postback.data == "house_add") {
-                    let con = Database.createConnection(listDB)
-                    con.connect(( err )=>{
-                        if (err) {
-                            dbpacket.dbErrorReturn(con, err, res);
-                            console.log("connect");
-                            return 0;
-                        }
-                        
-                        con.query(`
-                                    SELECT id_farmHouse , name_house FROM housefarm , 
-                                        (
-                                            SELECT uid_line , link_user FROM acc_farmer 
-                                            WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
-                                            ORDER BY date_register DESC
-                                            LIMIT 1
-                                        ) as farmer 
-                                    WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
-                                    ORDER BY id_farmHouse DESC
-                                    ` , 
-                            [req["body"]['events'][0]["source"]["userId"]] ,
-                            (err , result)=>{
-                                if (err) {
-                                    dbpacket.dbErrorReturn(con, err, res);
-                                    console.log("query");
-                                    return 0
-                                }
-                                con.end()
-                                let msg
-                                if(result[0]) {
-                                    let query = new Array
-                                    for (let key in result) {
-                                        query.push(
-                                                {
-                                                    imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
-                                                    action : {
-                                                        type : "uri",
-                                                        label : `${result[key]["name_house"]}`,
-                                                        uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farmHouse"]}`
-                                                    }
-                                                }
-                                        )
-                                    } 
-                                    msg =   {
-                                                type : "template",
-                                                altText : "โรงเรือน",
-                                                template : {
-                                                    type : "image_carousel" ,
-                                                    columns : query
+                    const con = await ConnectDB()
+                    con.query(`
+                                SELECT id_farmHouse , name_house FROM housefarm , 
+                                    (
+                                        SELECT uid_line , link_user FROM acc_farmer 
+                                        WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
+                                        ORDER BY date_register DESC
+                                        LIMIT 1
+                                    ) as farmer 
+                                WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
+                                ORDER BY id_farmHouse DESC
+                                ` , 
+                        [req["body"]['events'][0]["source"]["userId"]] ,
+                        (err , result)=>{
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("query");
+                                return 0
+                            }
+                            con.end()
+                            let msg
+                            if(result[0]) {
+                                let query = new Array
+                                for (let key in result) {
+                                    query.push(
+                                            {
+                                                imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
+                                                action : {
+                                                    type : "uri",
+                                                    label : `${result[key]["name_house"]}`,
+                                                    uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farmHouse"]}`
                                                 }
                                             }
-                                            // {
-                                            //     type : "flex" , 
-                                            //     altText : "โรงเรือน" ,
-                                            //     contents : {
-                                            //         type : "carousel" ,
-                                            //         contents : [
-                                            //             JSON.parse(newData)
-                                            //         ]
-                                            //     }
-                                            // }
+                                    )
+                                } 
+                                msg =   {
+                                            type : "template",
+                                            altText : "โรงเรือน",
+                                            template : {
+                                                type : "image_carousel" ,
+                                                columns : query
+                                            }
+                                        }
+                            }
+                            else {
+                                msg = {
+                                    type : "text",
+                                    text : "โปรดเพิ่มโรงเรือนก่อนนะครับ"
                                 }
-                                else {
-                                    msg = {
-                                        type : "text",
-                                        text : "โปรดเพิ่มโรงเรือนก่อนนะครับ"
-                                    }
-                                }
+                            }
 
-                                line.replyMessage(req["body"]['events'][0]["replyToken"] , msg)
-                                res.status(200).send('OK')
-                        })
+                            line.replyMessage(req["body"]['events'][0]["replyToken"] , msg)
+                            res.status(200).send('OK')
                     })
                 }
+            } else if (req.body.events[0].type === "message") {
+                // console.log(req.body.events[0])
+                const ObjectMsg = req.body.events[0]
+                const Uid_line = ObjectMsg.source.userId
+
+                const con = await ConnectDB()
+                const SelectProfile = await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                        SELECT station , register_auth
+                        FROM acc_farmer
+                        WHERE uid_line = ?
+                        ` , [ Uid_line ] , (err , resultCheck)=>{
+                            resole(resultCheck)
+                        }
+                    )
+                })
+
+                let msg = {}
+                if(SelectProfile.length != 0) {
+                    const stationAll = new Set(SelectProfile.map((val)=>val.station))
+                    const message = ObjectMsg.message.text
+
+                    try {
+                        const messageSet = await new Promise((resole , reject)=>{
+                            con.query(
+                                `
+                                INSERT INTO message_user
+                                ( message , uid_line_farmer , id_read , type ) VALUES ( ? , ? , '{}' , 0)
+                                ` , [ message , Uid_line ] , (err , result) => {
+                                    if(err) reject("err insert send")
+                                    resole()
+                                }
+                            )
+                        })
+
+                        //send to doctor
+                        const Uid_line_send = await new Promise( async (resole , reject)=>{
+                            const uid_send = new Array
+                            await new Promise( async (resole , reject)=>{
+                                let index = 1;
+                                for (let val of stationAll) {
+                                    const ObjectProfile = await new Promise((resole , reject)=>{
+                                        con.query(
+                                            `
+                                            SELECT uid_line_doctor
+                                            FROM acc_doctor
+                                            WHERE station_doctor = ? and status_account = 1 and status_delete = 0
+                                            ` , [val] , 
+                                            (err , doctor) => {
+                                                resole(doctor)
+                                            }
+                                        )
+                                    })
+                                    if(ObjectProfile.length > 0) {
+                                        const List_uid = ObjectProfile.map((val)=>val.uid_line_doctor).filter((val)=>val)
+                                        uid_send.push(...List_uid)
+                                    }
+
+                                    if(stationAll.size == index) resole()
+                                    index++
+                                }
+                            })
+
+                            resole(new Set(uid_send))
+                        })
+
+                        try {
+                            const bubble = {
+                                type : "flex",
+                                altText : "ข้อความจากเกษตรกร",
+                                contents : {
+                                    "type": "bubble",
+                                    "direction": "ltr",
+                                    "body": {
+                                      "type": "box",
+                                      "layout": "vertical",
+                                      "contents": [
+                                        {
+                                          "type": "text",
+                                          "text": "Body",
+                                          "size": "xs",
+                                          "align": "start",
+                                          "wrap": true,
+                                          "contents": []
+                                        }
+                                      ]
+                                    },
+                                    "footer": {
+                                      "type": "box",
+                                      "layout": "horizontal",
+                                      "height": "50px",
+                                      "contents": [
+                                        {
+                                          "type": "button",
+                                          "action": {
+                                            "type": "uri",
+                                            "label": "คลิกตอบกลับ",
+                                            "uri": "https://linecorp.com"
+                                          },
+                                          "color": "#25AA6EFF",
+                                          "height": "sm",
+                                          "style": "primary"
+                                        }
+                                      ]
+                                    }
+                                }
+                            }
+
+                            const checkAuth = SelectProfile.map(val=>val.register_auth.toString())
+                            const typeMessange = checkAuth.indexOf("1") >= 0 ? "บัญชีเกษตรกรที่ผ่านการตรวจสอบ" : 
+                                                checkAuth.indexOf("0") >= 0 ? "บัญชีเกษตรกรที่รอการตรวจสอบ" :
+                                                checkAuth.indexOf("2") >= 0 ? "บัญชีเกษตรกรที่ถูกปิด" : "";
+                            
+                            socket.to(Uid_line).emit("new_msg")
+                            socket.emit("reload-farmer-list" , Uid_line)
+                            // line.multicast([...Uid_line_send] , {type : "text" , text : "มีข้อความจาก"})
+                        } catch(e) {}
+
+                        // msg = {
+                        //     type : "text",
+                        //     text : "รับเรื่องแล้ว กรุณารอการตอบกลับจากเจ้าหน้าที่นะคะ \u2764"
+                        // }
+                    } catch(e) {
+                        msg = {
+                            type : "text",
+                            text : "พบปัญหาในการส่งข้อความ กรุณารอสักครู่และส่งข้อความใหม่อีกครั้ง \u2764"
+                        }
+                    }
+                    
+                } else {
+                    msg = {
+                        type : "text",
+                        text : "กรุณาสมัครบัญชีก่อนนะคะ \u2764"
+                    }
+                    con.end()
+                }
+
+                if(msg.type) line.replyMessage(req["body"]['events'][0]["replyToken"] , msg)
             }
             
         } else {
@@ -131,6 +256,19 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
         
     })
 
+    const ConnectDB = async () => {
+        return await new Promise((resole , reject)=>{
+            const connect = Database.createConnection(listDB)
+            connect.connect(( err )=>{
+                if (err) {
+                    dbpacket.dbErrorReturn(con, err, res);
+                    console.log("connect");
+                    return 0;
+                }
+                resole(connect)
+            })
+        })
+    } 
 }
 
 // {

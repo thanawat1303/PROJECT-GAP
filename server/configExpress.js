@@ -35,8 +35,9 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     const listDB = dbpacket.listConfig(username , password)
     const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV;
     const HOST_FARMER = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_FARMER;
+    
     // protocal websocket
-    WebSocket(server)
+    const io = WebSocket(server)
 
     // secure server
     // app.use(helmat(
@@ -73,9 +74,9 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
 
     router(app)
     apiAdmin(app , db , apifunc , TestNgrok , dbpacket , listDB)
-    apiDoctor(app , db , apifunc , TestNgrok , dbpacket , listDB)
+    apiDoctor(app , db , apifunc , TestNgrok , dbpacket , listDB , io)
     apiFarmer(app , db , apifunc , HOST_FARMER , dbpacket , listDB , LINE)
-    message(app , db , apifunc , TestNgrok , dbpacket , listDB , LINE , UrlNgrok)
+    message(app , db , apifunc , TestNgrok , dbpacket , listDB , UrlNgrok , io)
 
     return server
 }

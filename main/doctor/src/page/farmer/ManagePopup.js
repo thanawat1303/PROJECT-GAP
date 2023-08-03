@@ -8,9 +8,10 @@ import SelectConvert from "./SelectConvert";
 const ManagePopup = ({setPopup , RefPop , resultPage = {
     id_table : "",
     link_user : ""
-} , status , session , countLoad , Fecth , RefData}) => {
+} , status , session , countLoad , Fecth , socket}) => {
     const [DetailFarmer , setDetailFarmer] = useState(<></>)
     const [DetailDoctor , setDetailDoctor] = useState(<></>)
+    // const [DetailMsg , setDetailMsg] = useState(<></>)
     const [ TypeDetail , setTypeDetail ] = useState("farmer")
 
     const [Load , setLoad] = useState(true)
@@ -58,7 +59,33 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
         RefPop.current.style.visibility = "visible"
 
         FetchCountList(resultPage.link_user , resultPage.id_table)
+
+        return(()=>{
+            socket.emit("disconnect msg" , DetailFarmer.uid_line)
+            socket.removeListener("new_msg")
+        })
     } , [])
+
+    const [newMessage , SetNewMessage] = useState(true)
+    const [messageCount , setmessageCount] = useState(0)
+    useEffect(()=>{
+        socket.removeListener("new_msg")
+        socket.on("new_msg" , async ()=>{
+            SetNewMessage(!newMessage)
+            const Count = await clientMo.post("/api/doctor/farmer/msg/count" , {id_table : DetailFarmer.id_table})
+            try {
+                const count = JSON.parse(Count)[0]
+                console.log(count)
+                setmessageCount(count.count_msg)
+            } catch(e) {session()}
+        })
+    } , [messageCount , DetailFarmer])
+
+    const StartSocketMsg = async (uid_line) => {
+        const uid_lineIn = DetailFarmer.uid_line ? DetailFarmer.uid_line : uid_line;
+        socket.emit("disconnect msg" , uid_lineIn)
+        socket.emit("connect msg" , uid_line)
+    }
 
     const close = () => {
         RefPop.current.style.opacity = "0"
@@ -90,12 +117,15 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
         if(result) {
             setLoad(true)
             const resultData = await clientMo.post("/api/doctor/farmer/get/detail" , {id_table : result.id_table , link_user : result.link_user})
-
+            const Count = await clientMo.post("/api/doctor/farmer/msg/count" , {id_table : result.id_table})
             try {
                 const data = JSON.parse(resultData)
+                const count = JSON.parse(Count)[0]
                 if(data.length === 1) {
                     const Detail = data[0]
                     setDetailFarmer(Detail)
+                    setmessageCount(count.count_msg)
+                    StartSocketMsg(Detail.uid_line)
                 } else {
                     setDetailFarmer([])
 
@@ -294,6 +324,28 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
     }
 
 
+    // message
+    const MessagePopup = async (id_table , link_user) => {
+        setLoad(true)
+        const resultData = await clientMo.post("/api/doctor/farmer/get/detail" , {id_table : id_table , link_user : link_user})
+
+        try {
+            const data = JSON.parse(resultData)
+            if(data.length === 1) {
+                const Detail = data[0]
+                setDetailFarmer(Detail)
+            } else {
+                setDetailFarmer([])
+            }
+        } catch(e) {
+            console.log(e)
+            session()
+        }
+        setDetailDoctor([])
+        setTypeDetail("msg")
+        setLoad(false)
+    }
+
     //close account
     const CloseAccount = async (Detail) => {
         const context = await clientMo.post('/api/doctor/check')
@@ -336,11 +388,16 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                         <></>
             }
             <div className="option-account" top={resultDate.length !== 1 ? "n" : "y"}>
-                <a title="ข้อความจากเกษตรกร" className="list-type">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.02 2.90991C8.70997 2.90991 6.01997 5.59991 6.01997 8.90991V11.7999C6.01997 12.4099 5.75997 13.3399 5.44997 13.8599L4.29997 15.7699C3.58997 16.9499 4.07997 18.2599 5.37997 18.6999C9.68997 20.1399 14.34 20.1399 18.65 18.6999C19.86 18.2999 20.39 16.8699 19.73 15.7699L18.58 13.8599C18.28 13.3399 18.02 12.4099 18.02 11.7999V8.90991C18.02 5.60991 15.32 2.90991 12.02 2.90991Z" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/>
-                        <path d="M13.87 3.19994C13.56 3.10994 13.24 3.03994 12.91 2.99994C11.95 2.87994 11.03 2.94994 10.17 3.19994C10.46 2.45994 11.18 1.93994 12.02 1.93994C12.86 1.93994 13.58 2.45994 13.87 3.19994Z" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke-width="1.5" stroke-miterlimit="10"/>
+                <a title="พูดคุยกับเกษตรกร" className="list-type" onClick={()=>MessagePopup(DetailFarmer.id_table , DetailFarmer.link_user)}>
+                    {   messageCount > 0 ?
+                        <div className="count-msg">
+                        {
+                            messageCount > 10 ? "10+" : messageCount
+                        }
+                        </div> : <></>
+                    }
+                    <svg viewBox="0 0 48 48">
+                        <path d="M 23.007812 5 C 20.430604 5 17.955216 5.3826911 15.664062 6.0859375 A 1.50015 1.50015 0 1 0 16.544922 8.953125 C 18.547769 8.3383714 20.727023 8 23.007812 8 C 33.10213 8 41.005859 14.567511 41.005859 22.236328 C 41.005859 25.967632 39.339349 29.098942 36.613281 31.976562 A 1.50015 1.50015 0 1 0 38.791016 34.039062 C 41.856948 30.802683 44.005859 26.879024 44.005859 22.236328 C 44.005859 12.551146 34.415497 5 23.007812 5 z M 7.2363281 11.515625 A 1.50015 1.50015 0 0 0 6.0820312 12.03125 C 3.5472914 14.857327 2.0058594 18.403085 2.0058594 22.236328 C 2.0058594 30.874232 9.6073525 37.884555 19.505859 39.232422 C 19.733605 39.281857 19.977406 39.361175 20.132812 39.429688 C 20.118043 39.515147 20.153199 39.911316 20.105469 40.273438 C 20.105469 40.273438 20.105469 40.275391 20.105469 40.275391 C 20.092619 40.352451 19.881057 41.615404 19.835938 41.878906 L 19.837891 41.876953 C 19.762771 42.309977 19.521995 43.033546 20.193359 44.048828 C 20.529042 44.556469 21.285396 44.987587 21.962891 45 C 22.640385 45.01241 23.208997 44.789728 23.832031 44.447266 C 26.686076 42.87719 29.695889 41.176108 32.503906 39.255859 A 1.50015 1.50015 0 1 0 30.810547 36.779297 C 28.322739 38.480572 25.598464 40.016715 22.943359 41.484375 C 22.999979 41.145402 23.072266 40.71875 23.072266 40.71875 A 1.50015 1.50015 0 0 0 23.080078 40.671875 C 23.155098 40.109193 23.364983 39.264995 22.923828 38.162109 A 1.50015 1.50015 0 0 0 22.921875 38.158203 C 22.588283 37.333404 21.970623 36.974887 21.476562 36.738281 C 20.982502 36.501675 20.514934 36.37997 20.126953 36.296875 A 1.50015 1.50015 0 0 0 20.007812 36.277344 C 11.219455 35.120988 5.0058594 29.123568 5.0058594 22.236328 C 5.0058594 19.201571 6.2051462 16.387126 8.3164062 14.033203 A 1.50015 1.50015 0 0 0 7.2363281 11.515625 z M 18.333984 17.136719 C 17.769984 17.136719 17.310547 17.592344 17.310547 18.152344 L 17.310547 25.845703 C 17.310547 26.406703 17.768984 26.861328 18.333984 26.861328 C 18.897984 26.861328 19.357422 26.405703 19.357422 25.845703 L 19.357422 18.152344 C 19.357422 17.592344 18.898984 17.136719 18.333984 17.136719 z M 21.853516 17.136719 C 21.743516 17.136719 21.633344 17.154453 21.527344 17.189453 C 21.109344 17.328453 20.828125 17.715344 20.828125 18.152344 L 20.828125 25.845703 C 20.828125 26.406703 21.288516 26.861328 21.853516 26.861328 C 22.419516 26.861328 22.878906 26.405703 22.878906 25.845703 L 22.878906 21.087891 L 26.853516 26.455078 C 27.045516 26.709078 27.351875 26.861328 27.671875 26.861328 C 27.780875 26.861328 27.890094 26.843594 27.996094 26.808594 C 28.416094 26.671594 28.697266 26.284703 28.697266 25.845703 L 28.697266 18.150391 C 28.697266 17.590391 28.238828 17.136719 27.673828 17.136719 C 27.108828 17.136719 26.648438 17.590391 26.648438 18.150391 L 26.648438 22.912109 L 22.671875 17.542969 C 22.479875 17.288969 22.172516 17.136719 21.853516 17.136719 z M 11.466797 17.138672 C 10.902797 17.138672 10.443359 17.592344 10.443359 18.152344 L 10.443359 25.847656 C 10.443359 26.408656 10.901797 26.863281 11.466797 26.863281 L 15.345703 26.863281 C 15.910703 26.863281 16.368187 26.405703 16.367188 25.845703 C 16.367188 25.285703 15.910703 24.830078 15.345703 24.830078 L 12.488281 24.830078 L 12.488281 18.152344 C 12.488281 17.592344 12.031797 17.138672 11.466797 17.138672 z M 31.095703 17.138672 C 30.531703 17.138672 30.072266 17.594297 30.072266 18.154297 L 30.072266 18.15625 L 30.072266 21.998047 L 30.072266 22 L 30.072266 22.001953 L 30.072266 25.845703 C 30.072266 26.406703 30.532703 26.861328 31.095703 26.861328 L 34.974609 26.861328 C 35.539609 26.861328 36 26.405703 36 25.845703 C 36 25.285703 35.539609 24.830078 34.974609 24.830078 L 32.119141 24.830078 L 32.119141 23.013672 L 34.974609 23.013672 C 35.540609 23.013672 36 22.558047 36 21.998047 C 36 21.437047 35.539609 20.982422 34.974609 20.982422 L 34.974609 20.986328 L 32.119141 20.986328 L 32.119141 19.169922 L 34.974609 19.169922 C 35.540609 19.169922 36 18.714297 36 18.154297 C 36 17.594297 35.539609 17.138672 34.974609 17.138672 L 31.095703 17.138672 z"/>
                     </svg>
                 </a>
                 {
@@ -375,6 +432,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                         </div>
                         : 
                     // detail
+                    TypeDetail === "farmer" || TypeDetail === "doctor" ?
                     <div className="detail-account-data">
                         { TypeDetail === "farmer" ?
                             <></> :
@@ -483,7 +541,8 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                                 </>
                                 : <></>
                         }
-                    </div>
+                    </div> : 
+                    <Messageing Data={DetailFarmer} FetData={Fecth(countLoad)} session={session} socket={socket} is_change={newMessage}/>
                 }
             </div>
             {
@@ -607,6 +666,55 @@ const PopupConfirmAction = ({Ref , setPopup , session , DetailFarmer , id_table_
         </div>
     )
 }
+
+import io from "socket.io-client"
+const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
+    const [Limit , setLimit] = useState(5)
+    const [Offset , setOffset] = useState(0)
+    const [message , SetMessage] = useState([])
+
+    const [Open , setOpen] = useState(false)
+
+    useEffect(()=>{
+        onMessage()
+    } , [])
+
+    useEffect(()=>{
+        if(Open) FetchMsg(1 , Offset , "get")
+        setOpen(true)
+    } , [is_change])
+
+    const onMessage = async () => {
+        await FetchMsg(false , 0 , "start")
+    }
+
+    const FetchMsg = async ( limit , offset , open) => {
+        const list_msg = await clientMo.post('/api/doctor/farmer/msg/get' , {
+            uid_line : Data.uid_line,
+            limit : limit,
+            offset : offset,
+            open_msg : open
+        })
+
+        if(list_msg) {
+            const DataFetch = JSON.parse(list_msg)
+            let Body = []
+            if(open === "start") {
+                SetMessage(DataFetch)
+                Body = DataFetch
+            } else if(open === "get") {
+                SetMessage((prevMessages) => [...prevMessages, ...DataFetch]);
+                Body = [...message , ...DataFetch]
+            }
+            setOffset(DataFetch.length)
+            // setLimit(limit)
+            console.log(offset)
+            console.log(Body)
+        } else session()
+    }
+
+    return(<></>)
+} 
 
 // const PopupConfirmAction = ({Ref , setPopup , session , DetailFarmer , id_table_convert , 
 //     setReload , FetchCountList , FetData , CountFetch , type}) => {

@@ -1,7 +1,11 @@
 require('dotenv').config().parsed
 const wordcut = require('thai-wordcut')
 wordcut.init()
-module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
+
+const {Server} = require('socket.io')
+const io = new Server()
+
+module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket = io) {
 
     app.post('/api/doctor/check' , (req , res)=>{
         res.redirect('/api/doctor/auth');
@@ -309,7 +313,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         })
     })
 
-    app.post('/api/doctor/farmer/get/detail' , (req , res)=>{
+    app.post('/api/doctor/farmer/get/detail' , async (req , res)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -319,8 +323,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     
         let con = Database.createConnection(listDB)
-    
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
                 con.query(
                     `
@@ -338,12 +342,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     res.send(result)
                 })
             }
-        }).catch((err)=>{
+        } catch(err) {
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')
             }
-        })
+        }
     })
 
     app.post('/api/doctor/farmer/get/account/confirm' , (req , res)=>{
@@ -399,10 +403,20 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const Limit = isNaN(parseInt(req.body.limit)) ? 0 : req.body.limit;
                 let queryType = req.body.approve === 0 ?
                     `
-                    SELECT filterFarmer.*
+                    SELECT filterFarmer.* , 
+                    (
+                        SELECT date
+                        FROM message_user
+                        WHERE message_user.uid_line_farmer = acc_farmer.uid_line 
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
+                                and type = 0
+                        GROUP BY uid_line_farmer
+                        ORDER BY message_user.date
+                        LIMIT 1
+                    ) as is_msg
                     FROM acc_farmer , 
                     (
-                        SELECT id_table , img , date_register , fullname , 
+                        SELECT id_table , img , date_register , fullname , link_user , uid_line , 
                         (
                             SELECT EXISTS (
                                 SELECT id_table 
@@ -418,34 +432,62 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             register_auth = 0
                     ) as filterFarmer
                     WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
-                    ORDER BY filterFarmer.date_register ASC
+                    ORDER BY is_msg DESC , filterFarmer.date_register ASC
                     LIMIT ${Limit};
                     `: 
                     req.body.approve === 1 ?
                     `
                     SELECT acc_farmer.id_table , acc_farmer.img , acc_farmer.fullname , acc_farmer.link_user , acc_farmer.date_register
-                            , farmer_main.Count , acc_farmer.date_doctor_confirm ,
+                        , farmer_main.Count , acc_farmer.date_doctor_confirm , acc_farmer.uid_line ,
+                    (
+                        SELECT fullname_doctor
+                        FROM acc_doctor
+                        WHERE acc_doctor.id_table_doctor = acc_farmer.id_doctor
+                    ) as name_doctor ,
+                    (
+                        SELECT date
+                        FROM message_user , 
                         (
-                            SELECT fullname_doctor
-                            FROM acc_doctor
-                            WHERE acc_doctor.id_table_doctor = acc_farmer.id_doctor
-                        ) as name_doctor
-                    FROM acc_farmer , (
+                            SELECT uid_line
+                            FROM acc_farmer as farmer_check
+                            WHERE farmer_check.link_user = acc_farmer.link_user
+                            ORDER BY date_register DESC
+                            LIMIT 1
+                        ) as farmer
+                        WHERE message_user.uid_line_farmer = farmer.uid_line
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."2"') , 0) = 0
+                                and type = 0
+                        GROUP BY uid_line
+                        ORDER BY message_user.date
+                        LIMIT 1
+                    ) as is_msg
+                    FROM acc_farmer , 
+                    (
                         SELECT MAX(date_register) as DateLast , link_user , COUNT(link_user) as Count
                         FROM acc_farmer 
                         WHERE station = "${result['data']['station_doctor']}" and register_auth = 1
                         GROUP BY link_user
                     ) as farmer_main
                     WHERE acc_farmer.link_user = farmer_main.link_user 
-                            and acc_farmer.date_register = farmer_main.DateLast
-                    ORDER BY date_register DESC
+                        and acc_farmer.date_register = farmer_main.DateLast
+                    ORDER BY is_msg DESC , date_register DESC
                     LIMIT ${Limit};
                     ` :
                     `
-                    SELECT filterFarmer.*
+                    SELECT filterFarmer.* , 
+                    (
+                        SELECT date
+                        FROM message_user
+                        WHERE message_user.uid_line_farmer = acc_farmer.uid_line 
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
+                                and type = 0
+                        GROUP BY uid_line_farmer
+                        ORDER BY message_user.date
+                        LIMIT 1
+                    ) as is_msg
                     FROM acc_farmer , 
                     (
-                        SELECT id_table , img , date_register , fullname , 
+                        SELECT id_table , img , date_register , fullname , link_user , uid_line , 
                         (
                             SELECT EXISTS (
                                 SELECT id_table 
@@ -461,7 +503,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             register_auth = 2
                     ) as filterFarmer
                     WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
-                    ORDER BY filterFarmer.date_register ASC
+                    ORDER BY is_msg DESC , filterFarmer.date_register ASC
                     LIMIT ${Limit};
                     `
                 con.query(queryType, (err , result)=>{
@@ -897,6 +939,150 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         } 
     })
     // account end
+
+    //massage start
+    app.post('/api/doctor/farmer/msg/count' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    SELECT COUNT(message_user.id) as count_msg
+                    FROM message_user , 
+                    (
+                        SELECT uid_line
+                        FROM acc_farmer
+                        WHERE id_table = ? OR link_user = ?
+                    ) as farmer
+                    WHERE message_user.uid_line_farmer = farmer.uid_line
+                            and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
+                            and type = 0
+                    ` , [req.body.id_table , req.body.link_user , result["data"].id_table_doctor] , 
+                    (err , count)=>{
+                        con.end()
+                        res.send(count)
+                    }
+                )
+            }
+        } catch(err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.post('/api/doctor/farmer/msg/read' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    UPDATE message_user
+                    SET id_read = JSON_SET(id_read, '$."?"', 'read');
+                    WHERE uid_line_farmer = ?
+                    ` , [result["data"].id_table_doctor , req.body.uid_line] , 
+                    (err , read)=>{
+                        con.end()
+                        res.send("113")
+                    }
+                )
+            }
+        } catch(err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.post('/api/doctor/farmer/msg/get' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                if(req.body.open_msg === "start") {
+                    const LimitFirst = await new Promise((resole , reject)=>{
+                        con.query(
+                            `
+                            SELECT COUNT(*) as count_unread
+                            FROM message_user
+                            WHERE uid_line_farmer = ? 
+                                    and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
+                            ` , [ req.body.uid_line ] , 
+                            (err , list_unread)=>{
+                                resole(parseInt(list_unread[0].count_unread))
+                            }
+                        )
+                    })
+                    con.query(
+                        `
+                        SELECT *
+                        FROM message_user
+                        WHERE uid_line_farmer = ?
+                        ORDER BY date ASC
+                        LIMIT ${LimitFirst + 5} OFFSET 0
+                        ` , [ req.body.uid_line ] , 
+                        (err , list_msg)=>{
+                            con.end()
+                            res.send(list_msg)
+                        }
+                    )
+                } else if (req.body.open_msg === "get") {
+                    const LIMIT = isNaN(parseInt(req.body.limit)) ? 0 : req.body.limit
+                    const OFFSET = isNaN(parseInt(req.body.offset)) ? 0 : req.body.offset
+                    con.query(
+                        `
+                        SELECT *
+                        FROM message_user
+                        WHERE uid_line_farmer = ?
+                        ORDER BY date ASC
+                        LIMIT ${LIMIT} OFFSET ${OFFSET}
+                        ` , [ req.body.uid_line ] , 
+                        (err , list_msg)=>{
+                            con.end()
+                            res.send(list_msg)
+                        }
+                    )
+                }
+            }
+        } catch(err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+    //massage end
 
     // form start
     app.post('/api/doctor/form/list' , async (req , res)=>{

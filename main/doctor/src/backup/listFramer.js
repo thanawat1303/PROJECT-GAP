@@ -31,7 +31,7 @@ export default class List extends Component {
                                 <input className="id" readOnly value={listFm['id_farmer']}></input>
                                 <input className="fullname" readOnly value={listFm['fullname']}></input>
                             </div>
-                            <div className="count-account-list-farmer">
+                            <div className="count-msg-list-farmer">
                                 {listFm['CountFM']}
                             </div>
                         </div>

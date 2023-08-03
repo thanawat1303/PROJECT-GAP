@@ -180,26 +180,23 @@
                                 cursor: pointer;
                             }
                         }
-    
-                        .count-account {
+
+                        .count-msg {
                             display: flex;
                             justify-content: center;
                             align-items: center;
                             position: absolute;
                             top: 0.2em;
                             right: 0.2em;
-                            font-size: 18px;
-                            font-family: Sans-font;
                             background-color: transparent;
-                            font-weight: 900;
-                            width: 25px;
-                            height: 25px;
+                            width: 30px;
+                            height: 30px;
                             border-radius: 50%;
-                            color: white;
-                        }
-    
-                        .count-account[show="s"] {
-                            background-color: #22C7A9;
+                            
+                            svg {
+                                width: 100%;
+                                fill: #22C7A9;
+                            }
                         }
                     }
                 }

@@ -404,7 +404,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
 
 const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
     const [Data , setData] = useState([])
-    const [Count , setCount] = useState(20)
+    const [Count , setCount] = useState(2)
     const [timeOut , setTimeOut] = useState()
     const [LoadingList , setLoadList ] = useState(true)
     
@@ -413,7 +413,7 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
 
         clearTimeout(timeOut)
         setTimeOut(setTimeout(()=>{
-            FetchList(3)
+            FetchList(2)
         } , 1500))
 
     } , [DataFillter])
@@ -606,7 +606,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
             {Body}
         </div>
         <div className="footer">
-            <LoadOtherDom Fetch={fetch} count={count} setCount={setCount} Limit={5}
+            <LoadOtherDom Fetch={fetch} count={count} setCount={setCount} Limit={2}
                             style={{backgroundColor : "rgb(24 157 133)"}}/>
             <div id="popup-detail-form">
                 <PopupDom Ref={RefPop} Body={PopBody} zIndex={2}/>

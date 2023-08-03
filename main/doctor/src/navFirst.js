@@ -50,7 +50,7 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
                 <span>Menu</span>
             </div>
             <div className="content-menu">
-                <ButtonMenu type={"farmer"} textRow1={"ลงทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
+                <ButtonMenu type={"farmer"} textRow1={"ทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
                 <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
                 <ButtonMenu type={"data"} textRow1={"เพิ่มเติม"} textRow2={"ข้อมูล"} action={data}/>
             </div>

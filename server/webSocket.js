@@ -9,13 +9,10 @@ module.exports = function WebSocketServ (server) {
 
     io.on("connection" , (socket_client)=>{
         socket_client.on("connect msg" , (uid_line)=>{
-            console.log(uid_line + " join")
             socket_client.join(uid_line)
-            console.log(socket_client.rooms)
         })
 
         socket_client.on("disconnect msg" , (uid_line)=>{
-            console.log(uid_line + " leave")
             socket_client.leave(uid_line)
         })
     })

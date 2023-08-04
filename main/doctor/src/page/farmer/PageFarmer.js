@@ -93,22 +93,26 @@ const List = ({ session , socket , status}) => {
 
         FetchList(10)
 
-        return(()=>{
-            socket.removeListener("reload-farmer-list")
-        })
+        // socket.removeListener("reload-farmer-list")
+        // return(()=>{
+        //     socket.removeListener("reload-farmer-list")
+        // })
     } , [status])
 
-    useEffect(()=>{
-        socket.on("reload-farmer-list" , ()=>{
-            FetchList(Count)
-        })
-    } , [Count])
+    // useEffect(()=>{
+    //     socket.removeListener("reload-farmer-list")
+    //     socket.on("reload-farmer-list" , ()=>{
+    //         console.log(123)
+    //         FetchList(Count)
+    //     })
+    // } , [Count , status])
 
     const FetchList = async (limit) => {
         try {
             if(status.open === 1) window.history.pushState({} , "" , `/doctor/farmer/${status.status}`)
             const list = await clientMo.post('/api/doctor/farmer/list' , {approve:(status.status == "wt") ? 0 : (status.status == "ap") ? 1 : 2 , limit : limit})
             let data = JSON.parse(list)
+            console.log(data)
             setData(data)
             setLoadList(false)
             return data

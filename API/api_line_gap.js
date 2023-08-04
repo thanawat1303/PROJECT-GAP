@@ -133,6 +133,11 @@ const RichMenu = {
 
 }
 
+// richmenu.getMessageContent("466911495637172372").then((stream)=>{
+//   console.log(stream.req)
+// }).catch(error=>{
+//   console.log({"ERROR" : error})
+// })
 // RichMenu.DeleteRichMenu.All()
 // RichMenu.createRichLogin()
 // RichMenu.createRichAddFarm()

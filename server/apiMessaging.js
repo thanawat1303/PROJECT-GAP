@@ -68,7 +68,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                     })
                 }
             } else if (req.body.events[0].type === "message") {
-                // console.log(req.body.events[0])
+                console.log(req.body.events[0])
                 const ObjectMsg = req.body.events[0]
                 const Uid_line = ObjectMsg.source.userId
 
@@ -88,15 +88,21 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                 let msg = {}
                 if(SelectProfile.length != 0) {
                     const stationAll = new Set(SelectProfile.map((val)=>val.station))
-                    const message = ObjectMsg.message.text
+                    const message = ObjectMsg.message
 
                     try {
                         const messageSet = await new Promise((resole , reject)=>{
+                            const messagePut = (
+                                message.type == "text" ? message.text :
+                                message.type == "location" ? `{ lat : ${message.latitude} , lng : ${message.longitude}}` :
+                                message.id
+                            )
+
                             con.query(
                                 `
                                 INSERT INTO message_user
-                                ( message , uid_line_farmer , id_read , type ) VALUES ( ? , ? , '{}' , 0)
-                                ` , [ message , Uid_line ] , (err , result) => {
+                                ( message , uid_line_farmer , id_read , type , type_message ) VALUES ( ? , ? , '{}' , "" , ?)
+                                ` , [ messagePut , Uid_line , message.type] , (err , result) => {
                                     if(err) reject("err insert send")
                                     resole()
                                 }
@@ -182,7 +188,8 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                                 checkAuth.indexOf("2") >= 0 ? "บัญชีเกษตรกรที่ถูกปิด" : "";
                             
                             socket.to(Uid_line).emit("new_msg")
-                            socket.emit("reload-farmer-list" , Uid_line)
+
+                            // socket.emit("reload-farmer-list")
                             // line.multicast([...Uid_line_send] , {type : "text" , text : "มีข้อความจาก"})
                         } catch(e) {}
 

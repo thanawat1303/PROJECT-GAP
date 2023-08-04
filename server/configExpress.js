@@ -74,7 +74,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
 
     router(app)
     apiAdmin(app , db , apifunc , TestNgrok , dbpacket , listDB)
-    apiDoctor(app , db , apifunc , TestNgrok , dbpacket , listDB , io)
+    apiDoctor(app , db , apifunc , TestNgrok , dbpacket , listDB , io , LINE)
     apiFarmer(app , db , apifunc , HOST_FARMER , dbpacket , listDB , LINE)
     message(app , db , apifunc , TestNgrok , dbpacket , listDB , UrlNgrok , io)
 

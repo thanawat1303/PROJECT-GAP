@@ -340,6 +340,180 @@
                         }
                     }
                 }
+
+                .message-reply {
+                    display: flex;
+                    position: relative;
+                    justify-content: start;
+                    flex-direction: column;
+                    align-items: start;
+                    background-color: transparent;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 8px;
+
+                    .message {
+                        padding: 0px 5px;
+                        font-family: Sans-font;
+                        width: 82%;
+                        background: #aff7ea;
+                        box-shadow: 0px 0px 3px white;
+                        border-radius: 15px;
+                        overflow-y: auto;
+                        height: calc(100% - var(--size_box_input) - 10px);
+                    
+                        .scroll-msg {
+                            .user-other {
+                                display: flex;
+                                justify-content: start;
+                                align-items: start;
+                                margin: 5px 0px;
+                                .img {
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    width: 15%;
+                                    margin-top: 3px;
+                                    img {
+                                        width: 100%;
+                                        border-radius: 50%;
+                                    }
+                                }
+                                .message-detail {
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: start;
+                                    align-items: start;
+                                    margin-left: 5px;
+                                    width: 75%;
+                                    .name {
+                                        font-size: 11px;
+                                        font-weight: 900;
+                                    }
+                                    .message-box {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        font-size: 13px;
+                                        padding: 2px 6px;
+                                        padding-bottom: 0px;
+                                        background-color: white;
+                                        border-radius: 8px;
+                                        width: 70%;
+    
+                                        .msg {
+                                            font-family: Sans-font;
+                                            font-size: 13px;
+                                            width: 100%;
+                                            overflow-wrap: break-word;
+                                            cursor: default;
+                                        }
+    
+                                        .msg::-webkit-scrollbar {
+                                            width: 0;
+                                        }
+                                    }
+    
+                                    .message-box.file {
+                                        padding: 0;
+                                        width: 55%;
+    
+                                        img {
+                                            width: 100%;
+                                            border-radius: 8px;
+                                        }
+                                    }
+                                }
+                            }
+
+                            .unread {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                width: 100%;
+                                background-color: rgba(255, 255, 255, 0.682);
+                                border-radius: 20px;
+                                margin: 5px 0px;
+                                font-size: 12px;
+                                padding-top: 2px;
+                            }
+                        }
+                    }
+
+                    .send-msg {
+                        display: flex;
+                        justify-content: space-evenly;
+                        align-items: end;
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        // overflow: hidden;
+                        width: 100%;
+
+                        .input-send{
+                            display: flex;
+                            justify-content: start;
+                            align-items: center;
+                            width: 82%;
+                            textarea {
+                                width: 100%;
+                                height: 30px;
+                                resize: none;
+                                border-radius: 18px;
+                                border: 0;
+                                outline: 0;
+                                font-size: 15px;
+                                font-family: Sans-font;
+                                padding-left: 8px;
+                                padding-right: 8px;
+                                padding-top: 4px;
+                                padding-bottom: 3px;
+                            }
+    
+                            textarea::-webkit-scrollbar{
+                                width: 0;
+                            }
+                        }
+
+                        a{
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            width: 18%;
+                            height: 30px;
+                            overflow: hidden;
+                            svg {
+                                width: 100%;
+                                fill: #127261;
+
+                                path {
+                                    stroke: white;
+                                }
+                            }
+                        }
+                    }
+
+                    .bt-send {
+                        position: absolute;
+                        left: 100%;
+                        bottom: 0;
+
+                        a{
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            width: 35px;
+                            svg {
+                                height: 100%;
+                                fill: #127261;
+
+                                path {
+                                    stroke: white;
+                                }
+                            }
+                        }
+                    }
+                }
             }
     
             .action-box-bt {

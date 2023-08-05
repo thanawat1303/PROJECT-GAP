@@ -85,12 +85,9 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
             <div className="List-data" count={ListCount} style={{
                 '--count-list' : `${ListCount}`
             }}>
-                { DataFetch.length != 0 ?
-                    <ManageList Data={DataFetch} setBecause={setBecause} ListCount={ListCount} setListCount={setListCount} 
+                <ManageList Data={DataFetch} setBecause={setBecause} ListCount={ListCount} setListCount={setListCount} 
                                     TabOn={TabOn} HrefPage={HrefPage} status={status} 
                                     auth={auth} session={session} RefBe={RefBe} Fetch={()=>fetchDataList(0 , DataFetch.length)}/>
-                    : <></>
-                }
             </div>
             <div className="load-other" style={{
                 padding : "5px 0px"

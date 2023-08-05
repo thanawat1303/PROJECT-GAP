@@ -456,7 +456,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             LIMIT 1
                         ) as farmer
                         WHERE message_user.uid_line_farmer = farmer.uid_line
-                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."2"') , 0) = 0
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
                                 and type = ""
                         ORDER BY message_user.date DESC
                         LIMIT 1
@@ -998,12 +998,44 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 con.query(
                     `
                     UPDATE message_user
-                    SET id_read = JSON_SET(id_read, '$."?"', 'read');
+                    SET id_read = JSON_SET(id_read, '$."?"', 'read')
                     WHERE uid_line_farmer = ?
                     ` , [result["data"].id_table_doctor , req.body.uid_line] , 
                     (err , read)=>{
+                        socket.to(req.body.uid_line).emit("new_msg" , "read")
                         con.end()
-                        res.send("113")
+                        res.send("1")
+                    }
+                )
+            }
+        } catch(err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.post('/api/doctor/farmer/msg/send' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    INSERT INTO message_user
+                    ( message , uid_line_farmer , id_read , type , type_message ) VALUES ( ? , ? , '{}' , ? , text)
+                    ` , [ req.body.textSend , req.body.uid_line , result["data"].id_table_doctor] , (err , result) => {
+                        con.end()
                     }
                 )
             }
@@ -1043,6 +1075,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             }
                         )
                     })
+
                     const ListMsg = await new Promise((resole , reject)=>{
                         con.query(
                             `
@@ -1067,7 +1100,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             FROM message_user
                             WHERE uid_line_farmer = ?
                             ORDER BY date DESC
-                            LIMIT ${LimitFirst + 5} OFFSET 0
+                            LIMIT ${LimitFirst ? LimitFirst + 5 : 25} OFFSET 0
                             ` , [ result["data"].id_table_doctor , result["data"].id_table_doctor , req.body.uid_line ] , 
                             (err , list_msg)=>{
                                 resole(list_msg)
@@ -1075,51 +1108,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         )
                     })
 
-                    // let countPush = 0
-                    // await new Promise( async (resole , reject)=>{
-                    //     for (let Msg of ListMsg) {
-                    //         const MsgOfLine = (
-                    //                 (Msg.type_message == "text" || Msg.type_message == "location") ? Msg.message :
-                    //                 await Line.getMessageContent(Msg.message.toString())
-                    //             );
-                            
-                    //         const MsgSend = (
-                    //                 (Msg.type_message == "text" || Msg.type_message == "location") ? MsgOfLine :
-                    //                 await new Promise((resole , reject)=>{
-                    //                     https.get( MsgOfLine.responseUrl , {
-                    //                         method : "GET",
-                    //                         headers : {
-                    //                             Authorization : "Bearer 3bRyKhlM01xFG6hDC+x5ZlfT0r44XF4L5wHORR9CJc87tmjrHoQJad6kLvOa8cbX7hSHVu6SB08UcWx2I9QjdNWRLo6fwsExPTbm7Wuaw7Eq6zh6DJXs9FFQqSbXxZKvHJt4jURZqu4Z0NcP6zJ4wwdB04t89/1O/w1cDnyilFU="
-                    //                         }
-                    //                     } , (res)=>{
-                    //                         let Data = Buffer.alloc(0);
-                    //                         res.on('data' , (chunk)=>{
-                    //                             Data = Buffer.concat([Data, chunk]);
-                    //                         })
-
-                    //                         res.on('end', () => {
-                    //                             const fs = require("fs")
-                    //                             fs.writeFileSync(__dirname + "/text.txt" , Data)
-                    //                             resole(Data)
-                    //                         });
-                    //                     })
-                    //                 })
-                    //             )
-
-                    //         // delete Msg.message;
-                    //         Msg.msgLine = MsgSend;
-                    //         countPush++;
-                    //         if(countPush == ListMsg.length) resole()
-                    //     }
-                    // })
                     if(LimitFirst) ListMsg.splice(LimitFirst , 0 , {type_message : "unread"})
                     ListMsg.reverse()
 
                     con.end()
                     res.send(ListMsg)
                 } else if (req.body.open_msg === "get") {
-                    const LIMIT = isNaN(parseInt(req.body.limit)) ? 0 : req.body.limit
-                    const OFFSET = isNaN(parseInt(req.body.offset)) ? 0 : req.body.offset
                     const ListMsg = await new Promise((resole , reject)=>{
                         con.query(
                             `
@@ -1143,10 +1137,10 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 WHERE id_table_doctor = ? and id_table_doctor = message_user.type
                             ) as img_doctor
                             FROM message_user
-                            WHERE uid_line_farmer = ?
+                            WHERE uid_line_farmer = ? and id > ?
                             ORDER BY date ASC
-                            LIMIT 999999 OFFSET ${OFFSET}
-                            ` , [ result["data"].id_table_doctor , result["data"].id_table_doctor , req.body.uid_line ] , 
+                            LIMIT 999999
+                            ` , [ result["data"].id_table_doctor , result["data"].id_table_doctor , req.body.uid_line , req.body.id_start ] , 
                             (err , list_msg)=>{
                                 resole(list_msg)
                             }
@@ -1189,6 +1183,45 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     //     }
                     // })
 
+                    con.end()
+                    res.send(ListMsg)
+                } else if (req.body.open_msg === "load") {
+                    const LIMIT = isNaN(parseInt(req.body.limit)) ? 0 : req.body.limit
+                    const OFFSET = isNaN(parseInt(req.body.offset)) ? 0 : req.body.offset
+
+                    const ListMsg = await new Promise((resole , reject)=>{
+                        con.query(
+                            `
+                            SELECT * , 
+                            (
+                                SELECT fullname_doctor
+                                FROM acc_doctor
+                                WHERE id_table_doctor = message_user.type
+                            ) as name_doctor ,
+                            (
+                                SELECT EXISTS (
+                                    SELECT id_table_doctor
+                                    FROM acc_doctor
+                                    WHERE id_table_doctor = ? and id_table_doctor = message_user.type
+                                )
+                            ) as is_me ,
+                            (
+                                SELECT img_doctor
+                                FROM acc_doctor
+                                WHERE id_table_doctor = ? and id_table_doctor = message_user.type
+                            ) as img_doctor
+                            FROM message_user
+                            WHERE uid_line_farmer = ? and id < ?
+                            ORDER BY date DESC
+                            LIMIT ${LIMIT}
+                            ` , [ result["data"].id_table_doctor , result["data"].id_table_doctor , req.body.uid_line , req.body.id_start ] , 
+                            (err , list_msg)=>{
+                                resole(list_msg)
+                            }
+                        )
+                    })
+
+                    ListMsg.reverse()
                     con.end()
                     res.send(ListMsg)
                 }

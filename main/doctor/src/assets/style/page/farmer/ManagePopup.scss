@@ -399,7 +399,7 @@
                                         padding-bottom: 0px;
                                         background-color: white;
                                         border-radius: 8px;
-                                        width: 70%;
+                                        max-width: 70%;
     
                                         .msg {
                                             font-family: Sans-font;
@@ -416,7 +416,7 @@
     
                                     .message-box.file {
                                         padding: 0;
-                                        width: 55%;
+                                        width: 60%;
     
                                         img {
                                             width: 100%;
@@ -433,11 +433,20 @@
                                 width: 100%;
                                 background-color: rgba(255, 255, 255, 0.682);
                                 border-radius: 20px;
-                                margin: 5px 0px;
                                 font-size: 12px;
                                 padding-top: 2px;
                             }
                         }
+                    }
+
+                    .message::-webkit-scrollbar {
+                        width: 4px;
+                        background-color: transparent;
+                    }
+
+                    .message::-webkit-scrollbar-thumb {
+                        background-color: white;
+                        border-radius: 50px;
                     }
 
                     .send-msg {
@@ -488,6 +497,16 @@
 
                                 path {
                                     stroke: white;
+                                }
+                            }
+                        }
+
+                        a[sendoff=""] {
+                            svg {
+                                fill: #127260a8;
+
+                                path {
+                                    stroke: rgba(255, 255, 255, 0.552);
                                 }
                             }
                         }

@@ -72,7 +72,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
     useEffect(()=>{
         socket.removeListener("new_msg")
         socket.on("new_msg" , async (type)=>{
-            if(type !== "read") SetNewMessage(!newMessage)
+            if(type !== "read") SetNewMessage((prevent)=>!prevent)
             const Count = await clientMo.post("/api/doctor/farmer/msg/count" , {id_table : DetailFarmer.id_table})
             try {
                 const count = JSON.parse(Count)[0]

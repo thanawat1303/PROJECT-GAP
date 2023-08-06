@@ -399,7 +399,7 @@
                                         padding-bottom: 0px;
                                         background-color: white;
                                         border-radius: 8px;
-                                        max-width: 70%;
+                                        max-width: 100%;
     
                                         .msg {
                                             font-family: Sans-font;
@@ -422,6 +422,18 @@
                                             width: 100%;
                                             border-radius: 8px;
                                         }
+                                    }
+                                }
+                            }
+
+                            .user-other[is_me=""] {
+                                justify-content: end;
+
+                                .message-detail {
+                                    align-items: end;
+
+                                    .message-box {
+                                        background-color: #a7e5a7;
                                     }
                                 }
                             }

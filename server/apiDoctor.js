@@ -36,7 +36,75 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 res.redirect('/api/logout')
             }
         })
+    })
+
+    app.get('/api/doctor/profile/get' , (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
     
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+            con.query(
+                `
+                SELECT name
+                FROM station_list
+                WHERE id = ?
+                ` , [result['data'].station_doctor] , 
+                (err , station) => {
+                    con.end()
+                    res.send({
+                        ...result['data'] ,
+                        name_station : station[0].name
+                    })
+                }
+            )
+        }).catch((err)=>{
+            if(err == "not pass") {
+                con.end()
+                res.redirect('/api/logout')
+            } else if( err == "connect" ) {
+                res.redirect('/api/logout')
+            }
+        })
+    })
+
+    app.post('/api/doctor/profile/image/edit' , (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+            con.query(
+                `
+                UPDATE acc_doctor
+                SET img_doctor = ?
+                WHERE id_table_doctor = ?
+                ` , [ req.body.img , result["data"].id_table_doctor ] , 
+                (err , resultEdit) => {
+                    con.end()
+                    res.send("1")
+                }
+            )
+        }).catch((err)=>{
+            if(err == "not pass") {
+                con.end()
+                res.redirect('/api/logout')
+            } else if( err == "connect" ) {
+                res.redirect('/api/logout')
+            }
+        })
     })
     
     app.post('/api/doctor/checkline' , (req , res)=>{
@@ -168,7 +236,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 return 0;
             }
 
-            con.query(`SELECT * FROM station_list` , (err , result)=>{
+            con.query(`SELECT * FROM station_list WHERE is_use = 1` , (err , result)=>{
                 if (err) {
                     dbpacket.dbErrorReturn(con, err, res);
                     console.log("query");
@@ -1030,14 +1098,24 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result = await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                con.query(
-                    `
-                    INSERT INTO message_user
-                    ( message , uid_line_farmer , id_read , type , type_message ) VALUES ( ? , ? , '{}' , ? , text)
-                    ` , [ req.body.textSend , req.body.uid_line , result["data"].id_table_doctor] , (err , result) => {
-                        con.end()
-                    }
-                )
+                const TextSend = req.body.textSend.trim()
+                if(TextSend) {
+                    con.query(
+                        `
+                        INSERT INTO message_user
+                        ( message , uid_line_farmer , id_read , type , type_message ) VALUES ( ? , ? , '{"?" : "read"}' , ? , "text")
+                        ` , [ TextSend , req.body.uid_line , result["data"].id_table_doctor , result["data"].id_table_doctor ] , async (err) => {
+                            if(err) con.end()
+                            else {
+                                con.end()
+                                await Line.pushMessage(req.body.uid_line , {
+                                    type : "text" , text : `ส่งจากหมอ ${result["data"].fullname_doctor} : \n${TextSend}`
+                                })
+                                socket.to(req.body.uid_line).emit("new_msg")
+                            }
+                        }
+                    )
+                }
             }
         } catch(err) {
             con.end()

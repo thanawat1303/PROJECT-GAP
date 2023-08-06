@@ -68,7 +68,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                     })
                 }
             } else if (req.body.events[0].type === "message") {
-                console.log(req.body.events[0])
+                // console.log(req.body.events[0])
                 const ObjectMsg = req.body.events[0]
                 const Uid_line = ObjectMsg.source.userId
 
@@ -91,7 +91,27 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                     const message = ObjectMsg.message
 
                     try {
-                        const messageSet = await new Promise((resole , reject)=>{
+
+                        //check time msg
+                        const TimeMessage = await new Promise((resole , reject)=>{
+                            con.query(
+                                `
+                                SELECT (
+                                    SELECT EXISTS (
+                                        SELECT date
+                                        FROM message_user
+                                        WHERE uid_line_farmer = ? 
+                                                and TIMESTAMPDIFF(MINUTE, date, NOW()) < 5
+                                    )
+                                ) as is_msg
+                                ` , [ Uid_line ] , (err , is_msg)=>{
+                                    resole(parseInt(is_msg[0].is_msg))
+                                }
+                            )
+                        })
+
+                        // insert msg
+                        await new Promise((resole , reject)=>{
                             const messagePut = (
                                 message.type == "text" ? message.text :
                                 message.type == "location" ? `{ lat : ${message.latitude} , lng : ${message.longitude}}` :
@@ -109,88 +129,90 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                             )
                         })
 
-                        //send to doctor
-                        const Uid_line_send = await new Promise( async (resole , reject)=>{
-                            const uid_send = new Array
-                            await new Promise( async (resole , reject)=>{
-                                let index = 1;
-                                for (let val of stationAll) {
-                                    const ObjectProfile = await new Promise((resole , reject)=>{
-                                        con.query(
-                                            `
-                                            SELECT uid_line_doctor
-                                            FROM acc_doctor
-                                            WHERE station_doctor = ? and status_account = 1 and status_delete = 0
-                                            ` , [val] , 
-                                            (err , doctor) => {
-                                                resole(doctor)
-                                            }
-                                        )
-                                    })
-                                    if(ObjectProfile.length > 0) {
-                                        const List_uid = ObjectProfile.map((val)=>val.uid_line_doctor).filter((val)=>val)
-                                        uid_send.push(...List_uid)
-                                    }
-
-                                    if(stationAll.size == index) resole()
-                                    index++
-                                }
-                            })
-
-                            resole(new Set(uid_send))
-                        })
-
                         try {
-                            const bubble = {
-                                type : "flex",
-                                altText : "ข้อความจากเกษตรกร",
-                                contents : {
-                                    "type": "bubble",
-                                    "direction": "ltr",
-                                    "body": {
-                                      "type": "box",
-                                      "layout": "vertical",
-                                      "contents": [
-                                        {
-                                          "type": "text",
-                                          "text": "Body",
-                                          "size": "xs",
-                                          "align": "start",
-                                          "wrap": true,
-                                          "contents": []
-                                        }
-                                      ]
-                                    },
-                                    "footer": {
-                                      "type": "box",
-                                      "layout": "horizontal",
-                                      "height": "50px",
-                                      "contents": [
-                                        {
-                                          "type": "button",
-                                          "action": {
-                                            "type": "uri",
-                                            "label": "คลิกตอบกลับ",
-                                            "uri": "https://linecorp.com"
-                                          },
-                                          "color": "#25AA6EFF",
-                                          "height": "sm",
-                                          "style": "primary"
-                                        }
-                                      ]
-                                    }
-                                }
-                            }
+                            // const bubble = {
+                            //     type : "flex",
+                            //     altText : "ข้อความจากเกษตรกร",
+                            //     contents : {
+                            //         "type": "bubble",
+                            //         "direction": "ltr",
+                            //         "body": {
+                            //           "type": "box",
+                            //           "layout": "vertical",
+                            //           "contents": [
+                            //             {
+                            //               "type": "text",
+                            //               "text": "Body",
+                            //               "size": "xs",
+                            //               "align": "start",
+                            //               "wrap": true,
+                            //               "contents": []
+                            //             }
+                            //           ]
+                            //         },
+                            //         "footer": {
+                            //           "type": "box",
+                            //           "layout": "horizontal",
+                            //           "height": "50px",
+                            //           "contents": [
+                            //             {
+                            //               "type": "button",
+                            //               "action": {
+                            //                 "type": "uri",
+                            //                 "label": "คลิกตอบกลับ",
+                            //                 "uri": "https://linecorp.com"
+                            //               },
+                            //               "color": "#25AA6EFF",
+                            //               "height": "sm",
+                            //               "style": "primary"
+                            //             }
+                            //           ]
+                            //         }
+                            //     }
+                            // }
 
-                            const checkAuth = SelectProfile.map(val=>val.register_auth.toString())
-                            const typeMessange = checkAuth.indexOf("1") >= 0 ? "บัญชีเกษตรกรที่ผ่านการตรวจสอบ" : 
+                            socket.to(Uid_line).emit("new_msg")
+                            // socket.emit("reload-farmer-list")
+                            
+                            if(!TimeMessage) {
+                                const checkAuth = SelectProfile.map(val=>val.register_auth.toString())
+                                const typeMessange = checkAuth.indexOf("1") >= 0 ? "บัญชีเกษตรกรที่ผ่านการตรวจสอบ" : 
                                                 checkAuth.indexOf("0") >= 0 ? "บัญชีเกษตรกรที่รอการตรวจสอบ" :
                                                 checkAuth.indexOf("2") >= 0 ? "บัญชีเกษตรกรที่ถูกปิด" : "";
-                            
-                            socket.to(Uid_line).emit("new_msg")
+                                
+                                //send to doctor
+                                const Uid_line_send = await new Promise( async (resole , reject)=>{
+                                    const uid_send = new Array
+                                    await new Promise( async (resole , reject)=>{
+                                        let index = 1;
+                                        for (let val of stationAll) {
+                                            const ObjectProfile = await new Promise((resole , reject)=>{
+                                                con.query(
+                                                    `
+                                                    SELECT uid_line_doctor
+                                                    FROM acc_doctor
+                                                    WHERE station_doctor = ? and status_account = 1 and status_delete = 0
+                                                    ` , [val] , 
+                                                    (err , doctor) => {
+                                                        resole(doctor)
+                                                    }
+                                                )
+                                            })
+                                            if(ObjectProfile.length > 0) {
+                                                const List_uid = ObjectProfile.map((val)=>val.uid_line_doctor).filter((val)=>val)
+                                                uid_send.push(...List_uid)
+                                            }
 
-                            // socket.emit("reload-farmer-list")
-                            // line.multicast([...Uid_line_send] , {type : "text" , text : "มีข้อความจาก"})
+                                            if(stationAll.size == index) resole()
+                                            index++
+                                        }
+                                    })
+                                    resole(new Set(uid_send))
+                                })
+
+                                con.end()
+                                line.multicast([...Uid_line_send] , {type : "text" , text : "มีข้อความจาก"+typeMessange})
+                            } else con.end()
                         } catch(e) {}
 
                         // msg = {
@@ -198,6 +220,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                         //     text : "รับเรื่องแล้ว กรุณารอการตอบกลับจากเจ้าหน้าที่นะคะ \u2764"
                         // }
                     } catch(e) {
+                        console.log(e)
                         msg = {
                             type : "text",
                             text : "พบปัญหาในการส่งข้อความ กรุณารอสักครู่และส่งข้อความใหม่อีกครั้ง \u2764"

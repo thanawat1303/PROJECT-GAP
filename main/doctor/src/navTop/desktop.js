@@ -1,12 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Login from "../Login";
 import SessionOut from "../sesionOut";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
 import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
+import { PopupDom } from "../../../../src/assets/js/module";
+import ProfilePage from "../page/profile/Profile";
 
 const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , eleBody , setTextStatus}) => {
+    const RefPopup = useRef()
+    const [BodyPopup , setBodyPopup] = useState(<></>)
+    
     useEffect(()=>{
         
     } , [])
@@ -32,6 +37,11 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
         })
     }
 
+    const Profile = (e) => {
+        e.preventDefault()
+        setBodyPopup(<ProfilePage RefPop={RefPopup} setPopup={setBodyPopup} session={setSession} returnToHome={Home}/>)
+    }
+
     return(
         <section className="tab-bar-desktop">
             <span className="pg-action">
@@ -44,7 +54,7 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
                 <a title="หน้าแรก" href="/doctor">หน้าแรก</a>
                 <a title="เมนู" href="/doctor">เมนู</a>
                 <a title="การแจ้งเตือน" href="/doctor">การแจ้งเตือน</a>
-                <a title="โปรไฟล์" href="/doctor">โปรไฟล์</a>
+                <a title="โปรไฟล์" href="/doctor" onClick={Profile}>โปรไฟล์</a>
                 <a className="logout" onClick={Logout} title="ออกจากระบบ" href="/doctor/logout">ออกจากระบบ</a>
                 {/* <a className="alarm">
                     <img src="/alarm-svgrepo-com.svg"></img>
@@ -63,6 +73,7 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
                     </div>
                 </section> */}
             </span>
+            <PopupDom Ref={RefPopup} Body={BodyPopup} zIndex={999}/>
         </section>
     )
 }

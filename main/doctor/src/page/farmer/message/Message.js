@@ -32,6 +32,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     } , [timeOut])
 
     useEffect(()=>{
+        console.log(is_change , Open)
         if(Open) UpdateMessage()
         setOpen(true)
     } , [is_change])
@@ -72,14 +73,14 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
                     open === "get" ?
                         {
                             uid_line : Data.uid_line,
-                            id_start : message[message.length - 1].id,
+                            id_start : message[message.length - 1] ? message[message.length - 1].id : 0,
                             open_msg : open
                         } :
                     open === "load" ?
                         {
                             uid_line : Data.uid_line,
                             limit : limit,
-                            id_start : message[0].id,
+                            id_start : message[0] ? message[0].id : 0,
                             open_msg : open
                         } : {}
         const list_msg = await clientMo.post('/api/doctor/farmer/msg/get' , data)
@@ -132,8 +133,10 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     }
 
     const SendMsg = () => {
-        if(CheckSend()) {
-            
+        const Data = CheckSend()
+        if(Data) {
+            clientMo.post("/api/doctor/farmer/msg/send" , Data)
+            TextSend.current.value = ""
         }
     }
 
@@ -147,14 +150,18 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
                     message.map((val)=>{
                         return(
                             val.type_message !== "unread" ?
-                            <div key={parseInt(val.id)} className="user-other">
-                                <div className="img">
-                                    <img src={String.fromCharCode(...Data.img.data)}></img>
-                                </div>
+                            <div key={parseInt(val.id)} className="user-other" is_me={val.is_me ? "" : null}>
+                                { !val.is_me ? 
+                                    <div className="img">
+                                        <img src={String.fromCharCode(...Data.img.data)}></img>
+                                    </div> : <></>
+                                }
                                 <div className="message-detail">
-                                    <div className="name">
-                                        {val.type == "" ? "เกษตรกร" : val.name_doctor}
-                                    </div>
+                                    { !val.is_me ?
+                                        <div className="name">
+                                            {val.type == "" ? "เกษตรกร" : val.name_doctor}
+                                        </div> : <></>
+                                    }
                                     <div className={`message-box ${val.type_message === "text" || val.type_message === "location" ? "" : "file"}`}>
                                         <DetailMessange Msg={val}/>
                                     </div>

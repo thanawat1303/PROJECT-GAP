@@ -497,7 +497,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             SELECT uid_line
                             FROM acc_farmer
                             WHERE id_table = ? and register_auth = 1 and station = ?
-                            ` , [ req.body.id_table , result["data"].station_doctor ] , async (err , resultSelect) => {
+                            ` , [ req.body.id_table , result["data"].station_doctor ] , 
+                            async (err , resultSelect) => {
                                 if(!err && resultSelect.length != 0) {
                                     try {
                                         
@@ -544,14 +545,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 UPDATE acc_farmer
                                 SET ${SET}
                                 WHERE id_table = ?
-                            ` , [ req.body.id_table ] , (err , resultEdit) => {
-                                if(!err) {
-                                    con.end()
-                                    res.send("1")
-                                } else {
-                                    con.end()
-                                    res.send("not edit")
-                                }
+                            ` , [ req.body.id_table ] , 
+                            (err , resultEdit) => {
+                                con.end()
+                                if(!err) res.send("1")
+                                else res.send("not edit")
                             }
                         )
                     } else {
@@ -584,7 +582,18 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
-                
+                con.query(
+                    `
+                    UPDATE acc_farmer
+                    SET img = ?
+                    WHERE id_table = ? and register_auth = 1 and station = ?
+                    ` , [ req.body.img , req.body.id_table , result["data"].station_doctor ] , 
+                    (err , resultImg) => {
+                        con.end()
+                        if(!err) res.send("1")
+                        else res.send("not")
+                    }
+                )
             }
         }).catch((err)=>{
             con.end()

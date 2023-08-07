@@ -489,6 +489,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const newPassword = req.body.newPassword ? `password = SHA2( "${req.body.newPassword}" , 254 )` : "";
                 
                 const SET = [id , fullname , location , station , newPassword].filter(val=>val).join(" , ")
+
                 if(SET) {
                     con.query(
                         `
@@ -496,9 +497,45 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             SET ${SET}
                             WHERE id_table = ?
                         ` , [ req.body.id_table ] , (err , resultEdit) => {
+                            console.log(err)
                             if(!err) {
-                                Line.pushMessage()
-                                con.end()
+                                if(SET.length != 0) {
+                                    con.query(
+                                        `
+                                        SELECT uid_line
+                                        FROM acc_farmer
+                                        WHERE id_table = ?
+                                        ` , [ req.body.id_table ] , async (err , resultSelect) => {
+                                            if(!err) {
+                                                try {
+                                                    await new Promise( async (resole , reject)=>{
+                                                        const dataSend = {
+                                                            type : "text" , 
+                                                            text : `ผู้ส่งเสริม ${result["data"].fullname_doctor}\n\n`+
+                                                                    `ทำการเปลี่ยนข้อมูลของท่าน :`+
+                                                                    `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
+                                                                    `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
+                                                                    `${req.body.station ? `\nศูนย์ในการดูแล : ${req.body.station}` : ""}`+
+                                                                    `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
+                                                                    `${(req.body.lag && req.body.lng) ? `\nตำแหน่งที่ตั้ง :` : ""}`
+                                                        }
+                                                        await Line.pushMessage(resultSelect[0].uid_line , dataSend)
+                                                        resole("")
+                                                    })
+    
+                                                    if(req.body.lag && req.body.lng) {
+                                                        Line.pushMessage(resultSelect[0].uid_line , {
+                                                            type : "location",
+                                                            latitude : req.body.lag,
+                                                            longitude : req.body.lng
+                                                        })
+                                                    }
+                                                } catch(e) {console.log(e)}
+                                            }
+                                            con.end()
+                                        }
+                                    )         
+                                }
                                 res.send("1")
                             } else {
                                 con.end()

@@ -106,6 +106,54 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             }
         })
     })
+
+    app.post('/api/doctor/profile/text/edit' , (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+            const SET = req.body.type === "name" ? "fullname_doctor = ?" :
+                            req.body.type === "station" ? "station_doctor = ?" :
+                            req.body.type === "passwordNew" ? "password_doctor = SHA2( ? , 256)" : ""
+            if(SET) {
+                con.query(
+                    `
+                    UPDATE acc_doctor
+                    SET ${SET}
+                    WHERE id_table_doctor = ?
+                    ` , [ req.body.value , result["data"].id_table_doctor ] , 
+                    (err , resultEdit) => {
+                        if(!err) {
+                            if(req.body.type === "passwordNew") {
+                                req.session.pass_doctor = req.body.value
+                            }
+                            con.end()
+                            res.send("1")
+                        } else {
+                            con.end()
+                            res.send("")
+                        }
+                    }
+                )
+            } else {
+                res.send("")
+            }
+        }).catch((err)=>{
+            if(err == "not pass") {
+                con.end()
+                res.send('password')
+            } else if( err == "connect" ) {
+                res.send("")
+            }
+        })
+    })
     
     app.post('/api/doctor/checkline' , (req , res)=>{
         let con = Database.createConnection(listDB)
@@ -416,6 +464,58 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             con.end()
             if(err == "not pass") {
                 res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.post('/api/doctor/farmer/edit' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.body.password
+    
+        if(username === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+        try {
+            const result = await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                delete req.body.password
+                const id = req.body.id_farmer ? `id_farmer = "${req.body.id_farmer}"` : "";
+                const fullname = req.body.fullname ? `fullname = "${req.body.fullname}"` : "";
+                const location = req.body.lag && req.body.lng ? `location = POINT(${req.body.lag} , ${req.body.lng})` : "";
+                const station = req.body.station ? `station = "${req.body.station}"` : "";
+                const newPassword = req.body.newPassword ? `password = SHA2( "${req.body.newPassword}" , 254 )` : "";
+                
+                const SET = [id , fullname , location , station , newPassword].filter(val=>val).join(" , ")
+                if(SET) {
+                    con.query(
+                        `
+                            UPDATE acc_farmer
+                            SET ${SET}
+                            WHERE id_table = ?
+                        ` , [ req.body.id_table ] , (err , resultEdit) => {
+                            if(!err) {
+                                Line.pushMessage()
+                                con.end()
+                                res.send("1")
+                            } else {
+                                con.end()
+                                res.send("")
+                            }
+                        }
+                    )
+                } else {
+                    res.send("")
+                }
+            }
+        } catch(err) {
+            con.end()
+            if(err == "not pass") {
+                res.send("password")
+            } else {
+                res.send("")
             }
         }
     })
@@ -1178,7 +1278,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             FROM message_user
                             WHERE uid_line_farmer = ?
                             ORDER BY date DESC
-                            LIMIT ${LimitFirst ? LimitFirst + 5 : 25} OFFSET 0
+                            LIMIT ${LimitFirst ? LimitFirst + 5 : 15} OFFSET 0
                             ` , [ result["data"].id_table_doctor , result["data"].id_table_doctor , req.body.uid_line ] , 
                             (err , list_msg)=>{
                                 resole(list_msg)

@@ -171,12 +171,14 @@
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        width: 65%;
-                        background-color: white;
-                        border-radius: 50%;
+                        width: 100%;
+                        padding-bottom: 8px;
+                        border-bottom: 1.5px solid white;
+                        // background-color: white;
+                        // border-radius: 50%;
                         // margin-bottom: 1.5vw;
                         img {
-                            width: 100%;
+                            width: 65%;
                             border-radius: 50%;
                         }
                     }
@@ -185,24 +187,34 @@
                         display: flex;
                         flex-direction: column;
                         width: 100%;
-                        margin: 7.5px 0px;
+                        margin: 3px 0px;
+                        padding-bottom: 8px;
+                        border-bottom: 1.5px solid white;
                         span {
-                            font-size: 20px;
+                            font-size: 16px;
                             font-family: Sans-font;
                             font-weight: 900;
                         }
                         .frame-text {
                             background-color: white;
-                            border-radius: 15px;
-                            padding: 0.2vw 1vw;
+                            border-radius: 10px;
+                            padding: 2px 5px;
                             width: 100%;
-                            input {
+                            input , select {
                                 font-family: Sans-font;
-                                font-size: 18px;
+                                font-size: 16px;
                                 outline: 0;
                                 border: 0;
                                 width: 100%;
                                 background-color: transparent;
+                            }
+
+                            input[type="password"] {
+                                font-family: main-font;
+                            }
+            
+                            input[type="password"]::placeholder {
+                                font-family: Sans-font;
                             }
                         }
     
@@ -211,6 +223,17 @@
                             font-family: Sans-font;
                         }
                     }
+
+                    .text-detail.btm {
+                        padding-bottom: 5px;
+                        margin-bottom: 10px;
+                    }
+
+                    // .text-detail.not-btm {
+                    //     border-bottom: none;
+                    //     padding-bottom: 0px;
+                    //     margin-bottom: 4px;
+                    // }
     
                     .convert-user {
                         display: flex;
@@ -311,6 +334,32 @@
                                     fill: white;
                                 }
                             }
+                        }
+                    }
+
+                    .edit-account {
+                        margin-top: 15px;
+                        margin-bottom: 5px;
+                        width: 100%;
+
+                        button {
+                            background-color: #319f5d;
+                            border: 0;
+                            outline: 0;
+                            border-radius: 8px;
+                            font-family: Sans-font;
+                            font-size: 18px;
+                            font-weight: 900;
+                            width: 100%;
+                            color: white;
+                            height: 30px;
+                            min-height: 30px;
+                            box-shadow: 0px 2px 2px #0f6252;
+                        }
+
+                        button:active {
+                            padding-top: 3px;
+                            box-shadow: 0px 3px 3px inset #0f6252;
                         }
                     }
 
@@ -591,29 +640,50 @@
                     justify-content: space-evenly;
                     align-items: center;
                     // margin-top: 1.5vw;
-                    button {
+                    button , .loading {
                         font-family: Sans-font;
                         border: 0;
                         outline: 0;
                         border-radius: 10px;
                         width: 32%;
+                        height: 29.2px;
                         font-size: 18px;
                         font-weight: 900;
                         color: white;
+                        padding-top: 1px;
+                    }
+
+                    .loading {
+                        padding-top: 0px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
                     }
     
                     .cancel {
                         background-color: rgb(211, 43, 43);
-                        box-shadow: 0px 4px 4px rgb(114, 22, 22);
+                        box-shadow: 0px 2px 2px rgb(114, 22, 22);
+                    }
+
+                    .cancel:active {
+                        padding-top: 2.5px;
+                        box-shadow: 0px 4px 4px inset rgb(114, 22, 22);
                     }
     
                     .submit {
                         background-color: #168342;
-                        box-shadow: 0px 4px 4px #0d562a;
+                        box-shadow: 0px 2px 2px #0d562a;
+                    }
+
+                    .submit:active {
+                        padding-top: 2.5px;
+                        box-shadow: 0px 4px 4px inset #0d562a;
                     }
 
                     .submit[not=""] {
                         background-color: #67ca8f;
+                        box-shadow: none;
+                        padding-top: 1px;
                         color: rgba(136, 135, 135, 0.864);
                         cursor: not-allowed;
                         // box-shadow: 0px 4px 4px #0d562a;

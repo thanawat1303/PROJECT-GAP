@@ -11,11 +11,16 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
     const [ListStation , setListStation] = useState([])
     const [StateEditName , setStateEditName] = useState(false)
     const [StateEditStation , setStateEditStation] = useState(false)
+    const [StateEditPassword , setStateEditPassword] = useState(false)
+
     const [btEditNot , setbtEditNot] = useState(true)
+    const [FetchEditLoad , setFetchEditLoad] = useState(true)
 
     const Image = useRef()
     const Fullname = useRef()
     const Station = useRef()
+    const PasswordNew = useRef()
+    const PasswordAgain = useRef()
     const Password = useRef()
 
     useEffect(()=>{
@@ -78,19 +83,62 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
     const CheckEdit = () => {
         const check = 
                     StateEditName ? 
-                        getProfileOld.fullname_doctor !== Fullname.current.value && Fullname.current.value && Password.current.value :
+                        getProfileOld.fullname_doctor !== Fullname.current.value && Fullname.current.value && Password.current.value && /^[ก-๙a-zA-Z]+\s[ก-๙a-zA-Z]+$/.test(Fullname.current.value) :
                     StateEditStation ? 
-                        getProfileOld.station_doctor !== Station.current.value && Station.current.value && Password.current.value: false
-        
+                        getProfileOld.station_doctor !== Station.current.value && Station.current.value && Password.current.value :
+                    StateEditPassword ? 
+                        PasswordNew.current.value === PasswordAgain.current.value && PasswordNew.current.value && Password.current.value : false
+
         if(check) {
             setbtEditNot(false)
             return(
-                StateEditName ? `fullname_doctor = "${Fullname.current.value}"` :
-                StateEditStation ? `station_doctor = "${Station.current.value}"` : ""
+                StateEditName ? {
+                    value : Fullname.current.value ,
+                    password : Password.current.value,
+                    type : "name"
+                } :
+                StateEditStation ? {
+                    value : Station.current.value ,
+                    password : Password.current.value,
+                    type : "station"
+                } :
+                StateEditPassword ? {
+                    value : PasswordNew.current.value ,
+                    password : Password.current.value,
+                    type : "passwordNew"
+                } : {}
             )
         } else {
             setbtEditNot(true)
             return false
+        }
+    }
+
+    const EnterEdit = async () => {
+        const Data = CheckEdit()
+        console.log(Data)
+        if(Data) {
+            setFetchEditLoad(false)
+            setbtEditNot(true)
+            const Edit = await clientMo.post("/api/doctor/profile/text/edit" , Data)
+            if(Edit) {
+                if(Edit === "1") {
+                    returnToHome()
+                    await FetchProfile()
+                    setFetchEditLoad(true)
+                    setStateEditName(false)
+                    setStateEditStation(false)
+                    setStateEditPassword(false)
+                } else if(Edit === "password") {
+                    Password.current.value = ""
+                    Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+                    if(PasswordNew && PasswordAgain) {
+                        PasswordNew.current.value = ""
+                        PasswordAgain.current.value = ""
+                    }
+                    setFetchEditLoad(true)
+                }
+            } else session()
         }
     }
 
@@ -141,10 +189,14 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
                                 <div className="head-content">
                                     <span className="head-detail">ชื่อ - นามสกุล</span>
                                     { !StateEditName ?
-                                        <a onClick={()=>{
-                                            setStateEditName(true)
-                                            setStateEditStation(false)
-                                        }}>แก้ไข</a>
+                                        !StateEditStation && !StateEditPassword?
+                                            <a onClick={()=>{
+                                                setStateEditName(true)
+                                                setStateEditStation(false)
+                                                setStateEditPassword(false)
+                                                setbtEditNot(true)
+                                                if(Password.current) Password.current.value = ""
+                                            }}>แก้ไข</a> : <></>
                                         : <a onClick={()=>setStateEditName(false)}>ยกเลิก</a>
                                     }
                                 </div>
@@ -160,14 +212,18 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
                                 <div className="head-content">
                                     <span className="head-detail">ศูนย์ที่ทำงาน</span>
                                     { !StateEditStation ?
-                                        <a onClick={async ()=>{
-                                            const station = await clientMo.post("/api/doctor/station/list")
-                                            if(station) {
-                                                setListStation(JSON.parse(station))
-                                                setStateEditStation(true)
-                                                setStateEditName(false)
-                                            } else session()
-                                        }}>แก้ไข</a>
+                                        !StateEditName && !StateEditPassword ?
+                                            <a onClick={async ()=>{
+                                                setbtEditNot(true)
+                                                if(Password.current) Password.current.value = ""
+                                                const station = await clientMo.post("/api/doctor/station/list")
+                                                if(station) {
+                                                    setListStation(JSON.parse(station))
+                                                    setStateEditStation(true)
+                                                    setStateEditName(false)
+                                                    setStateEditPassword(false)
+                                                } else session()
+                                            }}>แก้ไข</a> : <></>
                                         : <a onClick={()=>setStateEditStation(false)}>ยกเลิก</a>
                                     }
                                 </div>
@@ -185,14 +241,43 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
                                     </div>
                                 }
                             </div>
+                            { !StateEditName && !StateEditStation ?
+                                <div className="row-detail not-bm head-bm">
+                                    <div className="head-content right">
+                                        { !StateEditPassword ?
+                                            <a onClick={()=>{
+                                                setStateEditName(false)
+                                                setStateEditStation(false)
+                                                setStateEditPassword(true)
+                                                setbtEditNot(true)
+                                                if(Password.current) Password.current.value = ""
+                                            }}>เปลี่ยนรหัสผ่าน</a>
+                                            : 
+                                            <a onClick={()=>setStateEditPassword(false)}>ยกเลิก</a>
+                                        }
+                                    </div>
+                                    { StateEditPassword ?
+                                        <>
+                                        <input className="input-password bt" onChange={CheckEdit} type="password" ref={PasswordNew} placeholder="รหัสผ่านใหม่" defaultValue={""}></input>
+                                        <input className="input-password" onChange={CheckEdit} type="password" ref={PasswordAgain} placeholder="รหัสผ่านใหม่อีกครั้ง" defaultValue={""}></input>
+                                        </>
+                                        : <></>
+                                    }
+                                </div> : <></>
+                            }
                         </div>
-                        { StateEditName || StateEditStation ?
+                        { StateEditName || StateEditStation || StateEditPassword ?
                             <div className="content-check-edit">
                                 <div className="input-edit">
-                                    <input type="password" ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่"></input>
+                                    <input className="input-password" onChange={CheckEdit} type="password" ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่"></input>
                                 </div>
                                 <div className="bt-edit">
-                                    <button no={btEditNot ? "" : null}>ยืนยัน</button>
+                                    { FetchEditLoad ?
+                                        <button onClick={EnterEdit} no={btEditNot ? "" : null}>ยืนยัน</button> :
+                                        <div className="bt-loading">
+                                            <Loading size={20} border={3} color="white" animetion={true}/>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                             : <></>

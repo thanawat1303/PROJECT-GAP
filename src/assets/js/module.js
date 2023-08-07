@@ -182,7 +182,7 @@ const Loading = ({size , border , color="green" , animetion = false}) => {
         <div style={{
             width : isNaN(size) ? size : `${size}px`,
             height : isNaN(size) ? size : `${size}px`,
-            overflow : "hidden"
+            // overflow : "hidden"
         }}>
             <div className="curcle"
                 style={{
@@ -449,6 +449,12 @@ const LoadOtherOffset = ({Fetch , Data , setRow , Limit , style = {
     )
 }
 
+const PatternCheck = (value) => {
+    return ({
+        fullname : /^[ก-๙a-zA-Z]+\s[ก-๙a-zA-Z]+$/.test(value)
+    })
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -522,4 +528,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , TabLoad , HrefData}

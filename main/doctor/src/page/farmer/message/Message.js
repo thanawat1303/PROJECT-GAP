@@ -4,7 +4,7 @@ import { clientMo } from "../../../../../../src/assets/js/moduleClient"
 import { Loading } from "../../../../../../src/assets/js/module"
 const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     const [message , SetMessage] = useState([])
-    const [Startmessage , SetStartMessage] = useState([])
+    const [Startmessage , SetStartMessage] = useState(false)
     const [timeOut , settimeOut] = useState(0)
     const [Size_input , setSize_input] = useState(30)
 
@@ -22,6 +22,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
         clearTimeout(timeOut)
         setFocusUnread("start")
         setOpen(false)
+        SetStartMessage(false)
         onMessage()
     } , [])
 
@@ -39,6 +40,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
 
     const onMessage = async () => {
         await FetchMsg(false , "start")
+        SetStartMessage(true)
     }
 
     const UpdateMessage = async () => {
@@ -145,8 +147,10 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
             '--size_box_input' : `${Size_input}px`
         }}>
             <div className="message" ref={messageRef} onScroll={LoadMessageOld}>
-                <div className="scroll-msg" ref={ScrollRef} onLoad={()=>UpdateScroll()}>
-                {
+                <div className="scroll-msg" ref={ScrollRef} onLoad={()=>UpdateScroll()} style={{
+                    height : Startmessage ? "auto" : "100%"
+                }}>
+                {Startmessage ?
                     message.map((val)=>{
                         return(
                             val.type_message !== "unread" ?
@@ -170,6 +174,16 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
                             <div key={0} ref={Unread} className="unread">ยังไม่ได้อ่าน</div>
                         )
                     })
+                    :
+                    <div style={{
+                        width : "100%",
+                        height : "100%",
+                        display : "flex",
+                        justifyContent : "center",
+                        alignItems : "center"
+                    }}>
+                        <Loading size={50} border={8} color="white" animetion={true}/>
+                    </div>
                 }
                 </div>
             </div>

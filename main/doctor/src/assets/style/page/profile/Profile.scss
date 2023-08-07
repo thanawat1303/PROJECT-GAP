@@ -70,6 +70,11 @@
                         }
                     }
 
+                    .head-content.right {
+                        display: flex;
+                        justify-content: end;
+                    }
+
                     .head-detail.img {
                         font-weight: 900;
                         font-size: 15px;
@@ -142,11 +147,44 @@
                             }
                         }
                     }
+
+                    .input-password {
+                        font-size: 15px;
+                        font-family: main-font;
+                        text-align: center;
+                        background-color: #50ddc362;
+                        border-radius: 8px;
+                        padding: 2px 0px;
+                        box-shadow: 0px 0px 4px inset #07453a62;
+                        margin-top: 4px;
+                        width: 100%;
+                        outline: 0;
+                        border: 0;
+                        height: 26.4px;
+                    }
+
+                    .input-password.bt {
+                        margin-bottom: 4px;
+                    }
+
+                    .input-password::placeholder {
+                        font-family: Sans-font;
+                    }
+
+                    .input-password[placeholder="รหัสผ่านไม่ถูกต้อง"] {
+                        box-shadow:0px 0px 4px red;
+                    }
                 }
 
                 .not-bm {
                     border-bottom: none;
                     padding-bottom: 5px;
+                }
+
+                .head-bm {
+                    border-top: 1.5px solid rgba(128, 128, 128, 0.415);
+                    margin-top: 8px;
+                    padding-bottom: 0px;
                 }
             }
 
@@ -161,7 +199,7 @@
                 margin-top: 8px;
 
                 .input-edit {
-                    input {
+                    .input-password {
                         text-align: center;
                         font-family: main-font;
                         font-size: 16px;
@@ -174,8 +212,12 @@
                         box-shadow: 0px 0px 5px inset #07453a62;
                     }
 
-                    input::placeholder {
+                    .input-password::placeholder {
                         font-family: Sans-font;
+                    }
+
+                    .input-password[placeholder="รหัสผ่านไม่ถูกต้อง"] {
+                        box-shadow:0px 0px 4px red;
                     }
                 }
 
@@ -213,6 +255,23 @@
                         box-shadow: none;
                         padding-top: 2px;
                         color: rgba(255, 255, 255, 0.4);
+                    }
+
+                    .bt-loading {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 15px;
+                        width: 30%;
+                        height: 27px;
+                        font-family: Sans-font;
+                        padding: 0;
+                        border: 0;
+                        outline: 0;
+                        padding-top: 2px;
+                        color: white;
+                        background-color: #4f8d81;
+                        cursor: not-allowed;
                     }
                 }                
             }

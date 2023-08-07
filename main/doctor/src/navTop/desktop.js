@@ -29,7 +29,7 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
     }
 
     const Home = (e) => {
-        e.preventDefault()
+        if(e) e.preventDefault()
         clientMo.post('/api/doctor/check').then((context)=>{
             if(context) 
                 setBody(<NavFirst setMain={setMain} socket={socket} setdoctor={setBody} setSession={setSession} type={1} eleImageCover={eleImageCover} eleBody={eleBody} setTextStatus={setTextStatus}/>)

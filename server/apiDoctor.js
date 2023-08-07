@@ -486,63 +486,77 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const fullname = req.body.fullname ? `fullname = "${req.body.fullname}"` : "";
                 const location = req.body.lag && req.body.lng ? `location = POINT(${req.body.lag} , ${req.body.lng})` : "";
                 const station = req.body.station ? `station = "${req.body.station}"` : "";
-                const newPassword = req.body.newPassword ? `password = SHA2( "${req.body.newPassword}" , 254 )` : "";
+                const newPassword = req.body.newPassword ? `password = SHA2("${req.body.newPassword}" , 256)` : "";
                 
                 const SET = [id , fullname , location , station , newPassword].filter(val=>val).join(" , ")
 
                 if(SET) {
-                    con.query(
-                        `
-                            UPDATE acc_farmer
-                            SET ${SET}
-                            WHERE id_table = ?
-                        ` , [ req.body.id_table ] , (err , resultEdit) => {
-                            console.log(err)
-                            if(!err) {
-                                if(SET.length != 0) {
-                                    con.query(
-                                        `
-                                        SELECT uid_line
-                                        FROM acc_farmer
-                                        WHERE id_table = ?
-                                        ` , [ req.body.id_table ] , async (err , resultSelect) => {
-                                            if(!err) {
-                                                try {
-                                                    await new Promise( async (resole , reject)=>{
-                                                        const dataSend = {
-                                                            type : "text" , 
-                                                            text : `ผู้ส่งเสริม ${result["data"].fullname_doctor}\n\n`+
-                                                                    `ทำการเปลี่ยนข้อมูลของท่าน :`+
-                                                                    `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
-                                                                    `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
-                                                                    `${req.body.station ? `\nศูนย์ในการดูแล : ${req.body.station}` : ""}`+
-                                                                    `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
-                                                                    `${(req.body.lag && req.body.lng) ? `\nตำแหน่งที่ตั้ง :` : ""}`
-                                                        }
-                                                        await Line.pushMessage(resultSelect[0].uid_line , dataSend)
-                                                        resole("")
-                                                    })
-    
-                                                    if(req.body.lag && req.body.lng) {
-                                                        Line.pushMessage(resultSelect[0].uid_line , {
-                                                            type : "location",
-                                                            latitude : req.body.lag,
-                                                            longitude : req.body.lng
-                                                        })
-                                                    }
-                                                } catch(e) {console.log(e)}
+                    const checkProfile = await new Promise((resole , reject)=>{
+                        con.query(
+                            `
+                            SELECT uid_line
+                            FROM acc_farmer
+                            WHERE id_table = ? and register_auth = 1 and station = ?
+                            ` , [ req.body.id_table , result["data"].station_doctor ] , async (err , resultSelect) => {
+                                if(!err && resultSelect.length != 0) {
+                                    try {
+                                        
+                                        await new Promise( async (resole , reject)=>{
+                                            const dataSend = {
+                                                type : "text" , 
+                                                text : `ผู้ส่งเสริม ${result["data"].fullname_doctor}\n\n`+
+                                                        `ทำการเปลี่ยนข้อมูลของท่าน :`+
+                                                        `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
+                                                        `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
+                                                        `${req.body.station ? `\nศูนย์ในการดูแล : ${req.body.station}` : ""}`+
+                                                        `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`
                                             }
-                                            con.end()
-                                        }
-                                    )         
+                                            await Line.pushMessage(resultSelect[0].uid_line , dataSend)
+                                            resole("")
+                                        })
+    
+                                        await new Promise( async (resole , reject)=>{
+                                            if(req.body.lag && req.body.lng) {
+                                                await Line.pushMessage(resultSelect[0].uid_line , {
+                                                    type : "location",
+                                                    title : "ตำแหน่งที่ตั้งที่แก้ไข",
+                                                    address : "คลิกตรวจสอบ",
+                                                    latitude : req.body.lag,
+                                                    longitude : req.body.lng
+                                                })
+                                                resole("")
+                                            }
+                                        })
+                                        resole(true)
+                                    } catch(e) {
+                                        resole(false)
+                                    }
+                                } else {
+                                    resole(false)
                                 }
-                                res.send("1")
-                            } else {
-                                con.end()
-                                res.send("")
                             }
-                        }
-                    )
+                        )  
+                    }) 
+
+                    if(checkProfile) {
+                        con.query(
+                            `
+                                UPDATE acc_farmer
+                                SET ${SET}
+                                WHERE id_table = ?
+                            ` , [ req.body.id_table ] , (err , resultEdit) => {
+                                if(!err) {
+                                    con.end()
+                                    res.send("1")
+                                } else {
+                                    con.end()
+                                    res.send("not edit")
+                                }
+                            }
+                        )
+                    } else {
+                        res.send("not profile")
+                    }
                 } else {
                     res.send("")
                 }
@@ -555,6 +569,29 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 res.send("")
             }
         }
+    })
+
+    app.post('/api/doctor/farmer/edit/img' , (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
+            if(result['result'] === "pass") {
+                
+            }
+        }).catch((err)=>{
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        })
     })
 
     app.post('/api/doctor/farmer/get/account/confirm' , (req , res)=>{

@@ -84,12 +84,14 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         } catch(e) { session() }
     }
 
-    const CheckEdit = async (Position) => {
+    const CheckEdit = async (Position , img) => {
+
+        const ImageIn = img ? img : ImageSh.current.value;
 
         const lagIn = Position ? Position.lag : Lag
         const lngIn = Position ? Position.lng : Lng
 
-        const ckImage = Image.current.files[0] && await UpdateImageClient(Image.current) != String.fromCharCode(...DataProfile.img.data)
+        const ckImage = ImageIn && ImageIn != String.fromCharCode(...DataProfile.img.data)
         const ckID = id_farmer.current.value && id_farmer.current.value != DataProfile.id_farmer
         const ckName = PatternCheck(fullname.current.value).fullname && fullname.current.value && fullname.current.value != DataProfile.fullname
         const ckLocation = lagIn != 0 && lngIn != 0 
@@ -97,15 +99,16 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         const ckStation = station.current.value && station.current.value != DataProfile.station
         const ckPassword = newPassword.current.value
 
+        console.log(ckID)
         if(ckID || ckName || ckLocation || ckStation || ckPassword || ckImage) {
             const DataUpdate = {
-                img : await UpdateImageClient(Image.current),
                 id_farmer : id_farmer.current.value,
                 fullname : fullname.current.value,
                 lag : lagIn,
                 lng : lngIn,
                 station : station.current.value,
                 newPassword : newPassword.current.value,
+                img : ImageIn
             }
 
             if(!ckID) delete DataUpdate.id_farmer
@@ -118,6 +121,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
             if(!ckPassword) delete DataUpdate.newPassword
             if(!ckImage) delete DataUpdate.img
 
+            console.log(DataUpdate)
             CheckEditFun(DataUpdate)
         } else {
             CheckEditFun("")
@@ -125,17 +129,15 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
     }
 
     const UpdateImageClient = async (e) => {
-        return await new Promise((resole , reject)=>{
-            const file = e.files[0]
-            if(file) {
-                const reader = new FileReader()
-                reader.onload = (e) => {
-                    ImageSh.current.src = e.target.result
-                    resole(e.target.result)
-                }
-                reader.readAsDataURL(file)
+        const file = e.files[0]
+        if(file) {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                ImageSh.current.src = e.target.result
+                CheckEdit("" , e.target.result)
             }
-        })
+            reader.readAsDataURL(file)
+        } else CheckEdit("" , "")
     }
 
     return(
@@ -151,7 +153,6 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                         </svg>
                     </a>
                     <input type="file" onChange={(e)=>{
-                        CheckEdit("")
                         UpdateImageClient(e.target)
                     }} hidden ref={Image} accept="image/jpeg, image/png"></input>
                 </div>
@@ -159,13 +160,13 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
             <div className="text-detail">
                 <span>รหัสประจำตัวเกษตรกร</span>
                 <div className="frame-text">
-                    <input onChange={()=>CheckEdit("")} placeholder="เช่น 11630500" ref={id_farmer} defaultValue={DataProfile.id_farmer}></input>
+                    <input onChange={()=>CheckEdit("" , "")} placeholder="เช่น 11630500" ref={id_farmer} defaultValue={DataProfile.id_farmer}></input>
                 </div>
             </div>
             <div className="text-detail">
                 <span>ชื่อ - นามสกุล</span>
                 <div className="frame-text">
-                    <input onChange={()=>CheckEdit("")} placeholder="เช่น สมชาย ใจดี" ref={fullname} defaultValue={DataProfile.fullname}></input>
+                    <input onChange={()=>CheckEdit("" , "")} placeholder="เช่น สมชาย ใจดี" ref={fullname} defaultValue={DataProfile.fullname}></input>
                 </div>
             </div>
             <div className="text-detail">
@@ -184,7 +185,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                 <span>ศูนย์ที่อยู่ในการดูแล</span>
                 <div className="frame-text">
                     { getListStation.length != 0 ?
-                        <select onChange={()=>CheckEdit("")} defaultValue={DataProfile.station} ref={station}>
+                        <select onChange={()=>CheckEdit("" , "")} defaultValue={DataProfile.station} ref={station}>
                             <option value={""}>เลือกศูนย์</option>
                             { 
                                 getListStation.map(val=>
@@ -199,7 +200,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
             <div className="text-detail">
                 <span>รหัสผ่านเกษตกร</span>
                 <div className="frame-text">
-                    <input onChange={()=>CheckEdit("")} placeholder="กรอกรหัสผ่านใหม่" type="password" ref={newPassword} defaultValue={""}></input>
+                    <input onChange={()=>CheckEdit("" , "")} placeholder="กรอกรหัสผ่านใหม่" type="password" ref={newPassword} defaultValue={""}></input>
                 </div>
             </div>
         </div>

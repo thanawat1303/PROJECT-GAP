@@ -398,6 +398,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
     }
 
     const CheckEdit = (DataEditIn = DataEdit) => {
+        console.log(DataEditIn)
         if(DataEditIn && RefPasswordEdit.current.value) {
             setBtStateEdit(true)
             setDataEdit(DataEditIn)

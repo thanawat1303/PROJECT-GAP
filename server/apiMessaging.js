@@ -19,7 +19,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                 if(req.body.events[0].postback.data == "house_add") {
                     const con = await ConnectDB()
                     con.query(`
-                                SELECT id_farmHouse , name_house FROM housefarm , 
+                                SELECT id_farm_house , name_house FROM housefarm , 
                                     (
                                         SELECT uid_line , link_user FROM acc_farmer 
                                         WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
@@ -27,7 +27,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                         LIMIT 1
                                     ) as farmer 
                                 WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
-                                ORDER BY id_farmHouse DESC
+                                ORDER BY id_farm_house DESC
                                 ` , 
                         [req["body"]['events'][0]["source"]["userId"]] ,
                         (err , result)=>{
@@ -39,11 +39,11 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                     for (let key in result) {
                                         query.push(
                                                 {
-                                                    imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
+                                                    imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farm_house"]}`,
                                                     action : {
                                                         type : "uri",
                                                         label : `${result[key]["name_house"]}`,
-                                                        uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farmHouse"]}`
+                                                        uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farm_house"]}`
                                                     }
                                                 }
                                         )
@@ -261,7 +261,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                     return 0;
                 }
 
-                con.query(`SELECT img_house FROM housefarm WHERE id_farmHouse = ?` , 
+                con.query(`SELECT img_house FROM housefarm WHERE id_farm_house = ?` , 
                     [req.query.imagefarm] ,
                     (err , result)=>{
                         if (err) {
@@ -317,8 +317,8 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
 //         layout : "vertical",
 //         action : {
 //             type : "uri",
-//             label : `${result[key]["id_farmHouse"]}` ,
-//             uri : `https://liff.line.me/1661049098-A9PON7LB?farm=${result[key]["id_farmHouse"]}`
+//             label : `${result[key]["id_farm_house"]}` ,
+//             uri : `https://liff.line.me/1661049098-A9PON7LB?farm=${result[key]["id_farm_house"]}`
 //         },
 //         backgroundColor : "#FFFFFFFF",
 //         contents : [
@@ -334,7 +334,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
 //     },
 //     hero : {
 //         type : "image" ,
-//         url : `https://ffb4-49-237-13-45.ngrok-free.app/imageHouse?imagefarm=${result[key]["id_farmHouse"]}`,
+//         url : `https://ffb4-49-237-13-45.ngrok-free.app/imageHouse?imagefarm=${result[key]["id_farm_house"]}`,
 //         align : "center" ,
 //         gravity : "center" ,
 //         size : "full",
@@ -343,8 +343,8 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
 //         backgroundColor : "#FFFFFFFF",
 //         action : {
 //             type : "uri",
-//             label : `${result[key]["id_farmHouse"]}` ,
-//             uri : `https://liff.line.me/1661049098-A9PON7LB?farm=${result[key]["id_farmHouse"]}`
+//             label : `${result[key]["id_farm_house"]}` ,
+//             uri : `https://liff.line.me/1661049098-A9PON7LB?farm=${result[key]["id_farm_house"]}`
 //         },
 //     },
 //     body : {
@@ -352,8 +352,8 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
 //         layout : "vertical",
 //         action : {
 //             type : "uri",
-//             label : `${result[key]["id_farmHouse"]}` ,
-//             uri : `https://liff.line.me/1661049098-A9PON7LB?farm=${result[key]["id_farmHouse"]}`
+//             label : `${result[key]["id_farm_house"]}` ,
+//             uri : `https://liff.line.me/1661049098-A9PON7LB?farm=${result[key]["id_farm_house"]}`
 //         },
 //         contents : [
 //             {

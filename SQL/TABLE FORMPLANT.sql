@@ -2,7 +2,7 @@ DROP TABLE line_chat_gap.formPlant;
 -- DELETE FROM line_chat_gap.formPlant;
 CREATE TABLE line_chat_gap.formPlant (
     id varchar(50) NOT NULL PRIMARY KEY,
-    id_farmHouse varchar(255) NOT NULL ,
+    id_farm_house varchar(255) NOT NULL ,
     name_plant varchar(50) NOT NULL ,
     generation INT NOT NULL,
     date_glow varchar(50) NOT NULL,

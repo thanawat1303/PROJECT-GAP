@@ -318,7 +318,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         SELECT COUNT(name_plant)
                         FROM formplant , 
                             (
-                                SELECT id_farmHouse 
+                                SELECT id_farm_house 
                                 FROM housefarm , 
                                     (
                                         SELECT uid_line , link_user
@@ -327,7 +327,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     ) as farmer
                                 WHERE housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user
                             ) as house
-                        WHERE formplant.name_plant = plant_list.name and house.id_farmHouse = formplant.id_farmHouse
+                        WHERE formplant.name_plant = plant_list.name and house.id_farm_house = formplant.id_farm_house
                     ) as countPlant
                     FROM plant_list
                     WHERE is_use = 1
@@ -1559,7 +1559,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as success_id_plant
                         FROM formplant , 
                             (
-                                SELECT id_farmHouse
+                                SELECT id_farm_house
                                 FROM housefarm , 
                                     (
                                         SELECT uid_line , link_user
@@ -1568,7 +1568,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     ) as farmer
                                 WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
                             ) as house
-                        WHERE formplant.id_farmHouse = house.id_farmHouse
+                        WHERE formplant.id_farm_house = house.id_farm_house
                                 ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
                                 ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
                                 ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
@@ -1633,7 +1633,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             (
                                 SELECT link_user
                                 FROM housefarm
-                                WHERE id_farmHouse = formplant.id_farmHouse
+                                WHERE id_farm_house = formplant.id_farm_house
                             ) as house
                             WHERE acc_farmer.link_user = house.link_user
                             ORDER BY date_register
@@ -1796,11 +1796,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             SELECT link_user
                             FROM housefarm , 
                             (
-                                SELECT id_farmHouse
+                                SELECT id_farm_house
                                 FROM formplant
                                 WHERE id = ?
                             ) as plant
-                            WHERE housefarm.id_farmHouse = plant.id_farmHouse
+                            WHERE housefarm.id_farm_house = plant.id_farm_house
                         ) as house
                     WHERE acc_farmer.link_user = house.link_user
                     ORDER BY date_register
@@ -2391,7 +2391,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as success_id_plant
                         FROM formplant , 
                             (
-                                SELECT id_farmHouse
+                                SELECT id_farm_house
                                 FROM housefarm , 
                                     (
                                         SELECT uid_line , link_user
@@ -2400,7 +2400,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     ) as farmer
                                 WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
                             ) as house
-                        WHERE formplant.id_farmHouse = house.id_farmHouse
+                        WHERE formplant.id_farm_house = house.id_farm_house
                                 ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
                                 ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
                                 ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
@@ -2434,11 +2434,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                 SELECT link_user
                                                 FROM housefarm , 
                                                 (
-                                                    SELECT id_farmHouse
+                                                    SELECT id_farm_house
                                                     FROM formplant
                                                     WHERE id = ?
                                                 ) as plant
-                                                WHERE housefarm.id_farmHouse = plant.id_farmHouse
+                                                WHERE housefarm.id_farm_house = plant.id_farm_house
                                             ) as house
                                         WHERE acc_farmer.link_user = house.link_user
                                         ORDER BY date_register

@@ -8,6 +8,8 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
 
     const [getListStation , setListStation] = useState([])
 
+    const Image = useRef()
+    const ImageSh = useRef()
     const id_farmer = useRef()
     const fullname = useRef()
     // const lagRef = useRef()
@@ -87,6 +89,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         const lagIn = Position ? Position.lag : Lag
         const lngIn = Position ? Position.lng : Lng
 
+        const ckImage = Image.current.files[0] && UpdateImageClient(Image.current) != String.fromCharCode(...DataProfile.img.data)
         const ckID = id_farmer.current.value && id_farmer.current.value != DataProfile.id_farmer
         const ckName = PatternCheck(fullname.current.value).fullname && fullname.current.value && fullname.current.value != DataProfile.fullname
         const ckLocation = lagIn != 0 && lngIn != 0 
@@ -94,8 +97,9 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         const ckStation = station.current.value && station.current.value != DataProfile.station
         const ckPassword = newPassword.current.value
 
-        if(ckID || ckName || ckLocation || ckStation || ckPassword) {
+        if(ckID || ckName || ckLocation || ckStation || ckPassword || ckImage) {
             const DataUpdate = {
+                img : Image.current.files[0],
                 id_farmer : id_farmer.current.value,
                 fullname : fullname.current.value,
                 lag : lagIn,
@@ -112,6 +116,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
             }
             if(!ckStation) delete DataUpdate.station
             if(!ckPassword) delete DataUpdate.newPassword
+            if(!ckImage) delete DataUpdate.img
 
             CheckEditFun(DataUpdate)
         } else {
@@ -119,10 +124,35 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         }
     }
 
+    const UpdateImageClient = (e) => {
+        const file = e.files[0]
+        if(file) {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                ImageSh.current.src = e.target.result
+                return e.target.result
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
     return(
         <div className="detail-account-data edit">
             <div className="img">
-                <img src={DataProfile.img.data ? String.fromCharCode(...DataProfile.img.data) : "/doctor-svgrepo-com.svg"}></img>
+                <div className="frame-img">
+                    <img ref={ImageSh} src={DataProfile.img.data ? String.fromCharCode(...DataProfile.img.data) : "/doctor-svgrepo-com.svg"}></img>
+                    <a className="edit-pic" title="แก้ไขรูปโปรไฟล์" onClick={()=>Image.current.click()}>
+                        <svg viewBox="0 0 528.899 528.899">
+                            <g>
+                                <path d="M328.883,89.125l107.59,107.589l-272.34,272.34L56.604,361.465L328.883,89.125z M518.113,63.177l-47.981-47.981   c-18.543-18.543-48.653-18.543-67.259,0l-45.961,45.961l107.59,107.59l53.611-53.611   C532.495,100.753,532.495,77.559,518.113,63.177z M0.3,512.69c-1.958,8.812,5.998,16.708,14.811,14.565l119.891-29.069   L27.473,390.597L0.3,512.69z"/>
+                            </g>
+                        </svg>
+                    </a>
+                    <input type="file" onChange={(e)=>{
+                        CheckEdit("")
+                        UpdateImageClient(e.target)
+                    }} hidden ref={Image} accept="image/jpeg, image/png"></input>
+                </div>
             </div>
             <div className="text-detail">
                 <span>รหัสประจำตัวเกษตรกร</span>

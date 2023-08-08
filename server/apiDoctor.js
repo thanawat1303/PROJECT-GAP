@@ -482,13 +482,14 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             const result = await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
                 delete req.body.password
+                const img = req.body.img ? `img = "${req.body.img}"` : "";
                 const id = req.body.id_farmer ? `id_farmer = "${req.body.id_farmer}"` : "";
                 const fullname = req.body.fullname ? `fullname = "${req.body.fullname}"` : "";
                 const location = req.body.lag && req.body.lng ? `location = POINT(${req.body.lag} , ${req.body.lng})` : "";
                 const station = req.body.station ? `station = "${req.body.station}"` : "";
                 const newPassword = req.body.newPassword ? `password = SHA2("${req.body.newPassword}" , 256)` : "";
                 
-                const SET = [id , fullname , location , station , newPassword].filter(val=>val).join(" , ")
+                const SET = [img , id , fullname , location , station , newPassword].filter(val=>val).join(" , ")
 
                 if(SET) {
                     const checkProfile = await new Promise((resole , reject)=>{
@@ -511,13 +512,25 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                         `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
                                                         `${req.body.station ? `\nศูนย์ในการดูแล : ${req.body.station}` : ""}`+
                                                         `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`
+                                                        `${req.body.img ? `\nรูปภาพ :` : ""}`
                                             }
                                             await Line.pushMessage(resultSelect[0].uid_line , dataSend)
                                             resole("")
                                         })
-    
-                                        await new Promise( async (resole , reject)=>{
-                                            if(req.body.lag && req.body.lng) {
+
+                                        if(req.body.img) {
+                                            await new Promise(resultSelect[0].uid_line , async (resole , reject) => {
+                                                await Line.pushMessage(resultSelect[0].uid_line , {
+                                                    "type": "image",
+                                                    "originalContentUrl": `${UrlApi}/image/farmer/${req.body.id_table}}`,
+                                                    "previewImageUrl": `${UrlApi}/image/farmer/${req.body.id_table}}`
+                                                })
+                                                resole("")
+                                            })
+                                        }
+
+                                        if(req.body.lag && req.body.lng) {
+                                            await new Promise( async (resole , reject)=>{
                                                 await Line.pushMessage(resultSelect[0].uid_line , {
                                                     type : "location",
                                                     title : "ตำแหน่งที่ตั้งที่แก้ไข",
@@ -526,8 +539,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                     longitude : req.body.lng
                                                 })
                                                 resole("")
-                                            }
-                                        })
+                                            })
+                                        }
                                         resole(true)
                                     } catch(e) {
                                         resole(false)
@@ -567,40 +580,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 res.send("")
             }
         }
-    })
-
-    app.post('/api/doctor/farmer/edit/img' , (req , res)=>{
-        let username = req.session.user_doctor
-        let password = req.session.pass_doctor
-    
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
-            res.redirect('/api/logout')
-            return 0
-        }
-    
-        let con = Database.createConnection(listDB)
-    
-        apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
-            if(result['result'] === "pass") {
-                con.query(
-                    `
-                    UPDATE acc_farmer
-                    SET img = ?
-                    WHERE id_table = ? and register_auth = 1 and station = ?
-                    ` , [ req.body.img , req.body.id_table , result["data"].station_doctor ] , 
-                    (err , resultImg) => {
-                        con.end()
-                        if(!err) res.send("1")
-                        else res.send("not")
-                    }
-                )
-            }
-        }).catch((err)=>{
-            con.end()
-            if(err == "not pass") {
-                res.redirect('/api/logout')
-            }
-        })
     })
 
     app.post('/api/doctor/farmer/get/account/confirm' , (req , res)=>{

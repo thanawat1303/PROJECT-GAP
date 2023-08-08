@@ -70,13 +70,13 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     app.use(express.static('public'))
 
     // router api url
-    const TestNgrok = HOST_FARMER
+    const HOSTSSL = HOST_FARMER
 
     router(app)
-    apiAdmin(app , db , apifunc , TestNgrok , dbpacket , listDB)
-    apiDoctor(app , db , apifunc , TestNgrok , dbpacket , listDB , io , LINE)
+    apiAdmin(app , db , apifunc , HOSTSSL , dbpacket , listDB)
+    apiDoctor(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io , LINE)
     apiFarmer(app , db , apifunc , HOST_FARMER , dbpacket , listDB , LINE)
-    message(app , db , apifunc , TestNgrok , dbpacket , listDB , UrlNgrok , io)
+    message(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io)
 
     return server
 }

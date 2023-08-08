@@ -84,12 +84,12 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         } catch(e) { session() }
     }
 
-    const CheckEdit = (Position) => {
+    const CheckEdit = async (Position) => {
 
         const lagIn = Position ? Position.lag : Lag
         const lngIn = Position ? Position.lng : Lng
 
-        const ckImage = Image.current.files[0] && UpdateImageClient(Image.current) != String.fromCharCode(...DataProfile.img.data)
+        const ckImage = Image.current.files[0] && await UpdateImageClient(Image.current) != String.fromCharCode(...DataProfile.img.data)
         const ckID = id_farmer.current.value && id_farmer.current.value != DataProfile.id_farmer
         const ckName = PatternCheck(fullname.current.value).fullname && fullname.current.value && fullname.current.value != DataProfile.fullname
         const ckLocation = lagIn != 0 && lngIn != 0 
@@ -99,7 +99,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
 
         if(ckID || ckName || ckLocation || ckStation || ckPassword || ckImage) {
             const DataUpdate = {
-                img : Image.current.files[0],
+                img : await UpdateImageClient(Image.current),
                 id_farmer : id_farmer.current.value,
                 fullname : fullname.current.value,
                 lag : lagIn,
@@ -124,16 +124,18 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         }
     }
 
-    const UpdateImageClient = (e) => {
-        const file = e.files[0]
-        if(file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                ImageSh.current.src = e.target.result
-                return e.target.result
+    const UpdateImageClient = async (e) => {
+        return await new Promise((resole , reject)=>{
+            const file = e.files[0]
+            if(file) {
+                const reader = new FileReader()
+                reader.onload = (e) => {
+                    ImageSh.current.src = e.target.result
+                    resole(e.target.result)
+                }
+                reader.readAsDataURL(file)
             }
-            reader.readAsDataURL(file)
-        }
+        })
     }
 
     return(

@@ -91,8 +91,8 @@ const List = ({ session , socket , status}) => {
         setBody(<></>)
         setLoadList(true)
 
-        FetchList(10)
-
+        StartList()
+        
         // socket.removeListener("reload-farmer-list")
         // return(()=>{
         //     socket.removeListener("reload-farmer-list")
@@ -109,16 +109,19 @@ const List = ({ session , socket , status}) => {
 
     const FetchList = async (limit) => {
         try {
-            if(status.open === 1) window.history.pushState({} , "" , `/doctor/farmer/${status.status}`)
             const list = await clientMo.post('/api/doctor/farmer/list' , {approve:(status.status == "wt") ? 0 : (status.status == "ap") ? 1 : 2 , limit : limit})
-            let data = JSON.parse(list)
-            console.log(data)
+            const data = JSON.parse(list)
             setData(data)
             setLoadList(false)
             return data
         } catch(e) {
             session()
         }
+    }
+
+    const StartList = async () => {
+        await FetchList(10)
+        if(status.open === 1) window.history.pushState({} , "" , `/doctor/farmer/${status.status}`)
     }
 
     return (LoadingList ?
@@ -185,7 +188,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
                             }}>
                             {
                                 Data.map((val , key)=>
-                                    <section key={key} className="list-some-data-on-page">
+                                    <section key={val.id_table} className="list-some-data-on-page">
                                         <ListProfile data={val} status={status} showPopup={showPopup}/>
                                     </section>
                                 )

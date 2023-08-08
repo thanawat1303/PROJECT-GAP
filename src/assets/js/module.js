@@ -180,6 +180,9 @@ const ResizeImg = (file , MaxSize) => {
 const Loading = ({size , border , color="green" , animetion = false}) => {
     return (
         <div style={{
+            display : "flex",
+            justifyContent : "center",
+            alignContent : "center",
             width : isNaN(size) ? size : `${size}px`,
             height : isNaN(size) ? size : `${size}px`,
             // overflow : "hidden"
@@ -189,8 +192,8 @@ const Loading = ({size , border , color="green" , animetion = false}) => {
                     border: `${isNaN(border) ? border : `${border}px`} solid ${color}`,
                     borderLeft : `${isNaN(border) ? border : `${border}px`} solid transparent`,
                     borderRadius : "50%",
-                    width : "100%",
-                    height : "100%",
+                    width : "98%",
+                    height : "98%",
                     animation : animetion ? "rotate-curcle 2s cubic-bezier(0, 0, 0, 0) 0s infinite" : "none"
                 }}
             ></div>
@@ -455,6 +458,35 @@ const PatternCheck = (value) => {
     })
 }
 
+const DownLoadImage = ({className , fileName , DataImageBase64}) => {
+    const aTag = useRef()
+
+    const DownLoad = () => {
+        var img = new Image();
+        img.src = DataImageBase64;
+        img.onload = () => Onload(img);
+    }
+
+    const Onload = (img) => {
+        const date = `${new Date().getFullYear()}${new Date().getMonth()}${new Date().getDate()}`
+        aTag.current.href = img.src
+        aTag.current.download = `${fileName}_${date}.jpg`
+        aTag.current.click()
+        img.removeEventListener("load" , ()=>Onload(img))
+    }
+
+    return (
+        <>
+        <a className={className} title="ดาวโหลดรูปภาพ" onClick={DownLoad}>
+            <svg viewBox="0 0 24 24" fill="white">
+                <path d="M5.25589 16C3.8899 15.0291 3 13.4422 3 11.6493C3 9.20008 4.8 6.9375 7.5 6.5C8.34694 4.48637 10.3514 3 12.6893 3C15.684 3 18.1317 5.32251 18.3 8.25C19.8893 8.94488 21 10.6503 21 12.4969C21 14.0582 20.206 15.4339 19 16.2417M12 21V11M12 21L9 18M12 21L15 18" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+        </a>
+        <a hidden ref={aTag}></a>
+        </>
+    )
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -528,4 +560,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , TabLoad , HrefData}

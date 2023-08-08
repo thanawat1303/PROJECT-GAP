@@ -5,7 +5,9 @@ const ListProfile = ({data , status , showPopup}) => {
     const [base64String , setbase64String] = useState(String.fromCharCode(...data.img.data))
     const [Date_comfirm , setDate_comfirm] = useState(data.date_doctor_confirm ? new Date(data.date_doctor_confirm) : "")
     useEffect(()=>{
-    } , [])
+        setbase64String(String.fromCharCode(...data.img.data))
+        setDate_comfirm(data.date_doctor_confirm ? new Date(data.date_doctor_confirm) : "")
+    } , [data])
     return (
         <>
             <div className="img">

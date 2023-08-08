@@ -94,7 +94,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.get("/image/farmer/:id_table" , (req , res)=>{
-        if(req.query.imagefarm) {
+        if(req.params.id_table) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
@@ -106,27 +106,26 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 con.query(`SELECT img FROM acc_farmer WHERE id_table = ?` , 
                     [req.params.id_table] ,
                     (err , result)=>{
-                        if (err) {
-                            dbpacket.dbErrorReturn(con, err, res);
-                            console.log("query");
-                            return 0
-                        }
                         con.end()
-                        if(result[0]) {
-                            const base64Image = result[0]["img"].toString(); //Buffer to string
-                            const base64Data = base64Image.replace(`data:image/jpeg;base64,`, '');
-
-                            // // แปลง Base64 เป็น Buffer
-                            const imageBuffer = Buffer.from(base64Data, 'base64');
-                    
-                            // // // ตั้งค่า Header 'Content-Type'
-                            res.setHeader('Content-Type', 'image/png');
-                            res.setHeader('Transfer-Encoding' , 'chunked')
-                    
-                            // ส่งกลับรูปภาพให้กับผู้ใช้
-                            res.end(imageBuffer);
+                        if (!err) {
+                            if(result[0]) {
+                                const base64Image = result[0]["img"].toString(); //Buffer to string
+                                const base64Data = base64Image.replace(`data:image/jpeg;base64,`, '');
+    
+                                // // แปลง Base64 เป็น Buffer
+                                const imageBuffer = Buffer.from(base64Data, 'base64');
+                        
+                                // // // ตั้งค่า Header 'Content-Type'
+                                res.setHeader('Content-Type', 'image/png');
+                                res.setHeader('Transfer-Encoding' , 'chunked')
+                        
+                                // ส่งกลับรูปภาพให้กับผู้ใช้
+                                res.end(imageBuffer);
+                            }
+                            else res.send("not found")
+                        } else {
+                            res.send("not found")
                         }
-                        else res.send("not found")
                 })
             })
         } else {

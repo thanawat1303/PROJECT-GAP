@@ -7,7 +7,7 @@ const {Server} = require('socket.io')
 const LINE = require('./configLine')
 const io = new Server()
 
-module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket = io , Line = LINE) {
+module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io , Line = LINE) {
 
     app.post('/api/doctor/check' , (req , res)=>{
         res.redirect('/api/doctor/auth');
@@ -502,7 +502,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             async (err , resultSelect) => {
                                 if(!err && resultSelect.length != 0) {
                                     try {
-                                        
                                         await new Promise( async (resole , reject)=>{
                                             const dataSend = {
                                                 type : "text" , 
@@ -511,7 +510,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                         `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
                                                         `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
                                                         `${req.body.station ? `\nศูนย์ในการดูแล : ${req.body.station}` : ""}`+
-                                                        `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`
+                                                        `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
                                                         `${req.body.img ? `\nรูปภาพ :` : ""}`
                                             }
                                             await Line.pushMessage(resultSelect[0].uid_line , dataSend)
@@ -519,11 +518,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         })
 
                                         if(req.body.img) {
-                                            await new Promise(resultSelect[0].uid_line , async (resole , reject) => {
+                                            await new Promise( async (resole , reject) => {
                                                 await Line.pushMessage(resultSelect[0].uid_line , {
                                                     "type": "image",
-                                                    "originalContentUrl": `${UrlApi}/image/farmer/${req.body.id_table}}`,
-                                                    "previewImageUrl": `${UrlApi}/image/farmer/${req.body.id_table}}`
+                                                    "originalContentUrl": `${UrlApi}/image/farmer/${req.body.id_table}`,
+                                                    "previewImageUrl": `${UrlApi}/image/farmer/${req.body.id_table}`
                                                 })
                                                 resole("")
                                             })
@@ -569,7 +568,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         res.send("not profile")
                     }
                 } else {
-                    res.send("")
+                    res.send("value")
                 }
             }
         } catch(err) {

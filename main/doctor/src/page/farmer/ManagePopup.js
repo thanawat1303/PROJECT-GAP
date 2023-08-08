@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { createElement, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
-import { DayJSX, Loading, MapsJSX, PopupDom, ReportAction, TimeJSX } from "../../../../../src/assets/js/module";
+import { DayJSX, DownLoadImage, Loading, MapsJSX, PopupDom, ReportAction, TimeJSX } from "../../../../../src/assets/js/module";
 import "../../assets/style/page/farmer/ManagePopup.scss"
 
 import SelectConvert from "./SelectConvert";
@@ -29,6 +29,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
     const [PopupCancel , setPopCancel] = useState(<></>)
 
     const RefTab = useRef()
+    const [ImageBase64 , setImageBase64] = useState("")
 
     const [ProfileConvert , setConvert] = useState({
         id_table_convert : "" ,
@@ -134,6 +135,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                 if(data.length === 1) {
                     const Detail = data[0]
                     setDetailFarmer(Detail)
+                    setImageBase64(Detail.img.data.length != 0 ? String.fromCharCode(...Detail.img.data) : "/doctor-svgrepo-com.svg")
                     setmessageCount(count.count_msg)
                     StartSocketMsg(Detail.uid_line)
                 } else {
@@ -324,6 +326,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
             if(data.length === 1) {
                 const Detail = data[0]
                 setDetailDoctor(Detail)
+                setImageBase64(Detail.img_doctor.data.length != 0 ? String.fromCharCode(...Detail.img_doctor.data) : "/doctor-svgrepo-com.svg")
             } else {
                 setDetailDoctor([])
             }
@@ -415,7 +418,6 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
 
             setLoadEdit(true)
             const ResultEdit = await clientMo.postForm("/api/doctor/farmer/edit" , Data)
-            
             if(ResultEdit === "password") {
                 RefPasswordEdit.current.value = ""
                 RefPasswordEdit.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
@@ -526,12 +528,8 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                                 }
                                 <div className="img">
                                     <div className="frame-img">
-                                        <img src={TypeDetail === "farmer" ? String.fromCharCode(...DetailFarmer.img.data) : DetailDoctor.img_doctor.data[0] ? String.fromCharCode(...DetailDoctor.img_doctor.data) : "/doctor-svgrepo-com.svg"}></img>
-                                        <a className="download-pic" title="ดาวโหลดรูปภาพ" onClick={null}>
-                                            <svg viewBox="0 0 24 24" fill="white">
-                                                <path d="M5.25589 16C3.8899 15.0291 3 13.4422 3 11.6493C3 9.20008 4.8 6.9375 7.5 6.5C8.34694 4.48637 10.3514 3 12.6893 3C15.684 3 18.1317 5.32251 18.3 8.25C19.8893 8.94488 21 10.6503 21 12.4969C21 14.0582 20.206 15.4339 19 16.2417M12 21V11M12 21L9 18M12 21L15 18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        </a>
+                                        <img src={ImageBase64}></img>
+                                        <DownLoadImage className={"download-pic"} fileName={DetailFarmer.fullname} DataImageBase64={ImageBase64}/>
                                     </div>
                                 </div>
                                 <div className="text-detail">

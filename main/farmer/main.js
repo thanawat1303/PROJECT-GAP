@@ -86,7 +86,8 @@ const MainFarmer = ({socket , idLiff , Path}) => {
                 backdropFilter : "blur(8px)",
                 opacity : "0",
                 visibility : "hidden",
-                transition : "0.5s opacity , 0.5s visibility"
+                transition : "0.5s opacity , 0.5s visibility",
+                zIndex : "999"
             }} id="session-farmer">
                 <div className="body" style={{
                     display : "flex",

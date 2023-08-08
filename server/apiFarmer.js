@@ -372,7 +372,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                     SELECT id_farm_house FROM housefarm
                                     WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farm_house = ?
                                 ) as houseFarm
-                            WHERE formplant.id = ?
+                            WHERE formplant.id = ? and houseFarm.id_farm_house = formplant.id_farm_house
                         ` , 
                         [
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_form_plant
@@ -444,7 +444,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                     SELECT id_farm_house FROM housefarm
                                     WHERE (housefarm.uid_line = ? or housefarm.link_user = ?) and housefarm.id_farm_house = ?
                                 ) as houseFarm
-                            WHERE formplant.name_plant = ? and housefarm.id_farm_house = formplant.id_farm_house
+                            WHERE formplant.name_plant = ? and houseFarm.id_farm_house = formplant.id_farm_house
                             ORDER BY date_plant DESC
                             LIMIT 1
                         ` , 
@@ -1357,49 +1357,40 @@ const authCheck = (con , dbpacket , res , req , LINE) => {
             con.query(`
                         SELECT * FROM acc_farmer 
                         WHERE uid_line = ?
-                        ORDER BY date_register DESC
-                        LIMIT 1
+                        ORDER BY date_register DESC , register_auth DESC
                         ` , 
                 [req.session.uidFarmer] ,
                 (err , result)=>{
-                    if (err) {
-                        dbpacket.dbErrorReturn(con, err, res);
-                        console.log("query");
-                        return 0
-                    }
-                    if(result[0]) {
-                        if(result[0].register_auth == 0 || result[0].register_auth == 1) {
-                            if(req.body['page'] === "signup") {
+                    if (!err) {
+                        if(result.length != 0) {
+                            const ProfilePass = result.filter(profile=>profile.register_auth == 0 || profile.register_auth == 1)
+                            if(ProfilePass.length != 0) {
+                                if(req.body['page'] === "signup") {
+                                    try {
+                                        LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
+                                        LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)
+                                    } catch (e) {}
+                                }
+                                resole({
+                                    result : "search",
+                                    data : ProfilePass[0]
+                                })
+                            } else {
                                 try {
                                     LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
-                                    LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)
-                                } catch (e) {
-                                    console.log(e)
-                                }
+                                    LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
+                                } catch (e) {}
+                                reject("no")
                             }
-                            resole({
-                                result : "search",
-                                data : result[0]
-                            })
-                        } else {
+                        }
+                        else {
                             try {
                                 LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
                                 LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
-                            } catch (e) {
-                                console.log(e)
-                            }
-                            reject("no")
+                            } catch (e) {}
+                            reject("no account")
                         }
-                    }
-                    else {
-                        try {
-                            LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
-                            LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
-                        } catch (e) {
-                            console.log(e)
-                        }
-                        reject("no account")
-                    }
+                    } else reject("no")
             })
         })
     })

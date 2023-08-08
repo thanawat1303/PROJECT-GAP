@@ -114,7 +114,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                 fullname : "" ,
                 img : ""
             })
-            console.log(link_user , id_table)
+            // console.log(link_user , id_table)
             setResult(result)
             setReload(false)
             await FetchData(result[0])

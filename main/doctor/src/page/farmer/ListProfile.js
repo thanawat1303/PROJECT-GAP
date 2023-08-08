@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { DayJSX, TimeJSX } from "../../../../../src/assets/js/module";
 
 const ListProfile = ({data , status , showPopup}) => {
-    const [base64String , setbase64String] = useState(String.fromCharCode(...data.img.data))
-    const [Date_comfirm , setDate_comfirm] = useState(data.date_doctor_confirm ? new Date(data.date_doctor_confirm) : "")
-    useEffect(()=>{
-        setbase64String(String.fromCharCode(...data.img.data))
-        setDate_comfirm(data.date_doctor_confirm ? new Date(data.date_doctor_confirm) : "")
-    } , [data])
+    // const [base64String , setbase64String] = useState(String.fromCharCode(...data.img.data))
+    // const [Date_comfirm , setDate_comfirm] = useState(data.date_doctor_confirm ? new Date(data.date_doctor_confirm) : "")
+    // useEffect(()=>{
+    //     setbase64String(String.fromCharCode(...data.img.data))
+    //     setDate_comfirm(data.date_doctor_confirm ? new Date(data.date_doctor_confirm) : "")
+    // } , [data])
     return (
         <>
             <div className="img">
-                <img src={base64String}></img>
+                <img src={data.img}></img>
             </div>
             <div className="detail">
                 <div className="text fullname">
@@ -29,7 +29,10 @@ const ListProfile = ({data , status , showPopup}) => {
                     status.status === "ap" ?
                     <div className="flex">
                         <span>วันที่อนุมัติ</span>
-                        <DayJSX DATE={new Date(Date_comfirm.setHours(Date_comfirm.getHours() + 7))} TYPE="small"/>
+                        <DayJSX DATE={
+                            // new Date(Date_comfirm.setHours(Date_comfirm.getHours() + 7))
+                            data.date_doctor_confirm
+                            } TYPE="small"/>
                     </div>
                     :
                     <div className="text date">

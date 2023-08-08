@@ -740,9 +740,14 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         dbpacket.dbErrorReturn(con , err , res)
                         return 0
                     };
+
+                    const listFarmer = result.map((val)=>{
+                        val.img = val.img.toString()
+                        return val
+                    })
     
                     con.end()
-                    res.send(result)
+                    res.send(listFarmer)
                 })
             }
         }).catch((err)=>{

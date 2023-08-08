@@ -6,7 +6,8 @@ wordcut.init()
 const {Server} = require('socket.io')
 const LINE = require('./configLine')
 const io = new Server()
-
+const RichSign = "richmenu-e6dd99ccb1aebb953c976a8188b20cd7"
+const RichHouse = "richmenu-93377925aa45b5dc5585f85749f8af8b"
 module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io , Line = LINE) {
 
     app.post('/api/doctor/check' , (req , res)=>{
@@ -857,33 +858,40 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ${Link_user ? `, link_user = "${Link_user}"` : ""}
                         WHERE register_auth = ? and id_table = ? and station = "${result['data']['station_doctor']}"
                         `,[ result['data']['id_table_doctor'] , new Date() , req.body.id_farmer , statusChange , req.body.id_table ],
-                        (err, result )=>{
-                            if (err){
-                                dbpacket.dbErrorReturn(con , err , res)
-                                return 0
-                            };
-    
-                            if(Link_user) {
-                                con.query(
-                                    `
-                                    UPDATE housefarm 
-                                    SET link_user = ?
-                                    WHERE uid_line = ?
-                                    ` , [ Link_user , req.body.uid_line ] ,
-                                    (err, result ) => {
-                                        if (err){
-                                            dbpacket.dbErrorReturn(con , err , res)
-                                            return 0
-                                        };
-    
-                                        con.end()
-                                    }
-                                )
+                        async (err, result )=>{
+                            if (!err){
+                                if(Link_user) {
+                                    con.query(
+                                        `
+                                        UPDATE housefarm 
+                                        SET link_user = ?
+                                        WHERE uid_line = ?
+                                        ` , [ Link_user , req.body.uid_line ] ,
+                                        async (err, result ) => {
+                                            con.end()
+                                            Line.pushMessage(req.body.uid_line , {
+                                                type : "text",
+                                                text : "บัญชีผ่านการตรวจสอบแล้วนะคะ \u2764"
+                                            })
+                                            await Line.unlinkRichMenuFromUser(req.body.uid_line)
+                                            Line.linkRichMenuToUser(req.body.uid_line , RichHouse)
+                                        }
+                                    )
+                                } else {
+                                    con.end()
+                                    Line.pushMessage(req.body.uid_line , {
+                                        type : "text",
+                                        text : "บัญชีผ่านการตรวจสอบแล้วนะคะ \u2764"
+                                    })
+                                    await Line.unlinkRichMenuFromUser(req.body.uid_line)
+                                    Line.linkRichMenuToUser(req.body.uid_line , RichHouse)
+                                }
+        
+                                res.send("113")
                             } else {
                                 con.end()
+                                res.send("not account")
                             }
-    
-                            res.send("113")
                         }
                     )
                 } else {
@@ -927,8 +935,26 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             dbpacket.dbErrorReturn(con , err , res)
                             return 0
                         };
+                        
+                        con.query(
+                            `
+                                SELECT uid_line
+                                FROM acc_farmer
+                                WHERE id_table = ?
+                            ` , [ req.body.id_table ] , 
+                            async (err , check) => {
+                                con.end()
+                                if(!err , check[0]) {
+                                    Line.pushMessage(check[0].uid_line , {
+                                        type : "text",
+                                        text : "บัญชีไม่ผ่านการตรวจสอบ กรุณาส่งข้อความเพื่อพูดคุยกับเจ้าหน้าที่ หรือสมัครบัญชีอีกครั้งนะคะ \u2764"
+                                    })
+                                    await Line.unlinkRichMenuFromUser(check[0].uid_line)
+                                    Line.linkRichMenuToUser(check[0].uid_line , RichSign)
+                                }
+                            }
+                        )
 
-                        con.end()
                         res.send("113")
                     }
                 )

@@ -6,7 +6,7 @@ import { CloseAccount } from "../../method";
 let TimeOut = 0
 
 const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage}) =>{
-    const DateNowOnForm = `${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`
+    const [DateNowOnForm , setDateNowOnForm] = useState(`${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`)
     const [DateHarvest , setDateHarvest] = useState("")
 
     const FormContent = useRef()
@@ -67,7 +67,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                 try {
                     const Object = JSON.parse(Data)
                     if(Object.qtyDate.length != 0) {
-                        MathDateHarvest(DatePlant.current.value , Object.qtyDate[0].qty_harvest)
+                        MathDateHarvest(DateNowOnForm , Object.qtyDate[0].qty_harvest)
                         setDateHarvest(Object.qtyDate[0].qty_harvest)
                     }
 
@@ -306,6 +306,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                             <span>วันที่ปลูก</span>
                                             <input onInput={(e)=>{
                                                 ChangeCHK()
+                                                setDateNowOnForm(e.target.value)
                                                 MathDateHarvest(e.target.value , DateHarvest)
                                             }} defaultValue={DateNowOnForm} ref={DatePlant} type="date" placeholder="ว/ด/ป"></input>
                                         </label>

@@ -452,20 +452,17 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.name_plant_list
                         ] , 
                         (err , result)=>{
-                            if (err) {
-                                dbpacket.dbErrorReturn(con, err, res);
-                                console.log("select listform");
-                                return 0;
-                            }
                             con.end()
-                            console.log({
-                                FromHistory : result,
-                                qtyDate : QtyDate
-                            })
-                            res.send({
-                                FromHistory : result,
-                                qtyDate : QtyDate
-                            })
+                            if (!err) {
+                                console.log({
+                                    FromHistory : result,
+                                    qtyDate : QtyDate
+                                })
+                                res.send({
+                                    FromHistory : result,
+                                    qtyDate : QtyDate
+                                })
+                            } else res.send("error auth")
                         })
             } catch (err) {
                 con.end()

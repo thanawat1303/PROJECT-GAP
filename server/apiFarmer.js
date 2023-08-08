@@ -452,6 +452,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.name_plant_list
                         ] , 
                         (err , result)=>{
+                            console.log(err)
                             con.end()
                             if (!err) {
                                 console.log({

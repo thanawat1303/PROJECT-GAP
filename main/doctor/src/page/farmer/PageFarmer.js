@@ -150,11 +150,11 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
         // refData = Data.map(() => React.createRef());
         ManageShow(Data)
 
-        // window.addEventListener("resize" , Resize)
+        window.addEventListener("resize" , Resize)
 
-        // return (() => {
-        //     window.removeEventListener("resize" , Resize)
-        // })
+        return (() => {
+            window.removeEventListener("resize" , Resize)
+        })
     } , [Data])
 
     const Resize = () => ManageShow(Data)
@@ -177,10 +177,14 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
             // const text = [ ...Data , ...Data , ...Data ]
 
             const Row = new Array
-            for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
+            const newData = Data.map((val)=>{
+                val.img = val.img.data.length != 0 ? String.fromCharCode(...val.img.data) : "/doctor-svgrepo-com.svg"
+                return val
+            })
+            
+            for(let x = 0 ; x < newData.length ; x += Max) Row.push(newData.slice(x , Max + x))
 
             const body = Row.map((Data , keyRow)=>{
-                console.log(Data)
                 return (
                     <section className={`row ${keyRow}`} key={keyRow}>
                         <div className="row-content" style={{
@@ -194,7 +198,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
                                     return (
                                         <section key={val.id_table} className="list-some-data-on-page">
                                             <div className="img">
-                                                {/* <img src={String.fromCharCode(...val.img.data)}></img> */}
+                                                <img src={val.img}></img>
                                             </div>
                                             <div className="detail">
                                                 <div className="text fullname">

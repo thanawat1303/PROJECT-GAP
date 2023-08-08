@@ -194,7 +194,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
                                     return (
                                         <section key={val.id_table} className="list-some-data-on-page">
                                             <div className="img">
-                                                <img src={String.fromCharCode(...val.img.data)}></img>
+                                                {/* <img src={String.fromCharCode(...val.img.data)}></img> */}
                                             </div>
                                             <div className="detail">
                                                 <div className="text fullname">

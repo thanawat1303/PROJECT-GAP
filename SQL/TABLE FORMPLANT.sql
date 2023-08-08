@@ -29,3 +29,6 @@ CREATE TABLE line_chat_gap.formPlant (
 -- DROP COLUMN date_success;
 
 -- -- id_uid_line
+
+ALTER TABLE line_chat_gap.formPlant
+RENAME COLUMN id_farmHouse TO id_farm_house;

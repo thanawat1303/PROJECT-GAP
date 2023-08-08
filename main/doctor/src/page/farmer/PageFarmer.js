@@ -3,6 +3,7 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/farmer/PageFarmer.scss"
 import "../../assets/style/TemplantList.scss"
 import { DayJSX, LoadOtherDom, Loading, PopupDom, TimeJSX } from "../../../../../src/assets/js/module";
+
 import ManagePopup from "./ManagePopup";
 import ListProfile from "./ListProfile";
 const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , LoadType , eleBody , setTextStatus}) => {

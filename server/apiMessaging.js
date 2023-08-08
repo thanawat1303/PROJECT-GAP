@@ -4,31 +4,28 @@ const fs = require('fs')
 
 const {Server} = require('socket.io')
 const io = new Server()
+const Report = require("./reportToAdmin")
 
 module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io) {
 
     app.post('/messageAPI' , async (req , res)=>{
         if(req.body.events.length > 0) {
             if(req.body.events[0].type === "postback") {
-                
-                line.pushMessage("Uceb5937bcd2edc0de5341022f8d59e9f	" , {
-                    type : "text",
-                    text : JSON.stringify(req.body.events[0])
-                })
-
                 if(req.body.events[0].postback.data == "house_add") {
                     const con = await ConnectDB()
-                    con.query(`
-                                SELECT id_farm_house , name_house FROM housefarm , 
-                                    (
-                                        SELECT uid_line , link_user FROM acc_farmer 
-                                        WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
-                                        ORDER BY date_register DESC
-                                        LIMIT 1
-                                    ) as farmer 
-                                WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
-                                ORDER BY id_farm_house DESC
-                                ` , 
+
+                    try {
+                        con.query(`
+                            SELECT id_farm_house , name_house FROM housefarm , 
+                                (
+                                    SELECT uid_line , link_user FROM acc_farmer 
+                                    WHERE uid_line = ? and (register_auth = 0 or register_auth = 1)
+                                    ORDER BY date_register DESC
+                                    LIMIT 1
+                                ) as farmer 
+                            WHERE housefarm.uid_line = farmer.uid_line || housefarm.link_user = farmer.link_user
+                            ORDER BY id_farm_house DESC
+                        ` , 
                         [req["body"]['events'][0]["source"]["userId"]] ,
                         (err , result)=>{
                             con.end()
@@ -67,7 +64,10 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                 line.replyMessage(req["body"]['events'][0]["replyToken"] , msg)
                                 res.status(200).send('OK')
                             }
-                    })
+                        })
+                    } catch (e) {
+                        Report(e.toString())
+                    }
                 } else {
                     await line.replyMessage(req["body"]['events'][0]["replyToken"] , {
                         type : "text",

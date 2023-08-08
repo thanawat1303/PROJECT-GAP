@@ -188,13 +188,13 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
                             '--font-size-in-row-doctor' : `${SizeFont}vw`,
                             '--font-size-date-in-row-doctor' : `${SizeFontDate}vw`,
                             }}>
-                            {
+                            {/* {
                                 Data.map((val , key)=>
                                     <section key={val.id_table} className="list-some-data-on-page">
                                         <ListProfile data={val} status={status} showPopup={showPopup}/>
                                     </section>
                                 )
-                            }
+                            } */}
                         </div>
                     </section>
                 )

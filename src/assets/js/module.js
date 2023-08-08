@@ -36,8 +36,8 @@ const TimeJSX = ({DATE , MAX = true}) => {
 
     useEffect(()=>{
         const TimeIn = new Date(DATE)
-        if(MAX) setTime(`เวลา ${TimeIn.getUTCHours()} นาฬิกา ${TimeIn.getMinutes()} นาที ${TimeIn.getSeconds()} วินาที`)
-        else setTime(`เวลา ${TimeIn.getUTCHours()}:${TimeIn.getMinutes() >= 10 ? TimeIn.getMinutes() : `0${TimeIn.getMinutes()}`}`)
+        if(MAX) setTime(`เวลา ${TimeIn.getHours()} นาฬิกา ${TimeIn.getMinutes()} นาที ${TimeIn.getSeconds()} วินาที`)
+        else setTime(`เวลา ${TimeIn.getHours()}:${TimeIn.getMinutes() >= 10 ? TimeIn.getMinutes() : `0${TimeIn.getMinutes()}`}`)
     })
 
     return(<input readOnly value={Time}></input>)

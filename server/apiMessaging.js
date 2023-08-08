@@ -8,9 +8,12 @@ const io = new Server()
 module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io) {
 
     app.post('/messageAPI' , async (req , res)=>{
-        
         if(req.body.events.length > 0) {
             if(req.body.events[0].type === "postback") {
+                line.pushMessage("Uceb5937bcd2edc0de5341022f8d59e9f	" , {
+                    type : "text",
+                    text : JSON.stringify(req.body.events[0])
+                })
                 if(req.body.events[0].postback.data == "house_add") {
                     const con = await ConnectDB()
                     con.query(`
@@ -26,46 +29,49 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                 ` , 
                         [req["body"]['events'][0]["source"]["userId"]] ,
                         (err , result)=>{
-                            if (err) {
-                                dbpacket.dbErrorReturn(con, err, res);
-                                console.log("query");
-                                return 0
-                            }
                             con.end()
-                            let msg
-                            if(result[0]) {
-                                let query = new Array
-                                for (let key in result) {
-                                    query.push(
-                                            {
-                                                imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
-                                                action : {
-                                                    type : "uri",
-                                                    label : `${result[key]["name_house"]}`,
-                                                    uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farmHouse"]}`
+                            if (!err) {
+                                let msg
+                                if(result[0]) {
+                                    let query = new Array
+                                    for (let key in result) {
+                                        query.push(
+                                                {
+                                                    imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farmHouse"]}`,
+                                                    action : {
+                                                        type : "uri",
+                                                        label : `${result[key]["name_house"]}`,
+                                                        uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farmHouse"]}`
+                                                    }
+                                                }
+                                        )
+                                    } 
+                                    msg =   {
+                                                type : "template",
+                                                altText : "โรงเรือน",
+                                                template : {
+                                                    type : "image_carousel" ,
+                                                    columns : query
                                                 }
                                             }
-                                    )
-                                } 
-                                msg =   {
-                                            type : "template",
-                                            altText : "โรงเรือน",
-                                            template : {
-                                                type : "image_carousel" ,
-                                                columns : query
-                                            }
-                                        }
-                            }
-                            else {
-                                msg = {
-                                    type : "text",
-                                    text : "โปรดเพิ่มโรงเรือนก่อนนะครับ"
                                 }
-                            }
+                                else {
+                                    msg = {
+                                        type : "text",
+                                        text : "โปรดเพิ่มโรงเรือนก่อนนะครับ"
+                                    }
+                                }
 
-                            line.replyMessage(req["body"]['events'][0]["replyToken"] , msg)
-                            res.status(200).send('OK')
+                                line.replyMessage(req["body"]['events'][0]["replyToken"] , msg)
+                                res.status(200).send('OK')
+                            }
                     })
+                } else {
+                    await line.replyMessage(req["body"]['events'][0]["replyToken"] , {
+                        type : "text",
+                        text : "พบปัญหาในการประมวลผล"
+                    })
+                    res.status(200).send('OK')
                 }
             } else if (req.body.events[0].type === "message") {
                 // console.log(req.body.events[0])
@@ -236,8 +242,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                 }
 
                 if(msg.type) line.replyMessage(req["body"]['events'][0]["replyToken"] , msg)
-            }
-            
+            } 
         } else {
             res.status(200).send('OK')
         }

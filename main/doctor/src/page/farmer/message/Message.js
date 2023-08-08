@@ -157,7 +157,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
                             <div key={parseInt(val.id)} className="user-other" is_me={val.is_me ? "" : null}>
                                 { !val.is_me ? 
                                     <div className="img">
-                                        <img src={String.fromCharCode(...Data.img.data)}></img>
+                                        <img src={Data.img}></img>
                                     </div> : <></>
                                 }
                                 <div className="message-detail">

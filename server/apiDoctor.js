@@ -456,9 +456,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         dbpacket.dbErrorReturn(con , err , res)
                         return 0
                     };
+
+                    const listFarmer = ProfileConvertImg(result , "img")
     
                     con.end()
-                    res.send(result)
+                    res.send(listFarmer)
                 })
             }
         } catch(err) {
@@ -606,9 +608,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         dbpacket.dbErrorReturn(con , err , res)
                         return 0
                     };
+
+                    const listFarmer = ProfileConvertImg(result , "img_doctor")
     
                     con.end()
-                    res.send(result)
+                    res.send(listFarmer)
                 })
             }
         }).catch((err)=>{
@@ -741,10 +745,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         return 0
                     };
 
-                    const listFarmer = result.map((val)=>{
-                        val.img = val.img.toString()
-                        return val
-                    })
+                    const listFarmer = ProfileConvertImg(result , "img")
     
                     con.end()
                     res.send(listFarmer)
@@ -2938,6 +2939,14 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             }
         }
     })
+
+    const ProfileConvertImg = (profile , column_img) => {
+        const listFarmer = profile.map((val)=>{
+            val[column_img] = val[column_img].toString()
+            return val
+        })
+        return listFarmer
+    }
     
     // app.post("/doctor/api/doctor/pull" , (req , res)=>{
     //     let username = req.session.user_doctor

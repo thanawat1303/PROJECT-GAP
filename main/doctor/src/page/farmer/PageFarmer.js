@@ -150,11 +150,11 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
         // refData = Data.map(() => React.createRef());
         ManageShow(Data)
 
-        // window.addEventListener("resize" , Resize)
+        window.addEventListener("resize" , Resize)
 
-        // return (() => {
-        //     window.removeEventListener("resize" , Resize)
-        // })
+        return (() => {
+            window.removeEventListener("resize" , Resize)
+        })
     } , [Data])
 
     const Resize = () => ManageShow(Data)

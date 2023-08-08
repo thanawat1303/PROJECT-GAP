@@ -1,6 +1,6 @@
 import React, { createElement, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
-import { DayJSX, DownLoadImage, Loading, MapsJSX, PopupDom, ReportAction, TimeJSX } from "../../../../../src/assets/js/module";
+import { DayJSX, DownLoadImage, Loading, MapsJSX, PopupDom, ReportAction, ResizeImg, TimeJSX } from "../../../../../src/assets/js/module";
 import "../../assets/style/page/farmer/ManagePopup.scss"
 
 import SelectConvert from "./SelectConvert";
@@ -135,7 +135,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                 if(data.length === 1) {
                     const Detail = data[0]
                     setDetailFarmer(Detail)
-                    setImageBase64(Detail.img.data.length != 0 ? String.fromCharCode(...Detail.img.data) : "/doctor-svgrepo-com.svg")
+                    setImageBase64(Detail.img != 0 ? Detail.img : "/doctor-svgrepo-com.svg")
                     setmessageCount(count.count_msg)
                     StartSocketMsg(Detail.uid_line)
                 } else {
@@ -145,6 +145,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                     //     </div>
                 }
             } catch(e) {
+                console.log(e)
                 session()
             }
             setDetailDoctor([])
@@ -326,7 +327,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
             if(data.length === 1) {
                 const Detail = data[0]
                 setDetailDoctor(Detail)
-                setImageBase64(Detail.img_doctor.data.length != 0 ? String.fromCharCode(...Detail.img_doctor.data) : "/doctor-svgrepo-com.svg")
+                setImageBase64(Detail.img_doctor ? Detail.img_doctor : "/doctor-svgrepo-com.svg")
             } else {
                 setDetailDoctor([])
             }
@@ -529,7 +530,9 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                                 }
                                 <div className="img">
                                     <div className="frame-img">
-                                        <img src={ImageBase64}></img>
+                                        <div className="frame-img-radius">
+                                            <img src={ImageBase64}></img>
+                                        </div>
                                         { status === "ap" ?
                                             <DownLoadImage className={"download-pic"} fileName={DetailFarmer.fullname} DataImageBase64={ImageBase64}/>
                                             : <></>

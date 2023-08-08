@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MapsJSX, PatternCheck } from "../../../../../../src/assets/js/module";
+import { MapsJSX, PatternCheck, ResizeImg } from "../../../../../../src/assets/js/module";
 import { clientMo } from "../../../../../../src/assets/js/moduleClient";
 
 const EditProfile = ({DataProfile , session , CheckEditFun}) => {
@@ -91,7 +91,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         const lagIn = Position ? Position.lag : Lag
         const lngIn = Position ? Position.lng : Lng
 
-        const ckImage = ImageIn && ImageIn != String.fromCharCode(...DataProfile.img.data)
+        const ckImage = ImageIn && ImageIn != DataProfile.img
         const ckID = id_farmer.current.value && id_farmer.current.value != DataProfile.id_farmer
         const ckName = PatternCheck(fullname.current.value).fullname && fullname.current.value && fullname.current.value != DataProfile.fullname
         const ckLocation = lagIn != 0 && lngIn != 0 
@@ -99,7 +99,6 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         const ckStation = station.current.value && station.current.value != DataProfile.station
         const ckPassword = newPassword.current.value
 
-        console.log(ckID)
         if(ckID || ckName || ckLocation || ckStation || ckPassword || ckImage) {
             const DataUpdate = {
                 id_farmer : id_farmer.current.value,
@@ -130,12 +129,9 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
     const UpdateImageClient = async (e) => {
         const file = e.files[0]
         if(file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                ImageSh.current.src = e.target.result
-                CheckEdit("" , e.target.result)
-            }
-            reader.readAsDataURL(file)
+            const imgResize = await ResizeImg(file , 600)
+            ImageSh.current.src = imgResize
+            CheckEdit("" , imgResize)
         } else CheckEdit("" , "")
     }
 
@@ -143,7 +139,12 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         <div className="detail-account-data edit">
             <div className="img">
                 <div className="frame-img">
-                    <img ref={ImageSh} src={DataProfile.img.data ? String.fromCharCode(...DataProfile.img.data) : "/doctor-svgrepo-com.svg"}></img>
+                    <div className="frame-img-radius">
+                        <img ref={ImageSh} src={DataProfile.img ? DataProfile.img : "/doctor-svgrepo-com.svg"}></img>
+                        <input type="file" onChange={(e)=>{
+                            UpdateImageClient(e.target)
+                        }} hidden ref={Image} accept="image/jpeg, image/png"></input>
+                    </div>
                     <a className="edit-pic" title="แก้ไขรูปโปรไฟล์" onClick={()=>Image.current.click()}>
                         <svg viewBox="0 0 528.899 528.899">
                             <g>
@@ -151,9 +152,6 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                             </g>
                         </svg>
                     </a>
-                    <input type="file" onChange={(e)=>{
-                        UpdateImageClient(e.target)
-                    }} hidden ref={Image} accept="image/jpeg, image/png"></input>
                 </div>
             </div>
             <div className="text-detail">

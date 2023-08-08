@@ -134,8 +134,8 @@ const List = ({ session , socket , status}) => {
                 }}>
                     <Loading size={"45px"} border={"5px"} color="rgb(24 157 133)" animetion={true}/>
                 </div> 
-                : <></>
-                // <ManageList Data={Data} status={status} session={session} fetch={FetchList} count={Count} setCount={setCount} socket={socket}/>
+                :
+                <ManageList Data={Data} status={status} session={session} fetch={FetchList} count={Count} setCount={setCount} socket={socket}/>
                 )
 }
 
@@ -150,11 +150,11 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
         refData = Data.map(() => React.createRef());
         ManageShow(Data)
 
-        window.addEventListener("resize" , Resize)
+        // window.addEventListener("resize" , Resize)
 
-        return () => {
-            window.removeEventListener("resize" , Resize)
-        }
+        // return (() => {
+        //     window.removeEventListener("resize" , Resize)
+        // })
     } , [Data])
 
     const Resize = () => ManageShow(Data)

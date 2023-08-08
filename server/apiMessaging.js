@@ -10,10 +10,12 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
     app.post('/messageAPI' , async (req , res)=>{
         if(req.body.events.length > 0) {
             if(req.body.events[0].type === "postback") {
+                
                 line.pushMessage("Uceb5937bcd2edc0de5341022f8d59e9f	" , {
                     type : "text",
                     text : JSON.stringify(req.body.events[0])
                 })
+
                 if(req.body.events[0].postback.data == "house_add") {
                     const con = await ConnectDB()
                     con.query(`
@@ -69,7 +71,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                 } else {
                     await line.replyMessage(req["body"]['events'][0]["replyToken"] , {
                         type : "text",
-                        text : "พบปัญหาในการประมวลผล"
+                        text : "พบปัญหาในการค้นหาข้อมูล\nรอสักครู่นะคะ \u2764"
                     })
                     res.status(200).send('OK')
                 }

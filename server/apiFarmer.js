@@ -458,6 +458,10 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                 return 0;
                             }
                             con.end()
+                            console.log({
+                                FromHistory : result,
+                                qtyDate : QtyDate
+                            })
                             res.send({
                                 FromHistory : result,
                                 qtyDate : QtyDate

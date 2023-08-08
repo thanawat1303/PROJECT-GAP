@@ -66,7 +66,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
             if(await CloseAccount(Data , setPage)) {
                 try {
                     const Object = JSON.parse(Data)
-                    if(Object.qtyDate.length !== 0) {
+                    if(Object.qtyDate.length != 0) {
                         MathDateHarvest(DatePlant.current.value , Object.qtyDate[0].qty_harvest)
                         setDateHarvest(Object.qtyDate[0].qty_harvest)
                     }

@@ -416,7 +416,7 @@ const StepThree = (props) => {
             y : 0
         })
         if(file) {
-            if(new Date().getTime() - file.lastModified < 1000
+            if(new Date().getTime() - file.lastModified < 8000
                 ) {
                 ResizeImg(file , 600).then((imageResult)=>{
                     setPreview(imageResult)

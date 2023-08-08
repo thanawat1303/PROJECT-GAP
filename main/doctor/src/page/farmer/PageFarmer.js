@@ -144,10 +144,10 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
     const RefPop = useRef()
     const [PopBody , setPop] = useState(<></>)
     
-    let refData = Data.map(() => React.createRef());
+    // let refData = Data.map(() => React.createRef());
 
     useEffect(()=>{
-        refData = Data.map(() => React.createRef());
+        // refData = Data.map(() => React.createRef());
         ManageShow(Data)
 
         // window.addEventListener("resize" , Resize)

@@ -180,6 +180,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
             for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
 
             const body = Row.map((Data , keyRow)=>{
+                console.log(Data)
                 return (
                     <section className={`row ${keyRow}`} key={keyRow}>
                         <div className="row-content" style={{
@@ -190,11 +191,10 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
                             }}>
                             {
                                 Data.map((val)=>{
-                                    const base64String = String.fromCharCode(...val.img.data)
                                     return (
                                         <section key={val.id_table} className="list-some-data-on-page">
                                             <div className="img">
-                                                <img src={base64String}></img>
+                                                <img src={String.fromCharCode(...val.img.data)}></img>
                                             </div>
                                             <div className="detail">
                                                 <div className="text fullname">

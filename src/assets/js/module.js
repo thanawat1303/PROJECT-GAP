@@ -22,7 +22,9 @@ const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"] 
 
     useEffect(()=>{
-        const DateIn = new Date(DATE)
+        const clientTimezoneOffset = new Date().getTimezoneOffset();
+        const DateIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
+
         if(TYPE === "full") setDATE(`${DayWeek[DateIn.getDay()]} ที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ปี พ.ศ. ${DateIn.getFullYear() + 543}`)
         else if (TYPE === "small") setDATE(`${TEXT ? `${TEXT} ` : ""}${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
         else setDATE(`วันที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
@@ -35,8 +37,9 @@ const TimeJSX = ({DATE , MAX = true}) => {
     const [Time , setTime] = useState("")
 
     useEffect(()=>{
-        const TimeIn = new Date(DATE)
-        console.log(TimeIn , DATE)
+        const clientTimezoneOffset = new Date().getTimezoneOffset();
+        const TimeIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
+        
         if(MAX) setTime(`เวลา ${TimeIn.getUTCHours()} นาฬิกา ${TimeIn.getMinutes()} นาที ${TimeIn.getSeconds()} วินาที`)
         else setTime(`เวลา ${TimeIn.getUTCHours()}:${TimeIn.getMinutes() >= 10 ? TimeIn.getMinutes() : `0${TimeIn.getMinutes()}`}`)
     })

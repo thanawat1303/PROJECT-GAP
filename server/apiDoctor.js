@@ -456,7 +456,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         return 0
                     };
     
-                    if(result[0]) console.log(result[0].date_register)
                     con.end()
                     res.send(result)
                 })

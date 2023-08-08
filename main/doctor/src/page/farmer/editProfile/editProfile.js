@@ -121,7 +121,6 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
             if(!ckPassword) delete DataUpdate.newPassword
             if(!ckImage) delete DataUpdate.img
 
-            console.log(DataUpdate)
             CheckEditFun(DataUpdate)
         } else {
             CheckEditFun("")
@@ -178,7 +177,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                     <input onChange={ async (e)=>{
                         const Position = await getMapAndStation(e)
                         CheckEdit(Position)
-                    }} placeholder="Url ที่ปักหมุดแดง" defaultValue={""}></input>
+                    }} placeholder="url ที่ปักหมุดแดง" defaultValue={""}></input>
                 </div>
             </div>
             <div className="text-detail">

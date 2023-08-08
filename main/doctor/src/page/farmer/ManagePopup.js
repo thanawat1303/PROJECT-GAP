@@ -502,7 +502,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                 </div>
             : <></>
             }
-            <div className="detail-content" type={status} style={{
+            <div className="detail-content" type={TypeDetail === "msg" ? "ap" : status} style={{
                 padding : Load ? "0px" : ""
             }}>
                 { 
@@ -530,7 +530,10 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                                 <div className="img">
                                     <div className="frame-img">
                                         <img src={ImageBase64}></img>
-                                        <DownLoadImage className={"download-pic"} fileName={DetailFarmer.fullname} DataImageBase64={ImageBase64}/>
+                                        { status === "ap" ?
+                                            <DownLoadImage className={"download-pic"} fileName={DetailFarmer.fullname} DataImageBase64={ImageBase64}/>
+                                            : <></>
+                                        }
                                     </div>
                                 </div>
                                 <div className="text-detail">
@@ -647,7 +650,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                 }
             </div>
             {
-                status === "wt" || status === "not" ? 
+                (status === "wt" || status === "not") && TypeDetail !== "msg" ? 
                     <div className="action-box-bt">
                         <div className="password">
                             <input  onChange={CheckEmply} type="password" ref={RefOnType.DoctorPw} placeholder="รหัสผ่านเจ้าหน้าที่"></input>

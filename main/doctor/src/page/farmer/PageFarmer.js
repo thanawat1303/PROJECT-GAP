@@ -74,7 +74,7 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
                 </select>
             </div>
             <div className="data-list-content">
-                {/* <List session={session} socket={socket} status={statusPage}/> */}
+                <List session={session} socket={socket} status={statusPage}/>
             </div>
         </section>
     )
@@ -92,7 +92,7 @@ const List = ({ session , socket , status}) => {
         setBody(<></>)
         setLoadList(true)
 
-        StartList()
+        StartList(status)
         
         // socket.removeListener("reload-farmer-list")
         // return(()=>{
@@ -120,7 +120,7 @@ const List = ({ session , socket , status}) => {
         }
     }
 
-    const StartList = async () => {
+    const StartList = async (status) => {
         await FetchList(10)
         if(status.open === 1) window.history.pushState({} , "" , `/doctor/farmer/${status.status}`)
     }
@@ -134,8 +134,9 @@ const List = ({ session , socket , status}) => {
                 }}>
                     <Loading size={"45px"} border={"5px"} color="rgb(24 157 133)" animetion={true}/>
                 </div> 
-                :
-                <ManageList Data={Data} status={status} session={session} fetch={FetchList} count={Count} setCount={setCount} socket={socket}/>)
+                : <></>
+                // <ManageList Data={Data} status={status} session={session} fetch={FetchList} count={Count} setCount={setCount} socket={socket}/>
+                )
 }
 
 const ManageList = ({Data , status , session , fetch , count , setCount , socket}) => {

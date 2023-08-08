@@ -74,7 +74,7 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
                 </select>
             </div>
             <div className="data-list-content">
-                <List session={session} socket={socket} status={statusPage}/>
+                {/* <List session={session} socket={socket} status={statusPage}/> */}
             </div>
         </section>
     )

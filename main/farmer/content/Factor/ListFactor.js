@@ -61,6 +61,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
         })
         if(await CloseAccount(result , setPage)) {
             const Ob = JSON.parse(result)
+            console.log(Ob)
             setBodyList(Ob.map((val , key)=>
                 <section key={key} className={`list-factor-content content-${val.id}`}>
                     <div className="row">
@@ -156,7 +157,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
     const popupInsertFactor = async () => {
         const result = await clientMo.post("/api/farmer/account/check")
         if(await CloseAccount(result , setPage)) {
-            const Reload = typeHraf.type === "z" ? ListFerti : ListChemi
+            const Reload = typeHraf.type === "z" ? ListFerti : ListChemi;
             setPopupAdd(<PopupInsertFactor setPage={setPage} 
                             id_house={id_house} id_form_plant={typeHraf.id_form_plant} type_path={typeHraf.type} 
                             setPopup={setPopupAdd} RefPop={PopupRef} ReloadData={Reload}/>)

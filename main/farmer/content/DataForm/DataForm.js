@@ -292,6 +292,10 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
         }} type={"plant"}/>)
     }
 
+    const reportEdit = () => {
+        
+    }
+
     return (
         <section className="data-form-page" id="data-form-page">
             <div className="head">
@@ -331,7 +335,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="num">1.</div>
                                     <div className="body">
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.name_plant == 2 ? " not" : ""}`}>
                                                 <span>ชนิดพืช</span>
                                                 <div className="input-select-popup">
                                                     { StatusEdit ?
@@ -360,13 +364,13 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.generation == 2 ? " not" : ""}`}>
                                                 <span>รุ่นที่ปลูก</span>
                                                 <input ref={Generation} onChange={StatusEdit ? ChangeEdit : null} type="number" readOnly defaultValue={Data.generation}></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${Data.subjectResult.date_glow == 2 ? " not" : ""}`}>
                                                 <span className="full">วันที่เพาะกล้า</span>
                                                 <div className="full">
                                                     {
@@ -380,7 +384,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${Data.subjectResult.date_plant == 2 ? " not" : ""}`}>
                                                 <span className="full">วันที่ปลูก</span>
                                                 <div className="full">
                                                     {
@@ -401,7 +405,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${Data.subjectResult.posi_w == 2 || Data.subjectResult.posi_h == 2 ? " not" : ""}`}>
                                                 <div className="full">ระยะการปลูก</div>
                                                 <div className="choose">
                                                     <label className="choose">
@@ -416,19 +420,19 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.qty == 2 ? " not" : ""}`}>
                                                 <span>จำนวนต้น</span>
                                                 <input ref={Qty} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.qty}></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.area == 2 ? " not" : ""}`}>
                                                 <span>พื้นที่</span>
                                                 <input ref={Area} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.area}></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${Data.subjectResult.date_harvest == 2 ? " not" : ""}`}>
                                                 <span className="full">วันที่คาดว่าจะเก็บเกี่ยว</span>
                                                 <div className="full">
                                                 <div className="full">
@@ -449,7 +453,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="num">2.</div>
                                     <div className="body">
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.system_glow == 2 ? " not" : ""}`}>
                                                 <span>ระบบการปลูก</span>
                                                 { StatusEdit ?
                                                     <select onChange={ChangeEdit} ref={System} defaultValue={Data.system_glow}>
@@ -471,7 +475,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="num">3.</div>
                                     <div className="body">
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.water == 2 ? " not" : ""}`}>
                                                 <span>แหล่งน้ำ</span>
                                                 { StatusEdit ?
                                                     <select onChange={ChangeEdit} ref={Water} defaultValue={Data.water}>
@@ -493,7 +497,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="num">4.</div>
                                     <div className="body">
                                     <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.water_flow == 2 ? " not" : ""}`}>
                                                 <span>วิธีการให้น้ำ</span>
                                                 { StatusEdit ?
                                                     <select onChange={ChangeEdit} ref={WaterStep} defaultValue={Data.water_flow}>
@@ -514,18 +518,18 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="num">5.</div>
                                     <div className="body">
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox`}>
                                                 <span style={{width : "100%"}}>ประวัติการใช้พื้นที่และการเกิดโรคระบาด</span>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.history == 2 ? " not" : ""}`}>
                                                 <span>พืชที่ปลูกก่อนหน้า</span>
                                                 <input ref={History} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.history}></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.insect == 2 ? " not" : ""}`}>
                                                 <span>โรค/แมลงที่พบ</span>
                                                 { StatusEdit ?
                                                     <select onChange={ChangeEdit} ref={Insect} defaultValue={Data.insect}>
@@ -539,7 +543,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.qtyInsect == 2 ? " not" : ""}`}>
                                                 <span>ปริมาณการเกิดโรค และแมลงที่พบ</span>
                                                 { StatusEdit ?
                                                     <select onChange={ChangeEdit} ref={QtyInsect} defaultValue={Data.qtyInsect}>
@@ -553,7 +557,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${Data.subjectResult.seft == 2 ? " not" : ""}`}>
                                                 <span>การป้องกันกำจัด</span>
                                                 <textarea style={{textAlign : "start" , padding : "0.5em"}} ref={Seft} onChange={StatusEdit ? ChangeEdit : null} readOnly defaultValue={Data.seft}></textarea>
                                             </label>
@@ -565,7 +569,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                         <div className="step">
                                             <div className="body">
                                                 <div className="row">
-                                                    <label className="frame-textbox colume">
+                                                    <label className={`frame-textbox colume`}>
                                                         <span className="full">เหตุผลการแก้ไข</span>
                                                         <textarea style={{textAlign : "start" , padding : "0.5em"}} className="full" onChange={ChangeEdit} ref={Because}></textarea>
                                                     </label>

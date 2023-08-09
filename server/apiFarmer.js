@@ -338,15 +338,69 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                         [
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse
                         ] , 
-                        (err , result)=>{
+                        async (err , result)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
                                 console.log("select listform");
                                 return 0;
                             }
-                            con.end()
-                            if(result[0]) res.send(result)
+
+                            if(result[0]) {
+                                if(req.body.id_formplant) {
+                                    const ResultEdit = await new Promise((resole , reject)=>{
+                                        con.query(
+                                            `
+                                            SELECT editform.id_edit , editform.status
+                                            FROM editform , 
+                                            (
+                                                SELECT formplant.id
+                                                FROM formplant , 
+                                                    (
+                                                        SELECT id_farm_house FROM housefarm
+                                                        WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farm_house = ?
+                                                    ) as houseFarm
+                                                WHERE formplant.id_farm_house = houseFarm.id_farm_house && formplant.id = ?
+                                            ) as formplant
+                                            WHERE editform.id_form = formplant.id and type_form = "plant"
+                                            ORDER BY date DESC
+                                            ` , [ auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.id_formplant ] ,
+                                            async (err , resultEditList) => {
+                                                const subjectResultPass = new Map()
+                                                for(let edit of resultEditList) {
+                                                    await new Promise((resole , reject)=>{
+                                                        con.query(
+                                                            `
+                                                            SELECT subject_form
+                                                            FROM detailedit
+                                                            WHERE id_edit = ?
+                                                            ` , [edit.id_edit] ,
+                                                            (err , resultDetail) => {
+                                                                for(let detail of resultDetail) {
+                                                                    if(!subjectResultPass.has(detail.subject_form) && edit.status != 0) {
+                                                                        subjectResultPass.set(detail.subject_form , edit.status)
+                                                                    }
+                                                                }
+
+                                                                resole("")
+                                                            }
+                                                        )
+                                                    })
+                                                }
+                                                resole(subjectResultPass)
+                                            }
+                                        )
+                                    })
+                                    
+                                    con.end()
+                                    result[0].subjectResult = Object.fromEntries(ResultEdit)
+                                    res.send(result)
+                                } else {
+                                    con.end()
+                                    res.send(result)
+                                }
+                            }
                             else {
+                                con.end()
                                 if(req.body.id_formplant) res.send("not found")
                                 else res.send(result)
                             }
@@ -452,13 +506,8 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse , req.body.name_plant_list
                         ] , 
                         (err , result)=>{
-                            console.log(err)
                             con.end()
                             if (!err) {
-                                console.log({
-                                    FromHistory : result,
-                                    qtyDate : QtyDate
-                                })
                                 res.send({
                                     FromHistory : result,
                                     qtyDate : QtyDate
@@ -732,9 +781,11 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                 `and form${req.body.type}.id = "${req.body.id_factor}"` :
                                 ""
 
+                const Type = req.body.type == "fertilizer" ? "fertilizer" : "chemical";       
+
                 con.query(`
-                            SELECT form${req.body.type}.* , formPlant.submit
-                            FROM form${req.body.type} , 
+                            SELECT form${Type}.* , formPlant.submit
+                            FROM form${Type} , 
                                 (
                                     SELECT formplant.id , formplant.submit
                                     FROM formplant , 
@@ -744,7 +795,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                         ) as houseFarm
                                     WHERE formplant.id_farm_house = houseFarm.id_farm_house && formplant.id = ?
                                 ) as formPlant
-                            WHERE form${req.body.type}.id_plant = formPlant.id ${where}
+                            WHERE form${Type}.id_plant = formPlant.id ${where}
                             ORDER BY ${req.body.order} DESC
                         ` , 
                         [
@@ -752,12 +803,52 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             req.body.id_farmhouse , 
                             req.body.id_plant
                         ] , 
-                        (err , result)=>{
+                        async (err , result)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
                                 console.log("select listform");
                                 return 0;
                             }
+
+                            for(let index in result) {
+                                const ResultEdit = await new Promise((resole , reject)=>{
+                                    con.query(
+                                        `
+                                        SELECT editform.id_edit , editform.status
+                                        FROM editform
+                                        WHERE editform.id_form = ? and type_form = "${Type}"
+                                        ORDER BY date DESC
+                                        ` , [ result[index].id ] ,
+                                        async (err , resultEditList) => {
+                                            const subjectResultPass = new Map()
+                                            for(let edit of resultEditList) {
+                                                await new Promise((resole , reject)=>{
+                                                    con.query(
+                                                        `
+                                                        SELECT subject_form
+                                                        FROM detailedit
+                                                        WHERE id_edit = ?
+                                                        ` , [edit.id_edit] ,
+                                                        (err , resultDetail) => {
+                                                            for(let detail of resultDetail) {
+                                                                if(!subjectResultPass.has(detail.subject_form) && edit.status != 0) {
+                                                                    subjectResultPass.set(detail.subject_form , edit.status)
+                                                                }
+                                                            }
+    
+                                                            resole("")
+                                                        }
+                                                    )
+                                                })
+                                            }
+                                            resole(subjectResultPass)
+                                        }
+                                    )
+                                })
+                                
+                                result[index].subjectResult = Object.fromEntries(ResultEdit)
+                            }
+
                             con.end()
                             res.send(result)
                         })

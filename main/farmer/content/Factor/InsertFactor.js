@@ -228,7 +228,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const setSearch = ChangeData(search)
         if(setSearch.length !== 0) 
             setListName(setSearch.map((val , key)=>
-                <span search_name="" onClick={()=>SetTextInputName(val)} key={key}>{val}</span>
+                <span search_name="" onClick={()=>SetTextInputName(val)} key={val.id}>{val}</span>
             ))
         else ResetListNamePopup()
         setLoadName(true);
@@ -259,7 +259,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const setSearch = ChangeData(search)
         if(setSearch.length !== 0) 
             setListOther(setSearch.map((val , key)=>
-                <span search_other="" onClick={()=>SetTextInputOrther(val)} key={key}>{val}</span>
+                <span search_other="" onClick={()=>SetTextInputOrther(val)} key={val.id}>{val}</span>
             ))
         else ResetListOtherPopup()
         setLoadNameMain(true);
@@ -401,7 +401,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                                         { 
                                                             DataSource ?
                                                                 DataSource.map((val , key)=>
-                                                                    <option value={val.name}>{val.name}</option>
+                                                                    <option value={val.name} key={val.id}>{val.name}</option>
                                                                 ) : <></>
                                                         }
                                                 </select>
@@ -496,7 +496,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                                     { 
                                                         DataSource ?
                                                             DataSource.map((val , key)=>
-                                                                <option value={val.name}>{val.name}</option>
+                                                                <option value={val.name} key={val.id}>{val.name}</option>
                                                             ) : <></>
                                                     }
                                                 </select>

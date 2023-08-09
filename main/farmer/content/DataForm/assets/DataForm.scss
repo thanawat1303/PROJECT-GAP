@@ -106,6 +106,7 @@
                                     width: 100%;
                                     margin-bottom: 5px;
                                     .num {
+                                        margin-top: 5px;
                                         margin-right: 5px;
                                     }
     
@@ -119,9 +120,8 @@
                                                 justify-content: start;
                                                 align-items: center;
                                                 width: 100%;
-                                                margin-bottom: 5px;
-                                                padding-bottom: 5px;
-                                                border-bottom:1px solid green ;
+                                                padding: 5px 0px;
+                                                border-bottom: 1px solid green;
     
                                                 .input-select-popup {
                                                     position: relative;
@@ -199,6 +199,11 @@
                                                         }
                                                     }
                                                 }
+                                            }
+
+                                            .frame-textbox.not {
+                                                background-color: #e38f8f78;
+                                                border-radius: 8px;
                                             }
     
                                             .colume {

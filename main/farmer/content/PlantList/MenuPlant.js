@@ -18,8 +18,7 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
 
         FetchCheck()
 
-        if(document.getElementById("loading").classList[0] !== "hide")
-            clientMo.unLoadingPage()
+        if(document.getElementById("loading").classList[0] !== "hide") clientMo.unLoadingPage()
     } , [])
 
     const FetchCheck = async () => {
@@ -36,11 +35,11 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
             else if (page === "z" || page === "c") {
                 setBody(<ListFactor setBody={setBody} setPage={setPage} id_house={id_house} typeHraf={{id_form_plant : id_plant , type : page}} isClick={1}/>)
             }
-            else if (page === "s") {
-                setBody(<Success setBody={setBody} setPage={setPage} id_house={id_house} id_plant={id_plant} isClick={1} liff={liff}/>)
+            else if (page === "h") {
+                setBody(<Success setBody={setBody} setPage={setPage} id_house={id_house} id_plant={id_plant} type={"menu:h"} isClick={1} liff={liff}/>)
             }
             else if (page === "r") {
-                setBody(<Report setBody={setBody} setPage={setPage} id_house={id_house} id_plant={id_plant} type={"menu:g"} isClick={1} liff={liff}/>)
+                setBody(<Report setBody={setBody} setPage={setPage} id_house={id_house} id_plant={id_plant} isClick={1} liff={liff}/>)
             }
         } 
     }
@@ -70,19 +69,19 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                         </div>
                         <span>สารเคมีที่ใช้</span>
                     </div>
-                    <div onClick={()=>selectMenu("s")} className="frame-menu frame-success">
+                    <div onClick={()=>selectMenu("h")} className="frame-menu frame-success">
                         <div className="img">
                             <img src="/เก็บ.png"></img>
                         </div>
                         <span>การเก็บเกี่ยว</span>
-                        {DotReport[0] ? DotReport[0].success ? <div className="dot-someting"></div> : <></> : <></>}
+                        {DotReport[0] ? DotReport[0].success || DotReport[0].form || DotReport[0].plant ? <div className="dot-someting"></div> : <></> : <></>}
                     </div>
                 </div>
                 <div className="report-farm" 
                     onClick={()=>selectMenu("r")}
                     >
                     <img src="/report.png"></img>
-                    {DotReport[0] ? DotReport[0].report || DotReport[0].form || DotReport[0].plant ? <div className="dot-someting"></div> : <></> : <></>}
+                    {DotReport[0] ? DotReport[0].report ? <div className="dot-someting"></div> : <></> : <></>}
                 </div>
             </div>
         </section>

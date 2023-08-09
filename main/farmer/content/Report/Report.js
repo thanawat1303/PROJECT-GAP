@@ -6,48 +6,31 @@ import "./assets/Report.scss"
 import { DayJSX, Loading } from "../../../../src/assets/js/module";
 import MenuPlant from "../PlantList/MenuPlant";
 
-const Report = ({ setBody , id_house , id_plant , liff , setPage , type , isClick = 0}) => {
+const Report = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     //type of menu => menu:[] , load => load:[] , popstate : pop:[]
     const [LoadingList , setLoadingList] = useState(false)
-    const [DotSome , setDotSome] = useState([])
     const [DataPage , setDataPage] = useState({
         id_house : id_house,
         id_plant : id_plant,
-        type : type.split(":")[1],
+        type : "r",
         isClick : isClick
     })
 
     useEffect(()=>{
         setPage("Report")
 
-        setDataPage({
-            id_house : id_house,
-            id_plant : id_plant,
-            type : type.split(":")[1],
-            isClick : isClick
-        })
-
-        FetchCheck()
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
-    } , [type])
+    } , [])
 
-    const ChangeMenu = (type) => {
-        setDataPage({
-            id_house : id_house,
-            id_plant : id_plant,
-            type : type,
-            isClick : 1
-        })
-    }
-
-    const FetchCheck = async () => {
-        const result = await clientMo.get(`/api/farmer/report/check?id_farmhouse=${id_house}&id_plant=${id_plant}`)
-        if(await CloseAccount(result , setPage)) {
-            setDotSome(JSON.parse(result))
-            console.log(JSON.parse(result))
-        }
-    }
+    // const ChangeMenu = (type) => {
+    //     setDataPage({
+    //         id_house : id_house,
+    //         id_plant : id_plant,
+    //         type : type,
+    //         isClick : 1
+    //     })
+    // }
 
     const ReturnPage = async () =>{
         const result = await clientMo.post("/api/farmer/account/check")
@@ -67,24 +50,7 @@ const Report = ({ setBody , id_house , id_plant , liff , setPage , type , isClic
                             </g>
                         </svg>
                     </div>
-                    <span>{DataPage.type === "g" ? "ข้อแนะนำ" : DataPage.type === "cf" ? "ตรวจสอบแบบฟอร์ม" : DataPage.type === "cp" ? "ตรวจสอบผลผลิต" : ""}</span>
-                </div>
-                <div className="menu-report">
-                    {!(DataPage.type === "g") ? 
-                        <span onClick={()=>ChangeMenu("g")}>
-                            ข้อแนะนำ
-                            {DotSome[0] ? DotSome[0].report ? <div className="dot-someting"></div> : <></> : <></>}
-                        </span> : <></>}
-                    {!(DataPage.type === "cf") ? 
-                        <span onClick={()=>ChangeMenu("cf")}>
-                            ผลตรวจแบบฟอร์ม
-                            { DotSome[0] ? DotSome[0].form ? <div className="dot-someting"></div> : <></> : <></>}
-                        </span> : <></>}
-                    {!(DataPage.type === "cp") ? 
-                        <span onClick={()=>ChangeMenu("cp")}>
-                            ผลตรวจผลผลิต
-                            { DotSome[0] ? DotSome[0].plant ? <div className="dot-someting"></div> : <></> : <></>}
-                        </span> : <></>}
+                    <span>ข้อแนะนำ</span>
                 </div>
                 <div className="content-report">
                     <div className="list-report">
@@ -99,96 +65,41 @@ const Report = ({ setBody , id_house , id_plant , liff , setPage , type , isClic
 const List = ({liff , setPage , DetailFetchList}) => {
     const [body , setBody] = useState(<></>)
     useEffect(()=>{
-        if(DetailFetchList.isClick === 1) window.history.pushState({} , null , `/farmer/form/${DetailFetchList.id_house}/r/${DetailFetchList.id_plant}/${DetailFetchList.type}`)
-        FetchData()
+        StartFetch()
     } , [DetailFetchList])
+
+    const StartFetch = async () => {
+        await FetchData()
+        if(DetailFetchList.isClick === 1) window.history.pushState({} , null , `/farmer/form/${DetailFetchList.id_house}/r/${DetailFetchList.id_plant}`)
+    }
 
     const FetchData = async () => {
         const result = await clientMo.get(`/api/farmer/report/list?id_farmhouse=${DetailFetchList.id_house}&id_plant=${DetailFetchList.id_plant}&type=${DetailFetchList.type}`)
         if(await CloseAccount(result , setPage)) {
             setBody(JSON.parse(result).map((val , key)=>
                 <div className="list-in-report" key={key}>
-                    { DetailFetchList.type === "g" ?
-                        <>
-                        <div className="row">
-                            <div className="in-row">
-                                <span>ครั้งที่</span>
-                                <div>{key + 1}</div>
-                            </div>
-                            <div className="in-row column end frame">
-                                <span>วันที่</span>
-                                <DayJSX DATE={val.date_report} TYPE="small"/>
-                            </div>
+                    <div className="row">
+                        <div className="in-row">
+                            <span>ครั้งที่</span>
+                            <div>{key + 1}</div>
                         </div>
-                        <div className="row">
-                            <div className="in-row column">
-                                <span>ข้อแนะนำ</span>
-                                <div>{val.report_text}</div>
-                            </div>
+                        <div className="in-row column end frame">
+                            <span>วันที่</span>
+                            <DayJSX DATE={val.date_report} TYPE="small"/>
                         </div>
-                        <div className="row">
-                            <div className="in-row">
-                                <span>ผู้ส่งเสริม</span>
-                                <div>{val.name_doctor}</div>
-                            </div>
+                    </div>
+                    <div className="row">
+                        <div className="in-row column">
+                            <span>ข้อแนะนำ</span>
+                            <div>{val.report_text}</div>
                         </div>
-                        </> : 
-                        DetailFetchList.type === "cf" ? 
-                        <>
-                        <div className="row">
-                            <div className="in-row column">
-                                <span>ผลตรวจสอบ</span>
-                                <div>{val.status_check ? "ผ่าน" : "ไม่ผ่าน"}</div>
-                            </div>
-                            <div className="in-row column end frame">
-                                <span>วันที่</span>
-                                <DayJSX DATE={val.date_check} TYPE="small"/>
-                            </div>
+                    </div>
+                    <div className="row">
+                        <div className="in-row">
+                            <span>ผู้ส่งเสริม</span>
+                            <div>{val.name_doctor}</div>
                         </div>
-                        { !val.status_check ? 
-                            <div className="row">
-                                <div className="in-row column">
-                                    <span>การแก้ไข</span>
-                                    <div>{val.note_text ? val.note_text : "ไม่ระบุ"}</div>
-                                </div>
-                            </div> : <></>
-                        }
-                        <div className="row">
-                            <div className="in-row">
-                                <span>ผู้ตรวจสอบ</span>
-                                <div>{val.name_doctor}</div>
-                            </div>
-                        </div>
-                        </> :
-                        DetailFetchList.type === "cp" ? 
-                        <>
-                        <div className="row">
-                            <div className="in-row column">
-                                <span>ผลวิเคราะห์</span>
-                                <div>
-                                    <status_check>{val.state_check ? "หลัง : " : "ก่อน : "}</status_check>
-                                    {val.status_check}
-                                </div>
-                            </div>
-                            <div className="in-row column end frame">
-                                <span>วันที่</span>
-                                <DayJSX DATE={val.date_check} TYPE="small"/>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="in-row column">
-                                <span>หมายเหตุ</span>
-                                <div>{val.note_text ? val.note_text : "ไม่ระบุ"}</div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="in-row">
-                                <span>ผู้ตรวจสอบ</span>
-                                <div>{val.name_doctor}</div>
-                            </div>
-                        </div>
-                        </> : <></>
-                    }
+                    </div>
                 </div>
             ))
         }

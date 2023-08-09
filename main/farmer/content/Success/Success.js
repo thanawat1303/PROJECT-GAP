@@ -5,45 +5,50 @@ import MenuPlant from "../PlantList/MenuPlant";
 
 import "./assets/Success.scss"
 import { DayJSX, Loading } from "../../../../src/assets/js/module";
+import List from "./ListSuccess";
 
-const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
+const Success = ({ setBody , id_house , id_plant , liff , setPage , type , isClick = 0}) => {
     const Popup = useRef()
-    const [List , setList] = useState(<></>)
+    // const [List , setList] = useState(<></>)
     const [PopupState , setPopup] = useState(<></>)
+
+    const [DotSome , setDotSome] = useState([])
+    const [DataPage , setDataPage] = useState({
+        id_house : id_house,
+        id_plant : id_plant,
+        type : type.split(":")[1],
+        isClick : isClick
+    })
 
     useEffect(()=>{
         setPage("Success")
-        if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/s/${id_plant}`)
+        setDataPage({
+            id_house : id_house,
+            id_plant : id_plant,
+            type : type.split(":")[1],
+            isClick : isClick
+        })
 
-        FetchData()
-    } , [])
-
-    const FetchData = async () => {
-        const result = await clientMo.post("/api/farmer/success/list" , {id_farmhouse : id_house , id_plant : id_plant})
-        if(await CloseAccount(result , setPage)) {
-            const ObjectData = JSON.parse(result)
-            setList(ObjectData.map((val , key)=>{
-                return <div key={key} className={`list-in-success ${val.id}`}>
-                            <div className="row first">
-                                <div className="type-head">{val.type_success ? "เก็บผลผลิต" : "เก็บผลตัวอย่าง"}</div>
-                                <div className="date">
-                                    <DayJSX DATE={val.date_of_doctor} TYPE="normal"/>
-                                </div>
-                            </div>
-                            <div className="row second">
-                                <div className="station">
-                                    <span>ศูนย์</span>
-                                    <div>{val.name_station}</div>
-                                </div>
-                                <div className="bt">
-                                    <button onClick={(e)=>OpenPopup(val.id , val.type_success , val.name_station , e)}>{val.date_of_farmer ? "แสดงรหัส" : "ยืนยัน"}</button>
-                                </div>
-                            </div>
-                        </div>
-            }))
-        }
+        FetchCheck()
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
+    } , [])
+
+    const ChangeMenu = (type) => {
+        setDataPage({
+            id_house : id_house,
+            id_plant : id_plant,
+            type : type,
+            isClick : 1
+        })
+    }
+
+    const FetchCheck = async () => {
+        const result = await clientMo.get(`/api/farmer/report/check?id_farmhouse=${id_house}&id_plant=${id_plant}`)
+        if(await CloseAccount(result , setPage)) {
+            setDotSome(JSON.parse(result))
+            console.log(JSON.parse(result))
+        }
     }
 
     const OpenPopup = async (id_table_success , type , name_station , Dom) => {
@@ -77,36 +82,54 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}
         }
     }
 
-    return (<>
-            <div className="body-success">
-                <div className="head">
-                    <div className="return" onClick={ReturnPage}>
-                        <svg fill="#000000" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
-                            <g fillRule="evenodd">
-                                <path d="M1052 92.168 959.701 0-.234 959.935 959.701 1920l92.299-92.43-867.636-867.635L1052 92.168Z"/>
-                                <path d="M1920 92.168 1827.7 0 867.766 959.935 1827.7 1920l92.3-92.43-867.64-867.635L1920 92.168Z"/>
-                            </g>
-                        </svg>
-                    </div>
-                    <span>การเก็บเกี่ยว</span>
+    return (
+        <>
+        <div className="body-success">
+            <div className="head">
+                <div className="return" onClick={ReturnPage}>
+                    <svg fill="#000000" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+                        <g fillRule="evenodd">
+                            <path d="M1052 92.168 959.701 0-.234 959.935 959.701 1920l92.299-92.43-867.636-867.635L1052 92.168Z"/>
+                            <path d="M1920 92.168 1827.7 0 867.766 959.935 1827.7 1920l92.3-92.43-867.64-867.635L1920 92.168Z"/>
+                        </g>
+                    </svg>
                 </div>
-                <div className="content-success">
-                    <div className="list-success">
-                        {List}
-                    </div>
-                </div>
-                <div ref={Popup} className="popup">
-                    {PopupState}
+                <span>{DataPage.type === "h" ? "การเก็บเกี่ยว" : DataPage.type === "cf" ? "ตรวจสอบแบบฟอร์ม" : DataPage.type === "cp" ? "ตรวจสอบผลผลิต" : ""}</span>
+            </div>
+            <div className="menu-success">
+                {!(DataPage.type === "h") ? 
+                    <span onClick={()=>ChangeMenu("h")}>
+                        การเก็บเกี่ยว
+                        {DotSome[0] ? DotSome[0].success ? <div className="dot-someting"></div> : <></> : <></>}
+                    </span> : <></>}
+                {!(DataPage.type === "cf") ? 
+                    <span onClick={()=>ChangeMenu("cf")}>
+                        ผลตรวจแบบฟอร์ม
+                        { DotSome[0] ? DotSome[0].form ? <div className="dot-someting"></div> : <></> : <></>}
+                    </span> : <></>}
+                {!(DataPage.type === "cp") ? 
+                    <span onClick={()=>ChangeMenu("cp")}>
+                        ผลตรวจผลผลิต
+                        { DotSome[0] ? DotSome[0].plant ? <div className="dot-someting"></div> : <></> : <></>}
+                    </span> : <></>}
+            </div>
+            <div className="content-success">
+                <div className="list-success">
+                    <List liff={liff} setPage={setPage} DetailFetchList={DataPage} OpenPopup={OpenPopup}/>
                 </div>
             </div>
-            </>
-            )
+            <div ref={Popup} className="popup">
+                {PopupState}
+            </div>
+        </div>
+        </>
+    )
 }
 
 const PopupSuccess = ({Ref , setPopup , setPage , Dom ,
-Data = {type : "" , id_table : "" , id_success : "" , name_station : ""} , 
-MainData = {id_plant : "" , id_house : ""}}) => {
-    
+    Data = {type : "" , id_table : "" , id_success : "" , name_station : ""} , 
+    MainData = {id_plant : "" , id_house : ""}}) => {
+        
     const [Load , setLoad] = useState(false)
     
     useEffect(()=>{

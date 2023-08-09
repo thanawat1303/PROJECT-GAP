@@ -12,6 +12,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
     const [StatusEdit , setStatusEdit] = useState(false)
     const [Popup , setPopup] = useState(<></>)
     const [DataPlant , setDataPlant] = useState([])
+    const [QtyDate , setQtyDate] = useState(0)
 
     const PopupRef = useRef()
     const ManageMenu = useRef()
@@ -61,6 +62,8 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
             const Data = JSON.parse(result)
             setData(Data[0])
             setLoad(true)
+
+            console.log(Data)
         }
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
@@ -68,10 +71,12 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
 
     const FetchPlant = async () => {
         setDataPlant([])
-        const Data = await clientMo.post("/api/farmer/plant/list")
-        if(await CloseAccount(Data , setPage)) {
-            const LIST = JSON.parse(Data)
+        const DataFetch = await clientMo.post("/api/farmer/plant/list")
+        if(await CloseAccount(DataFetch , setPage)) {
+            const LIST = JSON.parse(DataFetch)
+            const SelectPlant = LIST.filter(val=>val.name == Data.name_plant)
             setDataPlant(LIST)
+            setQtyDate(SelectPlant.length != 0 ? SelectPlant[0].qty_harvest : 0)
         }
     }
 
@@ -197,9 +202,15 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                             num : foundChange.length
                         }
 
+                        console.log(data)
+
                         const result = await clientMo.post("/api/farmer/formplant/edit" , data)
                         if(await CloseAccount(result , setPage)) {
+                            console.log(result)
                             if(result === "133") {
+                                CancelEdit()
+                                FetchData()
+                            } else if (result === "submit") {
                                 CancelEdit()
                                 FetchData()
                             }
@@ -294,7 +305,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                 </div>
                 <span>ข้อมูลแบบบันทึก</span>
                 {
-                    !StatusEdit ? 
+                    !StatusEdit && Load ? 
                         <>
                         <div className="manage-form" ref={BtManageMenu.Frame} onClick={ShowMenuManageForm}>
                             <svg ref={BtManageMenu.Svg} fill="#000000" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -302,7 +313,10 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                             </svg>
                         </div>
                         <div className="manage-menu" ref={ManageMenu}>
-                            <div onClick={EditForm}>แก้ไขข้อมูล</div>
+                            { Data.submit < 2 ?
+                                <div onClick={EditForm}>แก้ไขข้อมูล</div>
+                                : <></>
+                            }
                             <div onClick={HistoryEdit}>ประวัติแก้ไข</div>
                         </div>
                         </> : <></>
@@ -322,7 +336,17 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                 <div className="input-select-popup">
                                                     { StatusEdit ?
                                                         DataPlant.length != 0 ?
-                                                            <select style={{width : "100%"}} onChange={ChangeEdit} ref={TypePlantInput} defaultValue={Data.name_plant}>
+                                                            <select style={{width : "100%"}} onChange={(e)=>{
+                                                                ChangeEdit()
+
+                                                                const SelectPlant = DataPlant.filter(val=>val.name == e.target.value)
+                                                                const DatePlantQty = new Date(DatePlant.current.value)
+
+                                                                setQtyDate(SelectPlant[0].qty_harvest)
+                                                                DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(SelectPlant[0].qty_harvest))
+                                                                DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
+
+                                                            }} ref={TypePlantInput} defaultValue={Data.name_plant}>
                                                                 <option disabled value={""}>เลือกพืช</option>
                                                                 { 
                                                                     DataPlant.map((plant , key)=>
@@ -361,7 +385,14 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                 <div className="full">
                                                     {
                                                         StatusEdit ?
-                                                            <input ref={DatePlant} onChange={StatusEdit ? ChangeEdit : null} type="date" 
+                                                            <input ref={DatePlant} onChange={StatusEdit ? (e)=>{
+                                                                ChangeEdit()
+
+                                                                const DatePlantQty = new Date(e.target.value)
+                                                                DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(QtyDate))
+                                                                DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
+
+                                                            } : null} type="date" 
                                                             defaultValue={Data.date_plant.split(" ")[0]}></input> 
                                                             :
                                                             <DayJSX DATE={Data.date_plant} TYPE="normal"/>

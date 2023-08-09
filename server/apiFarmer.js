@@ -333,7 +333,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                     WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farm_house = ?
                                 ) as houseFarm
                             WHERE formplant.id_farm_house = houseFarm.id_farm_house ${where}
-                            ORDER BY date_plant DESC
+                            ORDER BY formplant.submit ASC , date_plant DESC
                         ` , 
                         [
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse
@@ -366,7 +366,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`
-                            SELECT formplant.id
+                            SELECT formplant.id , formplant.submit
                             FROM formplant , 
                                 (
                                     SELECT id_farm_house FROM housefarm
@@ -384,7 +384,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                 return 0;
                             }
                             con.end()
-                            if(result[0]) res.send("found")
+                            if(result[0]) res.send(result)
                             else res.send("not found")
                         })
             } catch (err) {
@@ -400,7 +400,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             let con = Database.createConnection(listDB)
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
-                con.query(`SELECT name , id FROM plant_list WHERE is_use = 1` , (err , result)=>{
+                con.query(`SELECT name , id , qty_harvest FROM plant_list WHERE is_use = 1` , (err , result)=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
                         console.log("query");
@@ -733,10 +733,10 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                 ""
 
                 con.query(`
-                            SELECT form${req.body.type}.* 
+                            SELECT form${req.body.type}.* , formPlant.submit
                             FROM form${req.body.type} , 
                                 (
-                                    SELECT formplant.id
+                                    SELECT formplant.id , formplant.submit
                                     FROM formplant , 
                                         (
                                             SELECT id_farm_house FROM housefarm
@@ -1264,11 +1264,30 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
-                const Type = req.query.type === "g" ? "report_detail" :
+                const Type = req.query.type === "h" ? "success_detail" :
+                                req.query.type === "r" ? "report_detail" :
                                 req.query.type === "cf" ? "check_form_detail" :
                                 req.query.type === "cp" ? "check_plant_detail" : ""
                 if(Type) {
                     con.query(
+                        req.query.type === "h" ?
+                        `
+                        SELECT success_detail.id , formPlant.name_station , type_success , date_of_doctor , date_of_farmer
+                        FROM success_detail , 
+                        (
+                            SELECT formplant.id , houseFarm.name_station
+                            FROM formplant , 
+                                (
+                                    SELECT id_farm_house , (
+                                        SELECT name FROM station_list WHERE station_list.id = ?
+                                    ) as name_station
+                                    FROM housefarm
+                                    WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farm_house = ?
+                                ) as houseFarm
+                            WHERE formplant.id_farm_house = houseFarm.id_farm_house && formplant.id = ?
+                        ) as formPlant
+                        WHERE success_detail.id_plant = formPlant.id
+                        ` :
                         `
                         SELECT ${Type}.* , 
                         (

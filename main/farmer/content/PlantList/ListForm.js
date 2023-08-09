@@ -28,12 +28,12 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
         const auth = await clientMo.post('/api/farmer/formplant/select' , {id_farmhouse : id_house})
         if(await CloseAccount(auth)) {
             setBodyList(JSON.parse(auth).map((val , key)=>
-                        <div key={key} className="plant-content" style={
-                            val.report || val.form || val.plant || val.success ? {
+                        <div key={val.id} className={`plant-content ${val.submit == 2 ? "submit" : ""}`} style={
+                            (val.report || val.form || val.plant || val.success) && val.submit < 2 ? {
                             marginTop : "25px",
                             position : "relative"
                             } : {}}>
-                            { val.report || val.form || val.plant || val.success ?
+                            { (val.report || val.form || val.plant || val.success) && val.submit < 2 ?
                                 <div className="report-of-doctor" style={{
                                     position : "absolute",
                                     bottom : "100%",
@@ -75,7 +75,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
                                     <div>{val.generation}</div>
                                 </div>
                                 <div className="bt">
-                                    <button onClick={()=>OpenMenuPlant(val.id)}>บันทึกข้อมูล</button>
+                                    <button onClick={()=>OpenMenuPlant(val.id)}>{val.submit < 2 ? "บันทึกข้อมูล" : "ดูข้อมูล"}</button>
                                 </div>
                             </div>
                         </div>

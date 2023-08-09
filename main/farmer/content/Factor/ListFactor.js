@@ -18,14 +18,18 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
 
     const PopupRef = useRef()
     const RefPopHistory = useRef()
+
+    const [getLoadCheckSubmit , setLoadCheckSubmit] = useState(-1)
     
     useEffect(()=>{
         setPage(typeHraf.type)
         setBodyList(<></>)
         if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/${typeHraf.type}/${typeHraf.id_form_plant}`)
 
-        if(document.getElementById("loading").classList[0] !== "hide")
-            clientMo.unLoadingPage();
+        if(document.getElementById("loading").classList[0] !== "hide") clientMo.unLoadingPage();
+        
+        setLoadCheckSubmit(-1);
+        fetchCheck();
 
         (typeHraf.type === "z") ? ListFerti() : (typeHraf.type === "c") ? ListChemi() : null;
 
@@ -37,6 +41,16 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
     } , [typeHraf])
 
     // Load Data List
+
+    const fetchCheck = async () => {
+        const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_house , id_form_plant : typeHraf.id_form_plant})
+        if(await CloseAccount(result , setPage)) {
+            try {
+                const Check = JSON.parse(result)
+                setLoadCheckSubmit(Check[0].submit)
+            } catch(e) {}
+        }
+    }
 
     const ListFerti = async () => {
         const result = await clientMo.post('/api/farmer/factor/select' , {
@@ -70,7 +84,10 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                         <button onClick={(e)=>OpenManage(val.id , e)}>จัดการ</button>
                         <div className={`manage-form content-${val.id}`}>
                             <div onClick={()=>DetailFrom(val)}>รายละเอียด</div>
-                            <div onClick={()=>PopupEditForm(val)}>แก้ไขข้อมูล</div>
+                            { val.submit < 2 ?
+                                <div onClick={()=>PopupEditForm(val)}>แก้ไขข้อมูล</div>
+                                : <></>
+                            }
                             <div onClick={()=>HistoryEdit(val.id)}>ประวัติแก้ไข</div>
                         </div>
                     </div>
@@ -122,7 +139,10 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                         <button onClick={(e)=>OpenManage(val.id , e)}>จัดการ</button>
                         <div className={`manage-form content-${val.id}`}>
                             <div onClick={()=>DetailFrom(val)}>รายละเอียด</div>
-                            <div onClick={()=>PopupEditForm(val)}>แก้ไขข้อมูล</div>
+                            { val.submit < 2 ?
+                                <div onClick={()=>PopupEditForm(val)}>แก้ไขข้อมูล</div>
+                                : <></>
+                            }
                             <div onClick={()=>HistoryEdit(val.id)}>ประวัติแก้ไข</div>
                         </div>
                     </div>
@@ -205,7 +225,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
     return (
         <>
         <Template PopUp={{PopupRef : PopupRef , PopupBody : PopupAdd}} 
-            List={BodyList} Loading={Loading} action={popupInsertFactor} Option={
+            List={BodyList} Loading={Loading} action={getLoadCheckSubmit != -1 ? getLoadCheckSubmit < 2 ? popupInsertFactor : null : null} Option={
                 {
                     TextHead : typeHraf.type === "z" ? "บันทึกปัจจัยการผลิต" : typeHraf.type === "c" ? "บันทึกสารเคมี" : "", 
                     img : typeHraf.type === "z" ? "/fertilizer.jpg" : typeHraf.type === "c" ? "/chemical.jpg" : ""

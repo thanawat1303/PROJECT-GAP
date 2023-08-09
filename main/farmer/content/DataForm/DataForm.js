@@ -56,14 +56,15 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
     } , [])
 
     const FetchData = async () => {
-        setData([])
+        setLoad(false)
+        setData({})
         const result = await clientMo.post("/api/farmer/formplant/select" , {id_formplant : id_plant , id_farmhouse : id_house})
         if(await CloseAccount(result , setPage)) {
-            const Data = JSON.parse(result)
-            setData(Data[0])
+            const DataIn = JSON.parse(result)
+            setData(DataIn[0])
             setLoad(true)
 
-            console.log(Data)
+            console.log(DataIn)
         }
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
@@ -110,13 +111,15 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
         })
     }
 
-    const CancelEdit = () => {
+    const CancelEdit = (cancel = true) => {
         setLoad(false)
         setStatusEdit(false)
         DataContent.current.removeAttribute("edit")
-        setTimeout(()=>{
-            setLoad(true)
-        } , 100)
+        if(cancel) {
+            setTimeout(()=>{
+                setLoad(true)
+            } , 100)
+        }
     }
 
     // start Edit
@@ -208,10 +211,10 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                         if(await CloseAccount(result , setPage)) {
                             console.log(result)
                             if(result === "133") {
-                                CancelEdit()
+                                CancelEdit(false)
                                 FetchData()
                             } else if (result === "submit") {
-                                CancelEdit()
+                                CancelEdit(false)
                                 FetchData()
                             }
                         }  
@@ -293,7 +296,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
     }
 
     const reportEdit = () => {
-        
+
     }
 
     return (

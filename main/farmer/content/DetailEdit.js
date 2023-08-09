@@ -104,6 +104,7 @@ const DetailEdit = ({Ref , setRef , setPage , type , Data_on}) => {
                     <>
                         <div className="menu-edit">
                             <div className="frame-menu">
+                                <div className="menu-list">
                                 {
                                     Data.map((val , key)=>
                                         key == 0  ?
@@ -112,6 +113,7 @@ const DetailEdit = ({Ref , setRef , setPage , type , Data_on}) => {
                                         <span onClick={(e)=>SelectHead(val.id_edit , e)} key={key}>{key + 1}</span>
                                     )
                                 }
+                                </div>
                             </div>
                             <div className="close" onClick={close}>
                                 <svg viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">

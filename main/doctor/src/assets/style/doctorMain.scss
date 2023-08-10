@@ -100,6 +100,55 @@ a {
         }
     }
 
+    @media only screen and (max-width : 800px) {
+        .image-cover {
+            margin-top: 48px;
+            flex-direction: column;
+
+            .text-icon-cover {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                .text {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: Sans-font;
+                    font-size: 22px;
+                    margin-right: 10px;
+                }
+
+                .icon-profile {
+                    width: 40%;
+                    max-width: 110px;
+
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+
+            .frame-image-cover {
+                width: 90%;
+                border-radius: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+                img {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    @media only screen and (max-width : 400px) {
+        .image-cover {
+            margin-top: 38px;
+        }
+    }
+
     .container-body-doctor {
         display: flex;
         justify-content: center;

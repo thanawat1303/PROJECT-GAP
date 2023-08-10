@@ -28,6 +28,8 @@
             background-color: white;
             padding: 20px 50px;
             border-radius: 30px;
+            width: 95%;
+            max-width: 393px;
     
             .Logo-App {
                 display: flex;
@@ -136,6 +138,65 @@
             opacity: 1;
             visibility: visible;
         }
+
+        @media only screen and (max-width : 400px) {
+            form {
+                padding-left: 30px;
+                padding-right: 30px;
+                .Logo-App {
+                    img {
+                        width: 4.2em;
+                    }
+
+                    span {
+                        font-size: 2.3em;
+                    }
+                }
+
+                label {
+                    width: 100%;
+                    height: 50px;
+
+                    span {
+                        padding: 0 7px;
+                        svg {
+                            font-size: 30px;
+                        }
+                    }
+
+                    input {
+                        font-size: 19px;
+                    }
+                }
+            }
+        }
+
+        @media only screen and (max-width : 300px) {
+            form {
+                padding-left: 25px;
+                padding-right: 25px;
+                .Logo-App {
+                    margin-bottom: 8px;
+                    img {
+                        width: 4em;
+                    }
+
+                    span {
+                        font-size: 2em;
+                    }
+                }
+
+                label {
+                    width: 100%;
+                    height: 48px;
+
+                    input {
+                        font-size: 17px;
+                    }
+                }
+            }
+        }
+
     }
     
     // responsive computer

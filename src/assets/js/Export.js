@@ -117,14 +117,14 @@ const TextBoxSplit = (pdf = new jsPDF() , qtyStartTextOnRow , qtyNormalTextOnRow
             pdf.setFontSize(16)
             pdf.text( newTextRow[x] ? newTextRow[x].join("") : "" , startRowFirst + 6 , startRow - 1);
             pdf.setFontSize(16)
-            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x].join("")) * fontSizeBody / 3.2 , startRowFirst + 6 , startRow , "")
+            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x] ? newTextRow[x].join("") : "") * fontSizeBody / 3.2 , startRowFirst + 6 , startRow , "")
         }
         else {
             const startRowFirst = startColumn //50
             pdf.setFontSize(16)
             pdf.text( newTextRow[x] ? newTextRow[x].join("") : "" , startRowFirst , startRow - 1);
             pdf.setFontSize(16)
-            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x].join("")) * fontSizeBody / 3.2 , startRowFirst , startRow , "")
+            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x] ? newTextRow[x].join("") : "") * fontSizeBody / 3.2 , startRowFirst , startRow , "")
         }
         startRow += 22
     }

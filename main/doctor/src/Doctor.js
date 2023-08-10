@@ -21,14 +21,18 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
     const ImageCover = useRef()
     const BodyRef = useRef()
 
+    const [Responsive , setResponsive] = useState(window.innerWidth)
+
     useEffect(()=>{
         if(isClick === 1) window.history.replaceState({} , "" , "/doctor")
         
         ChkPath(null , "web")
         window.addEventListener("popstate" , ChkPath)
+        window.addEventListener("resize" , Resize)
 
         return() => {
             window.removeEventListener("popstate" , ChkPath)
+            window.removeEventListener("resize" , Resize)
         }
     } , [])
 
@@ -87,29 +91,51 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
         }
     } 
 
+    const Resize = () => {
+        setResponsive(window.innerWidth)
+    }
+
     return (
         <div className="doctor"
         // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
         >
             <DesktopNev setMain={setMain} socket={socket} setSession={sessionoff} setBody={setBody} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>
             <section ref={ImageCover} className="image-cover">
-                <div className="text-cover">
-                    <div className="icon">
-                        <span>ยินดีต้อนรับ</span>
-                        <img src="/Logo-white.png"></img>
+                { Responsive > 800 ?
+                    <>
+                    <div className="text-cover">
+                        <div className="icon">
+                            <span>ยินดีต้อนรับ</span>
+                            <img src="/Logo-white.png"></img>
+                        </div>
+                        <div className="status">
+                            {TextPage.map((val , index)=>(
+                                <div className="box-status" key={index}>
+                                    <span>{val}</span>
+                                    {TextPage.length - 1 > index ? <img src={"/arrow.png"}></img> : <></>}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="status">
-                        {TextPage.map((val , index)=>(
-                            <div className="box-status" key={index}>
-                                <span>{val}</span>
-                                {TextPage.length - 1 > index ? <img src={"/arrow.png"}></img> : <></>}
-                            </div>
-                        ))}
+                    <div className="frame">
+                        <img src="/cover-2-3.png"></img>
                     </div>
-                </div>
-                <div className="frame">
-                    <img src="/cover-2-3.png"></img>
-                </div>
+                    </> :
+                    <>
+                    <div className="text-icon-cover">
+                        <div className="text">
+                            <span>ยินดีต้อนรับ</span>
+                            <span style={{fontWeight : 900}}>หมอพืช</span>
+                        </div>
+                        <div className="icon-profile">
+                            <img src="/PROFILE.png"></img>
+                        </div>
+                    </div>
+                    <div className="frame-image-cover">
+                        <img src="/cover-2-3.png"></img>
+                    </div>
+                    </>
+                }
             </section>
             <section ref={BodyRef} className="container-body-doctor">
                 {/* <div onLoad={this.checkSize}>

@@ -420,6 +420,7 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
 
     const FetchList = async (Limit) => {
         try {
+            console.log(Limit)
             let JsonData = {}
             let stringUrl = new Array
             DataFillter.forEach((data , key)=>{
@@ -592,6 +593,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
     }
 
     const showPopup = async (id_form , Ref) => {
+        console.log(count)
         const context = await clientMo.post('/api/doctor/check')
         if(context) 
             setPop(<ManagePopup RefData={Ref} setPopup={setPop} RefPop={RefPop} 

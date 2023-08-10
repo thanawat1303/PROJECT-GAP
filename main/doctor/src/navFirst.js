@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 
 import "./assets/style/Navfirst.scss"
 import PageFormPlant from "./page/form/PageFormPlant"
@@ -9,13 +9,32 @@ import { clientMo } from "../../../src/assets/js/moduleClient"
 import { ButtonMenu } from "./page/modules"
 import PageData from "./page/data/PageData"
 const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) => {
+    const [ Responsive , setResponsive ] = useState(window.innerWidth)
+    
     useEffect(()=>{
         if(type === 1) window.history.pushState({} , "" , "/doctor")
 
         setTextStatus([])
-        eleImageCover.current.style.height = "50%"
-        eleBody.current.style.height = "50%"
+        Resize()
+
+        window.addEventListener("resize" , Resize)
+
+        return(()=>{
+            window.removeEventListener("resize" , Resize)
+        })
     } , [])
+
+    const Resize = () => {
+        const Size = window.innerWidth
+        if(Size > 800) {
+            eleImageCover.current.style.height = "50%"
+            eleBody.current.style.height = "50%"
+        } else {
+            eleImageCover.current.style.height = "40%"
+            eleBody.current.style.height = "60%"
+        }
+        setResponsive(Size)
+    }
 
     const farmer = async () => {
         const context = await clientMo.post('/api/doctor/check')
@@ -49,9 +68,18 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
             <div className="head">
                 <span>Menu</span>
             </div>
-            <div className="content-menu">
-                <ButtonMenu type={"farmer"} textRow1={"ทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
-                <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
+            <div className={`content-menu${Responsive > 800 ? "" : " column"}`}>
+                { Responsive > 800 ?
+                    <>
+                    <ButtonMenu type={"farmer"} textRow1={"ทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
+                    <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
+                    </>
+                    :
+                    <div className="row">
+                        <ButtonMenu type={"farmer"} textRow1={"ทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
+                        <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
+                    </div>
+                }
                 <ButtonMenu type={"data"} textRow1={"เพิ่มเติม"} textRow2={"ข้อมูล"} action={data}/>
             </div>
         </section>

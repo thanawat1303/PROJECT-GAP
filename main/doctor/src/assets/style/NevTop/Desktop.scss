@@ -9,6 +9,9 @@ $ColorGreen : #22C7A9;
     padding: 6px 10px;
     z-index: 2;
     .pg-action {
+        display: flex;
+        justify-content: start;
+        align-items: center;
         .Logo {
             display: flex;
             align-items: center;
@@ -23,6 +26,15 @@ $ColorGreen : #22C7A9;
                 padding-top: 5px;
                 margin-left: 5px;
                 font-weight: 900;
+            }
+        }
+
+        .icon-nev-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            svg {
+                width: 70px;
             }
         }
     }
@@ -45,6 +57,47 @@ $ColorGreen : #22C7A9;
             margin-right: 0px;
             background-color: $ColorGreen;
             color: black;
+        }
+    }
+
+    .menu-mobile {
+        top: 0;
+        left: 0;
+        transition: 0.5s;
+        background-color: white;
+
+        .frame-pg{
+            padding: 6px 6px;
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-family: Sans-font;
+            font-size: 16px;
+            padding: 0px 6px;
+            height: 100%;
+
+            .menu-name-list {
+                
+            }
+        }
+    }
+}
+
+@media only screen and (max-width : 400px) {
+    .tab-bar-desktop {
+        padding: 6px 6px;
+        .pg-action {
+            .icon-nev-menu {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                svg {
+                    width: 48px;
+                }
+            }
         }
     }
 }

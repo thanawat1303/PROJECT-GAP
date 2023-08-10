@@ -353,12 +353,12 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
     )
 }
 
-const PopupDom = ({Ref , Body , zIndex}) => {
+const PopupDom = ({Ref , Body , zIndex , positionEdit = false}) => {
     return (
         <section ref={Ref} style={{
             display : "flex",
-            justifyContent : "center" ,
-            alignItems : "center" ,
+            justifyContent : positionEdit ? "normal" : "center" ,
+            alignItems : positionEdit ? "normal" : "center" ,
             backgroundColor : "transparent" ,
             backdropFilter : "blur(8px)",
             position : "fixed" ,

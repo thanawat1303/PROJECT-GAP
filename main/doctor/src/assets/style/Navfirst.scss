@@ -85,5 +85,127 @@
         .bt-menu-frame.exportData:hover {
             box-shadow: 0px 4px 4px #6d2a73;
         }
+
+        @media only screen and (max-width : 800px) {
+            .bt-menu-frame {
+                width: 165px;
+                padding: 6px 0px;
+
+                img {
+                    width: 75px;
+                    height: 75px;
+                }
+
+                .text-one {
+                    font-size: 20px;
+                    height: 28px;
+                }
+
+                .text-two {
+                    font-size: 16px;
+                }
+
+                .action {
+                    button {
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+
+        // @media only screen and (max-width : 350px) {
+        //     .bt-menu-frame {
+        //         width: 120px;
+        //         padding: 6px 0px;
+
+        //         // img {
+        //         //     width: 55px;
+        //         //     height: 55px;
+        //         // }
+
+                
+        //     }
+        // }
+    }
+
+    @media only screen and (max-width : 375px) {
+
+        .head {
+            font-size: 25px;
+        }
+
+        .content-menu {
+            .bt-menu-frame {
+                width: 120px;
+                padding: 5px 0px;
+    
+                img {
+                    width: 48px;
+                    height: 48px;
+                }
+    
+                .text-one {
+                    font-size: 17px;
+                    height: 23px;
+                }
+    
+                .text-two {
+                    font-size: 13px;
+                }
+    
+                .action {
+                    button {
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+    }
+
+    @media only screen and (max-height : 680px) {
+
+        .head {
+            font-size: 25px;
+        }
+
+        .content-menu {
+            .bt-menu-frame {
+                width: 120px;
+                padding: 5px 0px;
+    
+                img {
+                    width: 48px;
+                    height: 48px;
+                }
+    
+                .text-one {
+                    font-size: 17px;
+                    height: 23px;
+                }
+    
+                .text-two {
+                    font-size: 13px;
+                }
+    
+                .action {
+                    button {
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .column {
+        display: flex;
+        flex-direction: column;
     }
 }

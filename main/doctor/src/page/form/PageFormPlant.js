@@ -404,7 +404,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
 
 const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
     const [Data , setData] = useState([])
-    const [Count , setCount] = useState(2)
+    const [Count , setCount] = useState(10)
     const [timeOut , setTimeOut] = useState()
     const [LoadingList , setLoadList ] = useState(true)
     
@@ -413,14 +413,13 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
 
         clearTimeout(timeOut)
         setTimeOut(setTimeout(()=>{
-            FetchList(2)
+            FetchList(10)
         } , 1500))
 
     } , [DataFillter])
 
     const FetchList = async (Limit) => {
         try {
-            console.log(Limit)
             let JsonData = {}
             let stringUrl = new Array
             DataFillter.forEach((data , key)=>{
@@ -593,7 +592,6 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
     }
 
     const showPopup = async (id_form , Ref) => {
-        console.log(count)
         const context = await clientMo.post('/api/doctor/check')
         if(context) 
             setPop(<ManagePopup RefData={Ref} setPopup={setPop} RefPop={RefPop} 
@@ -608,7 +606,7 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
             {Body}
         </div>
         <div className="footer">
-            <LoadOtherDom Fetch={fetch} count={count} setCount={setCount} Limit={2}
+            <LoadOtherDom Fetch={fetch} count={count} setCount={setCount} Limit={10}
                             style={{backgroundColor : "rgb(24 157 133)"}}/>
             <div id="popup-detail-form">
                 <PopupDom Ref={RefPop} Body={PopBody} zIndex={2}/>

@@ -2464,7 +2464,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                             WHERE id_plant = ?
                                         ` , [val.id] ,
                                         (err , result) => {
-                                            resole(result)
+                                            const ResultEx = result.map((val , key)=>{
+                                                val.source = wordcut.cut(val.source)
+                                                return val
+                                            })
+                                            resole(ResultEx)
                                         }
                                     )
                                 })
@@ -2477,7 +2481,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                             WHERE id_plant = ?
                                         ` , [val.id] ,
                                         (err , result) => {
-                                            resole(result)
+                                            const ResultEx = result.map((val , key)=>{
+                                                val.source = wordcut.cut(val.source)
+                                                return val
+                                            })
+                                            resole(ResultEx)
                                         }
                                     )
                                 })

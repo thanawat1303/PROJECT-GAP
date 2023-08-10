@@ -385,7 +385,8 @@ const LoadOtherDom = ({Fetch , count , setCount , Limit , style = {
     const Other = async () => {
         const newCount = count + Limit
         setLoad(false)
-        if((await Fetch(newCount)).length === newCount) setCount(newCount)
+        // if((await Fetch(newCount)).length === newCount) setCount(newCount)
+        setCount((await Fetch(newCount)).length)
         setLoad(true)
     }
 
@@ -409,7 +410,16 @@ const LoadOtherDom = ({Fetch , count , setCount , Limit , style = {
                     fontSize : style.fontSize ? style.fontSize : "18px",
                     padding : "2px 15px"
                 }} onClick={Other}>โหลดเพิ่มเติม</button>
-                : <Loading size={style.sizeLoading ? style.sizeLoading : "31.2px"} border={7} color={style.backgroundColor} animetion={true}/>
+                : 
+                <div style={{
+                    display : "flex",
+                    justifyContent : "center",
+                    alignItems : "center",
+                    width : "100%",
+                    overflow : "hidden"
+                }}>
+                    <Loading size={style.sizeLoading ? style.sizeLoading : "31.2px"} border={7} color={style.backgroundColor} animetion={true}/>
+                </div>
 
             }
         </div>

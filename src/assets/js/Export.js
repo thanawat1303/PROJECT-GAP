@@ -62,20 +62,48 @@ const TableBox = (pdf = new jsPDF() , posiStartX = 0 , posiStartY = 0 , headers 
     let startBodyY = startHeadY + heightHeader
     for(let Row of body) {
         let startBodyX = posiStartX
+        
+        let splite = Row.filter(val=>val.name.indexOf("|") >= 0)
+        let countHeight = 1
+        const maxText = 3
+        if(splite.length != 0) {
+            const list = splite[0].name.split("|")
+            for( let x = 0 ; x < list.length ; x += maxText ){
+                countHeight++
+            }
+            if(countHeight == 2) countHeight = 1
+        }
+
         for(let Body of Row) {
             const widthText = pdf.getStringUnitWidth(Body.name) * FontSize
             const lineHeight = pdf.getTextDimensions(Body.name, ObjectText).h;
             const endX = startBodyX + parseInt(Body.size)
-            const endY = startBodyY + heightBody
+            const endY = startBodyY + heightBody * (countHeight)
     
             pdf.line(startBodyX , startBodyY , endX , startBodyY) //line ขอบบน
             pdf.line(startBodyX , endY , endX , endY) //line ขอบล่าง
             pdf.line(startBodyX , startBodyY , startBodyX , endY) //line แบ่งช่องแนวตั้ง
-            pdf.text(Body.name , startBodyX + ((endX - startBodyX) / 2) - widthText / 2 , startBodyY + ((endY - startBodyY) / 2) + (lineHeight / 3.5))
+
+            if(Body.name.indexOf("|") >= 0 && countHeight > 1) {
+                const newSplit = new Array
+                const list = Body.name.split("|")
+                for( let x = 0 ; x < list.length ; x += maxText ){
+                    const newArray = list.slice(x , x + maxText)
+                    newSplit.push(newArray.join(""))
+                    console.log(newSplit)
+                }
+                
+                const Text = newSplit.join("\n")
+                console.log(Text)
+                pdf.text(Text , startBodyX + 5 , startBodyY + 12)
+            }
+
+            else pdf.text(Body.name.replaceAll("|" , "") , startBodyX + ((endX - startBodyX) / 2) - widthText / 2 , startBodyY + ((endY - startBodyY) / 2) + (lineHeight / 3.5))
+            
             startBodyX += parseInt(Body.size)
         }
-        pdf.line(startBodyX , startBodyY , startBodyX , startBodyY + heightBody)
-        startBodyY += heightBody
+        pdf.line(startBodyX , startBodyY , startBodyX , startBodyY + heightBody * (countHeight))
+        startBodyY += heightBody * (countHeight)
     }
 
     pdf.setFontSize(16)
@@ -117,14 +145,14 @@ const TextBoxSplit = (pdf = new jsPDF() , qtyStartTextOnRow , qtyNormalTextOnRow
             pdf.setFontSize(16)
             pdf.text( newTextRow[x] ? newTextRow[x].join("") : "" , startRowFirst + 6 , startRow - 1);
             pdf.setFontSize(16)
-            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x] ? newTextRow[x].join("") : "") * fontSizeBody / 3.2 , startRowFirst + 6 , startRow , "")
+            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x] ? newTextRow[x].join("") : "ไม่ระบุ") * fontSizeBody / 3.2 , startRowFirst + 6 , startRow , "")
         }
         else {
             const startRowFirst = startColumn //50
             pdf.setFontSize(16)
             pdf.text( newTextRow[x] ? newTextRow[x].join("") : "" , startRowFirst , startRow - 1);
             pdf.setFontSize(16)
-            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x] ? newTextRow[x].join("") : "") * fontSizeBody / 3.2 , startRowFirst , startRow , "")
+            TextBoxDot(pdf , pdf.getStringUnitWidth(newTextRow[x] ? newTextRow[x].join("") : "ไม่ระบุ") * fontSizeBody / 3.2 , startRowFirst , startRow , "")
         }
         startRow += 22
     }

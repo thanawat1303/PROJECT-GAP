@@ -21,9 +21,11 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
     const [getProfile , setProfile] = useState([])
 
     const ImageCover = useRef()
+    const frameImage = useRef()
     const BodyRef = useRef()
 
     const [Responsive , setResponsive] = useState(window.innerWidth)
+    const [SizeProfileImg , setSizeProfileImg] = useState(0)
 
     useEffect(()=>{
         if(isClick === 1) window.history.replaceState({} , "" , "/doctor")
@@ -101,7 +103,13 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
     } 
 
     const Resize = () => {
-        setResponsive(window.innerWidth)
+        const size = window.innerWidth
+        setResponsive(size)
+        if(size <= 800 && frameImage.current) setSizeProfileImg(frameImage.current.clientWidth * 43 / 100)
+    }
+
+    const LoadImg = () => {
+        setSizeProfileImg(frameImage.current.clientWidth * 43 / 100)
     }
 
     return (
@@ -132,16 +140,18 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
                     </div>
                     </> :
                     <>
-                    <div className="text-icon-cover">
+                    <div className="text-icon-cover" ref={frameImage}>
                         <div className="text">
                             <span>ยินดีต้อนรับ</span>
                             <span style={{fontWeight : 900}}>หมอพืช</span>
                         </div>
-                        <div className="icon-profile">
-                            <img src={getProfile.length != 0 ? getProfile.img_doctor ? getProfile.img_doctor : "/PROFILE.png" : "/PROFILE.png"} style={{
-                                borderRadius : "50%",
-                                overflow : "hidden"
-                            }}></img>
+                        <div className="icon-profile" style={{
+                            borderRadius : "50%",
+                            overflow : "hidden",
+                            width : `${SizeProfileImg}px` ,
+                            height : `${SizeProfileImg}px`
+                        }} onLoad={LoadImg}>
+                            <img src={getProfile.length != 0 ? getProfile.img_doctor ? getProfile.img_doctor : "/PROFILE.png" : "/PROFILE.png"}></img>
                         </div>
                     </div>
                     <div className="frame-image-cover">

@@ -109,6 +109,7 @@ a {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                margin-bottom: 5px;
                 .text {
                     display: flex;
                     flex-direction: column;
@@ -120,8 +121,10 @@ a {
                 }
 
                 .icon-profile {
-                    width: 40%;
+                    // width: 80px;
+                    // height: 80px;
                     max-width: 110px;
+                    max-height: 110px;
 
                     img {
                         width: 100%;

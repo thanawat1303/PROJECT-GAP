@@ -195,7 +195,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                                                     </g>
                                                 </svg>
                                             </a>
-                                            <input type="file" hidden ref={Image} accept="image/jpeg, image/png" onChange={getImageFromClient}></input>
+                                            <input type="file" capture="user" hidden ref={Image} accept="image/jpeg, image/png" onChange={getImageFromClient}></input>
                                             </>
                                             : <Loading size={30} border={4} color="#16836f" animetion={true}/>
                                         }

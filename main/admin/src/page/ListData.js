@@ -82,9 +82,7 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
                 status.status === "default" || status.status === "plant" || status.status === "station" ? 
                 <InsertPage PageAddRef={PageAddRef} ReloadAccount={()=>fetchDataList(0 , DataFetch.length)} type={status.status}/> : <></>
             }
-            <div className="List-data" count={ListCount} style={{
-                '--count-list' : `${ListCount}`
-            }}>
+            <div className="List-data">
                 <ManageList Data={DataFetch} setBecause={setBecause} ListCount={ListCount} setListCount={setListCount} 
                                     TabOn={TabOn} HrefPage={HrefPage} status={status} 
                                     auth={auth} session={session} RefBe={RefBe} Fetch={()=>fetchDataList(0 , DataFetch.length)}/>
@@ -109,7 +107,8 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
     useEffect(()=>{
         setList(<></>)
 
-        LoadPageData()
+        manageList()
+        // LoadPageData()
 
         window.removeEventListener("resize" , sizeScreen)
         window.addEventListener("resize" , sizeScreen)
@@ -168,138 +167,244 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
         const ListExport = new Array()
         const max = maxColumn
 
-        setListCount(max)
+        // setListCount(max)
 
-        for(let x=0;x<Data.length;x += max) {
-            const account = Data
-            ListExport.push(account.slice(x , max + x))
-        }
+        // for(let x=0;x<Data.length;x += max) {
+        //     const account = Data
+        //     ListExport.push(account.slice(x , max + x))
+        // }
 
-        const doctorList = 
-            ListExport.map((row , key)=>{
-                while(row.length < max) row.push({data : "null"})
-                return (
-                <Row-List className={`row-${key}`} key={key}>
-                    {
-                        row.map((data , key)=>{
-                            if(!data.data) 
-                                return(
-                                <List-data-body key={key} 
-                                    id={`data-list-content-${
-                                        HrefPage.get().split("?")[0] === "list" ? data.id_table_doctor :
-                                        HrefPage.get().split("?")[0] === "data" ? data.id : ""
-                                    }`} 
-                                    status={status.status}>
-                                    {
-                                        HrefPage.get().split("?")[0] === "list" ?
-                                        <>
-                                            <Detail-Data-main>
-                                                <Detail-Image>
-                                                    <img src="/doctor-svgrepo-com.svg"></img>
-                                                </Detail-Image>
-                                                <Detail-data>
-                                                    <Detail-in-fullname>
-                                                        <span>{data.fullname_doctor ? data.fullname_doctor : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
-                                                    </Detail-in-fullname>
-                                                    <Detail-in>
-                                                        <span className="head-data">รหัสประจำตัว</span>
-                                                        <div className="text-data">{data.id_doctor}</div>
-                                                    </Detail-in>
-                                                    <Detail-in>
-                                                        <span className="head-data">ศูนย์</span>
-                                                        <div className="text-data">{data.station ? data.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
-                                                    </Detail-in>
-                                                </Detail-data>
-                                            </Detail-Data-main>
-                                            <Action-bt>
-                                                { status.status === "default" ? 
-                                                    <>
-                                                    <content-status because={1}>
-                                                        <bt-because>
-                                                            <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
-                                                        </bt-because>
-                                                        <Bt-status onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_account")}>
-                                                            <div className="frame" status={data.status_account ? "1" : "0"}>
-                                                                <span>ON</span>
-                                                                <span className="dot"></span>
-                                                                <span>OFF</span>
-                                                            </div>
-                                                        </Bt-status>
-                                                    </content-status>
-                                                    <bt-delete>
-                                                        <button onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
-                                                    </bt-delete>
-                                                    </> : 
-                                                    status.status === "delete" ?
-                                                    <content-status because={0} delete="">
-                                                        <bt-because>
-                                                            <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_delete")}>เหตุผล</button>
-                                                        </bt-because>
-                                                    </content-status> : <></>
-                                                }
-                                            </Action-bt>
-                                        </> :
-                                        HrefPage.get().split("?")[0] === "data" ?
-                                        <>
-                                            <Detail-Data-main column="">
-                                                <Detail-Data maxsize="" flex={status.status}>
-                                                    <div className="name" w={status.status}>
-                                                        { status.status === "plant" ?
-                                                            <span className={status.status}>ชื่อพืช</span> : <></>
+        const doctorList = Data.map((data , key)=>
+            <List-data-body key={key} 
+                id={`data-list-content-${
+                    HrefPage.get().split("?")[0] === "list" ? data.id_table_doctor :
+                    HrefPage.get().split("?")[0] === "data" ? data.id : ""
+                }`} 
+                status={status.status}>
+                {
+                    HrefPage.get().split("?")[0] === "list" ?
+                    <>
+                        <Detail-Data-main>
+                            <Detail-Image>
+                                <img src="/doctor-svgrepo-com.svg"></img>
+                            </Detail-Image>
+                            <Detail-data>
+                                <Detail-in-fullname>
+                                    <span>{data.fullname_doctor ? data.fullname_doctor : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
+                                </Detail-in-fullname>
+                                <Detail-in>
+                                    <span className="head-data">รหัสประจำตัว</span>
+                                    <div className="text-data">{data.id_doctor}</div>
+                                </Detail-in>
+                                <Detail-in>
+                                    <span className="head-data">ศูนย์</span>
+                                    <div className="text-data">{data.station ? data.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
+                                </Detail-in>
+                            </Detail-data>
+                        </Detail-Data-main>
+                        <Action-bt>
+                            { status.status === "default" ? 
+                                <>
+                                <content-status because={1}>
+                                    <bt-because>
+                                        <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
+                                    </bt-because>
+                                    <Bt-status onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_account")}>
+                                        <div className="frame" status={data.status_account ? "1" : "0"}>
+                                            <span>ON</span>
+                                            <span className="dot"></span>
+                                            <span>OFF</span>
+                                        </div>
+                                    </Bt-status>
+                                </content-status>
+                                <bt-delete>
+                                    <button onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
+                                </bt-delete>
+                                </> : 
+                                status.status === "delete" ?
+                                <content-status because={0} delete="">
+                                    <bt-because>
+                                        <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_delete")}>เหตุผล</button>
+                                    </bt-because>
+                                </content-status> : <></>
+                            }
+                        </Action-bt>
+                    </> :
+                    HrefPage.get().split("?")[0] === "data" ?
+                    <>
+                        <Detail-Data-main column="">
+                            <Detail-Data maxsize="" flex={status.status}>
+                                <div className="name" w={status.status}>
+                                    { status.status === "plant" ?
+                                        <span className={status.status}>ชื่อพืช</span> : <></>
 
-                                                        }
-                                                        <div className={`text-data ${status.status}`}>{data.name}</div>
-                                                    </div>
-                                                    <div className={status.status === "plant" ? "type_plant" : "location"}>
-                                                        {
-                                                            status.status === "plant" ? <span>ประเภท</span> : <></>
-                                                        }
-                                                        {
-                                                            status.status === "plant" ? <div className="text-data">{data.type_plant}</div> :
-                                                            status.status === "station" ? 
-                                                                <MapsJSX lat={data.location.x} lng={data.location.y} w={"300vw"} h={"100vw"}/> : ""
-                                                        }
-                                                    </div>
-                                                </Detail-Data>
-                                                { status.status === "plant" ?
-                                                    <Detail-Data maxsize="">
-                                                        <div className="name">
-                                                            <span className={status.status}>จำนวนวันที่จะเก็บเกี่ยว</span>
-                                                            <div className={`text-data`}>{`${data.qty_harvest} วัน`}</div>
-                                                        </div>
-                                                    </Detail-Data>
-                                                    : <></>
-                                                }
-                                            </Detail-Data-main>
-                                            <Action-bt>
-                                                <content-status because={0}>
-                                                    <Bt-status 
-                                                        onClick={()=>OpenConfirmData(data.id , status.status)}
-                                                        >
-                                                        <div className="frame" status={data.is_use}>
-                                                            <span>ON</span>
-                                                            <span className="dot"></span>
-                                                            <span>OFF</span>
-                                                        </div>
-                                                    </Bt-status>
-                                                </content-status>
-                                            </Action-bt>
-                                        </> : <></>
                                     }
-                                    
-                                </List-data-body>
-                                )
-                            else 
-                                return(
-                                <List-Data-null key={key}>
-                                </List-Data-null>
-                                )
-                        })
-                    }
-                </Row-List>
-                )
-            })
+                                    <div className={`text-data ${status.status}`}>{data.name}</div>
+                                </div>
+                                <div className={status.status === "plant" ? "type_plant" : "location"}>
+                                    {
+                                        status.status === "plant" ? <span>ประเภท</span> : <></>
+                                    }
+                                    {
+                                        status.status === "plant" ? <div className="text-data">{data.type_plant}</div> :
+                                        status.status === "station" ? 
+                                            <MapsJSX lat={data.location.x} lng={data.location.y} w={"300vw"} h={"100vw"}/> : ""
+                                    }
+                                </div>
+                            </Detail-Data>
+                            { status.status === "plant" ?
+                                <Detail-Data maxsize="">
+                                    <div className="name">
+                                        <span className={status.status}>จำนวนวันที่จะเก็บเกี่ยว</span>
+                                        <div className={`text-data`}>{`${data.qty_harvest} วัน`}</div>
+                                    </div>
+                                </Detail-Data>
+                                : <></>
+                            }
+                        </Detail-Data-main>
+                        <Action-bt>
+                            <content-status because={0}>
+                                <Bt-status 
+                                    onClick={()=>OpenConfirmData(data.id , status.status)}
+                                    >
+                                    <div className="frame" status={data.is_use}>
+                                        <span>ON</span>
+                                        <span className="dot"></span>
+                                        <span>OFF</span>
+                                    </div>
+                                </Bt-status>
+                            </content-status>
+                        </Action-bt>
+                    </> : <></>
+                }
+                
+            </List-data-body>
+        )
+        // const doctorList = 
+        //     ListExport.map((row , key)=>{
+        //         while(row.length < max) row.push({data : "null"})
+        //         return (
+        //         <Row-List className={`row-${key}`} key={key}>
+        //             {
+        //                 row.map((data , key)=>{
+        //                     if(!data.data) 
+        //                         return(
+        //                         <List-data-body key={key} 
+        //                             id={`data-list-content-${
+        //                                 HrefPage.get().split("?")[0] === "list" ? data.id_table_doctor :
+        //                                 HrefPage.get().split("?")[0] === "data" ? data.id : ""
+        //                             }`} 
+        //                             status={status.status}>
+        //                             {
+        //                                 HrefPage.get().split("?")[0] === "list" ?
+        //                                 <>
+        //                                     <Detail-Data-main>
+        //                                         <Detail-Image>
+        //                                             <img src="/doctor-svgrepo-com.svg"></img>
+        //                                         </Detail-Image>
+        //                                         <Detail-data>
+        //                                             <Detail-in-fullname>
+        //                                                 <span>{data.fullname_doctor ? data.fullname_doctor : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
+        //                                             </Detail-in-fullname>
+        //                                             <Detail-in>
+        //                                                 <span className="head-data">รหัสประจำตัว</span>
+        //                                                 <div className="text-data">{data.id_doctor}</div>
+        //                                             </Detail-in>
+        //                                             <Detail-in>
+        //                                                 <span className="head-data">ศูนย์</span>
+        //                                                 <div className="text-data">{data.station ? data.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
+        //                                             </Detail-in>
+        //                                         </Detail-data>
+        //                                     </Detail-Data-main>
+        //                                     <Action-bt>
+        //                                         { status.status === "default" ? 
+        //                                             <>
+        //                                             <content-status because={1}>
+        //                                                 <bt-because>
+        //                                                     <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
+        //                                                 </bt-because>
+        //                                                 <Bt-status onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_account")}>
+        //                                                     <div className="frame" status={data.status_account ? "1" : "0"}>
+        //                                                         <span>ON</span>
+        //                                                         <span className="dot"></span>
+        //                                                         <span>OFF</span>
+        //                                                     </div>
+        //                                                 </Bt-status>
+        //                                             </content-status>
+        //                                             <bt-delete>
+        //                                                 <button onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
+        //                                             </bt-delete>
+        //                                             </> : 
+        //                                             status.status === "delete" ?
+        //                                             <content-status because={0} delete="">
+        //                                                 <bt-because>
+        //                                                     <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_delete")}>เหตุผล</button>
+        //                                                 </bt-because>
+        //                                             </content-status> : <></>
+        //                                         }
+        //                                     </Action-bt>
+        //                                 </> :
+        //                                 HrefPage.get().split("?")[0] === "data" ?
+        //                                 <>
+        //                                     <Detail-Data-main column="">
+        //                                         <Detail-Data maxsize="" flex={status.status}>
+        //                                             <div className="name" w={status.status}>
+        //                                                 { status.status === "plant" ?
+        //                                                     <span className={status.status}>ชื่อพืช</span> : <></>
 
+        //                                                 }
+        //                                                 <div className={`text-data ${status.status}`}>{data.name}</div>
+        //                                             </div>
+        //                                             <div className={status.status === "plant" ? "type_plant" : "location"}>
+        //                                                 {
+        //                                                     status.status === "plant" ? <span>ประเภท</span> : <></>
+        //                                                 }
+        //                                                 {
+        //                                                     status.status === "plant" ? <div className="text-data">{data.type_plant}</div> :
+        //                                                     status.status === "station" ? 
+        //                                                         <MapsJSX lat={data.location.x} lng={data.location.y} w={"300vw"} h={"100vw"}/> : ""
+        //                                                 }
+        //                                             </div>
+        //                                         </Detail-Data>
+        //                                         { status.status === "plant" ?
+        //                                             <Detail-Data maxsize="">
+        //                                                 <div className="name">
+        //                                                     <span className={status.status}>จำนวนวันที่จะเก็บเกี่ยว</span>
+        //                                                     <div className={`text-data`}>{`${data.qty_harvest} วัน`}</div>
+        //                                                 </div>
+        //                                             </Detail-Data>
+        //                                             : <></>
+        //                                         }
+        //                                     </Detail-Data-main>
+        //                                     <Action-bt>
+        //                                         <content-status because={0}>
+        //                                             <Bt-status 
+        //                                                 onClick={()=>OpenConfirmData(data.id , status.status)}
+        //                                                 >
+        //                                                 <div className="frame" status={data.is_use}>
+        //                                                     <span>ON</span>
+        //                                                     <span className="dot"></span>
+        //                                                     <span>OFF</span>
+        //                                                 </div>
+        //                                             </Bt-status>
+        //                                         </content-status>
+        //                                     </Action-bt>
+        //                                 </> : <></>
+        //                             }
+                                    
+        //                         </List-data-body>
+        //                         )
+        //                     else 
+        //                         return(
+        //                         <List-Data-null key={key}>
+        //                         </List-Data-null>
+        //                         )
+        //                 })
+        //             }
+        //         </Row-List>
+        //         )
+        //     })
+        TabOn.addTimeOut(TabOn.end())
         setList(doctorList)
     }
 

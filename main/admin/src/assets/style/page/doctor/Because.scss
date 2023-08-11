@@ -5,8 +5,9 @@
     flex-direction: column;
     background-color: white;
     box-shadow: 0px 4px 4px rgba(191, 191, 191, 0.495);
-    border-radius: 2vw;
-    width: 40vw;
+    border-radius: 8px;
+    width: 95%;
+    max-width: 450px;
     // overflow: hidden;
 
     .head {
@@ -15,20 +16,21 @@
         align-items: center;
         width: 100%;
         background-color: #1CFFF1;
-        padding: 0.5vw 0px;
-        border-radius: 1.5vw;
+        padding: 5px 0px;
+        border-radius: 8px;
         box-shadow: 0px 4px 4px rgba(182, 182, 182, 0.59);
         .head-text {
             font-family: Sans-font;
-            font-size: 2vw;
+            font-size: 22px;
             width: 100%;
             text-align: center;
+            font-weight: 900;
         }
 
         img {
             position: absolute;
             right: 1em;
-            width: 2.5vw;
+            width: 40px;
             cursor: pointer;
         }
     }
@@ -37,28 +39,29 @@
         display: flex;
         justify-content: center;
         align-items: start;
-        height: 20vw;
+        height: 100%;
+        max-height: 600px;
         width: 100%;
         overflow: hidden;
 
         table {
             width: 90%;
             // height: 10vw;
-            margin-top: 0.4vw;
+            margin-top: 10px;
             font-family: Sans-font;
-            border-radius: 1.5vw;
+            border-radius: 8px;
             overflow: hidden;
 
             thead {
                 display: table;
                 table-layout: fixed;
                 width: 100%;
-                font-size: 1.3vw;
+                font-size: 20px;
                 background-color: #1CFFF1;
 
                 tr {
                     td {
-                        outline: 0.2vw solid white;
+                        outline: 3px solid white;
                     }
                 }
             }
@@ -71,22 +74,22 @@
                 flex-direction: column;
                 overflow-y: scroll;
                 background-color: #bdebe7;
-                max-height: 16vw;
+                max-height: 300px;
                 
                 tr {
                     display: table;
                     table-layout: fixed;
                     width: 100%;
                     td {
-                        padding: 0.2vw 0px;
-                        font-size: 1.1vw;
-                        outline: 0.2vw solid white;
+                        padding: 0px 0px;
+                        font-size: 16px;
+                        outline: 3px solid white;
                         div {
                             display: flex;
                             flex-direction: column;
                             align-items: center;
-                            padding-left :0.5vw;
-                            padding-right: 0.2vw;
+                            padding-left : 5px;
+                            padding-right: 3px;
                             
                             span{
                                 width: 100%;
@@ -101,9 +104,48 @@
                                     text-align: end;
                                     font-family: Sans-font;
                                     padding: 0;
-                                    font-size: 0.8vw;
-                                    padding-right: 0.2vw;
+                                    font-size: 12px;
+                                    padding-right: 5px;
                                     border-radius: 0px 0px 0px 50px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media only screen and (max-width : 450px) {
+        .head {
+            .head-text {
+                font-size: 17px;
+            }
+
+            img {
+                right: 0.2em;
+                width: 35px;
+            }
+        }
+
+        .content {
+            table {
+                margin-top: 5px;
+
+                thead {
+                    font-size: 12px;
+                }
+
+                tbody {
+                    tr {
+                        td {
+                            font-size: 12px;
+
+                            div {
+                                span.date {
+                                    input {
+                                        font-size: 10px;
+                                    }
                                 }
                             }
                         }

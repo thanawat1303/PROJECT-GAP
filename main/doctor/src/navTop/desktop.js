@@ -30,7 +30,7 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
         setTimeout(()=>{
             clientMo.get('/api/logout').then(()=>{
                 setMain(<Login socket={socket} setMain={setMain} isClick={1}/>)
-                clientMo.addAction('#loading' , 'hide' , 1500)
+                clientMo.unLoadingPage()
             })
         } , 2000)
     }
@@ -163,17 +163,6 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
             transform : `translateX(${Menu ? 0 : -100}%)`
         }}>
             <div className="content">
-                {/* <div className="frame-pg">
-                    <span className="pg-action" onClick={Close}>
-                        <div className="icon-nev-menu">
-                            <svg viewBox="0 0 45 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="45" height="4.73529" rx="2.36765" fill="#8BFFEA"/>
-                                <rect y="9.47058" width="45" height="4.05882" rx="2.02941" fill="#8BFFEA"/>
-                                <rect y="18.2646" width="29.7" height="4.73529" rx="2.36765" fill="#8BFFEA"/>
-                            </svg>
-                        </div>
-                    </span>
-                </div> */}
                 <div className="frame-pg">
                     <div className="img">
                         <img src={Profile.img_doctor ? Profile.img_doctor : "/PROFILE.png"}></img>

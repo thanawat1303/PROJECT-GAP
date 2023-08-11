@@ -26,6 +26,10 @@ const Admin = ({setBodyFileMain , socket}) => {
     const TabOn = new TabLoad(Tabbar)
     const Href = new HrefData("HOME") 
 
+    const [Responsive , setResponsive] = useState(window.innerWidth)
+
+    const [getLoad , setLoad] = useState(true)
+
     useEffect(()=>{
 
         ChkPath("")
@@ -33,8 +37,10 @@ const Admin = ({setBodyFileMain , socket}) => {
                         auth={Auth} modify={modifyMainPage} TabOn={TabOn} HrefData={Href}/>)
         
         window.addEventListener("popstate" , ChkPath)
+        window.addEventListener("resize" , Resize)
         return() => {
             window.removeEventListener("popstate" , ChkPath)
+            window.removeEventListener("resize" , Resize)
         }
     } , [])
 
@@ -102,8 +108,17 @@ const Admin = ({setBodyFileMain , socket}) => {
         BodyRef.current.style.height = `${heigthBody}%`
     }
 
+    const Resize = () => {
+        setResponsive(window.innerWidth)
+    }
+
     return (
-        <div onLoad={()=>clientMo.unLoadingPage()} className="admin" 
+        <div onLoad={()=>{
+            if(getLoad) {
+                clientMo.unLoadingPage()
+                setLoad(false)
+            }
+        }} className="admin" 
         // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
         >
             {TabMenuTop}
@@ -111,23 +126,38 @@ const Admin = ({setBodyFileMain , socket}) => {
                 <div ref={Tabbar} className="tab-load"></div>
             </div>
             <section ref={ImageCover} className="image-cover">
-                <div className="text-cover">
-                    <div className="icon">
-                        <span>ยินดีต้อนรับ</span>
-                        <img src="/Logo-white.png"></img>
+                { Responsive > 800 ?
+                    <>
+                    <div className="text-cover">
+                        <div className="icon">
+                            <span>ยินดีต้อนรับ</span>
+                            <img src="/Logo-white.png"></img>
+                        </div>
+                        <div className="status">
+                            {TextPage.map((val , index)=>(
+                                <div className="box-status" key={index}>
+                                    <span>{val}</span>
+                                    {TextPage.length - 1 > index ? <img src={"/arrow.png"}></img> : <></>}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="status">
-                        {TextPage.map((val , index)=>(
-                            <div className="box-status" key={index}>
-                                <span>{val}</span>
-                                {TextPage.length - 1 > index ? <img src={"/arrow.png"}></img> : <></>}
-                            </div>
-                        ))}
+                    <div className="frame">
+                        <img src="/ดอย.jpg"></img>
                     </div>
-                </div>
-                <div className="frame">
-                    <img src="/ดอย.jpg"></img>
-                </div>
+                    </> :
+                    <>
+                    <div className="text-icon-cover">
+                        <div className="text">
+                            <span>ยินดีต้อนรับ</span>
+                            <span style={{fontWeight : 900}}>ผู้ดูแลระบบ</span>
+                        </div>
+                    </div>
+                    <div className="frame-image-cover">
+                        <img src="/ดอย.jpg"></img>
+                    </div>
+                    </>
+                }
             </section>
             <section ref={BodyRef} className="container-body-admin">
                 <bot-main>

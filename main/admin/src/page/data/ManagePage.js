@@ -127,14 +127,14 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
                     <div className="data-popup" maxsize="" flex={type}>
                         <div className="name" w={type}>
                             {type === "plant" ? <span className={type}>ชื่อพืช</span> : <></>}
-                            <input readOnly value={Data.name}></input>
+                            <div>{Data.name}</div>
                         </div>
                         <div className={type === "plant" ? "type_plant" : "location"}>
                             {
                                 type === "plant" ? <span>ชนิดพืช</span> : <></>
                             }
                             {
-                                type === "plant" ? <input readOnly value={Data.dataOther}></input> :
+                                type === "plant" ? <div>{Data.dataOther}</div> :
                                 Data.dataOther ? 
                                     <MapsJSX lat={Data.dataOther.x} lng={Data.dataOther.y} w={"300vw"} h={"80vw"}/> : 
                                     ""
@@ -144,9 +144,9 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
                 </div>
             </div>
             <div className="form-manage">
-                <label>
+                <label className="column">
                     <span>รหัสผ่านผู้ดูแล</span>
-                    <input ref={PasswordRef} type="password" className="input-text"></input>
+                    <input placeholder="กรอกรหัสผ่าน" ref={PasswordRef} type="password" className="input-text input-pw"></input>
                 </label>
                 <div className="bt-manage">
                     <button onClick={close} className="close">ยกเลิก</button>

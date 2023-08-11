@@ -42,14 +42,15 @@ a {
     }
     .image-cover {
         display: flex;
+        position: relative;
         justify-content: center;
         align-items: center;
         overflow: hidden;
-        position: relative;
         width: 100%;
         height: 50%;
         transition: 0.5s height;
-        margin-top: 4.8vw;
+        z-index: 1;
+        margin-top: 70.47px;
 
         .text-cover {
             display: flex;
@@ -57,17 +58,18 @@ a {
             align-items: center;
             flex-direction: column;
             position: absolute;
-            z-index: 10;
+            overflow: hidden;
+            width: 800px;
             .icon {
                 display: flex;
                 justify-content: center;
                 align-items: start;
                 span {
-                    font-size: 5.5vw;
+                    font-size: 80px;
                     font-family: Sans-font;
                     font-weight: 900;
                     color: white;
-                    margin-top: 2%;
+                    margin-top: 20px;
                     letter-spacing: 10px;
                 }
     
@@ -89,14 +91,14 @@ a {
                     span {
                         color: black;
                         font-family: Sans-font;
-                        font-size: 1.2vw;
+                        font-size: 18px;
                         font-weight: 900;
                         padding: 0px 15px;
                         border-radius: 20px;
                         background-color: white;
                     }
                     img {
-                        width: 1.1vw;
+                        width: 15px;
                         margin: 0px 5px;
                     }
                 }
@@ -107,13 +109,64 @@ a {
             justify-content: center;
             align-items: center;
             // transform: translateY(0px);
-            width: 1600px;
-            height: 849px;
+            width: 100%;
+            height: 1080px;
             img {
-                transform: translateY(4.55vw);
-                width: 1600px;
-                height: 849px;
+                width: 100%;
+                height: 100%;
             }
+        }
+    }
+
+    @media only screen and (max-width : 800px) {
+        .image-cover {
+            margin-top: 48px;
+            flex-direction: column;
+
+            .text-icon-cover {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 5px;
+                .text {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: Sans-font;
+                    font-size: 22px;
+                    margin-right: 10px;
+                }
+
+                .icon-profile {
+                    // width: 80px;
+                    // height: 80px;
+                    max-width: 110px;
+                    max-height: 110px;
+
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+
+            .frame-image-cover {
+                width: 90%;
+                border-radius: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+                img {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    @media only screen and (max-width : 400px) {
+        .image-cover {
+            margin-top: 38px;
         }
     }
 
@@ -122,8 +175,8 @@ a {
         justify-content: center;
         align-items: center;
         width: 100%;
+        height: 40vh;
         overflow: hidden;
-        z-index: 99;
         bot-main {
             display: flex;
             justify-content: center;

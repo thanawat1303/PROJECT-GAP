@@ -2,28 +2,39 @@ $ColorGreen : #22C7A9;
 .tab-bar-desktop {
     display: flex;
     position: fixed;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
     background-color: white;
-    padding: 0.39% 0.65%;
-    width: 100%;
-    z-index: 90;
+    padding: 6px 10px;
+    z-index: 2;
     .pg-action {
-        width: 10vw;
+        display: flex;
+        justify-content: start;
+        align-items: center;
         .Logo {
             display: flex;
             align-items: center;
             justify-content: start;
             img {
-                width: 4.144vw;
+                width: 60px;
             }
             span {
                 color: $ColorGreen;
                 font-family: Sans-font;
-                font-size: 1.85vw;
-                padding-top: 2%;
-                margin-left: 2%;
+                font-size: 30px;
+                padding-top: 5px;
+                margin-left: 5px;
                 font-weight: 900;
+            }
+        }
+
+        .icon-nev-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            svg {
+                width: 70px;
             }
         }
     }
@@ -32,21 +43,145 @@ $ColorGreen : #22C7A9;
         display: flex;
         justify-content: end;
         align-items: center;
-        width: 85%;
         a {
-            margin: 0px 3.1%;
+            margin: 0px 20px;
+            padding: 2px 20px;
             font-family: Sans-font;
             border-radius: 50px;
             font-weight: 900;
-            font-size: 1.4vw;
+            font-size: 20px;
             color: $ColorGreen;
         }
 
         a.logout {
             margin-right: 0px;
             background-color: $ColorGreen;
-            padding: 0.2% 2%;
             color: black;
+        }
+    }
+
+    .menu-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        top: 0;
+        left: 0;
+        transition: 0.5s;
+        background-color: white;
+        height: 100%;
+
+        .content {
+            width: 100%;
+            .frame-pg{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 6px 6px;
+                padding-top: 12px;
+                font-family: Sans-font;
+                .img {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+    
+            .menu-list {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                flex-direction: column;
+                font-family: Sans-font;
+                font-size: 16px;
+                padding: 0px 6px;
+                width: 100%;
+
+                margin-top: 20px;
+    
+                .menu-name-list {
+                    margin: 4px 0px;
+                    display: flex;
+                    justify-content: start;
+                    align-items: center;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width : 800px) {
+    .tab-bar-desktop {
+        padding: 6px 6px;
+        .pg-action {
+            .icon-nev-menu {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                svg {
+                    width: 48px;
+                }
+            }
+        }
+
+        .menu-mobile {
+            .content {
+                .frame-pg{
+                    // padding: 6px 6px;
+                    padding-right: 24px;
+                    padding-left: 20px;
+                    .img {
+                        width: 50px;
+                        height: 50px;
+                        overflow: hidden;
+                        border-radius: 8px;
+                    }
+
+                    .fullname {
+                        margin-left: 6px;
+
+                        .head-name {
+                            font-size: 16px;
+                        }
+
+                        .text-name {
+                            font-size: 14px;
+                        }
+                    }
+                }
+        
+                .menu-list {
+                    display: flex;
+                    justify-content: start;
+                    align-items: center;
+                    flex-direction: column;
+                    font-family: Sans-font;
+                    font-size: 16px;
+                    padding: 0px 6px;
+        
+                    .menu-name-list {
+                        width: 80%;
+                        margin: 8px 0px;
+
+                        svg {
+                            width: 28px;
+                        }
+
+                        span {
+                            margin-left: 8px;
+                        }
+                    }
+                }
+            }
+
+            .content.bottom {
+                // margin-bottom: 10px;
+            }
         }
     }
 }

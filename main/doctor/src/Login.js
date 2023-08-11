@@ -8,6 +8,7 @@ import { PopupDom, useLiff } from "../../../src/assets/js/module";
 const Login = ({setMain , socket , isClick = 0}) => {
     // const [Body , setBody] = useState(<></>)
     const [InputUser , setInput] = useState("")
+    const [getUidLine , setUidLine] = useState("")
     const [formPersonal , setFormPro] = useState(<></>)
 
     const Personal = useRef()
@@ -40,6 +41,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
                 if(liff.isLoggedIn()) {
                     const profile = await liff.getProfile()
                     if(profile.userId) {
+                        setUidLine(profile.userId)
                         const Uid = await clientMo.post("/api/doctor/checkline" , {id:profile.userId})
                         setInput(Uid)
                     }
@@ -60,7 +62,8 @@ const Login = ({setMain , socket , isClick = 0}) => {
             clientMo.LoadingPage()
             const formData = {
                 username : e.target[0].value,
-                password : e.target[1].value
+                password : e.target[1].value,
+                uid_line : getUidLine
             }
 
             setTimeout(()=>{

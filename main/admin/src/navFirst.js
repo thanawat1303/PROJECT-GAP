@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 
 import "./assets/style/Navfirst.scss"
 import { ButtonMenu } from "../../../src/assets/js/module"
@@ -6,15 +6,36 @@ import { ButtonMenu } from "../../../src/assets/js/module"
 import PageTemplate from "./page/PageTemplate"
 
 const NavFirst = ({setBodyFileAdmin , auth , session , socket , modify , type = 0 , TabOn , selectPage , HrefData}) => {
+    const [ Responsive , setResponsive ] = useState(window.innerWidth)
+    
     useEffect(()=>{
         if(type === 1 && HrefData.get() !== "HOME") window.history.pushState({} , "" , "/admin")
 
         TabOn.addTimeOut(TabOn.end())
+        // Resize()
 
         HrefData.set("HOME")
 
         modify(50 , 50 , [])
+
+        // window.addEventListener("resize" , Resize)
+
+        // return(()=>{
+        //     window.removeEventListener("resize" , Resize)
+        // })
     } , [selectPage])
+
+    const Resize = () => {
+        const Size = window.innerWidth
+        if(Size > 800) {
+            modify(50 , 50 , [])
+        } else if(Size > 570){
+            modify(50 , 50 , [])
+        } else {
+            modify(50 , 50 , [])
+        }
+        setResponsive(Size)
+    }
 
     const doctor = async () => {
         if(await auth(true)) {

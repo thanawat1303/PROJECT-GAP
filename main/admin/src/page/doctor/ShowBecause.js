@@ -31,8 +31,7 @@ const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
                 { type === "status_account" ?
                     <>
                     <td style={{
-                        textAlign : 'center' , 
-                        fontSize : "2vw",
+                        textAlign : 'center' ,
                         fontWeight : "900",
                         color : value.type_status ? "green" : "red",
                         width : "20%",

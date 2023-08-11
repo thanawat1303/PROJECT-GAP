@@ -162,18 +162,16 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                                     <img src={Profile.img}></img>
                                 </div>
                                 <div className="detail-text">
-                                    <div className="text-preview fullname">
-                                        <input value={Profile.fullname ? Profile.fullname : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"} readOnly></input>
+                                    <div className="text-preview">
+                                        <span className="fullname">{Profile.fullname ? Profile.fullname : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
                                     </div>
                                     <div className="text-preview">
-                                        <span className="head-data id">รหัสประจำตัว</span>
-                                        <span className="dot">:</span>
-                                        <input value={Profile.id} readOnly></input>
+                                        <span className="head-data">รหัสประจำตัว</span>
+                                        <div>{Profile.id}</div>
                                     </div>
                                     <div className="text-preview">
                                         <span className="head-data">ศูนย์</span> 
-                                        <span className="dot">:</span>
-                                        <input value={Profile.station ? Profile.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"} readOnly></input>
+                                        <div>{Profile.station ? Profile.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
                                     </div>
                                 </div>
                             </> 
@@ -185,23 +183,17 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                 <label className="column">
                     <span>เหตุผล</span>
                     { Profile.isdelete ? 
-                        <textarea readOnly ref={BecauseRef} className="input-text" style={{
-                            width : `${22.786/100 * ScreenW >= 175 ? 22.786/100 * ScreenW : 175}px`,
-                            height : `${8.463/100 * ScreenW >= 60 ? 8.463/100 * ScreenW : 60}px`
-                        }}></textarea>
+                        <textarea readOnly ref={BecauseRef} className="input-text"></textarea>
                         :
-                        <textarea ref={BecauseRef} className="input-text" style={{
-                            width : `${22.786/100 * ScreenW >= 175 ? 22.786/100 * ScreenW : 175}px`,
-                            height : `${8.463/100 * ScreenW >= 60 ? 8.463/100 * ScreenW : 60}px`
-                        }}></textarea>
+                        <textarea ref={BecauseRef} className="input-text"></textarea>
                     }
                 </label>
-                <label>
+                <label className="column">
                     <span>รหัสผ่านผู้ดูแล</span>
                     { Profile.isdelete ? 
-                        <input readOnly ref={PasswordRef} type="password" className="input-text"></input>
+                        <input placeholder="กรอกรหัสผ่าน" readOnly ref={PasswordRef} type="password" className="input-text input-pw"></input>
                         : 
-                        <input ref={PasswordRef} type="password" className="input-text"></input>
+                        <input placeholder="กรอกรหัสผ่าน" ref={PasswordRef} type="password" className="input-text input-pw"></input>
                     }
                 </label>
                 <div className="bt-manage">

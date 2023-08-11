@@ -8,6 +8,8 @@ import { PopupDom, useLiff } from "../../../src/assets/js/module";
 const Login = ({setMain , socket , isClick = 0}) => {
     // const [Body , setBody] = useState(<></>)
     const [InputUser , setInput] = useState("")
+    const [getLoadUid , setLoadUid] = useState(false)
+
     const [getUidLine , setUidLine] = useState("")
     const [formPersonal , setFormPro] = useState(<></>)
 
@@ -44,11 +46,14 @@ const Login = ({setMain , socket , isClick = 0}) => {
                         setUidLine(profile.userId)
                         const Uid = await clientMo.post("/api/doctor/checkline" , {id:profile.userId})
                         setInput(Uid)
+                        setLoadUid(true)
                     }
                 } 
                 // else {
                 //     liff.login()
                 // }
+            } else {
+                setLoadUid(true)
             }
         }).catch(err=>{console.log(err)})
     }
@@ -134,7 +139,11 @@ const Login = ({setMain , socket , isClick = 0}) => {
                                 <path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"/>
                             </svg>
                         </span>
-                        <input defaultValue={InputUser} autoComplete="off" type="text" name="username" placeholder="รหัสประจำตัวหมอพืช"/>
+                        { getLoadUid ?
+                            <input defaultValue={InputUser} autoComplete="off" type="text" name="username" placeholder="รหัสประจำตัวหมอพืช"/>
+                            :
+                            <input autoComplete="off" type="text" name="username" placeholder="รหัสประจำตัวหมอพืช"/>
+                        }
                     </label>
                     <label>
                         <span>

@@ -265,7 +265,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     if(req.body.uid_line) {
                         con.query(
                             `
-                            UPDATE acc_farmer 
+                            UPDATE acc_doctor 
                             SET uid_line_doctor = ?
                             WHERE id_table_doctor = ?
                             ` , [ result.data.id_table_doctor , req.body.uid_line ] ,

@@ -254,18 +254,35 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             if(result['result'] === "pass") {
                 if (result['data']['status_account'] == 0
                         || result['data']['status_delete'] == 1) {
+                    con.end()
                     res.send('account')
                 }
                 else if(result['data']['fullname_doctor'] 
                         && result['data']['station_doctor']) {
                     req.session.user_doctor = username
                     req.session.pass_doctor = password
+
+                    if(req.body.uid_line) {
+                        con.query(
+                            `
+                            UPDATE acc_farmer 
+                            SET uid_line_doctor = ?
+                            WHERE id_table_doctor = ?
+                            ` , [ result.data.id_table_doctor , req.body.uid_line ] ,
+                            (err , uid) => {
+                                con.end()
+                                if(!err) Line.pushMessage(req.body.uid_line , {type : "text" , text : "เชื่อมต่อบัญชีเจ้าหน้าที่กับบัญชีไลน์เรียบร้อยค่ะ"})
+                            }
+                        )
+                    } else {
+                        con.end()
+                    }
                     res.send('pass')
                 } else {
+                    con.end()
                     res.send(`wait:${username}`)
                 }
             }
-            con.end()
         }).catch((err)=>{
             if(err == "not pass") {
                 con.end()

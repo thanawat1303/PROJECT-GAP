@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/profile/Profile.scss"
-import { Loading } from "../../../../../src/assets/js/module";
+import { Loading, ResizeImg } from "../../../../../src/assets/js/module";
 
-const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
+const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileReload}) => {
     const [getProfileOld , setProfileOld] = useState([])
     const [getProfile , setProfile] = useState([])
 
@@ -34,8 +34,6 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
             RefPop.current.style.opacity = "1"
             RefPop.current.style.visibility = "visible"
             const dataProfile = JSON.parse(fetchProfile)
-            console.log(dataProfile)
-            dataProfile.img_doctor = dataProfile.img_doctor.data.length != 0 ? String.fromCharCode(...dataProfile.img_doctor.data) : ""
             setLoadImage(true)
             setProfile(dataProfile)
             setProfileOld(dataProfile)
@@ -50,34 +48,52 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
         } , 500)
     }
 
-    const getImageFromClient = (e) => {
+    const getImageFromClient = async (e) => {
         const file = e.target.files[0]
-        const reader = new FileReader()
 
         setLoadImage(false)
-        reader.onload = async (e) => {
-            const image = e.target.result
-            if(String.fromCharCode(getProfileOld.img_doctor.data) !== image) {
-                const resultEdit = await clientMo.postForm("/api/doctor/profile/image/edit" , {
-                    img : image
+        const image = await ResizeImg(file , 600)
+        if(getProfileOld.img_doctor !== image) {
+            const resultEdit = await clientMo.postForm("/api/doctor/profile/image/edit" , {
+                img : image
+            })
+            if(resultEdit) {
+                setProfileOld((prevent)=>{
+                    prevent.img_doctor = image
+                    return prevent
                 })
-                if(resultEdit) {
-                    setProfileOld((prevent)=>{
-                        prevent.img_doctor = image
-                        return prevent
-                    })
-                    setProfile((prevent)=>{
-                        prevent.img_doctor = image
-                        return prevent
-                    })
-                } else session()
-            }
-            setLoadImage(true)
+                setProfile((prevent)=>{
+                    prevent.img_doctor = image
+                    return prevent
+                })
+                FetchProfileReload()
+            } else session()
         }
+        setLoadImage(true)
 
-        if(file) {
-            reader.readAsDataURL(file)
-        }
+        // reader.onload = async (e) => {
+        //     const image = await ResizeImg(file , 600)
+        //     if(getProfileOld.img_doctor !== image) {
+        //         const resultEdit = await clientMo.postForm("/api/doctor/profile/image/edit" , {
+        //             img : image
+        //         })
+        //         if(resultEdit) {
+        //             setProfileOld((prevent)=>{
+        //                 prevent.img_doctor = image
+        //                 return prevent
+        //             })
+        //             setProfile((prevent)=>{
+        //                 prevent.img_doctor = image
+        //                 return prevent
+        //             })
+        //         } else session()
+        //     }
+        //     setLoadImage(true)
+        // }
+
+        // if(file) {
+        //     reader.readAsDataURL(file)
+        // }
     }
 
     const CheckEdit = () => {
@@ -125,6 +141,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome}) => {
                 if(Edit === "1") {
                     returnToHome()
                     await FetchProfile()
+                    FetchProfileReload()
                     setFetchEditLoad(true)
                     setStateEditName(false)
                     setStateEditStation(false)

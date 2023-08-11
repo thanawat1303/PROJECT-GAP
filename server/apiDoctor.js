@@ -59,6 +59,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 ` , [result['data'].station_doctor] , 
                 (err , station) => {
                     con.end()
+                    result['data'].img_doctor = result['data'].img_doctor.toString()
                     res.send({
                         ...result['data'] ,
                         name_station : station[0].name

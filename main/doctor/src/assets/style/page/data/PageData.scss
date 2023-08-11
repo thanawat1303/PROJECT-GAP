@@ -311,8 +311,28 @@
         }
     }
 
+    @media only screen and (max-width : 400px) {
+        .search-form {
+            .bt-select-option {
+                right: 105%;
+                .bt-search-show {
+                    width: 25px;
+                    height: 25px;
+                    padding: 0px 3px 3px 0px;
+                }
+            }
+        }
+    }
+
     .search-form[show=""] {
         transform: translateX(0%);
+
+        .bt-select-option {
+            flex-direction: column;
+            .bt-search-show {
+                margin: 4px 0px;
+            }
+        }
     }
 
     .data-list-content {

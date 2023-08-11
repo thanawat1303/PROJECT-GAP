@@ -56,12 +56,12 @@
 
         .bt-select-option {
             display: flex;
-            flex-direction: column;
+            // flex-direction: column;
             align-items: center;
             justify-content: center;
             position: absolute;
             right: 100%;
-            margin-right: 5px;
+            // margin-right: 5px;
             z-index: 1;
             .bt-search-show {
                 display: flex;
@@ -78,7 +78,7 @@
                 border-radius: 50%;
                 box-shadow: 0px 2px 4px rgb(192, 192, 192);
                 outline: 2px solid #22C7A9;
-                margin: 4px 0px;
+                margin: 0px 4px;
                 
                 svg {
                     width: 35px;
@@ -101,7 +101,7 @@
                 border-radius: 50%;
                 box-shadow: 0px 2px 4px rgb(192, 192, 192);
                 outline: 2px solid #22C7A9;
-                margin: 4px 0px;
+                margin: 0px 4px;
                 
                 svg {
                     width: 35px;
@@ -284,9 +284,67 @@
 
     .search-form[show=""] {
         transform: translateX(0%);
+
+        .bt-select-option {
+            justify-content: space-between;
+            flex-direction: column;
+            height: 60px;
+        }
+    }
+
+    @media only screen and (max-width : 400px) {
+        .search-form {
+            .bt-select-option {
+                right: 100%;
+                .bt-search-show {
+                    width: 25px;
+                    height: 25px;
+                    padding: 0px 3px 3px 0px;
+                }
+
+                .bt-export-show {
+                    width: 25px;
+                    height: 25px;
+                }
+            }
+        }
+    }
+
+    @media only screen and (max-width : 340px) {
+        .search-form {
+            .content-option {
+                .field-option {
+                    .row {
+                        input {
+                            font-size: 14px;
+                        }
+
+                        .field-select {
+                            span {
+                                font-size: 11px;
+                            }
+
+                            select {
+                                font-size: 11px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .search-form[show=""] {
+            .bt-select-option {
+                top: 104%;
+                left: 0.3em;
+                flex-direction: row;
+                height: auto;
+            }
+        }
     }
 
     .data-list-content {
+        margin-top: 15px;
         .body-page-content {
             padding: 2px 0px;
             text-align: center;

@@ -150,57 +150,65 @@ const ManageList = ({Data , status , session , fetch , count , setCount , socket
         // refData = Data.map(() => React.createRef());
         ManageShow(Data)
 
-        window.addEventListener("resize" , Resize)
+        // window.addEventListener("resize" , Resize)
 
-        return (() => {
-            window.removeEventListener("resize" , Resize)
-        })
+        // return (() => {
+        //     window.removeEventListener("resize" , Resize)
+        // })
     } , [Data])
 
     const Resize = () => ManageShow(Data)
 
     const ManageShow = async (Data) => {
         if(Data.length !== 0) {
-            let Max = 0 , SizeFont = 0 , SizeFontDate = 0
-            // console.log(Data)
-            if(window.innerWidth >= 920) {
-                Max = 3
-                SizeFont = 1.8
-                SizeFontDate = 1.2
-            }
-            else if (window.innerWidth < 920) {
-                Max = 2
-                SizeFont = 2.8
-                SizeFontDate = 1.8
-            }
+            // let Max = 0 , SizeFont = 0 , SizeFontDate = 0
+            // // console.log(Data)
+            // if(window.innerWidth >= 920) {
+            //     Max = 3
+            //     SizeFont = 1.8
+            //     SizeFontDate = 1.2
+            // }
+            // else if (window.innerWidth < 920) {
+            //     Max = 2
+            //     SizeFont = 2.8
+            //     SizeFontDate = 1.8
+            // }
 
             // const text = [ ...Data , ...Data , ...Data ]
 
-            const Row = new Array
-            for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
+            // const Row = new Array
+            // for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
 
-            const body = Row.map((Data , keyRow)=>{
+            const body = Data.map((val)=>{
                 return (
-                    <section className={`row ${keyRow}`} key={keyRow}>
-                        <div className="row-content" style={{
-                            '--item-in-row-doctor' : `${Max}`,
-                            '--margin-in-row-doctor' : '16px',
-                            '--font-size-in-row-doctor' : `${SizeFont}vw`,
-                            '--font-size-date-in-row-doctor' : `${SizeFontDate}vw`,
-                            }}>
-                            {
-                                Data.map((val)=>{
-                                    return (
-                                        <section key={val.id_table} className="list-some-data-on-page">
-                                            <ListProfile data={val} status={status} showPopup={showPopup}/>
-                                        </section>
-                                    )
-                                })
-                            }
-                        </div>
+                    <section key={val.id_table} className="list-some-data-on-page">
+                        <ListProfile data={val} status={status} showPopup={showPopup}/>
                     </section>
                 )
             })
+            
+            // Row.map((Data , keyRow)=>{
+            //     return (
+            //         <section className={`row ${keyRow}`} key={keyRow}>
+            //             <div className="row-content" style={{
+            //                 '--item-in-row-doctor' : `${Max}`,
+            //                 '--margin-in-row-doctor' : '16px',
+            //                 '--font-size-in-row-doctor' : `${SizeFont}vw`,
+            //                 '--font-size-date-in-row-doctor' : `${SizeFontDate}vw`,
+            //                 }}>
+            //                 {
+            //                     Data.map((val)=>{
+            //                         return (
+            //                             <section key={val.id_table} className="list-some-data-on-page">
+            //                                 <ListProfile data={val} status={status} showPopup={showPopup}/>
+            //                             </section>
+            //                         )
+            //                     })
+            //                 }
+            //             </div>
+            //         </section>
+            //     )
+            // })
             setBody(body)
         } else {
             setBody(

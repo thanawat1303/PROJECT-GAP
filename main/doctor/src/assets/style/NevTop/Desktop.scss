@@ -61,32 +61,61 @@ $ColorGreen : #22C7A9;
     }
 
     .menu-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
         top: 0;
         left: 0;
         transition: 0.5s;
         background-color: white;
+        height: 100%;
 
-        .frame-pg{
-            padding: 6px 6px;
-        }
+        .content {
+            width: 100%;
+            .frame-pg{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 6px 6px;
+                padding-top: 12px;
+                font-family: Sans-font;
+                .img {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
 
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-family: Sans-font;
-            font-size: 16px;
-            padding: 0px 6px;
-            height: 100%;
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+    
+            .menu-list {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                flex-direction: column;
+                font-family: Sans-font;
+                font-size: 16px;
+                padding: 0px 6px;
+                width: 100%;
 
-            .menu-name-list {
-                
+                margin-top: 20px;
+    
+                .menu-name-list {
+                    margin: 4px 0px;
+                    display: flex;
+                    justify-content: start;
+                    align-items: center;
+                }
             }
         }
     }
 }
 
-@media only screen and (max-width : 400px) {
+@media only screen and (max-width : 800px) {
     .tab-bar-desktop {
         padding: 6px 6px;
         .pg-action {
@@ -97,6 +126,59 @@ $ColorGreen : #22C7A9;
                 svg {
                     width: 48px;
                 }
+            }
+        }
+
+        .menu-mobile {
+            .content {
+                .frame-pg{
+                    // padding: 6px 6px;
+                    .img {
+                        width: 50px;
+                        height: 50px;
+                        overflow: hidden;
+                        border-radius: 8px;
+                    }
+
+                    .fullname {
+                        margin-left: 6px;
+
+                        .head-name {
+                            font-size: 16px;
+                        }
+
+                        .text-name {
+                            font-size: 14px;
+                        }
+                    }
+                }
+        
+                .menu-list {
+                    display: flex;
+                    justify-content: start;
+                    align-items: center;
+                    flex-direction: column;
+                    font-family: Sans-font;
+                    font-size: 16px;
+                    padding: 0px 6px;
+        
+                    .menu-name-list {
+                        width: 80%;
+                        margin: 8px 0px;
+
+                        svg {
+                            width: 28px;
+                        }
+
+                        span {
+                            margin-left: 8px;
+                        }
+                    }
+                }
+            }
+
+            .content.bottom {
+                // margin-bottom: 10px;
             }
         }
     }

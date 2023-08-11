@@ -18,6 +18,8 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
     const [session , setSession] = useState(<div></div>)
     const [TextPage , setTextPage] = useState([])
 
+    const [getProfile , setProfile] = useState()
+
     const ImageCover = useRef()
     const BodyRef = useRef()
 
@@ -26,6 +28,7 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
     useEffect(()=>{
         if(isClick === 1) window.history.replaceState({} , "" , "/doctor")
         
+        FetchProfile()
         ChkPath(null , "web")
         window.addEventListener("popstate" , ChkPath)
         window.addEventListener("resize" , Resize)
@@ -36,6 +39,12 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
         }
     } , [])
 
+    const FetchProfile = async () => {
+        const result = await clientMo.get("/api/doctor/profile/get")
+        if(result) 
+            setProfile(JSON.parse(result))
+        else setSession()
+    }
 
     const ChkPath = async (e , type="pop") => {
         const context = await clientMo.post('/api/doctor/check')
@@ -99,7 +108,8 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
         <div className="doctor"
         // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
         >
-            <DesktopNev setMain={setMain} socket={socket} setSession={sessionoff} setBody={setBody} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>
+            <DesktopNev setMain={setMain} socket={socket} setSession={sessionoff} setBody={setBody} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage} 
+                getProfile={getProfile} FetchProfile={FetchProfile}/>
             <section ref={ImageCover} className="image-cover">
                 { Responsive > 800 ?
                     <>
@@ -128,7 +138,10 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
                             <span style={{fontWeight : 900}}>หมอพืช</span>
                         </div>
                         <div className="icon-profile">
-                            <img src="/PROFILE.png"></img>
+                            <img src={getProfile.img_doctor ? getProfile.img_doctor : "/PROFILE.png"} style={{
+                                borderRadius : "50%",
+                                overflow : "hidden"
+                            }}></img>
                         </div>
                     </div>
                     <div className="frame-image-cover">

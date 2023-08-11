@@ -268,7 +268,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             UPDATE acc_doctor 
                             SET uid_line_doctor = ?
                             WHERE id_table_doctor = ?
-                            ` , [ result.data.id_table_doctor , req.body.uid_line ] ,
+                            ` , [ req.body.uid_line , result.data.id_table_doctor ] ,
                             (err , uid) => {
                                 con.end()
                                 if(!err) Line.pushMessage(req.body.uid_line , {type : "text" , text : "เชื่อมต่อบัญชีเจ้าหน้าที่กับบัญชีไลน์เรียบร้อยค่ะ"})

@@ -166,12 +166,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 return 0;
             }
     
-            con.query(`SELECT id_doctor FROM acc_doctor WHERE uid_line_doctor=${req.body['id']}` , (err , result)=>{
-                if (err) {
-                    dbpacket.dbErrorReturn(con, err, res);
-                    console.log("query");
-                }
-    
+            con.query(`
+                SELECT id_doctor 
+                FROM acc_doctor 
+                WHERE uid_line_doctor = "${req.body['id']}"` , 
+                (err , result)=>{
                 if (result[0]) {
                     res.send(result[0]['id_doctor'])
                 } else {

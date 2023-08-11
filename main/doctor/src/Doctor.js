@@ -85,7 +85,7 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
                 }
                 
             } else {
-                console.log(15)
+                setBody(<div>เกิดปัญหา</div>)
             }
         }
         else sessionoff()

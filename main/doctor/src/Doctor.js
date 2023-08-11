@@ -18,7 +18,7 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
     const [session , setSession] = useState(<div></div>)
     const [TextPage , setTextPage] = useState([])
 
-    const [getProfile , setProfile] = useState()
+    const [getProfile , setProfile] = useState([])
 
     const ImageCover = useRef()
     const BodyRef = useRef()
@@ -138,7 +138,7 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
                             <span style={{fontWeight : 900}}>หมอพืช</span>
                         </div>
                         <div className="icon-profile">
-                            <img src={getProfile.img_doctor ? getProfile.img_doctor : "/PROFILE.png"} style={{
+                            <img src={getProfile.length != 0 ? getProfile.img_doctor ? getProfile.img_doctor : "/PROFILE.png" : "/PROFILE.png"} style={{
                                 borderRadius : "50%",
                                 overflow : "hidden"
                             }}></img>

@@ -40,6 +40,8 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
 
     const BTConfirm = useRef()
 
+    const [getWait , setWait] = useState(false)
+
     useEffect(()=>{
         FetchPlant()
         RefPop.current.setAttribute("show" , "")
@@ -159,10 +161,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                     seft : seft.value
                 }
 
+                setWait(true)
                 const Data = await clientMo.post("/api/farmer/formplant/insert" , data)
                 if(await CloseAccount(Data , setPage)) {
                     cancel()
                     ReloadData()
+                    setWait(false)
                 }
         } else {
             // let RefObject = [
@@ -498,8 +502,20 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                     </div>
                 </div>
                 <div className="bt-form">
-                    <button style={{backgroundColor : "#FF8484"}} onClick={cancel}>ยกเลิก</button>
-                    <button ref={BTConfirm} no="" onClick={Confirm}>ยืนยัน</button>
+                    <button className="bt-confirm-add" style={{backgroundColor : "#FF8484"}} onClick={cancel}>ยกเลิก</button>
+                    { getWait ?
+                        <div className="bt-confirm-add" style={{
+                            display : "flex",
+                            justifyContent : "center",
+                            alignItems : "center",
+                            padding : "2px",
+                            height : "31.2px"
+                        }}>
+                            <Loading size={27} border={5} color="white" animetion={true}/>
+                        </div>
+                        :
+                        <button className="bt-confirm-add" ref={BTConfirm} no="" onClick={Confirm}>ยืนยัน</button>
+                    }
                 </div>
             </div>
         </section>

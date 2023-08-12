@@ -11,15 +11,25 @@ import Report from "../Report/Report";
 const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
     const NavBody = useRef()
     const [DotReport , setDotReport] = useState([])
+    const [getDotEditPlant , setDotEditPlant] = useState(false)
 
     useEffect(()=>{
         setPage("MENU ON LIST")
         if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/p/${id_plant}`)
 
+        // FetchFormPlant()
         FetchCheck()
 
         if(document.getElementById("loading").classList[0] !== "hide") clientMo.unLoadingPage()
     } , [])
+
+    // const FetchFormPlant = async () => {
+    //     const result = await clientMo.post("/api/farmer/formplant/select" , {id_formplant : id_plant , id_farmhouse : id_house})
+    //     if(await CloseAccount(result , setPage)) {
+    //         const DataIn = JSON.parse(result)
+    //         setDotEditPlant(DataIn[0].filter(val.subjectResult))
+    //     }
+    // }
 
     const FetchCheck = async () => {
         const result = await clientMo.get(`/api/farmer/report/check?id_farmhouse=${id_house}&id_plant=${id_plant}`)
@@ -54,12 +64,14 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                             <img src="/plant_glow.jpg"></img>
                         </div>
                         <span>ข้อมูลการปลูก</span>
+                        {DotReport.checkEditPlant ? <div className="dot-someting"></div> : <></>}
                     </div>
                     <div onClick={()=>selectMenu("z")} className="frame-menu frame-ferti">
                         <div className="img">
                             <img src="/fertilizer.jpg"></img>
                         </div>
                         <span>ปัจจัยการผลิต</span>
+                        {DotReport.checkEditFertilizer ? <div className="dot-someting"></div> : <></>}
                     </div>
                 </div>
                 <div className="row">
@@ -68,6 +80,7 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                             <img src="/chemical.jpg"></img>
                         </div>
                         <span>สารเคมีที่ใช้</span>
+                        {DotReport.checkEditChemical ? <div className="dot-someting"></div> : <></>}
                     </div>
                     <div onClick={()=>selectMenu("h")} className="frame-menu frame-success">
                         <div className="img">

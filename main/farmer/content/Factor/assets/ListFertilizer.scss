@@ -3,11 +3,25 @@ $FontText : 5vw;
     .plant {
         .list-factor-content {
             width: 90vw;
+            position: relative;
             background-color: #daf1ee;
             padding: 0px 8px;
             border-radius: 18px;
             margin-bottom: 10px;
             box-shadow: 0px 2px 2px #5c807b;
+
+            .dot-someting {
+                position: absolute;
+                background-color: rgb(255, 0, 0);
+                width: 1.2em;
+                height: 1.2em;
+                border-radius: 50%;
+                top : 0.2em;
+                right: 0.2em;
+                box-shadow: 0px 2px 2px rgb(106, 0, 0);
+                // z-index: 2;
+            }
+
             .row {
                 display: flex;
                 justify-content: space-between;
@@ -301,6 +315,14 @@ $FontText : 5vw;
                                                     }
                                                 }
                                             }
+
+                                            .frame-textbox.not {
+                                                // outline: 1.5px solid red;
+
+                                                padding: 4px;
+                                                background-color: #e38f8f78;
+                                                border-radius: 8px;
+                                            }
     
                                             .colume {
                                                 flex-direction: column;
@@ -318,7 +340,7 @@ $FontText : 5vw;
                         align-items: center;
                         margin-top: 5%;
                         height: 8%;
-                        button {
+                        .bt-confirm-factor {
                             background-color: #23dd36;
                             border-radius: 5px;
                             border: 0;
@@ -329,7 +351,7 @@ $FontText : 5vw;
                             padding: 3px 0px;
                         }
     
-                        button[no=""] {
+                        .bt-confirm-factor[no=""] {
                             background-color: #ACFFB4;
                             color: rgba(16, 16, 16, 0.3);
                         }

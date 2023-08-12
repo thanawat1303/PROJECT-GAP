@@ -61,9 +61,11 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
         })
         if(await CloseAccount(result , setPage)) {
             const Ob = JSON.parse(result)
-            console.log(Ob)
             setBodyList(Ob.map((val , key)=>
                 <section key={key} className={`list-factor-content content-${val.id}`}>
+                    { Object.entries(val.subjectResult).filter(val=>val[1] == 2).length != 0 ?
+                        <div className="dot-someting"></div> : <></>
+                    }
                     <div className="row">
                         <div className="name">{val.name}</div>
                         <div className="date">

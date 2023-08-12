@@ -33,6 +33,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     const [LoadSearchName , setLoadName] = useState(false) 
     const [LoadSearchNameMain , setLoadNameMain] = useState(false) 
 
+    const [getWait , setWait] = useState(false)
     useEffect(()=>{
         RefPop.current.setAttribute("show" , "");
         FetchSource()
@@ -78,10 +79,12 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                     type_insert : type_path
                 }
 
+                setWait(true)
                 const result = await clientMo.post("/api/farmer/factor/insert" , data)
                 if(await CloseAccount(result , setPage)) {
                     cancel()
                     ReloadData()
+                    setWait(false)
                 }
         } else {
             let RefObject = [
@@ -130,10 +133,12 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                     type_insert : type_path
                 }
 
+                setWait(true)
                 const result = await clientMo.post("/api/farmer/factor/insert" , data)
                 if(await CloseAccount(result , setPage)) {
                     cancel()
                     ReloadData()
+                    setWait(false)
                 }
         } else {
             let RefObject = [
@@ -510,8 +515,20 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                     </div>
                 </div>
                 <div className="bt-form">
-                    <button style={{backgroundColor : "#FF8484"}} onClick={cancel}>ยกเลิก</button>
-                    <button ref={BTConfirm} no="" onClick={type_path === "z" ? ConfirmFerti : ConfirmChemi}>ยืนยัน</button>
+                    <button style={{backgroundColor : "#FF8484"}} className="bt-confirm-factor" onClick={cancel}>ยกเลิก</button>
+                    { getWait ?
+                        <div className="bt-confirm-factor" style={{
+                            display : "flex",
+                            justifyContent : "center",
+                            alignItems : "center",
+                            padding : "2px",
+                            height : "30.8px"
+                        }}>
+                            <Loading size={27} border={5} color="white" animetion={true}/>
+                        </div>
+                        :
+                        <button ref={BTConfirm} no="" className="bt-confirm-factor" onClick={type_path === "z" ? ConfirmFerti : ConfirmChemi}>ยืนยัน</button>
+                    }
                 </div>
             </div>
         </section>

@@ -226,7 +226,7 @@
                         align-items: center;
                         height: 15%;
 
-                        button {
+                        .bt-confirm-edit {
                             border-radius: 15px;
                             width: 32%;
                             font-size: 17px;
@@ -238,7 +238,7 @@
                             box-shadow: 0px 2px 2px rgb(182, 182, 182);
                         }
 
-                        button[no=""] {
+                        .bt-confirm-edit[no=""] {
                             background-color: #ACFFB4;
                             color: rgba(16, 16, 16, 0.3);
                         }

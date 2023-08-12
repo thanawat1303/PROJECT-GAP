@@ -34,6 +34,7 @@ ObjectData}) => {
     const [LoadSearchName , setLoadName] = useState(false) 
     const [LoadSearchNameMain , setLoadNameMain] = useState(false) 
 
+    const [getWait , setWait] = useState(false)
     useEffect(()=>{
         RefPop.current.setAttribute("show" , "");
         FetchSource()
@@ -104,12 +105,17 @@ ObjectData}) => {
                         num : foundChange.length
                     }
 
+                    setWait(true)
                     const result = await clientMo.post("/api/farmer/factor/edit" , data)
                     if(await CloseAccount(result , setPage)) {
                         if(result === "133") {
                             cancel()
                             ReloadData()
+                        } else if (result === "submit") {
+                            cancel()
+                            ReloadData()
                         }
+                        setWait(false)
                     }
             } else {
                 let RefObject = [
@@ -189,12 +195,17 @@ ObjectData}) => {
                         num : foundChange.length
                     }
 
+                    setWait(true)
                     const result = await clientMo.post("/api/farmer/factor/edit" , data)
                     if(await CloseAccount(result , setPage)) {
                         if(result === "133") {
                             cancel()
                             ReloadData()
+                        } else if (result === "submit") {
+                            cancel()
+                            ReloadData()
                         }
+                        setWait(false)
                     }      
             } else {
                 let RefObject = [
@@ -321,8 +332,8 @@ ObjectData}) => {
                                 .map((val)=>val.name)
         const setSearch = ChangeData(search)
         if(setSearch.length !== 0) 
-            setListName(setSearch.map((val , key)=>
-                <span search_name="" onClick={()=>SetTextInputName(val)} key={key}>{val}</span>
+            setListName(setSearch.map((val)=>
+                <span search_name="" onClick={()=>SetTextInputName(val)} key={val.id}>{val}</span>
             ))
         else ResetListNamePopup()
         setLoadName(true);
@@ -352,8 +363,8 @@ ObjectData}) => {
                                 .map((val)=>val.name_formula)
         const setSearch = ChangeData(search)
         if(setSearch.length !== 0) 
-            setListOther(setSearch.map((val , key)=>
-                <span search_other="" onClick={()=>SetTextInputOrther(val)} key={key}>{val}</span>
+            setListOther(setSearch.map((val)=>
+                <span search_other="" onClick={()=>SetTextInputOrther(val)} key={val.id}>{val}</span>
             ))
         else ResetListOtherPopup()
         setLoadNameMain(true);
@@ -428,13 +439,13 @@ ObjectData}) => {
                                     { type_path === "z" ?
                                         <>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.date == 2 ? " not" : ""}`}>
                                                 <span>ว/ด/ป ที่ใช้</span>
                                                 <input onChange={ChangeFerti} defaultValue={ObjectData.date.split(" ")[0]} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${ObjectData.subjectResult.name == 2 ? " not" : ""}`}>
                                                 <span className="full">ชื่อสิ่งที่ใช้ (ชื่อการค้า, ตรา)</span>
                                                 <div className="content-colume-input">
                                                     <div className="input-select-popup">
@@ -456,7 +467,7 @@ ObjectData}) => {
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.formula_name == 2 ? " not" : ""}`}>
                                                 <span>ชื่อสูตรปุ๋ย</span>
                                                 <div className="input-select-other">
                                                     <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} defaultValue={ObjectData.formula_name} ref={NameMainFactor} type="text" placeholder="กรอก"></input>
@@ -476,19 +487,19 @@ ObjectData}) => {
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${ObjectData.subjectResult.use_is == 2 ? " not" : ""}`}>
                                                 <span className="full">วิธีการใช้</span>
                                                 <textarea onChange={ChangeFerti} defaultValue={ObjectData.use_is} className="content-colume-input" style={{textAlign : "start"}} ref={Use}></textarea>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.volume == 2 ? " not" : ""}`}>
                                                 <span>ปริมาณที่ใช้</span>
                                                 <input onChange={ChangeFerti} defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.source == 2 ? " not" : ""}`}>
                                                 <span>แหล่งที่ซื้อ</span>
                                                 {/* <input onChange={ChangeFerti} defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
                                                 {
@@ -496,8 +507,8 @@ ObjectData}) => {
                                                         <select onChange={ChangeFerti} ref={Source} defaultValue={ObjectData.source}>
                                                             <option value={""} disabled>เลือก</option>
                                                             {
-                                                                DataSource.map((val , key)=>
-                                                                    <option value={val.name}>{val.name}</option>
+                                                                DataSource.map((val)=>
+                                                                    <option key={val.id} value={val.name}>{val.name}</option>
                                                                 )
                                                             }
                                                         </select> : <></>
@@ -507,13 +518,13 @@ ObjectData}) => {
                                         </> :
                                         <>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.date == 2 ? " not" : ""}`}>
                                                 <span>ว/ด/ป ที่ใช้</span>
                                                 <input onChange={ChangeChemi} defaultValue={ObjectData.date.split(" ")[0]} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${ObjectData.subjectResult.name == 2 ? " not" : ""}`}>
                                                 <span className="full">ชื่อสารเคมี (ชื่อการค้า, ตรา)</span>
                                                 <div className="content-colume-input">
                                                     <div className="input-select-popup">
@@ -536,7 +547,7 @@ ObjectData}) => {
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.formula_name == 2 ? " not" : ""}`}>
                                                 <span>ชื่อสามัญสารเคมี</span>
                                                 <div className="input-select-other">
                                                     <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} 
@@ -557,42 +568,42 @@ ObjectData}) => {
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.insect == 2 ? " not" : ""}`}>
                                                 <span>ศัตรูพืชที่พบ</span>
                                                 <input onChange={ChangeChemi} 
                                                     defaultValue={ObjectData.insect} ref={NameInsect} type="text" placeholder="ชื่อศัตรูพืช"></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox colume">
+                                            <label className={`frame-textbox colume${ObjectData.subjectResult.use_is == 2 ? " not" : ""}`}>
                                                 <span className="full">วิธีการใช้</span>
                                                 <textarea className="content-colume-input" style={{textAlign : "start"}}
                                                     defaultValue={ObjectData.use_is} ref={Use}></textarea>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.rate == 2 ? " not" : ""}`}>
                                                 <span>อัตราที่ผสม</span>
                                                 <input onChange={ChangeChemi} 
                                                     defaultValue={ObjectData.rate} ref={Rate} type="text" placeholder="กรอก 00/00"></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.volume == 2 ? " not" : ""}`}>
                                                 <span>ปริมาณที่ใช้ทั้งหมด</span>
                                                 <input onChange={ChangeChemi} 
                                                     defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.date_safe == 2 ? " not" : ""}`}>
                                                 <span>วันที่ปลอดภัย</span>
                                                 <input onChange={ChangeChemi} 
                                                     defaultValue={ObjectData.date_safe.split(" ")[0]} onClick={()=>clickDate(DateSafe)} ref={DateSafe} type="date"></input>
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className="frame-textbox">
+                                            <label className={`frame-textbox${ObjectData.subjectResult.source == 2 ? " not" : ""}`}>
                                                 <span>แหล่งที่ซื้อ</span>
                                                 {/* <input onChange={ChangeChemi} 
                                                     defaultValue={ObjectData.source} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
@@ -601,8 +612,8 @@ ObjectData}) => {
                                                         <select onChange={ChangeChemi} ref={Source} defaultValue={ObjectData.source}>
                                                             <option value={""} disabled>เลือก</option>
                                                             {
-                                                                DataSource.map((val , key)=>
-                                                                    <option value={val.name}>{val.name}</option>
+                                                                DataSource.map((val)=>
+                                                                    <option key={val.id} value={val.name}>{val.name}</option>
                                                                 )
                                                             }
                                                         </select> : <></>
@@ -612,7 +623,7 @@ ObjectData}) => {
                                         </>
                                     }
                                     <div className="row">
-                                        <label className="frame-textbox colume">
+                                        <label className={`frame-textbox colume`}>
                                             <span className="full">เหตุผลการแก้ไข</span>
                                             <textarea style={{
                                                 textAlign : "start"
@@ -625,8 +636,19 @@ ObjectData}) => {
                     </div>
                 </div>
                 <div className="bt-form">
-                    <button style={{backgroundColor : "#FF8484"}} onClick={cancel}>ยกเลิก</button>
-                    <button ref={BTConfirm} no="" onClick={type_path === "z" ? ConfirmFerti : ConfirmChemi}>ยืนยัน</button>
+                    <button style={{backgroundColor : "#FF8484"}} className="bt-confirm-factor" onClick={cancel}>ยกเลิก</button>
+                    { getWait ?
+                        <div className="bt-confirm-factor" style={{
+                            display : "flex",
+                            justifyContent : "center",
+                            alignItems : "center",
+                            padding : "2px",
+                            height : "30.8px"
+                        }}>
+                            <Loading size={27} border={5} color="white" animetion={true}/>
+                        </div> :
+                        <button ref={BTConfirm} className="bt-confirm-factor" no="" onClick={type_path === "z" ? ConfirmFerti : ConfirmChemi}>ยืนยัน</button>
+                    }
                 </div>
             </div>
         </section>

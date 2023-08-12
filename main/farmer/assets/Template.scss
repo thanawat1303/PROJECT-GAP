@@ -235,18 +235,18 @@
                     align-items: center;
 
                     height: 100%;
-                    button {
+                    .bt-confirm-add {
                         background-color: #23dd36;
                         border-radius: 5px;
                         border: 0;
-                        width: 30vw;
+                        width: 30%;
                         font-weight: 900;
-                        font-size: 5vw;
+                        font-size: 18px;
                         font-family: Sans-font;
-                        padding: 3px 0px;
+                        padding: 2px 0px;
                     }
 
-                    button[no=""] {
+                    .bt-confirm-add[no=""] {
                         background-color: #ACFFB4;
                         color: rgba(16, 16, 16, 0.3);
                     }

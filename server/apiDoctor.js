@@ -743,8 +743,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT id_table 
                                 FROM acc_farmer as farmer
                                 WHERE farmer.uid_line = acc_farmer.uid_line and 
-                                        station = "${result['data']['station_doctor']}" and 
-                                        register_auth = 1
+                                        (register_auth = 1 || register_auth = 0)
                             )
                         ) as CheckOver
                         FROM acc_farmer 

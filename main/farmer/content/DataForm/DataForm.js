@@ -3,7 +3,7 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import { CloseAccount } from "../../method";
 
 import "./assets/DataForm.scss"
-import { DayJSX } from "../../../../src/assets/js/module";
+import { DayJSX, Loading } from "../../../../src/assets/js/module";
 import MenuPlant from "../PlantList/MenuPlant";
 import DetailEdit from "../DetailEdit";
 const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
@@ -13,6 +13,8 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
     const [Popup , setPopup] = useState(<></>)
     const [DataPlant , setDataPlant] = useState([])
     const [QtyDate , setQtyDate] = useState(0)
+
+    const [getWait , setWait] = useState(false)
 
     const PopupRef = useRef()
     const ManageMenu = useRef()
@@ -205,8 +207,8 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                             num : foundChange.length
                         }
 
-                        console.log(data)
-
+                        
+                        setWait(true)
                         const result = await clientMo.post("/api/farmer/formplant/edit" , data)
                         if(await CloseAccount(result , setPage)) {
                             console.log(result)
@@ -217,6 +219,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                 CancelEdit(false)
                                 FetchData()
                             }
+                            setWait(false)
                         }  
             } else {
                 let RefObject = [
@@ -587,8 +590,18 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                 {
                     StatusEdit ? 
                     <div className="bt">
-                        <button style={{backgroundColor : "red"}} onClick={CancelEdit}>ยกเลิก</button>
-                        <button ref={BtConfirm} no="" onClick={ConfirmEdit}>ยืนยัน</button>
+                        <button style={{backgroundColor : "red"}} className="bt-confirm-edit" onClick={CancelEdit}>ยกเลิก</button>
+                        { getWait ?
+                            <div className="bt-confirm-edit" style={{
+                                display : "flex",
+                                justifyContent : "center",
+                                alignItems : "center",
+                                padding : "2px"
+                            }}>
+                                <Loading size={24} border={5} color="white" animetion={true}/>
+                            </div> :
+                            <button ref={BtConfirm} no=""  className="bt-confirm-edit" onClick={ConfirmEdit}>ยืนยัน</button>
+                        }
                     </div>
                     : <></>
                 }

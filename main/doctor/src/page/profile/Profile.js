@@ -99,7 +99,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
     const CheckEdit = () => {
         const check = 
                     StateEditName ? 
-                        getProfileOld.fullname_doctor !== Fullname.current.value && Fullname.current.value && Password.current.value && /^[ก-๙a-zA-Z]+\s[ก-๙a-zA-Z]+$/.test(Fullname.current.value) :
+                        getProfileOld.fullname_doctor !== Fullname.current.value && Fullname.current.value && Password.current.value && /^[ก-ฮะ-์]+\s[ก-ฮะ-์]+$/.test(Fullname.current.value) :
                     StateEditStation ? 
                         getProfileOld.station_doctor !== Station.current.value && Station.current.value && Password.current.value :
                     StateEditPassword ? 

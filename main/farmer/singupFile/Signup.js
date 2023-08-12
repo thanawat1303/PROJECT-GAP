@@ -1,8 +1,9 @@
 import React , { useEffect , useRef, useState } from "react";
-import { Loading, MapsJSX, ReportAction, ResizeImg } from "../../../src/assets/js/module";
+import { Loading, MapsJSX, PatternCheck, ReportAction, ResizeImg } from "../../../src/assets/js/module";
 
 import './assets/Signup.scss'
 import {clientMo}  from "../../../src/assets/js/moduleClient";
+import { CloseAccount } from "../method";
 
 const SignUp = ({liff}) => {
     const [step , setStep] = useState(1)
@@ -21,6 +22,8 @@ const SignUp = ({liff}) => {
 
     const [PositionBt , setBt] = useState(window.innerHeight - ((window.innerHeight * 15/100) + 20))
     const [animetion , setAnimetion] = useState(false)
+
+    const [btNext , setbtNext] = useState(false)
 
     useEffect(()=>{
         selectStep(stepApprov)
@@ -61,15 +64,16 @@ const SignUp = ({liff}) => {
     }
 
     const selectStep = (stepInMedthod) => {
+        setbtNext(false)
         switch(stepInMedthod) {
             case 1 :
-                setStep(<StepOne stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepOne stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext}/>)
                 break;
             case 2 :
-                setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext}/>)
                 break;
             case 3 :
-                setStep(<StepThree setAnimetion={setAnimetion} LoadingPreview={LoadingPreview} liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile}/>)
+                setStep(<StepThree setAnimetion={setAnimetion} LoadingPreview={LoadingPreview} liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext}/>)
                 break;
         }
     }
@@ -111,9 +115,17 @@ const SignUp = ({liff}) => {
                                 fillRule="evenodd"/>
                         </g>    
                     </svg>
+                    <svg ref={next} unclick={btNext ? null : ""} onClick={()=>changeStep(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next" viewBox="0 0 512 512" >
+                        <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
+                        <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
+                        <g id="SVGRepo_iconCarrier">
+                            <title>ionicons-v5-b</title>
+                            <path d="M464,256c0-114.87-93.13-208-208-208S48,141.13,48,256s93.13,208,208,208S464,370.87,464,256ZM212,147.73,342.09,256,212,364.27Z"/>
+                        </g>
+                    </svg>
                     {/* fill="#009919" */}
                     {/* <img src="/confirm-sf-svgrepo-com.svg"></img> */}
-                    <img ref={next} onClick={()=>changeStep(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next"></img>
+                    {/* <img ref={next} unclick={btNext ? null : ""} onClick={()=>changeStep(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next"></img> */}
                 </div>
             </div>
         </section>
@@ -147,11 +159,12 @@ const StepOne = (props) => {
         }
 
         if(
-            props.data.get("firstname") &&
-            props.data.get("lastname") &&
+            ( props.data.get("firstname") && PatternCheck(props.data.get("firstname")).thaiName ) &&
+            ( props.data.get("lastname") && PatternCheck(props.data.get("lastname")).thaiName ) &&
             props.data.get("password")
             )
         {
+            props.btnext(true)
             props.stepAp(2)
         } else {
             props.stepAp(1)
@@ -168,13 +181,13 @@ const StepOne = (props) => {
                     <span>
                         <span>ชื่อ</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
+                    <input autoComplete="false" placeholder="กรอกชื่อภาษาไทย" defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
                 </label>
                 <label className="fullname">
                     <span>
                         <span>นามสกุล</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
+                    <input autoComplete="false" placeholder="กรอกนามสกุลภาษาไทย" defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
                 </label>
                 <label className="password">
                     <span>
@@ -184,7 +197,7 @@ const StepOne = (props) => {
                 </label>
                 <label className="select-remember">
                     <span>
-                        <span>รหัสประจำตัว</span><span className="dot">* หากมีหรือจำได้</span>
+                        <span>รหัสประจำตัว</span><span className="dot">หากมีหรือจำได้</span>
                     </span>
                     <input autoComplete="false" defaultValue={props.profile.get("oldID")} onChange={checkData} type="text" ref={OldID} data="oldID"></input>
                 </label>
@@ -260,14 +273,18 @@ const StepTwo = (props) => {
 
                 const search = new Array
                 const sortMap = new Map
-                JSON.parse(list).map(val=>{
-                    let lag = Math.abs(location.coords.latitude - val.location.x)
-                    let lng = Math.abs(location.coords.longitude - val.location.y)
-                    search.push({id : val.id , name : val.name , dist : lag + lng})
-                })
-                
-                setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
-                setReady(true)
+                try {
+                    JSON.parse(list).map(val=>{
+                        let lag = Math.abs(location.coords.latitude - val.location.x)
+                        let lng = Math.abs(location.coords.longitude - val.location.y)
+                        search.push({id : val.id , name : val.name , dist : lag + lng})
+                    })
+                    
+                    setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
+                    setReady(true)
+                } catch (e) {
+                    CloseAccount(list , "")
+                }
                 // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
             })
             CheckData()
@@ -299,6 +316,7 @@ const StepTwo = (props) => {
             && props.data.get("latitude") 
             && props.data.get("longitude")) 
         {
+            props.btnext(true)
             props.stepAp(3)
         } else {
             props.stepAp(2)

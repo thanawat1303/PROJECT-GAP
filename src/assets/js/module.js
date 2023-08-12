@@ -468,7 +468,8 @@ const LoadOtherOffset = ({Fetch , Data , setRow , Limit , style = {
 
 const PatternCheck = (value) => {
     return ({
-        fullname : /^[ก-๙a-zA-Z]+\s[ก-๙a-zA-Z]+$/.test(value)
+        fullname : /^[ก-ฮะ-์]+\s[ก-ฮะ-์]+$/.test(value),
+        thaiName : /^[ก-ฮะ-์]+$/.test(value)
     })
 }
 

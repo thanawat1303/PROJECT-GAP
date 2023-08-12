@@ -385,7 +385,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                                     </div>
                                 </div>
                                 <a className="pdf" title="ส่งออก PDF" onClick={()=>SelectMenuExport("pdf")}>PDF</a>
-                                <a className="excel" title="ส่งออก EXCEL" onClick={()=>SelectMenuExport("excel")}>EXCEL</a>
+                                {/* <a className="excel" title="ส่งออก EXCEL" onClick={()=>SelectMenuExport("excel")}>EXCEL</a> */}
                                 {/* <select defaultValue={"show"}>
                                     <option value={"show"}>ตามที่แสดง</option>
                                     <option value={"all"}>ทั้งหมดจากค้นหา</option>

@@ -135,7 +135,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/signup' , (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK) && /^[ก-ฮะ-์]+$/.test(req.body['firstname']) && /^[ก-ฮะ-์]+$/.test(req.body['firstname'])) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
@@ -168,13 +168,13 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             ) 
                         VALUES (? , ? , ? , ? , POINT(?,?) , SHA2(? , 256) , 0 , ? , "" , "" , ?)` , 
                         [
-                            req.body['oldID'] , 
-                            `${req.body['firstname']} ${req.body['lastname']}` ,
+                            req.body['oldID'].trim() , 
+                            `${req.body['firstname'].trim()} ${req.body['lastname'].trim()}` ,
                             req.body['Img'] ,
                             req.body['station'] ,
                             req.body['lat'] ,
                             req.body['lng'] ,
-                            req.body['password'] ,
+                            req.body['password'].trim() ,
                             req.session.uidFarmer ,
                             req.session.uidFarmer
                         ] , (err , result)=>{
@@ -220,7 +220,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             )
                         VALUES (? , ? , ? , ?)` , 
                         [
-                            auth.data.uid_line , req.body['name'] , req.body['img'] , auth.data.link_user
+                            auth.data.uid_line , req.body['name'].trim() , req.body['img'] , auth.data.link_user
                         ] , (err , insert)=>{
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
@@ -984,7 +984,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
                             if(result[0]) {
                                 let data = req.body
-                                if(!result[0].submit) {
+                                if(result[0].submit == 0 || result[0].submit == 1) {
                                     con.query(
                                         `
                                         INSERT INTO editform 

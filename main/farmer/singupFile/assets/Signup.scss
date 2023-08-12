@@ -502,6 +502,11 @@
         width: 100%;
         .back , .next , .confirm {
             width: 15vw;
+            fill: #009919;
+        }
+
+        .next[unclick=""] {
+            fill: #00991976;
         }
 
         .confirm[show=""] {

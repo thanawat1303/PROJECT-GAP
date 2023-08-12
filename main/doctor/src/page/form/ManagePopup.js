@@ -295,7 +295,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
         console.log(123)
         const context = await clientMo.post('/api/doctor/check')
         if(context) 
-            setBodyPopupEdit(<DetailEdit Ref={PopRef} setRef={setBodyPopupEdit} setDetailData={FetchContent} type={type} id_form={id_form_edit} session={session}/>)
+            setBodyPopupEdit(<DetailEdit Ref={PopRef} setRef={setBodyPopupEdit} setDetailData={FetchContent} type={type} id_form={id_form_edit} id_from_plant={id_form} session={session}/>)
         else session()
     }
 

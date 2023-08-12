@@ -3,7 +3,7 @@ import "../../assets/style/page/form/DetailEdit.scss"
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import { DayJSX, Loading, ReportAction } from "../../../../../src/assets/js/module";
 
-const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , session}) => {
+const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_plant , session}) => {
     const [Data , setData] = useState(null)
     const [HeadEdit , setHead] = useState([])
     const [BodyEdit , setBody] = useState(<></>)
@@ -105,7 +105,8 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , session}) =
             const result = await clientMo.put("/api/doctor/form/edit/change/status" , {
                 status : resultBt,
                 note : RefBecause.current.value,
-                id_edit : id_edit
+                id_edit : id_edit,
+                id_plant : id_from_plant
             })
 
             if(result) {
@@ -151,6 +152,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , session}) =
                     <>
                         <div className="menu-edit">
                             <div className="frame-menu">
+                                <div className="menu-list">
                                 {
                                     Data.map((val , key)=>
                                         key == 0  ?
@@ -159,6 +161,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , session}) =
                                         <a onClick={(e)=>SelectHead(val.id_edit , e)} key={key}>{key + 1}</a>
                                     )
                                 }
+                                </div>
                             </div>
                             <div className="close" onClick={close}>
                                 <svg viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">

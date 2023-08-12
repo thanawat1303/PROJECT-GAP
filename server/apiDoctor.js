@@ -814,7 +814,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     const convert= await new Promise((resole , reject)=> {
                         con.query(
                             `
-                            SELECT link_user , uid_line
+                            SELECT link_user , uid_line , fullname
                             FROM acc_farmer
                             WHERE id_table = ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
                             ` , [ req.body.id_table_convert ]
@@ -858,7 +858,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                     dbpacket.dbErrorReturn(con , err , res)
                                                     return 0
                                                 };
-                                                
+                                                try {
+                                                    Line.pushMessage(convert[0].uid_line , {
+                                                        type : "text",
+                                                        text : `คุณได้ทำการเชื่อมบัญชีเรียบร้อย \u2764`
+                                                    })
+                                                } catch(e) {}
                                                 resole(1)
                                             }
                                         )
@@ -891,24 +896,35 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         ` , [ Link_user , req.body.uid_line ] ,
                                         async (err, result ) => {
                                             con.end()
-                                            Line.pushMessage(req.body.uid_line , {
-                                                type : "text",
-                                                text : "บัญชีผ่านการตรวจสอบแล้วนะคะ \u2764"
-                                            })
-                                            await Line.unlinkRichMenuFromUser(req.body.uid_line)
-                                            Line.linkRichMenuToUser(req.body.uid_line , RichHouse)
+                                            try {
+                                                Line.pushMessage(req.body.uid_line , {
+                                                    type : "text",
+                                                    text : `บัญชีผ่านการตรวจสอบแล้วนะคะ \nและมีการเชื่อมบัญชีกับคุณ ${convert[0].fullname}\u2764`
+                                                })
+                                            } catch(e) {}
+                                            try {
+                                                await Line.unlinkRichMenuFromUser(req.body.uid_line)
+                                            } catch(e) {}
+                                            try {
+                                                Line.linkRichMenuToUser(req.body.uid_line , RichHouse)
+                                            } catch(e) {}
                                         }
                                     )
                                 } else {
                                     con.end()
-                                    Line.pushMessage(req.body.uid_line , {
-                                        type : "text",
-                                        text : "บัญชีผ่านการตรวจสอบแล้วนะคะ \u2764"
-                                    })
-                                    await Line.unlinkRichMenuFromUser(req.body.uid_line)
-                                    Line.linkRichMenuToUser(req.body.uid_line , RichHouse)
+                                    try {
+                                        Line.pushMessage(req.body.uid_line , {
+                                            type : "text",
+                                            text : "บัญชีผ่านการตรวจสอบแล้วนะคะ \u2764"
+                                        })
+                                    } catch (e) {}
+                                    try {
+                                        await Line.unlinkRichMenuFromUser(req.body.uid_line)
+                                    } catch(e) {}
+                                    try {
+                                        Line.linkRichMenuToUser(req.body.uid_line , RichHouse)
+                                    } catch(e) {}
                                 }
-        
                                 res.send("113")
                             } else {
                                 con.end()
@@ -967,16 +983,21 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             async (err , check) => {
                                 con.end()
                                 if(!err , check[0]) {
-                                    Line.pushMessage(check[0].uid_line , {
-                                        type : "text",
-                                        text : "บัญชีไม่ผ่านการตรวจสอบ กรุณาส่งข้อความเพื่อพูดคุยกับเจ้าหน้าที่ หรือสมัครบัญชีอีกครั้งนะคะ \u2764"
-                                    })
-                                    await Line.unlinkRichMenuFromUser(check[0].uid_line)
-                                    Line.linkRichMenuToUser(check[0].uid_line , RichSign)
+                                    try {
+                                        Line.pushMessage(check[0].uid_line , {
+                                            type : "text",
+                                            text : "บัญชีไม่ผ่านการตรวจสอบ กรุณาส่งข้อความเพื่อพูดคุยกับเจ้าหน้าที่ หรือสมัครบัญชีอีกครั้งนะคะ \u2764"
+                                        })
+                                    } catch (e) {}
+                                    try {
+                                        await Line.unlinkRichMenuFromUser(check[0].uid_line)
+                                    } catch (e) {}
+                                    try {
+                                        Line.linkRichMenuToUser(check[0].uid_line , RichSign)
+                                    } catch(e) {}
                                 }
                             }
                         )
-
                         res.send("113")
                     }
                 )
@@ -1054,42 +1075,42 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     FROM acc_farmer
                     WHERE id_table = ?
                 ` , [req.body.id_table] ,
-                (err, search ) => {
-                    if (err){
-                        dbpacket.dbErrorReturn(con , err , res)
-                        return 0
-                    };
+                async (err, search ) => {
+                    if (!err){
+                        await SendToFarmerLink(con , search[0].link_user , "ทำการยกเลิกการเชื่อมต่อบัญชีของท่านเรียบร้อย")
+                        con.query(
+                            `
+                            UPDATE acc_farmer
+                            SET link_user = ?
+                            WHERE id_table = ?
+                            ` , [search[0].uid_line , req.body.id_table] ,
+                            (err, result ) => {
+                                if (err){
+                                    dbpacket.dbErrorReturn(con , err , res)
+                                    return 0
+                                };
 
-                    con.query(
-                        `
-                        UPDATE acc_farmer
-                        SET link_user = ?
-                        WHERE id_table = ?
-                        ` , [search[0].uid_line , req.body.id_table] ,
-                        (err, result ) => {
-                            if (err){
-                                dbpacket.dbErrorReturn(con , err , res)
-                                return 0
-                            };
-
-                            con.query(
-                                `
-                                UPDATE housefarm
-                                SET link_user = ?
-                                WHERE uid_line = ?
-                                ` , [search[0].uid_line , search[0].uid_line] ,
-                                (err, update ) => {
-                                    if (err){
-                                        dbpacket.dbErrorReturn(con , err , res)
-                                        return 0
-                                    };
-
-                                    con.end()
-                                    res.send(search[0].link_user)
-                                }
-                            )
-                        }
-                    )
+                                con.query(
+                                    `
+                                    UPDATE housefarm
+                                    SET link_user = ?
+                                    WHERE uid_line = ?
+                                    ` , [search[0].uid_line , search[0].uid_line] ,
+                                    (err, update ) => {
+                                        if (err){
+                                            dbpacket.dbErrorReturn(con , err , res)
+                                            return 0
+                                        };
+                                        con.end()
+                                        res.send(search[0].link_user)
+                                    }
+                                )
+                            }
+                        )
+                    } else {
+                        con.end()
+                        res.send("")
+                    }
                 })
             }
         } catch (err ) {
@@ -1117,16 +1138,17 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const convert= await new Promise((resole , reject)=> {
                     con.query(
                         `
-                        SELECT link_user , uid_line
+                        SELECT link_user , uid_line , fullname
                         FROM acc_farmer
                         WHERE id_table = ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
                         ` , [ req.body.id_table_convert ]
                         , (err , result)=>{
-                        if (err){
-                            dbpacket.dbErrorReturn(con , err , res)
-                            return 0
-                        };
-    
+                        try {
+                            Line.pushMessage(convert[0].uid_line , {
+                                type : "text",
+                                text : `คุณได้ทำการเชื่อมบัญชีเรียบร้อย \u2764`
+                            })
+                        } catch(e) {}
                         resole(result)
                     })
                 })
@@ -1157,11 +1179,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         WHERE uid_line = ?
                                         ` , [ Link_user , convert[0].uid_line ] ,
                                         (err, result ) => {
-                                            if (err){
-                                                dbpacket.dbErrorReturn(con , err , res)
-                                                return 0
-                                            };
-                                            
                                             resole(1)
                                         }
                                     )
@@ -1178,32 +1195,35 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     WHERE register_auth = 1 and id_table = ? and station = ?
                     `,[Link_user , req.body.id_table , result['data']['station_doctor'] ],
                     (err, result )=>{
-                        if (err){
-                            dbpacket.dbErrorReturn(con , err , res)
-                            return 0
-                        };
-
-                        if(Link_user) {
-                            con.query(
-                                `
-                                UPDATE housefarm 
-                                SET link_user = ?
-                                WHERE uid_line = ?
-                                ` , [ Link_user , req.body.uid_line ] ,
-                                (err, result ) => {
-                                    if (err){
-                                        dbpacket.dbErrorReturn(con , err , res)
-                                        return 0
-                                    };
-
-                                    con.end()
-                                }
-                            )
+                        if (!err){
+                            if(Link_user) {
+                                con.query(
+                                    `
+                                    UPDATE housefarm 
+                                    SET link_user = ?
+                                    WHERE uid_line = ?
+                                    ` , [ Link_user , req.body.uid_line ] ,
+                                    (err, result ) => {
+                                        if (!err){
+                                            try {
+                                                Line.pushMessage(req.body.uid_line , {
+                                                    type : "text",
+                                                    text : `เชื่อมบัญชีกับคุณ ${convert[0].fullname} \u2764`
+                                                })
+                                            } catch(e) {}
+                                            con.end()
+                                        }
+                                    }
+                                )
+                            } else {
+                                con.end()
+                            }
+                            
+                            res.send(Link_user)
                         } else {
                             con.end()
+                            res.send("")
                         }
-
-                        res.send(Link_user)
                     }
                 )
             }
@@ -1775,15 +1795,46 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         SET status = ? , note = ? , id_doctor = ?
                         WHERE id_edit = ?
                     ` , [ req.body.status , req.body.note , result['data']['id_table_doctor'] , req.body.id_edit ] ,
-                    (err, result ) => {
-                        if (err) {
-                            dbpacket.dbErrorReturn(con, err, res);
-                            console.log("update plant editform");
-                            return 0;
+                    async (err, result ) => {
+                        if (!err) {
+                            if(req.body.status == 2) {
+                                // con.query(
+                                //     `
+                                //     SELECT uid_line , house.name_house as name_house
+                                //     FROM acc_farmer ,
+                                //     (
+                                //         SELECT link_user , name_house
+                                //         FROM housefarm ,
+                                //         (
+                                //             SELECT id_farm_house
+                                //             FROM formplant
+                                //             WHERE id = ?
+                                //         ) as formPlant
+                                //         WHERE housefarm.id_farm_house = formPlant.id_farm_house
+                                //     ) as house
+                                //     WHERE house.link_user = acc_farmer.link_user and acc_farmer.register_auth != 2
+                                //     ` , [ req.body.id_plant ] ,
+                                //     (err , listFarmer) => {
+                                //         con.end()
+                                //         if(!err) {
+                                //             const uid = listFarmer.filter(val=>val.uid_line)
+                                //             const nameHouse = [...(new Set(listFarmer.filter(val=>val.name_house)))]
+                                //             if(uid.length != 0 && nameHouse.length != 0) {
+                                //                 try {
+                                //                     Line.multicast([...(new Set(uid))] , {type : "text" , text : `ผลการตรวจสอบการแก้ไขแบบบันทึก\nผลการตรวจสอบ ไม่ผ่าน\nในโรงเรือน ${nameHouse[0]}`})
+                                //                 } catch(e) {}
+                                //             }
+                                //         }
+                                //     }
+                                // )
+                                await SendToFarmerHouse(con , req.body.id_plant , "ผลการตรวจสอบการแก้ไขแบบบันทึก\nผลการตรวจสอบ ไม่ผ่าน")
+                                con.end()
+                            } else con.end()
+                            res.send("133")
+                        } else {
+                            con.end()
+                            res.send("")
                         }
-
-                        con.end()
-                        res.send("133")
                     }
                 )
             }
@@ -2006,7 +2057,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                
                 const CheckInsert = req.body.type == 1 ? await new Promise((resole , reject)=>{
                     con.query(
                         `
@@ -2085,12 +2135,45 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             VALUES 
                             ( ? , ? , ? , ? , '')
                         ` , [ req.body.id_plant , Random , result["data"].id_table_doctor , req.body.type ] ,
-                        (err, result ) => {
+                        async (err, result ) => {
                             if (err) {
                                 dbpacket.dbErrorReturn(con, err, res);
                                 console.log("get manage");
                                 return 0;
                             }
+
+                            // await new Promise((resole , reject)=>{
+                            //     con.query(
+                            //         `
+                            //         SELECT uid_line , house.name_house as name_house
+                            //         FROM acc_farmer ,
+                            //         (
+                            //             SELECT link_user , name_house
+                            //             FROM housefarm ,
+                            //             (
+                            //                 SELECT id_farm_house
+                            //                 FROM formplant
+                            //                 WHERE id = ?
+                            //             ) as formPlant
+                            //             WHERE housefarm.id_farm_house = formPlant.id_farm_house
+                            //         ) as house
+                            //         WHERE house.link_user = acc_farmer.link_user and acc_farmer.register_auth != 2
+                            //         ` , [ req.body.id_plant ] ,
+                            //         (err , listFarmer) => {
+                            //             if(!err) {
+                            //                 const uid = listFarmer.filter(val=>val.uid_line)
+                            //                 const nameHouse = [...(new Set(listFarmer.filter(val=>val.name_house)))]
+                            //                 if(uid.length != 0 && nameHouse.length != 0) {
+                            //                     try {
+                            //                         Line.multicast([...(new Set(uid))] , {type : "text" , text : `หมอพืชมีการสั่งเก็บเกี่ยวผลผลิตตัวอย่างในโรงเรือน ${nameHouse[0]}`})
+                            //                     } catch(e) {}
+                            //                 }
+                            //             }
+                            //             resole("")
+                            //         }
+                            //     )
+                            // })
+                            await SendToFarmerHouse(con , req.body.id_plant , "หมอพืชมีการสั่งเก็บเกี่ยวผลผลิตตัวอย่าง")
     
                             if(req.body.type == 0) {
                                 con.query(
@@ -2161,15 +2244,15 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     VALUES
                                     (? , ? , ?)
                                 ` , [ req.body.id_plant , req.body.report_text , result.data.id_table_doctor ] ,
-                                (err , result) =>{
-                                    if (err) {
-                                        dbpacket.dbErrorReturn(con, err, res);
-                                        console.log("insert report");
-                                        return 0;
+                                async (err , result) =>{
+                                    if (!err) {
+                                        await SendToFarmerHouse(con , req.body.id_plant , "หมอพืชให้คำแนะนำกับแบบบันทึก")
+                                        con.end()
+                                        res.send("113")
+                                    } else {
+                                        con.end()
+                                        res.send("")
                                     }
-            
-                                    con.end()
-                                    res.send("113")
                                 }
                             )
                         } else {
@@ -2266,28 +2349,25 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             VALUES
                             (? , ? , ? , ? , ?)
                         ` , [ req.body.id_plant , req.body.statusCheck , req.body.stateCheck , req.body.report_text , result.data.id_table_doctor ] ,
-                        (err , result) =>{
-                            if (err) {
-                                dbpacket.dbErrorReturn(con, err, res);
-                                console.log("insert plant check");
-                                return 0;
-                            }
-
-                            if(req.body.stateCheck == 1) {
-                                con.query(
-                                    `
-                                    UPDATE formplant 
-                                    SET submit = 2
-                                    WHERE id = ? and submit = 1
-                                    ` , [ req.body.id_plant ] , 
-                                    (err , update)=>{
-                                        con.end()
-                                        res.send("113")
-                                    }
-                                )
-                            } else {
-                                con.end()
-                                res.send("113")
+                        async (err , result) =>{
+                            if (!err) {
+                                await SendToFarmerHouse(con , req.body.id_plant , "มีผลการตรวจสอบผลผลิต")
+                                if(req.body.stateCheck == 1) {
+                                    con.query(
+                                        `
+                                        UPDATE formplant 
+                                        SET submit = 2
+                                        WHERE id = ? and submit = 1
+                                        ` , [ req.body.id_plant ] , 
+                                        (err , update)=>{
+                                            con.end()
+                                            res.send("113")
+                                        }
+                                    )
+                                } else {
+                                    con.end()
+                                    res.send("113")
+                                }
                             }
                         }
                     )
@@ -2340,15 +2420,15 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     VALUES
                                     (? , ? , ? , ?)
                                 ` , [ req.body.id_plant , req.body.statusCheck , req.body.report_text , result.data.id_table_doctor ] ,
-                                (err , result) =>{
-                                    if (err) {
-                                        dbpacket.dbErrorReturn(con, err, res);
-                                        console.log("insert form check");
-                                        return 0;
+                                async (err , result) =>{
+                                    if (!err) {
+                                        await SendToFarmerHouse(con , req.body.id_plant , "มีผลการตรวจสอบแบบบันทึก")
+                                        con.end()
+                                        res.send("113")
+                                    } else {
+                                        con.end()
+                                        res.send("")
                                     }
-            
-                                    con.end()
-                                    res.send("113")
                                 }
                             )
                         } else {
@@ -2970,6 +3050,63 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             return val
         })
         return listFarmer
+    }
+
+    const SendToFarmerHouse = async (con , id_plant , textSend) => {
+        return await new Promise((resole , reject)=>{
+            con.query(
+                `
+                SELECT uid_line , house.name_house as name_house
+                FROM acc_farmer ,
+                (
+                    SELECT link_user , name_house
+                    FROM housefarm ,
+                    (
+                        SELECT id_farm_house
+                        FROM formplant
+                        WHERE id = ?
+                    ) as formPlant
+                    WHERE housefarm.id_farm_house = formPlant.id_farm_house
+                ) as house
+                WHERE house.link_user = acc_farmer.link_user and acc_farmer.register_auth != 2
+                ` , [ id_plant ] ,
+                (err , listFarmer) => {
+                    if(!err) {
+                        const uid = listFarmer.map(val=>val.uid_line).filter(val=>val)
+                        const nameHouse = [...(new Set(listFarmer.map(val=>val.name_house).filter(val=>val)))]
+                        if(uid.length != 0 && nameHouse.length != 0) {
+                            try {
+                                Line.multicast([...(new Set(uid))] , {type : "text" , text : `${textSend}\nในโรงเรือน : ${nameHouse[0]}`})
+                            } catch(e) {}
+                        }
+                    }
+                    resole("")
+                }
+            )
+        })
+    }
+
+    const SendToFarmerLink = async (con , link_user , textSend) => {
+        return await new Promise((resole , reject)=>{
+            con.query(
+                `
+                SELECT uid_line
+                FROM acc_farmer
+                WHERE acc_farmer.link_user = ? and acc_farmer.register_auth != 2
+                ` , [ link_user ] ,
+                (err , listFarmer) => {
+                    if(!err) {
+                        const uid = listFarmer.map(val=>val.uid_line).filter(val=>val)
+                        if(uid.length) {
+                            try {
+                                Line.multicast([...(new Set(uid))] , {type : "text" , text : `${textSend}`})
+                            } catch(e) {}
+                        }
+                    }
+                    resole("")
+                }
+            )
+        })
     }
     
     // app.post("/doctor/api/doctor/pull" , (req , res)=>{

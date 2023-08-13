@@ -64,14 +64,16 @@ const TableBox = (pdf = new jsPDF() , posiStartX = 0 , posiStartY = 0 , headers 
         let startBodyX = posiStartX
         
         let splite = Row.filter(val=>val.name.indexOf("|") >= 0)
+        const numLine = new Array
         let countHeight = 1
         const maxText = 3
         if(splite.length != 0) {
             const list = splite[0].name.split("|")
             for( let x = 0 ; x < list.length ; x += maxText ){
-                countHeight++
+                const newArray = list.slice(x , x + maxText)
+                numLine.push(newArray.join(""))
             }
-            if(countHeight == 2) countHeight = 1
+            countHeight = numLine.length
         }
 
         for(let Body of Row) {
@@ -90,7 +92,6 @@ const TableBox = (pdf = new jsPDF() , posiStartX = 0 , posiStartY = 0 , headers 
                 for( let x = 0 ; x < list.length ; x += maxText ){
                     const newArray = list.slice(x , x + maxText)
                     newSplit.push(newArray.join(""))
-                    console.log(newSplit)
                 }
                 
                 const Text = newSplit.join("\n")

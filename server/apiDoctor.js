@@ -3044,6 +3044,79 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     })
 
+    app.get('/api/doctor/notify/get/count' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                con.query(
+                    `
+                    SELECT COUNT(id) as countNotify
+                    FROM notify_doctor
+                    WHERE COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0 
+                            AND station = ?
+                    ` , [ result.data.id_table_doctor , result.data.station_doctor ] , 
+                    (err , COUNT) => {
+                        con.end()
+                        if(!err) res.send(COUNT)
+                        else res.send("")
+                    }
+                )
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.get('/api/doctor/notify/get' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                const countUnRead = await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                        SELECT COUNT(id) as countNotify
+                        FROM notify_doctor
+                        WHERE COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0 
+                                AND station = ?
+                        ` , [ result.data.id_table_doctor , result.data.station_doctor ] , 
+                        (err , COUNT) => {
+                            con.end()
+                            resole(isNaN(parseInt(COUNT)) ? 0 : parseInt(COUNT))
+                        }
+                    )
+                })
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
     const ProfileConvertImg = (profile , column_img) => {
         const listFarmer = profile.map((val)=>{
             val[column_img] = val[column_img].toString()

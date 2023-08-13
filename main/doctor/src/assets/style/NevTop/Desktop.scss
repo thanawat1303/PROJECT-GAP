@@ -43,20 +43,31 @@ $ColorGreen : #22C7A9;
         display: flex;
         justify-content: center;
         align-items: center;
-        a {
-            margin: 0px 20px;
-            padding: 2px 20px;
-            font-family: Sans-font;
-            border-radius: 50px;
-            font-weight: 900;
-            font-size: 20px;
-            color: $ColorGreen;
-        }
+        .menu-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
 
-        a.logout {
-            margin-right: 0px;
-            background-color: $ColorGreen;
-            color: black;
+            a {
+                margin: 0px 20px;
+                padding: 2px 20px;
+                font-family: Sans-font;
+                border-radius: 50px;
+                font-weight: 900;
+                font-size: 20px;
+                color: $ColorGreen;
+            }
+    
+            a.logout {
+                margin-right: 0px;
+                background-color: $ColorGreen;
+                color: black;
+            }
+
+            .notify-content {
+                position: absolute;
+            }
         }
     }
 

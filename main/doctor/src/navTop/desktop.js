@@ -14,6 +14,8 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
     const [BodyPopup , setBodyPopup] = useState(<></>)
     const [BodyMenu , setBodyMenu] = useState(<></>)
     const [Responsive , setResponsive] = useState(window.innerWidth)
+
+    const [getNotifyContent , setNotifyContent] = useState(<></>)
     
     useEffect(()=>{
         window.addEventListener("resize" , Resize)
@@ -49,6 +51,11 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
         setBodyPopup(<ProfilePage RefPop={RefPopup} setPopup={setBodyPopup} session={setSession} returnToHome={Home} FetchProfileReload={FetchProfile}/>)
     }
 
+    const Notify = (e) => {
+        if(e) e.preventDefault()
+        
+    }
+
     const OpenMenuMobile = () => {
         setBodyMenu(<MenuMobile RefMenu={RefMenu} Profile={getProfile} setBodyMenu={setBodyMenu} Click={{
             HomeClick : Home,
@@ -78,10 +85,21 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
                 </span>
                 <span className="bt-action">
                     {/* <a title="หน้าแรก" href="/doctor">หน้าแรก</a> */}
-                    <a title="เมนู" href="/doctor" onClick={Home}>เมนู</a>
-                    <a title="การแจ้งเตือน" href="/doctor">การแจ้งเตือน</a>
-                    <a title="โปรไฟล์" href="/doctor" onClick={Profile}>โปรไฟล์</a>
-                    <a className="logout" onClick={Logout} title="ออกจากระบบ" href="/doctor/logout">ออกจากระบบ</a>
+                    <div className="menu-content">
+                        <a title="เมนู" href="/doctor" onClick={Home}>เมนู</a>
+                    </div>
+                    <div className="menu-content">
+                        <a title="การแจ้งเตือน" href="/doctor">การแจ้งเตือน</a>
+                        <div className="notify-content">
+                            {getNotifyContent}
+                        </div>
+                    </div>
+                    <div className="menu-content">
+                        <a title="โปรไฟล์" href="/doctor" onClick={Profile}>โปรไฟล์</a>
+                    </div>
+                    <div className="menu-content">
+                        <a className="logout" onClick={Logout} title="ออกจากระบบ" href="/doctor/logout">ออกจากระบบ</a>
+                    </div>
                     {/* <a className="alarm">
                         <img src="/alarm-svgrepo-com.svg"></img>
                     </a>
@@ -127,6 +145,7 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
 }}) => {
 
     const [ Menu , setMenu ] = useState(false)
+    const [getNotifyContent , setNotifyContent] = useState(<></>)
 
     useEffect(()=>{
         RefMenu.current.style.opacity = "1"
@@ -144,6 +163,10 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
         if(e.target === RefMenu.current) {
             Close()
         }
+    }
+
+    const Notify = (e) => {
+        if(e) e.preventDefault()
     }
 
     const Close = async () => {
@@ -186,6 +209,9 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
                         <span>เมนู</span>
                     </div>
                     <div className="menu-name-list">
+                        <div className="notify-content">
+                            {getNotifyContent}
+                        </div>
                         <svg viewBox="0 0 25 25" fill="none">
                             <path d="M18.5904 8.59888C18.5904 7.00758 17.9582 5.48145 16.833 4.35624C15.7078 3.23102 14.1817 2.59888 12.5904 2.59888C10.9991 2.59888 9.47294 3.23102 8.34772 4.35624C7.2225 5.48145 6.59036 7.00758 6.59036 8.59888C6.59036 15.5989 3.59036 17.5989 3.59036 17.5989H21.5904C21.5904 17.5989 18.5904 15.5989 18.5904 8.59888Z" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M14.3204 21.5989C14.1445 21.902 13.8922 22.1535 13.5886 22.3284C13.285 22.5033 12.9407 22.5953 12.5904 22.5953C12.24 22.5953 11.8957 22.5033 11.5921 22.3284C11.2885 22.1535 11.0362 21.902 10.8604 21.5989" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

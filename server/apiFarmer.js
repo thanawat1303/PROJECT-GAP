@@ -641,7 +641,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                                                                 }
                                                                                 con.end()
                                                                                 try {
-                                                                                    sendNotifyToDoctor(auth.data.station , `เกษตรกร ${auth.data.fullname} ทำการแก้ไขแบบฟอร์มบันทึกข้อมูล\n รหัสแบบฟอร์ม ${data.id_plant} กรุณาตรวจสอบค่ะ`)
+                                                                                    sendNotifyToDoctor(auth.data.station , `เกษตรกร ${auth.data.fullname} ทำการแก้ไขแบบฟอร์มบันทึกข้อมูล\nรหัสแบบฟอร์ม ${data.id_plant} กรุณาตรวจสอบค่ะ`)
                                                                                 } catch (e) {}
                                                                                 res.send("133")
                                                                             }
@@ -1588,7 +1588,15 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                     })
                     resole(new Set(uid_send))
                 })
-                con.end()
+                con.query(
+                    `
+                    INSERT notify_doctor 
+                    ( id_read , notify , station ) VALUES ( ? , ? , ? )
+                    ` , ['{}' , msg , stationSend] , 
+                    (err , result) => {
+                        con.end()
+                    }
+                )
                 if(Uid_line_send.size) line.multicast([...Uid_line_send] , {type : "text" , text : `${msg}`})
             }
         })

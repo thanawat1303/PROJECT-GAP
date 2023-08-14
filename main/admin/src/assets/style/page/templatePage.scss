@@ -79,6 +79,15 @@
             height: 100%;
             overflow-y: scroll;
         }
+
+        .list-manage::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .list-manage::-webkit-scrollbar-thumb {
+            background-color: #049f9f;
+            border-radius: 18px;
+        }
     }
     
     @media screen and (max-width: 480px) {

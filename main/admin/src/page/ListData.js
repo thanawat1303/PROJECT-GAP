@@ -186,7 +186,7 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
                     <>
                         <Detail-Data-main>
                             <Detail-Image>
-                                <img src="/doctor-svgrepo-com.svg"></img>
+                                <img src={data.img_doctor ? data.img_doctor : "/doctor-svgrepo-com.svg"}></img>
                             </Detail-Image>
                             <Detail-data>
                                 <Detail-in-fullname>

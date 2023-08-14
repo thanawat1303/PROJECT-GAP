@@ -37,13 +37,18 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
         , 
         [data.typeDelete] ,
         (err , result)=>{
-          if (err){
-            dbpacket.dbErrorReturn(con , err , res)
-            return 0
+          con.end()
+          if (!err){
+            result.map(val=>{
+              val.img_doctor = val.img_doctor.toString()
+              return val
+            })
+            res.send(result)
+          } else {
+            res.send("")
           };
   
-          con.end()
-          res.send(result)
+          
         })
       }
     }).catch((err)=>{

@@ -297,15 +297,24 @@
             .bt-select-option {
                 right: 100%;
                 .bt-search-show {
-                    width: 25px;
-                    height: 25px;
+                    width: 30px;
+                    height: 30px;
                     padding: 0px 3px 3px 0px;
                 }
 
                 .bt-export-show {
-                    width: 25px;
-                    height: 25px;
+                    width: 30px;
+                    height: 30px;
                 }
+            }
+        }
+
+        .search-form[show=""] {
+            .bt-select-option {
+                top: 104%;
+                left: 0.3em;
+                flex-direction: row;
+                height: auto;
             }
         }
     }

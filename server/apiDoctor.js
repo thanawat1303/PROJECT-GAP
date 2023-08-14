@@ -270,6 +270,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ` , [ req.body.uid_line , result.data.id_table_doctor , req.body.uid_line ] ,
                             (err , uid) => {
                                 con.end()
+                                console.log(uid)
                                 if(!err) if(uid.changedRows != 0) Line.pushMessage(req.body.uid_line , {type : "text" , text : "เชื่อมต่อบัญชีเจ้าหน้าที่กับบัญชีไลน์เรียบร้อยค่ะ"})
                             }
                         )

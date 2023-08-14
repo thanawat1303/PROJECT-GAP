@@ -3044,42 +3044,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     })
 
-    app.get('/api/doctor/notify/get/count' , async (req , res)=>{
-        let username = req.session.user_doctor
-        let password = req.session.pass_doctor
-    
-        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
-            res.redirect('/api/logout')
-            return 0
-        }
-    
-        let con = Database.createConnection(listDB)
-    
-        try {
-            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
-            if(result['result'] === "pass") {
-                con.query(
-                    `
-                    SELECT COUNT(id) as countNotify
-                    FROM notify_doctor
-                    WHERE COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0 
-                            AND station = ?
-                    ` , [ result.data.id_table_doctor , result.data.station_doctor ] , 
-                    (err , COUNT) => {
-                        con.end()
-                        if(!err) res.send(COUNT)
-                        else res.send("")
-                    }
-                )
-            }
-        } catch (err) {
-            con.end()
-            if(err == "not pass") {
-                res.redirect('/api/logout')
-            }
-        }
-    })
-
     app.get('/api/doctor/notify/get' , async (req , res)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
@@ -3097,17 +3061,52 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const countUnRead = await new Promise((resole , reject)=>{
                     con.query(
                         `
-                        SELECT COUNT(id) as countNotify
+                        SELECT COUNT(id) as count
                         FROM notify_doctor
                         WHERE COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0 
                                 AND station = ?
                         ` , [ result.data.id_table_doctor , result.data.station_doctor ] , 
                         (err , COUNT) => {
-                            con.end()
-                            resole(isNaN(parseInt(COUNT)) ? 0 : parseInt(COUNT))
+                            resole(isNaN(parseInt(COUNT[0].count)) ? 0 : parseInt(COUNT[0].count))
                         }
                     )
                 })
+
+                const Oparetor = (req.query.type == "start" || req.query.type == "update") ? ">" : "<"; 
+                const getNotify = await new Promise((resole , reject)=>{
+                    con.query(
+                        `
+                        SELECT * ,
+                        (
+                            SELECT img
+                            FROM acc_farmer
+                            WHERE acc_farmer.id_table = notify_doctor.id_table_farmer
+                        ) as img_farmer
+                        FROM notify_doctor
+                        WHERE station = ? AND id ${Oparetor} ?
+                        ORDER BY id DESC
+                        LIMIT ${req.query.type == "start" ? countUnRead != 0 ? countUnRead + 3 : 10 :
+                                req.query.type == "update" ? "999999" :
+                                req.query.type == "get" ? "10" : 0}
+                        ` , [ result.data.station_doctor , req.query.id ] , 
+                        (err , list) => {
+                            if(list.length) list.map(val=>{
+                                val.img_farmer = val.img_farmer.toString()
+                                return val
+                            })
+                            resole(list)
+                        }
+                    )
+                })
+                
+                const Send = {
+                    List : getNotify,
+                    countUn : countUnRead,
+                    station : result.data.station_doctor
+                }
+
+                con.end()
+                res.send(Send)
             }
         } catch (err) {
             con.end()

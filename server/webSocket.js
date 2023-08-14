@@ -15,6 +15,14 @@ module.exports = function WebSocketServ (server) {
         socket_client.on("disconnect msg" , (uid_line)=>{
             socket_client.leave(uid_line)
         })
+
+        socket_client.on("connect_notify_doctor" , (station)=>{
+            socket_client.join(`notify-${station}`)
+        })
+
+        socket_client.on("disconnect_notify_doctor" , (station)=>{
+            socket_client.leave(`notify-${station}`)
+        })
     })
 
     return io

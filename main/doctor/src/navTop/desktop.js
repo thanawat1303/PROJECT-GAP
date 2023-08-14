@@ -2,20 +2,26 @@ import React, { useEffect, useRef, useState } from "react";
 import Login from "../Login";
 import SessionOut from "../sesionOut";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
+import io from "socket.io-client"
 
 import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
-import { PopupDom } from "../../../../src/assets/js/module";
+import { DayJSX, PopupDom, TimeDiff } from "../../../../src/assets/js/module";
 import ProfilePage from "../page/profile/Profile";
 
-const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , eleBody , setTextStatus , getProfile , FetchProfile}) => {
+const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCover , eleBody , setTextStatus , getProfile , FetchProfile}) => {
     const RefPopup = useRef()
     const RefMenu = useRef()
     const [BodyPopup , setBodyPopup] = useState(<></>)
-    const [BodyMenu , setBodyMenu] = useState(<></>)
+    const [BodyMenu , setBodyMenu] = useState(false)
     const [Responsive , setResponsive] = useState(window.innerWidth)
+    const [getFetchStart , setFetchStart] = useState(true)
+    const [getStation , setStation] = useState(0)
 
-    const [getNotifyContent , setNotifyContent] = useState(<></>)
+    const [getNotifyContent , setNotifyContent] = useState(false)
+    const [getNotifyCount , setNotifyCount] = useState(0)
+    const [getNotifyList , setNotifyList] = useState([])
+    const [getShowNotify , setShowNotify] = useState(false)
     
     useEffect(()=>{
         window.addEventListener("resize" , Resize)
@@ -24,6 +30,50 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
             window.removeEventListener("resize" , Resize)
         })
     } , [])
+
+    const NotifyConnect = async (id) => {
+        if(getFetchStart) {
+            setFetchStart(false)
+            await FetchNotify(0 , "start")
+        } else {
+            SocketConnect(id)
+        }
+    }
+
+    useEffect(()=>{
+        socket.emit("disconnect_notify_doctor" , getStation)
+        socket.removeListener("update")
+        NotifyConnect(getNotifyList.length == 0 ? 0 : getNotifyList[0].id)
+        return (()=>{
+            socket.emit("disconnect_notify_doctor" , getStation)
+            socket.removeListener("update")
+        })
+    } , [getNotifyList])
+
+    const SocketConnect = (id) => {
+        console.log(id , getStation)
+        socket.emit("connect_notify_doctor" , getStation)
+        socket.on("update" ,()=>{
+            FetchNotify(id , "update")
+        })
+    }
+
+    const FetchNotify = async (id_focus , type) => {
+        const notify = await clientMo.get(`/api/doctor/notify/get?type=${type}&id=${id_focus}`)
+        if(notify) {
+            const notifyData = JSON.parse(notify)
+            setNotifyCount(notifyData.countUn ? notifyData.countUn : 0)
+            setStation(notifyData.station)
+            console.log(notifyData)
+            if(type === "start") {
+                setNotifyList(notifyData.List)
+            } else if (type === "update") {
+                setNotifyList((prevent)=> [...notifyData.List , ...prevent])
+            } else if (type === "get") {
+                setNotifyList((prevent)=> [...prevent , ...notifyData.List])
+            }
+        } else setSession()
+    }
 
     const Logout = (e) => {
         // e.target.parentElement.classList.toggle('hide')
@@ -53,15 +103,11 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
 
     const Notify = (e) => {
         if(e) e.preventDefault()
-        
+        setNotifyContent(true)
     }
 
     const OpenMenuMobile = () => {
-        setBodyMenu(<MenuMobile RefMenu={RefMenu} Profile={getProfile} setBodyMenu={setBodyMenu} Click={{
-            HomeClick : Home,
-            ProfileClick : Profile,
-            LogoutClick : Logout
-        }}/>)
+        setBodyMenu(true)
     }
 
     const Resize = () => {
@@ -89,9 +135,18 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
                         <a title="เมนู" href="/doctor" onClick={Home}>เมนู</a>
                     </div>
                     <div className="menu-content">
-                        <a title="การแจ้งเตือน" href="/doctor">การแจ้งเตือน</a>
-                        <div className="notify-content">
-                            {getNotifyContent}
+                        <a title="การแจ้งเตือน" href="/doctor" onClick={Notify} notify="">
+                            การแจ้งเตือน
+                            { getNotifyCount ?
+                                <div notify="" className="count-notify">{getNotifyCount < 10 ? getNotifyCount : "9+"}</div>
+                                : <></>
+                            }
+                        </a>
+                        <div className="notify-content" show={getShowNotify ? "" : null}>
+                            { getNotifyContent ?
+                                <Notification setShow={setShowNotify} setContent={setNotifyContent} dataNotification={getNotifyList} FectNotify={()=>FetchNotify(getNotifyList.length != 0 ? getNotifyList[getNotifyList.length - 1].id : 0)}/>
+                                : <></>
+                            }
                         </div>
                     </div>
                     <div className="menu-content">
@@ -131,21 +186,40 @@ const DesktopNev = ({setMain , socket , setSession , setBody , eleImageCover , e
             }
             <PopupDom Ref={RefPopup} Body={BodyPopup} zIndex={999}/>
             { Responsive < 800 ?
-                <PopupDom Ref={RefMenu} Body={BodyMenu} zIndex={900} positionEdit={true}/>
+                // <PopupDom Ref={RefMenu} Body={BodyMenu} zIndex={900} positionEdit={true}/>
+                <div className="background-menu-mobile" ref={RefMenu}>
+                    { BodyMenu ?
+                        <MenuMobile RefMenu={RefMenu} Profile={getProfile} setBodyMenu={setBodyMenu} Click={{
+                            HomeClick : Home,
+                            ProfileClick : Profile,
+                            LogoutClick : Logout
+                        }} NotifyContent={{
+                            getNotifyCount : getNotifyCount,
+                            getNotifyList : getNotifyList
+                        }} FetchNotify={FetchNotify}/>
+                        : <></>
+                    }
+                </div>
                 : <></>
             }
         </section>
     )
 }
 
-const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
+const MenuMobile = ({RefMenu , setBodyMenu , Profile , 
+Click = {
     HomeClick : null,
     ProfileClick : null,
     LogoutClick : null
-}}) => {
+} ,
+NotifyContent = {
+    getNotifyCount : 0,
+    getNotifyList : []
+} , FetchNotify}) => {
 
     const [ Menu , setMenu ] = useState(false)
-    const [getNotifyContent , setNotifyContent] = useState(<></>)
+    const [getShowNotify , setShowNotify] = useState(false)
+    const [getNotifyContent , setNotifyContent] = useState(false)
 
     useEffect(()=>{
         RefMenu.current.style.opacity = "1"
@@ -167,6 +241,7 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
 
     const Notify = (e) => {
         if(e) e.preventDefault()
+        setNotifyContent(true)
     }
 
     const Close = async () => {
@@ -178,7 +253,7 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
                 resole("")
             } , 500)
         })
-        setBodyMenu(<></>)
+        setBodyMenu(false)
     }
 
     return(
@@ -208,15 +283,19 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
                         </svg>
                         <span>เมนู</span>
                     </div>
-                    <div className="menu-name-list">
-                        <div className="notify-content">
-                            {getNotifyContent}
+                    <div className="menu-name-list" notify="" onClick={Notify}>
+                        <div notify="" className="notify-content" show={getShowNotify ? "" : null}>
+                            { getNotifyContent ?
+                                <Notification setShow={setShowNotify} setContent={setNotifyContent} dataNotification={NotifyContent.getNotifyList} FectNotify={()=>FetchNotify(NotifyContent.getNotifyList.length != 0 ? NotifyContent.getNotifyList[NotifyContent.getNotifyList.length - 1].id : 0)}/>
+                                : <></>
+                            }
                         </div>
-                        <svg viewBox="0 0 25 25" fill="none">
+                        <svg notify="" viewBox="0 0 25 25" fill="none">
                             <path d="M18.5904 8.59888C18.5904 7.00758 17.9582 5.48145 16.833 4.35624C15.7078 3.23102 14.1817 2.59888 12.5904 2.59888C10.9991 2.59888 9.47294 3.23102 8.34772 4.35624C7.2225 5.48145 6.59036 7.00758 6.59036 8.59888C6.59036 15.5989 3.59036 17.5989 3.59036 17.5989H21.5904C21.5904 17.5989 18.5904 15.5989 18.5904 8.59888Z" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M14.3204 21.5989C14.1445 21.902 13.8922 22.1535 13.5886 22.3284C13.285 22.5033 12.9407 22.5953 12.5904 22.5953C12.24 22.5953 11.8957 22.5033 11.5921 22.3284C11.2885 22.1535 11.0362 21.902 10.8604 21.5989" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>การแจ้งเตือน</span>
+                        <span notify="">การแจ้งเตือน</span>
+                        <div notify="" className="count-notify">{NotifyContent.getNotifyCount}</div>
                     </div>
                     <div className="menu-name-list" onClick={()=>{
                         Click.ProfileClick()
@@ -243,6 +322,56 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
                         <span>ออกจากระบบ</span>
                     </div>
                 </div>
+            </div>
+        </section>
+    )
+}
+
+const Notification = ({setShow , setContent , dataNotification , FectNotify}) => {
+    useEffect(()=>{
+        window.addEventListener("click" , Close)
+        setShow(true)
+
+        return(()=>{
+            window.removeEventListener("click" , Close)
+        })
+    } , [])
+
+    const Close = (e) => {
+        if(e.target.getAttribute("notify") == null) {
+            setShow(false)
+            setTimeout(()=>{
+                setContent(false)
+            } , 500)
+        }
+    }
+
+    const LoadGet = (e = document.getElementById()) => {
+        if(e.target.scrollHeight <= e.target.scrollTop + e.target.clientHeight) {
+            FectNotify()
+        }
+    }
+
+    return(
+        <section className="body-notification" notify="" onScroll={LoadGet}>
+            <div className="list-notification" notify="">
+                { dataNotification.length ?
+                    dataNotification.map(val=>
+                        <div className="content-notification" key={val.id} notify="">
+                            <div className="box-left" notify="">
+                                <img notify="" src={val.img_farmer}></img>
+                            </div>
+                            <div className="box-right" notify="">
+                                <div className="subject" notify="">
+                                    {val.notify}
+                                </div>
+                                <div className="date" notify="">
+                                    <TimeDiff DATE={val.date}/>
+                                </div>
+                            </div>
+                        </div>
+                    ) : <div>ไม่มีการแจ้งเตือน</div>
+                }
             </div>
         </section>
     )

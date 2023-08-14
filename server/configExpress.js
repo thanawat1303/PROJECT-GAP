@@ -75,7 +75,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     router(app)
     apiAdmin(app , db , apifunc , HOSTSSL , dbpacket , listDB)
     apiDoctor(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io , LINE)
-    apiFarmer(app , db , apifunc , HOST_FARMER , dbpacket , listDB , LINE)
+    apiFarmer(app , db , apifunc , HOST_FARMER , dbpacket , listDB , io , LINE)
     message(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io)
 
     return server

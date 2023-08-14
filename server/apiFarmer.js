@@ -3,7 +3,11 @@ const line = require('./configLine')
 const fs = require('fs')
 const RichSign = "richmenu-e6dd99ccb1aebb953c976a8188b20cd7"
 const RichHouse = "richmenu-93377925aa45b5dc5585f85749f8af8b"
-module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , LINE = line) {
+
+const {Server} = require('socket.io')
+const io = new Server()
+
+module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket = io , LINE = line) {
 
     app.post('/api/farmer/sign' , async (req , res)=>{
         if(req.session.user_doctor != undefined || req.session.pass_doctor != undefined) {
@@ -169,7 +173,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                         }
                                         
                                         try {
-                                            sendNotifyToDoctor(req.body['station'] , "เกษตรกรสมัครบัญชีเข้ามาใหม่ค่ะ")
+                                            sendNotifyToDoctor(result.insertId , req.body['station'] , "มีเกษตรกรสมัครบัญชีเข้ามาใหม่")
                                         } catch(e) {}
                                         
                                         res.send("insert complete")
@@ -550,7 +554,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                                     }
                                                     con.end()
                                                     try {
-                                                        sendNotifyToDoctor(auth.data.station , `เกษตรกร ${auth.data.fullname} มีการเพิ่มแบบบันทึก`)
+                                                        sendNotifyToDoctor(auth.data.id_table , auth.data.station , `เกษตรกร ${auth.data.fullname} มีการเพิ่มแบบบันทึก`)
                                                     } catch (e) {}
                                                     res.send("insert")
                                                 })
@@ -641,7 +645,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                                                                 }
                                                                                 con.end()
                                                                                 try {
-                                                                                    sendNotifyToDoctor(auth.data.station , `เกษตรกร ${auth.data.fullname} ทำการแก้ไขแบบฟอร์มบันทึกข้อมูล\nรหัสแบบฟอร์ม ${data.id_plant} กรุณาตรวจสอบค่ะ`)
+                                                                                    sendNotifyToDoctor(auth.data.id_table , auth.data.station , `เกษตรกร ${auth.data.fullname} ทำการแก้ไขแบบฟอร์มบันทึกข้อมูล\nรหัสแบบฟอร์ม ${data.id_plant}`)
                                                                                 } catch (e) {}
                                                                                 res.send("133")
                                                                             }
@@ -903,7 +907,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                         con.query(sql , ArrayData ,
                                                     (err , insert)=>{
                                                         try {
-                                                            sendNotifyToDoctor(auth.data.station , `เกษตรกร ${auth.data.fullname}\nมีการเพิ่ม${data.type_insert == "z" ? "ปัจจัยการผลิต" : "สารเคมี"}\nที่ฟอร์มไอดี ${data.id_plant}`)
+                                                            sendNotifyToDoctor(auth.data.id_table , auth.data.station , `เกษตรกร ${auth.data.fullname}\nมีการเพิ่ม${data.type_insert == "z" ? "ปัจจัยการผลิต" : "สารเคมี"}\nที่ฟอร์มไอดี ${data.id_plant}`)
                                                         } catch (e) {}
                                                         con.end()
                                                         res.send("insert")
@@ -1003,7 +1007,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                                                             (err , update) => {
                                                                                 if (!err) {
                                                                                     try {
-                                                                                        sendNotifyToDoctor(auth.data.station , `เกษตรกร ${auth.data.fullname}\nทำการแก้ไข${data.type_form == "z" ? "ปัจจัยการผลิต" : "สารเคมี"}\nที่ฟอร์มไอดี ${req.body.id_plant}`)
+                                                                                        sendNotifyToDoctor(auth.data.id_table , auth.data.station , `เกษตรกร ${auth.data.fullname}\nทำการแก้ไข${TypeFrom == "fertilizer" ? "ปัจจัยการผลิต" : "สารเคมี"}\nที่ฟอร์มไอดี ${req.body.id_plant}`)
                                                                                     } catch (e) {}
                                                                                     con.end()
                                                                                     res.send("133")
@@ -1561,7 +1565,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
         } else res.send("error auth")
     })
 
-    const sendNotifyToDoctor = async (stationSend , msg) => {
+    const sendNotifyToDoctor = async (id_table , stationSend , msg) => {
         let con = Database.createConnection(listDB)
         con.connect( async ( err )=>{
             if(!err) {
@@ -1591,12 +1595,14 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 con.query(
                     `
                     INSERT notify_doctor 
-                    ( id_read , notify , station ) VALUES ( ? , ? , ? )
-                    ` , ['{}' , msg , stationSend] , 
+                    (id_table_farmer , id_read , notify , station ) VALUES (? , ? , ? , ? )
+                    ` , [id_table , '{}' , msg , stationSend] , 
                     (err , result) => {
                         con.end()
                     }
                 )
+                
+                socket.to(`notify-${stationSend}`).emit("update")
                 if(Uid_line_send.size) line.multicast([...Uid_line_send] , {type : "text" , text : `${msg}`})
             }
         })

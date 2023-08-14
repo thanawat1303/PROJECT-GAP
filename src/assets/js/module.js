@@ -42,7 +42,28 @@ const TimeJSX = ({DATE , MAX = true}) => {
         
         if(MAX) setTime(`เวลา ${TimeIn.getUTCHours()} นาฬิกา ${TimeIn.getMinutes()} นาที ${TimeIn.getSeconds()} วินาที`)
         else setTime(`เวลา ${TimeIn.getUTCHours()}:${TimeIn.getMinutes() >= 10 ? TimeIn.getMinutes() : `0${TimeIn.getMinutes()}`}`)
-    })
+    } , [])
+
+    return(<input readOnly value={Time}></input>)
+}
+
+const TimeDiff = ({DATE}) => {
+    const [Time , setTime] = useState("")
+
+    useEffect(()=>{
+        const clientTimezoneOffset = new Date().getTimezoneOffset();
+        const TimeIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
+        // const TimeIn = new Date(DATE)
+        const NowTime = new Date().getTime()
+        const DiffTime = (NowTime - TimeIn.getTime())
+        // console.log(TimeIn , new Date())
+        const NewTime = parseInt(DiffTime / (1000)) < 60 ? `${parseInt(DiffTime / (1000))} วินาทีที่แล้ว` :
+                        parseInt(DiffTime / (1000 * 60)) < 60 ? `${parseInt(DiffTime / (1000 * 60))} นาทีที่แล้ว` :
+                        parseInt(DiffTime / (1000 * 60 * 60)) < 24 ? `${parseInt(DiffTime / (1000 * 60 * 60))} ชั่วโมงที่แล้ว` :
+                        parseInt(DiffTime / (1000 * 60 * 60 * 24)) < 3 ? `${parseInt(DiffTime / (1000 * 60 * 60 * 24))} วันที่แล้ว` :
+                        `เวลา ${TimeIn.getUTCHours()}:${TimeIn.getMinutes() >= 10 ? TimeIn.getMinutes() : `0${TimeIn.getMinutes()}`}`
+        setTime(NewTime)
+    } , [])
 
     return(<input readOnly value={Time}></input>)
 }
@@ -575,4 +596,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , TabLoad , HrefData}

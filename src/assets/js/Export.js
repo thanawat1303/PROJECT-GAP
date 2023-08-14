@@ -1,5 +1,6 @@
 import {Document,Page,Text,View,StyleSheet,PDFViewer,PDFDownloadLink} from "@react-pdf/renderer";
 import {jsPDF} from 'jspdf'
+import { useLiff } from "./module";
 // import autoTable from 'jspdf-autotable';
 const TextBoxDot = (pdf , count , xStart , y , textOnDot) => {
     let posi = parseInt(xStart);
@@ -454,8 +455,40 @@ const ExportPDF = async (Data) => {
         if(parseInt(index) + 1 !== Data.length) pdf.addPage()
     }
 
+    const [init , liff] = useLiff("1661049098-dorebKYg")
+    init.then( async ()=>{
+        if(liff.isInClient()) {
+            if(liff.isLoggedIn()) {
+                const profile = await liff.getProfile()
+                if(profile.userId) {
+                    const DataPdf = pdf.output("datauristring")
+
+                    liff.sendMessages([{
+                        'type': 'image',
+                        'originalContentUrl': DataPdf,
+                        'previewImageUrl': DataPdf
+                    }]).then(function () {
+                        // ส่งข้อความไปยัง LINE
+                    }).catch(function (error) {
+                        // จัดการข้อผิดพลาด
+                    });
+                }
+            } 
+            else {
+                pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
+            }
+        } else {
+            pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
+        }
+    }).catch(err=>{pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)})
     // window.open(pdf.output('dataurlnewwindow' , "แบบบันทึกข้อมูล"))
-    pdf.save("ทดสอบ.pdf")
+    
+    // const DataOut = pdf.output("datauristring" , `${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
+
+    // const a = document.createElement("a")
+    // a.href = DataOut
+    // a.click()
+    // a.remove()
 
     // const data = document.createElement("section");
     // data.innerHTML = 

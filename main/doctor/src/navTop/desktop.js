@@ -51,7 +51,6 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
     } , [getNotifyList])
 
     const SocketConnect = (id) => {
-        console.log(id , getStation)
         socket.emit("connect_notify_doctor" , getStation)
         socket.on("update" ,()=>{
             FetchNotify(id , "update")
@@ -64,7 +63,6 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
             const notifyData = JSON.parse(notify)
             setNotifyCount(notifyData.countUn ? notifyData.countUn : 0)
             setStation(notifyData.station)
-            console.log(notifyData)
             if(type === "start") {
                 setNotifyList(notifyData.List)
             } else if (type === "update") {

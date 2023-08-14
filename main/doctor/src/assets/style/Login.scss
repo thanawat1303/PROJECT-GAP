@@ -233,6 +233,7 @@
         background-color: #7ae5c1;
         border-radius: 15px;
         box-shadow: 0px 4px 4px #398068;
+        max-width: 90%;
 
         .head {
             font-size: 25px;
@@ -383,6 +384,70 @@
                 background-color: #4b927bcf;
                 color: rgb(191, 191, 191);
                 cursor: not-allowed;
+            }
+        }
+    }
+
+    @media only screen and (max-width : 300px) {
+        #form-personal-doctor {
+            padding: 10px 15px;
+    
+            .head {
+                font-size: 22px;
+            }
+    
+            .form {
+                margin: 5px 0px;
+                margin-bottom: 10px;
+                .id {
+                    span {
+                        font-size: 16px;
+                    }
+    
+                    input {
+                        font-size: 16px;
+                    }
+                }
+    
+                .profile {
+                    padding: 5px;
+    
+                    .input-field {
+    
+                        span {
+                            font-size: 16px;
+                        }
+    
+                        input , select {
+                            padding: 5px 6px;
+                            padding-top: 6px;
+                            font-size: 16px;
+                        }
+    
+                        input::placeholder {
+                            color: rgb(255, 255, 255);
+                        }
+                    }
+                }
+    
+                .password {
+                    padding: 8px;
+    
+                    input {
+                        font-size: 16px;
+                        height: 30px;
+                    }
+                }
+            }
+    
+            .bt {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                width: 100%;
+                button {
+                    font-size: 16px;
+                }
             }
         }
     }

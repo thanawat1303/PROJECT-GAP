@@ -3,7 +3,7 @@ import {clientMo}  from "../../../src/assets/js/moduleClient";
 import './assets/style/Login.scss'
 
 import Doctor from "./Doctor";
-import { PopupDom, useLiff } from "../../../src/assets/js/module";
+import { PatternCheck, PopupDom, useLiff } from "../../../src/assets/js/module";
 
 const Login = ({setMain , socket , isClick = 0}) => {
     // const [Body , setBody] = useState(<></>)
@@ -233,7 +233,7 @@ const FormPersonal = ({ main = {setMain : null , socket : null} , id_doctor , Re
         const sta = station.current
         const pw = password.current
 
-        if(first.value && last.value && sta.value && pw.value) 
+        if(first.value && PatternCheck(first.value).thaiName && last.value && PatternCheck(last.value).thaiName && sta.value && pw.value) 
             btConfirm.current.setAttribute("confirm" , "")
         else 
             btConfirm.current.removeAttribute("confirm")

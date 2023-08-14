@@ -31,7 +31,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             , id_table_doctor , fullname_doctor , id_doctor , img_doctor ${select}
             FROM acc_doctor
             WHERE status_delete=? 
-            ORDER BY status_account DESC
+            ORDER BY status_account DESC , id_table_doctor DESC
             LIMIT ${Limit} OFFSET ${StartRow};
           ` 
         , 

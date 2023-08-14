@@ -51,9 +51,9 @@ const TimeDiff = ({DATE}) => {
     const [Time , setTime] = useState("")
 
     useEffect(()=>{
-        const clientTimezoneOffset = new Date().getTimezoneOffset();
-        const TimeIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
-        // const TimeIn = new Date(DATE)
+        // const clientTimezoneOffset = new Date().getTimezoneOffset();
+        // const TimeIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
+        const TimeIn = new Date(DATE)
         const NowTime = new Date().getTime()
         const DiffTime = (NowTime - TimeIn.getTime())
         // console.log(TimeIn , new Date())

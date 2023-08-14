@@ -36,7 +36,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                     for (let key in result) {
                                         query.push(
                                                 {
-                                                    imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farm_house"]}`,
+                                                    imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farm_house"]}&date=${new Date().getTime()}`,
                                                     action : {
                                                         type : "uri",
                                                         label : `${result[key]["name_house"]}`,

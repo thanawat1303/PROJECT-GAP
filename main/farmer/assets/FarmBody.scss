@@ -91,6 +91,36 @@
                     }
                 }
             }
+
+            .content-list-menu {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                .frame-list-menu {
+                    display: flex;
+                    justify-content: start;
+                    align-items: center;
+                    flex-direction: column;
+                    .menu-list {
+                        display: flex;
+                        align-items: center;
+                        justify-content: start;
+                        width: 100%;
+                        margin-top: 15px;
+                        font-family: Sans-font;
+                        font-size: 14px;
+                        font-weight: 900;
+        
+                        svg {
+                            width: 30px;
+                        }
+        
+                        span {
+                            margin-left: 3px;
+                        }
+                    }
+                }
+            }
         }
     }
 

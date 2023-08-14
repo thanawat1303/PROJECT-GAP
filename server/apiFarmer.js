@@ -263,6 +263,67 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             }
         } else res.send("error auth")
     })
+
+    app.get('/api/farmer/farmhouse/get/detail' , async (req , res)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+            try {
+                const auth = await authCheck(con , dbpacket , res , req , LINE)
+                con.query(
+                        `
+                        SELECT name_house , img_house , id_farm_house
+                        FROM housefarm
+                        WHERE id_farm_house = ? and link_user = ?
+                        ` , 
+                        [ req.query.id_farmhouse , auth.data.link_user] , 
+                        (err , result)=>{
+                            con.end()
+                            if (!err) {
+                                if(result[0]) {
+                                    result.map(val=>{
+                                        val.img_house = val.img_house.toString()
+                                        return val
+                                    })
+                                    res.send(result)
+                                }
+                                else res.send("not")
+                            } else res.send("error auth")
+                        })
+            } catch (err) {
+                con.end()
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+        } else res.send("error auth")
+    })
+
+    app.post('/api/farmer/farmhouse/edit' , async (req , res)=>{
+        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+            let con = Database.createConnection(listDB)
+            try {
+                const auth = await authCheck(con , dbpacket , res , req , LINE)
+                const name = (req.body.name) ? `name_house = "${req.body.name}"` : ""
+                const img = (req.body.img) ? `img_house = "${req.body.img}"` : ""
+                const SET = [name , img].filter(val=>val).join(" , ")
+                con.query(
+                        `
+                        UPDATE housefarm
+                        SET ${SET}
+                        WHERE id_farm_house = ? and link_user = ?
+                        ` , 
+                        [ req.body.id_farmhouse , auth.data.link_user ] , 
+                        (err , result)=>{
+                            con.end()
+                            if (!err) res.send("113")
+                            else res.send("error auth")
+                        })
+            } catch (err) {
+                con.end()
+                if(err === "no" || err === "no account") res.send("close")
+                else res.send("error auth")
+            }
+        } else res.send("error auth")
+    })
     // end farmhouse
 
     // start formplant

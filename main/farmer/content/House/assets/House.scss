@@ -1,0 +1,166 @@
+.house-detail {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: scroll;
+    // .head {
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    // }
+    Report-Dom {
+        Body-Report {
+            padding: 15px 30px;
+            border-radius: 15px;
+
+            Text-Report {
+                margin-bottom: 10px;
+                font-family: TH-font;
+                font-size: 25px;
+                font-weight: 900;
+                background-color: white;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-top: 6px;
+                border-radius: 20px;
+                box-shadow: 0px 2px 2px gray;
+            }
+
+            BoxButton-Report {
+                margin-top: 10px;
+
+                button {
+                    background-color: #00b412;
+                    border-radius: 15px;
+                    border-radius: 15px;
+                    padding: 0px 25px;
+                    padding-top: 2px;
+                    font-family: TH-font;
+                    font-size: 30px;
+                    font-weight: 900;
+                    color: white;
+                    box-shadow: 0px 2px 2px gray;
+                }
+            }
+        }
+    }
+    .loading-show {
+        position: fixed;
+        
+    }
+    .content {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        .name-farmhouse {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            input {
+                font-family: TH-font;
+                font-size: 7vw;
+                padding: 0px 10px;
+                padding-top: 5px;
+                text-align: center;
+                border: 0;
+                box-shadow: inset 0px 0px 5px green;
+                border-radius: 18px;
+            }
+        }
+        .box-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin:0px auto;
+            .frame-picture {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                overflow: hidden;
+                margin: 20px auto;
+                margin-bottom: 0px;
+                border-radius: 15px;
+        
+                .Loading-img {
+                    position: absolute;
+                    background-color: white;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10;
+                }
+        
+                img {
+                    transform: translate(0,0);
+                    // transition: 0.5s;
+                }
+                
+                img[size="w"] {
+                    width: 100%;
+                    height: auto;
+                }
+        
+                img[size="h"] {
+                    width: auto;
+                    height: 100%;
+                }
+
+                img[src="/view-preview-img.svg"] {
+                    opacity: 0.3;
+                }
+            }
+    
+            .content-bt {
+                margin-top: 20px;
+                .bt-upload {
+                    background-color: black;
+                    padding: 0px 15px;
+                    padding-top: 3px;
+                    font-family: TH-font;
+                    border-radius: 15px;
+                    font-size: 7vw;
+                    color: white;
+                    box-shadow: 0px 2px 2px gray;
+                }
+            }
+    
+        }
+    }
+    
+
+    .content-bt {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+        .bt-submit , .bt-cancel {
+            // margin-top: 70px;
+            border-radius: 15px;
+            width: 30%;
+            padding-top: 2vw;
+            border: 0;
+            font-family: TH-font;
+            font-size: 10vw;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0px 3px 4px gray;
+            text-align: center;
+        }
+
+        .bt-submit:active , .bt-cancel:active {
+            box-shadow: none;
+        }
+
+        .bt-submit {
+            background-color: green;
+        }
+
+        .bt-cancel {
+            background-color: red;
+        }
+    }
+}

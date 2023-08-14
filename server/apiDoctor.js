@@ -266,11 +266,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             `
                             UPDATE acc_doctor 
                             SET uid_line_doctor = ?
-                            WHERE id_table_doctor = ?
-                            ` , [ req.body.uid_line , result.data.id_table_doctor ] ,
+                            WHERE id_table_doctor = ? and uid_line_doctor != ?
+                            ` , [ req.body.uid_line , result.data.id_table_doctor , req.body.uid_line ] ,
                             (err , uid) => {
                                 con.end()
-                                if(!err) Line.pushMessage(req.body.uid_line , {type : "text" , text : "เชื่อมต่อบัญชีเจ้าหน้าที่กับบัญชีไลน์เรียบร้อยค่ะ"})
+                                if(!err) if(uid.changedRows != 0) Line.pushMessage(req.body.uid_line , {type : "text" , text : "เชื่อมต่อบัญชีเจ้าหน้าที่กับบัญชีไลน์เรียบร้อยค่ะ"})
                             }
                         )
                     } else {

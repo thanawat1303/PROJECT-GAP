@@ -319,11 +319,10 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
             const Data = JSON.parse(profileGet)
             console.log(Data)
             setContent(Data.map((val , key)=>{
-                const img = String.fromCharCode(...val.img.data);
                 return(
                     <section key={key} className="profile-farmer">
                         <div className="img">
-                            <img src={img}></img>
+                            <img src={val.img}></img>
                         </div>
                         <div className="detail-text">
                             <div className="row">

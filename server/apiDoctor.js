@@ -1886,6 +1886,10 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             return 0;
                         }
 
+                        result.map(val=>{
+                            val.img = val.img.toString()
+                            return val
+                        })
                         con.end()
                         res.send(result)
                     }
@@ -2060,10 +2064,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const CheckInsert = req.body.type == 1 ? await new Promise((resole , reject)=>{
                     con.query(
                         `
-                            SELECT EXISTS (
-                                SELECT id
-                                FROM check_plant_detail
-                                WHERE id_plant = ? and status_check = 0
+                            SELECT (
+                                SELECT EXISTS (
+                                    SELECT id
+                                    FROM check_plant_detail
+                                    WHERE id_plant = ? and status_check = 0
+                                )
                             ) as ResultAfter
                         ` , [ req.body.id_plant ] , 
                         (err, result ) => {
@@ -2073,10 +2079,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 }) : req.body.type == 0 ? await new Promise((resole , reject)=>{
                     con.query(
                         `
-                            SELECT EXISTS (
-                                SELECT id
-                                FROM check_plant_detail
-                                WHERE id_plant = ? and state_check = 1
+                            SELECT (
+                                SELECT EXISTS (
+                                    SELECT id
+                                    FROM check_plant_detail
+                                    WHERE id_plant = ? and state_check = 1
+                                )
                             ) as ResultBefore
                         ` , [ req.body.id_plant ] , 
                         (err, result ) => {

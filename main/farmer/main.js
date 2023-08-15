@@ -28,9 +28,9 @@ const MainFarmer = ({socket , idLiff , Path}) => {
                     liff.login()
                 }
             } else {
-                let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
-                LoadPage(UID)
-                // setBody(<ErrorPage text={"กรุณาเข้าผ่าน LINE Appication"}/>)
+                // let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
+                // LoadPage(UID)
+                setBody(<ErrorPage text={"กรุณาเข้าผ่าน LINE Appication"}/>)
             }
         }).catch(err=>{
             console.log(err)

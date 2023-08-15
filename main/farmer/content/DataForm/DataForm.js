@@ -207,7 +207,6 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                             num : foundChange.length
                         }
 
-                        
                         setWait(true)
                         const result = await clientMo.post("/api/farmer/formplant/edit" , data)
                         if(await CloseAccount(result , setPage)) {
@@ -412,14 +411,14 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                         </div>
                                         <div className="row">
                                             <label className={`frame-textbox colume${Data.subjectResult.posi_w == 2 || Data.subjectResult.posi_h == 2 ? " not" : ""}`}>
-                                                <div className="full">ระยะการปลูก</div>
+                                                <div className="full">ระยะระหว่าง</div>
                                                 <div className="choose">
                                                     <label className="choose">
-                                                        กว้าง
+                                                        ต้น
                                                         <input ref={PositionW} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_w} ></input>
                                                     </label>
                                                     <label className="choose">
-                                                        ยาว
+                                                        ระหว่างแถว
                                                         <input ref={PositionH} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_h}></input>
                                                     </label>
                                                 </div>
@@ -434,7 +433,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                         <div className="row">
                                             <label className={`frame-textbox${Data.subjectResult.area == 2 ? " not" : ""}`}>
                                                 <span>พื้นที่</span>
-                                                <input ref={Area} onChange={StatusEdit ? ChangeEdit : null} readOnly type="text" defaultValue={Data.area}></input>
+                                                <input ref={Area} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.area}></input>
                                             </label>
                                         </div>
                                         <div className="row">

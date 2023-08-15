@@ -197,7 +197,7 @@ const StepOne = (props) => {
                 </label>
                 <label className="select-remember">
                     <span>
-                        <span>รหัสประจำตัว</span><span className="dot">หากมีหรือจำได้</span>
+                        <span>รหัสเกษตรกร</span><span className="dot">หากมีหรือจำได้</span>
                     </span>
                     <input autoComplete="false" defaultValue={props.profile.get("oldID")} onChange={checkData} type="text" ref={OldID} data="oldID"></input>
                 </label>
@@ -744,7 +744,7 @@ const PopUpPreview = (props) => {
                                     <input type="password" readOnly value={props.data['password']}></input>
                                 </div>
                                 <div className="oldID">
-                                    <div>รหัสประจำตัว</div>
+                                    <div>รหัสเกษตรกร</div>
                                     <input readOnly value={(props.data['oldID']) ? props.data['oldID'] : "ไม่ระบุ"}></input>
                                 </div>
                                 <div className="station">

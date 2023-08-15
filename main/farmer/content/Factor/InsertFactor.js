@@ -302,7 +302,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                             val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
                                 .map((val)=>val.date_sefe)[0]
                 const DateUsePut = new Date(DateUse.current.value)
-                DateUsePut.setDate(DateUsePut.getDate() + NumDay)
+                DateUsePut.setDate(DateUsePut.getDate() + NumDay + 1)
                 const result = DateUsePut.toISOString().split("T")[0]
                 DateSafe.current.value = result
             } catch(e) {}

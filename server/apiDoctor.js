@@ -160,23 +160,22 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     app.post('/api/doctor/checkline' , (req , res)=>{
         let con = Database.createConnection(listDB)
         con.connect((err)=>{
-            if (err) {
-                dbpacket.dbErrorReturn(con, err, res);
-                console.log("connect");
-                return 0;
+            if (!err) {
+                con.query(`
+                    SELECT id_doctor 
+                    FROM acc_doctor 
+                    WHERE uid_line_doctor = "${req.body['id']}"` , 
+                    (err , result)=>{
+                    con.end()
+                    if (result[0]) {
+                        res.send(result[0]['id_doctor'])
+                    } else {
+                        res.send('')
+                    }
+                })
+            } else {
+                res.send('')
             }
-    
-            con.query(`
-                SELECT id_doctor 
-                FROM acc_doctor 
-                WHERE uid_line_doctor = "${req.body['id']}"` , 
-                (err , result)=>{
-                if (result[0]) {
-                    res.send(result[0]['id_doctor'])
-                } else {
-                    res.send('')
-                }
-            })
         })
     })
     

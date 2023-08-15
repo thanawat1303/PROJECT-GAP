@@ -39,7 +39,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                                     imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farm_house"]}&date=${new Date().getTime()}`,
                                                     action : {
                                                         type : "uri",
-                                                        label : `${result[key]["name_house"]}`,
+                                                        label : `${result[key]["name_house"].toString().slice(0 , 11)}`,
                                                         uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farm_house"]}`
                                                     }
                                                 }

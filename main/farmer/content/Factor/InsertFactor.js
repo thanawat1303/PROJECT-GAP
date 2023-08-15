@@ -257,16 +257,18 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const type_search = (type_path === "z") ? "fertilizer" : "chemical";
         ListSearchFactorNameMain.current.removeAttribute("remove")
         setLoadNameMain(false);
-        let search = await FetchFactor(type_search)
-        search = search.filter((val)=>
-                            val.name_formula.indexOf(e.target.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
-                                .map((val)=>val.name_formula)
-        const setSearch = ChangeData(search)
-        if(setSearch.length !== 0) 
-            setListOther(setSearch.map((val , key)=>
-                <span search_other="" onClick={()=>SetTextInputOrther(val)} key={val.id}>{val}</span>
-            ))
-        else ResetListOtherPopup()
+        try {
+            let search = await FetchFactor(type_search)
+            search = search.filter((val)=>
+                                val.name_formula.indexOf(e.target.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
+                                    .map((val)=>val.name_formula)
+            const setSearch = ChangeData(search)
+            if(setSearch.length !== 0) 
+                setListOther(setSearch.map((val , key)=>
+                    <span search_other="" onClick={()=>SetTextInputOrther(val)} key={val.id}>{val}</span>
+                ))
+            else ResetListOtherPopup()
+        } catch(e) {}
         setLoadNameMain(true);
 
         (type_path === "z") ? ChangeFerti() : ChangeChemi()
@@ -295,13 +297,15 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     // math date sefe chemical
     const setDateSafe = () => {
         if(DateSafe.current.value === "") {
-            const NumDay = DataFactor.filter((val)=>
+            try {
+                const NumDay = DataFactor.filter((val)=>
                             val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
                                 .map((val)=>val.date_sefe)[0]
-            const DateUsePut = new Date(DateUse.current.value)
-            DateUsePut.setDate(DateUsePut.getDate() + NumDay)
-            const result = DateUsePut.toISOString().split("T")[0]
-            DateSafe.current.value = result
+                const DateUsePut = new Date(DateUse.current.value)
+                DateUsePut.setDate(DateUsePut.getDate() + NumDay)
+                const result = DateUsePut.toISOString().split("T")[0]
+                DateSafe.current.value = result
+            } catch(e) {}
         }
     }
 

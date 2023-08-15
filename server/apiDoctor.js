@@ -2112,7 +2112,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     )
                 })
                 
-                if(CheckInsert && !CheckSuccess) {
+                if(!CheckSuccess) {
                     const Random = await new Promise( async (resole , reject)=>{
                         while(true) {
                             let random = apifunc.generateID(4 , "num")

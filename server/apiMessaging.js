@@ -28,6 +28,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                         ` , 
                         [req["body"]['events'][0]["source"]["userId"]] ,
                         (err , result)=>{
+                            console.log(err)
                             con.end()
                             if (!err) {
                                 let msg

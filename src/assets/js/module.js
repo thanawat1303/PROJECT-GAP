@@ -202,14 +202,16 @@ const ResizeImg = (file , MaxSize) => {
     })
 }
 
-const Loading = ({size , border , color="green" , animetion = false}) => {
+const Loading = ({size , MaxSize = 0 , border , color="green" , animetion = false}) => {
     return (
-        <div style={{
+        <div className="loading-dom-module" style={{
             display : "flex",
             justifyContent : "center",
             alignContent : "center",
             width : isNaN(size) ? size : `${size}px`,
             height : isNaN(size) ? size : `${size}px`,
+            maxWidth : MaxSize ? `${MaxSize}px` : "",
+            maxHeight : MaxSize ? `${MaxSize}px` : "",
             // overflow : "hidden"
         }}>
             <div className="curcle"
@@ -523,6 +525,11 @@ const DownLoadImage = ({className , stroke = "#000000" , fileName , DataImageBas
     )
 }
 
+const SetMaxLength = (e , setQty , max) => {
+    e.target.value = e.target.value.slice(0 , max)
+    setQty(e.target.value.length)
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -596,4 +603,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , TabLoad , HrefData}

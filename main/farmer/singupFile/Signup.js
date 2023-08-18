@@ -1,5 +1,5 @@
 import React , { useEffect , useRef, useState } from "react";
-import { Loading, MapsJSX, PatternCheck, ReportAction, ResizeImg } from "../../../src/assets/js/module";
+import { Loading, MapsJSX, PatternCheck, ReportAction, ResizeImg, SetMaxLength } from "../../../src/assets/js/module";
 
 import './assets/Signup.scss'
 import {clientMo}  from "../../../src/assets/js/moduleClient";
@@ -16,9 +16,13 @@ const SignUp = ({liff}) => {
 
     const back = useRef()
     const next = useRef()
+    const StatusStep = useRef()
     const confirm = useRef()
     const DetailProfile = useRef()
     const LoadingPreview = useRef()
+
+    const frameForm = useRef()
+    const BtFrom = useRef()
 
     const [PositionBt , setBt] = useState(window.innerHeight - ((window.innerHeight * 15/100) + 20))
     const [animetion , setAnimetion] = useState(false)
@@ -30,29 +34,47 @@ const SignUp = ({liff}) => {
         document.title = "ลงทะเบียนเกษตรกร"
     } , [])
 
-    const changeStep = (type) => {
-        let statusSelect = document.querySelector('.status-step span[select=""]')
+    useEffect(()=>{
+        window.removeEventListener("resize" , setPositionBt)
+        window.addEventListener("resize" , setPositionBt)
+
+        return(()=>{
+            window.removeEventListener("resize" , setPositionBt)
+        })
+    } , [])
+
+    useEffect(()=>{
+        setPositionBt()
+    } , [step])
+
+    const changeStepMoveOnBt = (type) => {
         let stepInMedthod = 0
-        if(type && (stepOn + 1) == stepApprov && statusSelect.nextSibling) {
-            statusSelect.removeAttribute('select')
-            statusSelect.nextSibling.setAttribute('select' , "")
-            setstepOn(stepOn + 1)
+        const StepIndex = stepOn - 1
+        const StepFocus = StatusStep.current.childNodes
+        
+        //ฟังก์ชั่นเลื่อนขั้นตอนถัดไป
+        console.log(StepIndex , stepOn ,stepApprov , type && (stepOn + 1) == stepApprov && StepFocus.item(StepIndex + 1))
+        if(type && (stepOn + 1) == stepApprov && StepFocus.item(StepIndex + 1)) {
+            StepFocus.item(StepIndex).removeAttribute('select')
+            StepFocus.item(StepIndex + 1).setAttribute('select' , "")
             stepInMedthod = stepOn + 1
-        } else if (!type && statusSelect.previousSibling){
-            statusSelect.removeAttribute('select')
-            statusSelect.previousSibling.setAttribute('select' , "")
-            setstepOn(stepOn - 1)
+            setstepOn(stepInMedthod)
+        } else if (!type && StepFocus.item(StepIndex - 1)){
+            StepFocus.item(StepIndex).removeAttribute('select')
+            StepFocus.item(StepIndex - 1).setAttribute('select' , "")
             stepInMedthod = stepOn - 1
+            setstepOn(stepInMedthod)
         }
 
-        statusSelect = document.querySelector('.status-step span[select=""]')
-        if(statusSelect.previousSibling) {
+        // ตรวจสอบแสดงปุ่มย้อนกลับ
+        if(StepFocus.item(stepInMedthod - 1 - 1)) {
             back.current.removeAttribute('hide')
         } else {
             back.current.setAttribute('hide' , "")
         }
 
-        if(statusSelect.nextSibling) {
+        // ตรวจสอบแสดงปุ่มถัดไป และแสดงปุ่ม confirm
+        if(StepFocus.item(stepInMedthod + 1 - 1)) {
             next.current.removeAttribute('hide')
             confirm.current.removeAttribute('show')
         } else {
@@ -78,54 +100,65 @@ const SignUp = ({liff}) => {
         }
     }
 
+    const setPositionBt = () => {
+        if(frameForm.current.clientHeight > window.innerHeight - 30) {
+            BtFrom.current.removeAttribute("flex")
+        } else {
+            BtFrom.current.setAttribute("flex" , "")
+        }
+    }
+
     const LoadPage = (e) => {
+        // setPositionBt()
         clientMo.unLoadingPage()
     }
 
     return (
         <section id="content-signup-farmer" onLoad={LoadPage}>
-            {PreviewData}
-            <div className="Loading-preview" ref={LoadingPreview}>
-                <Loading size={80} border={8} animetion={animetion}/>
-            </div>
-            <div className="title">
-                <div className="title-form">ทะเบียนเกษตรกร</div>
-                <div className="subtitle">สมัครบัญชี</div>
-            </div>
-            <div className="form-sigup">
-                <div className="detail-profile" ref={DetailProfile}>
-                    {step}
+            <div className="frame-form" ref={frameForm}>
+                {PreviewData}
+                <div className="Loading-preview" ref={LoadingPreview}>
+                    <Loading size={"29vw"} border={"2.9vw"} MaxSize={136.3} animetion={animetion}/>
                 </div>
-            </div>
-            <div className="button-step" style={{
-                top : `${PositionBt}px`
-            }}>
-                <img ref={back} hide="" onClick={()=>changeStep(false)} className="back" src="/caret-back-circle-svgrepo-com.svg"></img>
-                <div className="status-step">
-                    <span select=""></span>
-                    <span></span>
-                    <span></span>
+                <div className="title">
+                    <div className="title-form">ทะเบียนเกษตรกร</div>
+                    <div className="subtitle">สมัครบัญชี</div>
                 </div>
-                <div>
-                    <svg ref={confirm} className="confirm" viewBox="0 0 32.00 32.00" xmlns="http://www.w3.org/2000/svg" strokeWidth="0.00032">
-                        <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
-                        <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" stroke="#CCCCCC" strokeWidth="0.192"/>
-                        <g id="SVGRepo_iconCarrier">
-                            <path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm5.7279221 11-7.0710679 7.0710678-4.2426406-4.2426407-1.4142136 1.4142136 5.6568542 5.6568542 8.4852814-8.4852813z" 
-                                fillRule="evenodd"/>
-                        </g>    
-                    </svg>
-                    <svg ref={next} unclick={btNext ? null : ""} onClick={()=>changeStep(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next" viewBox="0 0 512 512" >
-                        <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
-                        <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
-                        <g id="SVGRepo_iconCarrier">
-                            <title>ionicons-v5-b</title>
-                            <path d="M464,256c0-114.87-93.13-208-208-208S48,141.13,48,256s93.13,208,208,208S464,370.87,464,256ZM212,147.73,342.09,256,212,364.27Z"/>
-                        </g>
-                    </svg>
-                    {/* fill="#009919" */}
-                    {/* <img src="/confirm-sf-svgrepo-com.svg"></img> */}
-                    {/* <img ref={next} unclick={btNext ? null : ""} onClick={()=>changeStep(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next"></img> */}
+                <div className="form-sigup">
+                    <div className="detail-profile" ref={DetailProfile}>
+                        {step}
+                    </div>
+                </div>
+                <div className="button-step" ref={BtFrom}>
+                    <img ref={back} hide="" onClick={()=>changeStepMoveOnBt(false)} className="back" src="/caret-back-circle-svgrepo-com.svg"></img>
+                    <div className="status-step" ref={StatusStep}>
+                        <span select=""></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div style={{
+                        position : "relative"
+                    }}>
+                        <svg ref={confirm} className="confirm" viewBox="0 0 32.00 32.00" xmlns="http://www.w3.org/2000/svg" strokeWidth="0.00032">
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" stroke="#CCCCCC" strokeWidth="0.192"/>
+                            <g id="SVGRepo_iconCarrier">
+                                <path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm5.7279221 11-7.0710679 7.0710678-4.2426406-4.2426407-1.4142136 1.4142136 5.6568542 5.6568542 8.4852814-8.4852813z" 
+                                    fillRule="evenodd"/>
+                            </g>    
+                        </svg>
+                        <svg ref={next} unclick={btNext ? null : ""} onClick={()=>changeStepMoveOnBt(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next" viewBox="0 0 512 512" >
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
+                            <g id="SVGRepo_iconCarrier">
+                                <title>ionicons-v5-b</title>
+                                <path d="M464,256c0-114.87-93.13-208-208-208S48,141.13,48,256s93.13,208,208,208S464,370.87,464,256ZM212,147.73,342.09,256,212,364.27Z"/>
+                            </g>
+                        </svg>
+                        {/* fill="#009919" */}
+                        {/* <img src="/confirm-sf-svgrepo-com.svg"></img> */}
+                        {/* <img ref={next} unclick={btNext ? null : ""} onClick={()=>changeStepMoveOnBt(true)} src="/caret-forward-circle-sharp-svgrepo-com.svg" className="next"></img> */}
+                    </div>
                 </div>
             </div>
         </section>
@@ -136,7 +169,9 @@ const StepOne = (props) => {
     const Firstname = useRef()
     const Lastname = useRef()
     const Password = useRef()
-    const OldID = useRef()
+    const telnumber = useRef()
+
+    const [getQtyPhone , setQtyPhone] = useState(0)
 
     useEffect(()=>{
         props.stepAp(1)
@@ -150,23 +185,25 @@ const StepOne = (props) => {
                 ...props.profile , 
                 ...props.data
             ]))
-        } 
+        }
         else {
             props.data.set("firstname" , Firstname.current.value)
             props.data.set("lastname" , Lastname.current.value)
             props.data.set("password" , Password.current.value)
-            props.data.set("oldID" , OldID.current.value)
+            props.data.set("telnumber" , telnumber.current.value)
         }
 
         if(
             ( props.data.get("firstname") && PatternCheck(props.data.get("firstname")).thaiName ) &&
             ( props.data.get("lastname") && PatternCheck(props.data.get("lastname")).thaiName ) &&
-            props.data.get("password")
+            props.data.get("password") && 
+            props.data.get("telnumber") && !isNaN(props.data.get("telnumber")) && props.data.get("telnumber").length == 10
             )
         {
             props.btnext(true)
             props.stepAp(2)
         } else {
+            props.btnext(false)
             props.stepAp(1)
         }
     } 
@@ -177,29 +214,31 @@ const StepOne = (props) => {
                 ข้อมูลส่วนตัว
             </div>
             <div className="detail-farmer">
-                <label className="fullname">
+                <label>
                     <span>
                         <span>ชื่อ</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" placeholder="กรอกชื่อภาษาไทย" defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
+                    <input autoComplete="false" placeholder="ชื่อภาษาไทย" defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
                 </label>
-                <label className="fullname">
+                <label>
                     <span>
                         <span>นามสกุล</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" placeholder="กรอกนามสกุลภาษาไทย" defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
+                    <input autoComplete="false" placeholder="นามสกุลภาษาไทย" defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
                 </label>
-                <label className="password">
+                <label>
                     <span>
                         <span>รหัสผ่าน</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password} data="password"></input> 
+                    <input autoComplete="false" defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password} data="password" placeholder="กรอกตัวอักษรที่จำได้"></input> 
                 </label>
-                <label className="select-remember">
+                <label>
                     <span>
-                        <span>รหัสเกษตรกร</span><span className="dot">หากมีหรือจำได้</span>
+                        <span>เบอร์มือถือเกษตรกร</span><span className="dot">*</span><span className="qty">{getQtyPhone}/10</span>
                     </span>
-                    <input autoComplete="false" defaultValue={props.profile.get("oldID")} onChange={checkData} type="text" ref={OldID} data="oldID"></input>
+                    <input autoComplete="false" defaultValue={props.profile.get("telnumber")} onChange={checkData} onInput={(e)=>{
+                        SetMaxLength(e , setQtyPhone , 10)
+                    }} type="number" ref={telnumber} data="telnumber" placeholder="เช่น 0902959768"></input>
                 </label>
             </div>
         </section>
@@ -217,6 +256,7 @@ const StepTwo = (props) => {
     const [ListStation , setStation] = useState(<></>)
     const [Listready , setReady] = useState(false)
     const [Selected , setSelected] = useState(props.profile.get("station"))
+    const [getTextLocation , setTextLocation] = useState(props.profile.get("text-location"))
 
     const [LoadingState , setLoading] = useState(<></>)
     
@@ -305,20 +345,22 @@ const StepTwo = (props) => {
 
         if(Station.current) props.data.set("station" , Station.current.value)
         else props.data.set("station" , props.profile.get("station"))
+
+        props.data.set("text-location" , getTextLocation)
+
         props.update(new Map([
             ...props.profile , 
             ...props.data
         ]))
 
-        console.log(props.data)
-
         if(props.data.get("station") 
             && props.data.get("latitude") 
-            && props.data.get("longitude")) 
+            && props.data.get("longitude") && props.data.get("text-location")) 
         {
             props.btnext(true)
             props.stepAp(3)
         } else {
+            props.btnext(false)
             props.stepAp(2)
         }
     }
@@ -334,9 +376,19 @@ const StepTwo = (props) => {
                 ตำแหน่ง
             </div>
             <div className="detail-farmer">
+                <label className="location-text">
+                    <span>
+                        <span>ที่อยู่ปัจจุบัน</span><span className="dot">*</span>
+                    </span>
+                    <textarea placeholder="เช่น บ้านเลขที่ 99/99 หมู่ 14 ต.เมืองนะ อ.เชียงดาว จ.เชียงใหม่" defaultValue={getTextLocation} type="text" onChange={(e)=>{
+                        props.data.set("text-location" , e.target.value)
+                        setTextLocation(e.target.value)
+                        CheckData("")
+                    }}></textarea>
+                </label>
                 <label className="location">
-                    <div className="head-map">ตำแหน่งแปลงที่อยู่</div>
-                    <div className="warning">* เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่ทำการเกษตรกรของท่าน</div>
+                    <div className="head-map">ตำแหน่งที่อยู่</div>
+                    <div className="warning">* เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่อยู่ปัจจุบันของท่าน</div>
                     <div className="map-genarate">
                         <div onLoad={MapLoad} ref={MapEle} className="map">
                             {LocationCurrent}
@@ -351,7 +403,9 @@ const StepTwo = (props) => {
                 </label>
                 <label className="station">
                     <div className="content-station">
-                        <div className="head-station">ศูนย์ที่เกษตรกรอยู่ในการดูแล</div>
+                        <span>
+                            <div className="head-station">ศูนย์ที่เกษตรกรอยู่ในการดูแล <span className="dot">*</span></div>
+                        </span>
                         {(Listready) ?
                             <div className="content-select">
                                 <select value={Selected ?? ""} ref={Station} onChange={CheckData}>
@@ -369,7 +423,7 @@ const StepTwo = (props) => {
                             </div>
                             : 
                             <div className="loading-content">
-                                <Loading size={25} border={4} animetion={true}/><span>โหลดตัวเลือกศูนย์</span>  
+                                <Loading size={"6.5vw"} border={"1vw"} animetion={true}/><span>โหลดตัวเลือกศูนย์</span>  
                             </div>}
                     </div>
                 </label>
@@ -421,6 +475,7 @@ const StepThree = (props) => {
     } , [])
 
     const InputImage = (e) => {
+        e.preventDefault()
         const file = e.target.files[0]
         setLoading(false)
         props.data.delete("dataImgState")
@@ -434,7 +489,8 @@ const StepThree = (props) => {
             y : 0
         })
         if(file) {
-            if(new Date().getTime() - file.lastModified < 8000
+            if(true
+                // new Date().getTime() - file.lastModified < 8000
                 ) {
                 ResizeImg(file , 600).then((imageResult)=>{
                     setPreview(imageResult)
@@ -478,7 +534,7 @@ const StepThree = (props) => {
             let oldX = e.target.offsetLeft // ระยะขอบซ้ายรูปกับระยะขอบซ้ายหน้าจอ เพื่อหาตำแหน่งของรูปบนหน้าจอ
             let oldY = e.target.offsetTop // ระยะขอบบนรูปกับระยะขอบบนหน้าจอ เพื่อหาตำแหน่งของรูปบนหน้าจอ
             
-        // หาระยะห่างรูปกับกรอบ เพื่อให้ได้ค่า มากสุดที่รูปสามารถเลื่อนไปได้
+            // หาระยะห่างรูปกับกรอบ เพื่อให้ได้ค่า มากสุดที่รูปสามารถเลื่อนไปได้
             let OffsetLeft = frame.offsetLeft - oldX // ค่าหลัก ผลต่าง ขอบซ้าย
             let OffsetTop = frame.offsetTop - oldY // ค่าหลัก ผลต่าง ขอบบน
 
@@ -500,7 +556,7 @@ const StepThree = (props) => {
         }
     }
 
-    const setCurrent = (e) => {
+    const setCurrent = () => {
         if(PreviewImage != "/view-preview-img.svg") {
             const P = PositionMouse
             let x = 0
@@ -518,9 +574,9 @@ const StepThree = (props) => {
             if(P.yn < PoY && PoY < P.yp) {
                 y = PoY
             } else if (P.yn > PoY || PoY > P.yp) {
-                if(P.yn > PoY) { // เมื่อเกินขอบเขตด้าน ล่าง แกน x 
+                if(P.yn > PoY) { // เมื่อเกินขอบเขตด้าน ล่าง แกน y
                     y = P.yn
-                } else { // เมื่อเกินขอบเขตด้าน บน แกน x 
+                } else { // เมื่อเกินขอบเขตด้าน บน แกน y
                     y = P.yp
                 }
             }
@@ -539,7 +595,7 @@ const StepThree = (props) => {
         }
     }
 
-    const LoadPic = (e) => {
+    const LoadPic = () => {
         setWidthImg(ImageCurrent.current.width)
         setHeightImg(ImageCurrent.current.height)
         if(ImageCurrent.current.width > ImageCurrent.current.height) {
@@ -571,8 +627,8 @@ const StepThree = (props) => {
             const scaleW = sizeImgW / Img.width
             const scaleH = sizeImgH / Img.height
 
-            console.log(scaleH)
-            console.log(((FrameIn.offsetTop - Img.offsetTop) * scaleH) - (Poy * scaleH))
+            // console.log(scaleH)
+            // console.log(((FrameIn.offsetTop - Img.offsetTop) * scaleH) - (Poy * scaleH))
 
             context.drawImage(
                 Img,
@@ -598,18 +654,19 @@ const StepThree = (props) => {
             props.data.set("Image" , CropImage)
             updateData()
 
-            let data = {
+            const data = {
                 "firstname" : props.profile.get("firstname"),
                 "lastname" : props.profile.get("lastname"),
                 "password" : props.profile.get("password"),
-                "oldID" : props.profile.get("oldID"),                
+                "telnumber" : props.profile.get("telnumber"),                
                 "lat" : props.profile.get("latitude"),                
                 "lng" : props.profile.get("longitude"),                
-                "station" : props.profile.get("station"),                
-                "Img" : props.data.get("Image"),                
+                "station" : props.profile.get("station"),
+                "text_location" : props.profile.get("text-location"),
+                "Img" : props.data.get("Image"),         
             }
 
-            if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img) {
+            if(data.firstname && data.lastname && data.password && data.lat && data.lng && data.station && data.Img && data.text_location) {
                 props.previewData(<PopUpPreview setAnimetion={props.setAnimetion} LoadingPreview={props.LoadingPreview} data={data} previewData={props.previewData} liff={props.liff}/>)
             } else {
                 props.LoadingPreview.current.removeAttribute("show")
@@ -636,7 +693,7 @@ const StepThree = (props) => {
                     <div ref={LoadingEle}></div>
                     :
                     <div ref={LoadingEle} className="Loading-img">
-                        <Loading size={70} border={8} color="green" animetion={true}/>
+                        <Loading size={"25vw"} border={"4vw"} color="green" animetion={true}/>
                     </div>
                 }
                 <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
@@ -651,12 +708,12 @@ const StepThree = (props) => {
 }
 
 const PopUpPreview = (props) => {
-    const Control = useRef()
-    const Content = useRef()
     const FrameBody = useRef()
     const [Feedback , setFeed] = useState(<></>)
+    const [getLoadPage , setLoadPage] = useState(true)
 
     const [Station , setStation] = useState("")
+    const [getLoadMap , setLoadMap] = useState(true)
 
     const [TextData , setText] = useState("")
     const [Result , setResult] = useState(0)
@@ -667,6 +724,7 @@ const PopUpPreview = (props) => {
     const ConfirmSave = () => {
         setOpenPop(true)
         clientMo.postForm("/api/farmer/signup" , props.data).then((result)=>{
+            console.log(props.data)
             if(result === "insert complete"){
                 setText("เพิ่มสำเร็จ")
                 setResult(1)
@@ -685,22 +743,25 @@ const PopUpPreview = (props) => {
 
     const LoadContent = async (e) => {
         loadNum++
-        if(loadNum == 2) {
-            const name = JSON.parse(await clientMo.post("/api/farmer/station/get" , {id_station : props.data['station']}))[0].name
-
-            FrameBody.current.style.overflow = "scroll"
-            Control.current.style.opacity = "1"
-            Control.current.style.visibility = "visible"
-            Content.current.style.opacity = "1"
-            Content.current.style.visibility = "visible"
-            setStation(name)
-            props.LoadingPreview.current.removeAttribute("show")
-            setTimeout(()=>{
-                props.setAnimetion(false)
-            } , 500)
-            loadNum = 0
+        try {
+            if(loadNum == 1) {
+                const name = JSON.parse(await clientMo.post("/api/farmer/station/get" , {id_station : props.data['station']}))[0].name
+                FrameBody.current.style.overflowY = "scroll"
+                setLoadPage(false)
+                setStation(name.trim())
+                props.LoadingPreview.current.removeAttribute("show")
+                setTimeout(()=>{
+                    props.setAnimetion(false)
+                } , 500)
+                loadNum = 0
+            }
+        } catch (e) {
+            console.log(e)
         }
-        console.log(e)
+    }
+
+    const LoadMap = () => {
+        setLoadMap(false)
     }
 
     const confirmArert = () => {
@@ -716,13 +777,19 @@ const PopUpPreview = (props) => {
     }
 
     return (
-        <section onLoad={LoadContent} className="popUpPreview" ref={Control}>
+        <section onLoad={LoadContent} className="popUpPreview" style={getLoadPage ? {} : {
+            opacity : "1",
+            visibility : "visible"
+        }}>
             {/* {<PopupAlert liff={props.liff} textData={TextData} result={Result} open={OpenPop} 
                 setOpen={setOpenPop} setResult={setResult} setText={setText}/>} */}
             <ReportAction Open={OpenPop} Text={TextData} Status={Result}
                             setOpen={setOpenPop} setText={setText} setStatus={setResult} 
-                            sizeLoad={90} BorderLoad={10} color="white" action={confirmArert}/>
-            <div className="content" ref={Content}>
+                            sizeLoad={"32.5vw"} BorderLoad={"3.6vw"} color="white" action={confirmArert}/>
+            <div className="content" style={getLoadPage ? {} : {
+                opacity : "1",
+                visibility : "visible"
+            }}>
                 <div className="head">เช็คข้อมูล</div>
                 <div className="body">
                     <div ref={FrameBody} className="frame-body">
@@ -743,18 +810,30 @@ const PopUpPreview = (props) => {
                                     <div>รหัสผ่าน</div>
                                     <input type="password" readOnly value={props.data['password']}></input>
                                 </div>
-                                <div className="oldID">
-                                    <div>รหัสเกษตรกร</div>
-                                    <input readOnly value={(props.data['oldID']) ? props.data['oldID'] : "ไม่ระบุ"}></input>
+                                <div className="telnumber">
+                                    <div>เบอร์มือถือเกษตรกร</div>
+                                    <input readOnly value={props.data['telnumber']}></input>
                                 </div>
                                 <div className="station">
                                     <div>ศูนย์ที่อยู่ในการดูแล</div>
                                     <input readOnly value={Station}></input>
                                 </div>
+                                <div className="telnumber">
+                                    <div>ที่อยู่เกษตรกร</div>
+                                    <textarea readOnly value={props.data['text_location']}></textarea>
+                                </div>
                             </div>
                         </div>
-                        <div className="google-map">
+                        <div className="google-map" onLoad={LoadMap} style={{
+                            position : "relative"
+                        }}>
                             <MapsJSX w={"100%"} lat={props.data['lat']} lng={props.data['lng']}/>
+                            { getLoadMap ?
+                                <div className="Load-frame">
+                                    <Loading size={"25vw"} MaxSize={100} border={"4vw"} color="green" animetion={true}/>
+                                </div>
+                                : <></>
+                            }
                         </div>
                     </div>
                 </div>

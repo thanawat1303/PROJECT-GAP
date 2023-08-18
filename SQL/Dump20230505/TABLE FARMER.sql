@@ -12,8 +12,10 @@
 --     register_auth tinyint(1) NOT NULL,
 --     date_register DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     date_doctor_confirm varchar(100) NOT NULL,
---     uid_line varchar(255) NOT NULL
+--     uid_line varchar(255) NOT NULL,
+--     tel_number varchar(15) NOT NULL,
+--     text_location longtext NOT NULL
 -- )
 
 ALTER TABLE `line_chat_gap`.`acc_farmer`
-ADD COLUMN link_user varchar(50) NOT NULL
+ADD COLUMN text_location longtext NOT NULL

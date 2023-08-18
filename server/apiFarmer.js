@@ -14,6 +14,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             delete req.session.pass_doctor
             delete req.session.user_doctor
         }
+
         if(req.body['uid'] && (req.hostname == HOST_CHECK)) {
             req.session.uidFarmer = req.body['uid']
             let con = Database.createConnection(listDB)
@@ -125,74 +126,84 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
         
     })
 
-    app.post('/api/farmer/signup' , (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK) && /^[ก-ฮะ-์]+$/.test(req.body['firstname']) && /^[ก-ฮะ-์]+$/.test(req.body['firstname'])) {
+    app.post('/api/farmer/signup' , async (req , res)=>{
+        const userLine = await new Promise( async (resole , reject)=>{
+            try {
+                await LINE.getLinkToken(req.session.uidFarmer)
+                resole(true)
+            } catch(e) {
+                resole(false)
+            }
+        })
+
+        if(userLine && req.session.uidFarmer && (req.hostname == HOST_CHECK) && /^[ก-ฮะ-์]+$/.test(req.body['firstname']) && /^[ก-ฮะ-์]+$/.test(req.body['firstname'])) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
-                if (err) {
-                    dbpacket.dbErrorReturn(con, err, res);
-                    console.log("connect");
-                    return 0;
-                }
-
-                con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)` , 
-                            [req.session.uidFarmer] , (err , search) => {
-                    if (!err) {
-                        if(!search[0]) {
-                            con.query(`INSERT INTO acc_farmer(
-                                id_farmer,
-                                fullname,
-                                img,
-                                station,
-                                location,
-                                password,
-                                register_auth,
-                                uid_line,
-                                date_doctor_confirm,
-                                id_doctor,
-                                link_user
-                                ) 
-                            VALUES (? , ? , ? , ? , POINT(?,?) , SHA2(? , 256) , 0 , ? , "" , "" , ?)` , 
-                            [
-                                req.body['oldID'].trim() , 
-                                `${req.body['firstname'].trim()} ${req.body['lastname'].trim()}` ,
-                                req.body['Img'] ,
-                                req.body['station'] ,
-                                req.body['lat'] ,
-                                req.body['lng'] ,
-                                req.body['password'].trim() ,
-                                req.session.uidFarmer ,
-                                req.session.uidFarmer
-                            ] , (err , result)=>{
-                                if (!err) {
-                                    if(result.affectedRows > 0) {
-                                        con.end()
-                                        try {LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)} 
-                                        catch (e) {
-                                            fs.appendFileSync(__dirname.replace('\server' , '/logs/errorfile.json') , `richMenuAddFarm : {id:${req.session.uidFarmer} , date : ${new Date().getTime}}`)
+                if (!err) {
+                    con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)` , 
+                        [req.session.uidFarmer] , (err , search) => {
+                        if (!err) {
+                            if(!search[0]) {
+                                con.query(`INSERT INTO acc_farmer(
+                                    id_farmer,
+                                    fullname,
+                                    img,
+                                    station,
+                                    location,
+                                    password,
+                                    register_auth,
+                                    uid_line,
+                                    date_doctor_confirm,
+                                    id_doctor,
+                                    link_user,
+                                    tel_number,
+                                    text_location
+                                    ) 
+                                VALUES ("" , ? , ? , ? , POINT(?,?) , SHA2(? , 256) , 0 , ? , "" , "" , ? , ? , ?)` , 
+                                [
+                                    `${req.body['firstname'].trim()} ${req.body['lastname'].trim()}` ,
+                                    req.body['Img'] ,
+                                    req.body['station'] ,
+                                    req.body['lat'] ,
+                                    req.body['lng'] ,
+                                    req.body['password'].trim() ,
+                                    req.session.uidFarmer ,
+                                    req.session.uidFarmer ,
+                                    req.body['telnumber'].trim() ,
+                                    req.body['text_location'].trim()
+                                ] , (err , result)=>{
+                                    con.end()
+                                    if (!err) {
+                                        if(result.affectedRows > 0) {
+                                            try {LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)} 
+                                            catch (e) {
+                                                fs.appendFileSync(__dirname.replace('\server' , '/logs/errorfile.json') , `richMenuAddFarm : {id:${req.session.uidFarmer} , date : ${new Date().getTime}}`)
+                                            }
+                                            
+                                            try {
+                                                sendNotifyToDoctor(result.insertId , req.body['station'] , "มีเกษตรกรสมัครบัญชีเข้ามาใหม่")
+                                            } catch(e) {}
+                                            
+                                            res.send("insert complete")
+                                        } else {
+                                            res.send("error auth")
                                         }
-                                        
-                                        try {
-                                            sendNotifyToDoctor(result.insertId , req.body['station'] , "มีเกษตรกรสมัครบัญชีเข้ามาใหม่")
-                                        } catch(e) {}
-                                        
-                                        res.send("insert complete")
                                     } else {
                                         res.send("error auth")
                                     }
-                                } else {
-                                    res.send("error auth")
-                                }
-                            })
+                                })
+                            } else {
+                                con.end()
+                                res.send("search")
+                            }
                         } else {
                             con.end()
-                            res.send("search")
+                            res.send("error auth")
                         }
-                    } else {
-                        con.end()
-                        res.send("error auth")
-                    }
-                })
+                    })
+                } else {
+                    res.send("error")
+                }
             })
         } else res.send("error auth")
     })
@@ -1672,53 +1683,60 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 }
 
 const authCheck = (con , dbpacket , res , req , LINE) => {
-    return new Promise((resole , reject)=>{
-        con.connect(( err )=>{
-            if (err) {
-                dbpacket.dbErrorReturn(con, err, res);
-                console.log("connect");
-                return 0;
+    return new Promise( async (resole , reject)=>{
+        const userLine = await new Promise( async (resole , reject)=>{
+            try {
+                await LINE.getLinkToken(req.session.uidFarmer)
+                resole(true)
+            } catch(e) {
+                resole(false)
             }
+        })
 
-            con.query(`
-                        SELECT * FROM acc_farmer 
-                        WHERE uid_line = ?
-                        ORDER BY register_auth DESC , date_register DESC
-                        ` , 
-                [req.session.uidFarmer] ,
-                (err , result)=>{
-                    if (!err) {
-                        if(result.length != 0) {
-                            const ProfilePass = result.filter(profile=>profile.register_auth == 0 || profile.register_auth == 1)
-                            if(ProfilePass.length != 0) {
-                                if(req.body['page'] === "signup") {
+        if(userLine) {
+            con.connect(( err )=>{
+                if (!err) {
+                    con.query(`
+                            SELECT * FROM acc_farmer 
+                            WHERE uid_line = ?
+                            ORDER BY register_auth DESC , date_register DESC
+                                ` , 
+                        [req.session.uidFarmer] ,
+                        (err , result)=>{
+                            if (!err) {
+                                if(result.length != 0) {
+                                    const ProfilePass = result.filter(profile=>profile.register_auth == 0 || profile.register_auth == 1)
+                                    if(ProfilePass.length != 0) {
+                                        if(req.body['page'] === "signup") {
+                                            try {
+                                                LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
+                                                LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)
+                                            } catch (e) {}
+                                        }
+                                        resole({
+                                            result : "search",
+                                            data : ProfilePass[0]
+                                        })
+                                    } else {
+                                        try {
+                                            LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
+                                            LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
+                                        } catch (e) {}
+                                        reject("no")
+                                    }
+                                }
+                                else {
                                     try {
                                         LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
-                                        LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)
+                                        LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
                                     } catch (e) {}
+                                    reject("no account")
                                 }
-                                resole({
-                                    result : "search",
-                                    data : ProfilePass[0]
-                                })
-                            } else {
-                                try {
-                                    LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
-                                    LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
-                                } catch (e) {}
-                                reject("no")
-                            }
-                        }
-                        else {
-                            try {
-                                LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
-                                LINE.linkRichMenuToUser(req.session.uidFarmer , RichSign)
-                            } catch (e) {}
-                            reject("no account")
-                        }
-                    } else reject("no")
+                            } else reject("no")
+                    })
+                } else reject("no")
             })
-        })
+        } else reject("no")
     })
 }
 

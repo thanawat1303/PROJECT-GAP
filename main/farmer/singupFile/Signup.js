@@ -398,7 +398,7 @@ const StepTwo = (props) => {
                         </div>
                     </div>
                     <div className="box-bt">
-                        <button className="bt-map-reload" onClick={reloadMap}>โหลดพิกัด</button>
+                        <button className="bt-map-reload" onClick={reloadMap}>โหลดตำแหน่ง</button>
                     </div>
                 </label>
                 <label className="station">

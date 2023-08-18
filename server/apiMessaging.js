@@ -34,12 +34,13 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                                 if(result[0]) {
                                     let query = new Array
                                     for (let key in result) {
+                                        const name_house = result[key]["name_house"].toString()
                                         query.push(
                                                 {
                                                     imageUrl : `${UrlApi}/image/house?imagefarm=${result[key]["id_farm_house"]}&date=${new Date().getTime()}`,
                                                     action : {
                                                         type : "uri",
-                                                        label : `${result[key]["name_house"].toString().slice(0 , 11)}`,
+                                                        label : `${name_house.length > 12 ? `${name_house.slice(0 , 9)}..` : name_house}`,
                                                         uri : `https://liff.line.me/1661049098-GVZzbm5q/${result[key]["id_farm_house"]}`
                                                     }
                                                 }

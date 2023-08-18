@@ -222,11 +222,12 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                 uid_line , 
                                 name_house , 
                                 img_house , 
-                                link_user
+                                link_user,
+                                location
                             )
-                        VALUES (? , ? , ? , ?)` , 
+                        VALUES (? , ? , ? , ? , POINT(? , ?))` , 
                         [
-                            auth.data.uid_line , req.body['name'].trim() , req.body['img'] , auth.data.link_user
+                            auth.data.uid_line , req.body['name'].toString().trim() , req.body['img'] , auth.data.link_user , req.body['lag'] , req.body['lng']
                         ] , (err , insert)=>{
                             con.end()
                             if (!err) {

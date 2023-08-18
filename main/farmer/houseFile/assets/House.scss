@@ -1,7 +1,7 @@
 .house-add {
     display: flex;
     justify-content: center;
-    align-items: start;
+    align-items: center;
     width: 100vw;
     height: 100vh;
     flex-direction: column;
@@ -67,7 +67,7 @@
             justify-content: start;
             align-items: center;
             flex-direction: column;
-            width: 90%;
+            width: 95%;
             // height: 75%;
             overflow-y: scroll;
             .frame-content-house {
@@ -75,6 +75,7 @@
                 justify-content: start;
                 align-items: center;
                 flex-direction: column;
+                width: 100%;
                 .loading-show {
                     position: fixed;
                 }
@@ -84,6 +85,7 @@
                     flex-direction: column;
                     align-items: center;
                     margin: 10px 0px;
+                    width: 100%;
                     .name-farmhouse {
                         display: flex;
                         justify-content: center;
@@ -91,7 +93,7 @@
                         width: 100%;
                         input {
                             font-family: TH-font;
-                            font-size: 7vw;
+                            font-size: 10vw;
                             padding: 0px 10px;
                             padding-top: 5px;
                             text-align: center;
@@ -171,16 +173,58 @@
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        position: relative;
                         flex-direction: column;
                         margin-top: 20px;
-                        border-radius: 15px;
-                        overflow: hidden;
+                        position: relative;
+                        width: 100%;
+
+                        span {
+                            font-family: TH-font;
+                            font-size: 10vw;
+                            font-weight: 900;
+                        }
         
-                        .loading-map-house {
+                        .frame-map {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            position: relative;
+                            border-radius: 15px;
+                            overflow: hidden;
+                            width: 100%;
+                            .frame-background-loading-map {
+                                position: absolute;
+                                width: 100%;
+                                height: 100%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                background-color: rgba(255, 255, 255, 0.349);
+                                backdrop-filter: blur(8px);
+                                .loading-map-house {
+                                    width: 25vw;
+                                    height: 25vw;
+                                }
+                            }
+
+                            .map-house {
+                                width: 100%;
+                            }
+                        }
+
+                        .reload-map {
+                            display: flex;
                             position: absolute;
-                            width: 25vw;
-                            height: 25vw;
+                            font-family: TH-font;
+                            font-size: 6vw;
+                            font-weight: 900;
+                            background-color: white;
+                            padding: 0px 10px;
+                            padding-top: 2vw;
+                            border-radius: 15px;
+                            box-shadow: 0px 4px 4px rgb(0, 0, 0);
+                            bottom: 0.6em;
+                            right: 0.2em;
                         }
                     }
                 }
@@ -213,6 +257,122 @@
 
             .cancel {
                 background-color: red;
+            }
+        }
+    }
+
+    @media only screen and (min-width : 470px) {
+        Report-Dom {
+            Body-Report {
+                padding: 15px 30px;
+                border-radius: 15px;
+    
+                Text-Report {
+                    margin-bottom: 10px;
+                    font-family: TH-font;
+                    font-size: 25px;
+                    font-weight: 900;
+                    background-color: white;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    padding-top: 6px;
+                    border-radius: 20px;
+                    box-shadow: 0px 2px 2px gray;
+                }
+    
+                BoxButton-Report {
+                    margin-top: 10px;
+    
+                    button {
+                        background-color: #00b412;
+                        border-radius: 15px;
+                        border-radius: 15px;
+                        padding: 0px 25px;
+                        padding-top: 2px;
+                        font-family: TH-font;
+                        font-size: 30px;
+                        font-weight: 900;
+                        color: white;
+                        box-shadow: 0px 2px 2px gray;
+                    }
+                }
+            }
+        }
+        .content-max-width {
+            .title {
+                font-size: 47px;
+                padding-top: 10px;
+                // height: 10%;
+            }
+        
+            .frame-house-add {
+                .frame-content-house {
+                    .loading-show {
+                        position: fixed;
+                    }
+                    .content {
+                        .name-farmhouse {
+                            input {
+                                font-size: 47px;
+                                padding: 0px 10px;
+                                padding-top: 5px;
+                            }
+                        }
+                        .box-image {
+                            .content-bt-image {
+                                .bt-upload {
+                                    background-color: black;
+                                    padding: 0px 15px;
+                                    padding-top: 3px;
+                                    font-size: 32.9px;
+                                }
+                            }
+                    
+                        }
+            
+                        .generate-map {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            flex-direction: column;
+                            margin-top: 20px;
+    
+                            span {
+                                font-family: TH-font;
+                                font-size: 47px;
+                                font-weight: 900;
+                            }
+            
+                            .frame-map {
+                                .frame-background-loading-map {
+                                    .loading-map-house {
+                                        width: 117.5px;
+                                        height: 117.5px;
+    
+                                        .loading-dom-module {
+                                            .curcle {
+                                                border-width: 18.8px !important;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            .reload-map {
+                                font-size: 28.2px;
+                                padding: 0px 10px;
+                                padding-top: 9.4px;
+                            }
+                        }
+                    }
+                }
+            }
+        
+            .content-bt {
+                .bt {
+                    padding-top: 9.4px;
+                    font-size: 47px;
+                }
             }
         }
     }

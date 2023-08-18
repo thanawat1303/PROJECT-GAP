@@ -40,10 +40,10 @@ const House = ({liff}) => {
         // bodySection.current.style.width = `${window.innerWidth}px`
         // bodySection.current.style.height = `${window.innerHeight}px`
 
-        Frame.current.style.width = `${window.innerWidth * 0.8}px`
-        Frame.current.style.height = `${window.innerWidth * 0.8}px`
-        LoadingEle.current.style.width = `${window.innerWidth * 0.8}px`
-        LoadingEle.current.style.height = `${window.innerWidth * 0.8}px`
+        Frame.current.style.width = `${window.innerWidth <= 470 ? window.innerWidth * 0.8 : 470 * 0.8}px`
+        Frame.current.style.height = `${window.innerWidth <= 470 ? window.innerWidth * 0.8 : 470 * 0.8}px`
+        LoadingEle.current.style.width = `${window.innerWidth <= 470 ? window.innerWidth * 0.8 : 470 * 0.8}px`
+        LoadingEle.current.style.height = `${window.innerWidth <= 470 ? window.innerWidth * 0.8 : 470 * 0.8}px`
         
         document.title = "เพิ่มโรงเรือน"
         ImageCurrent.current.style.transform = `translate(${CurrentP.x}px , ${CurrentP.y}px)`
@@ -204,10 +204,12 @@ const House = ({liff}) => {
     
             let data = {
                 img : CropImage,
-                name : namefarm.current.value
+                name : namefarm.current.value,
+                lag : getLag,
+                lng : getLng
             }
 
-            if(data.img && data.name) {
+            if(data.img && data.name && data.lag && data.lng) {
                 clientMo.postForm("/api/farmer/farmhouse/add" , data).then((result)=>{
                     if(result === "133") {
                         setText("เพิ่มโรงเรือนสำเร็จ")
@@ -260,16 +262,13 @@ const House = ({liff}) => {
     } , [])
 
     const getGenerateMap = () => {
-        liff.getProfile().then(profile => {
-            const displayName = profile.displayName;
-            const userId = profile.userId;
-            const context = liff.getContext();
-            if (context.type === 'utou') {
-                // คำสั่งสำหรับการดึงตำแหน่งที่ตั้ง
-                const location = context.utou.getLiveLocation();
-                alert(location);
-            }
-        });
+        navigator.geolocation.getCurrentPosition((location)=>{
+            setLag(location.coords.latitude)
+            setLng(location.coords.longitude)
+            setLoadingMap(false)
+        } , null , {
+            enableHighAccuracy: true
+        })
     }
 
     return (
@@ -305,13 +304,28 @@ const House = ({liff}) => {
                                 <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
                             </div>
                             <div className="generate-map">
-                                { getLoadingMap ?
-                                    <div className="loading-map-house">
-                                        <Loading size={"100%"} border={8} animetion={true}/>
-                                    </div> : <></>
-                                }
-                                <div className="map-house">
-                                    <MapsJSX lat={getLag} lng={getLng} w={"100%"} h={"100%"}/>
+                                <span>ตำแหน่งโรงเรือน</span>
+                                <div className="frame-map">
+                                    { getLoadingMap ?
+                                        <div className="frame-background-loading-map">
+                                            <div className="loading-map-house">
+                                                <Loading size={"100%"} border={"4vw"} animetion={true}/>
+                                            </div>
+                                        </div>
+                                        : <></>
+                                    }
+                                    <div className="map-house">
+                                        <MapsJSX lat={getLag} lng={getLng} w={"100%"} h={"100%"}/>
+                                    </div>
+                                    <div className="reload-map" onClick={()=>{
+                                        setLag(0)
+                                        setLng(0)
+                                        setLoadingMap(true)
+
+                                        setTimeout(()=>{
+                                            getGenerateMap()
+                                        } , 500)
+                                    }}>โหลดตำแหน่ง</div>
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect , useRef , useState } from "react";
 import { clientMo } from "../../../src/assets/js/moduleClient";
-import { Loading , ReportAction, ResizeImg } from "../../../src/assets/js/module";
+import { Loading , MapsJSX, ReportAction, ResizeImg } from "../../../src/assets/js/module";
 
 import "./assets/House.scss"
 
@@ -25,7 +25,7 @@ const House = ({liff}) => {
         y : 0
     })
 
-    const [LoadingImg , setLoading] = useState(false) 
+    const [LoadingImg , setLoading] = useState(false)
 
     const [sizeWidthImg , setWidthImg] = useState(0)
     const [sizeHeightImg , setHeightImg] = useState(0)
@@ -37,8 +37,8 @@ const House = ({liff}) => {
     const frameLate = 1
 
     useEffect(()=>{
-        bodySection.current.style.width = `${window.innerWidth}px`
-        bodySection.current.style.height = `${window.innerHeight}px`
+        // bodySection.current.style.width = `${window.innerWidth}px`
+        // bodySection.current.style.height = `${window.innerHeight}px`
 
         Frame.current.style.width = `${window.innerWidth * 0.8}px`
         Frame.current.style.height = `${window.innerWidth * 0.8}px`
@@ -48,6 +48,8 @@ const House = ({liff}) => {
         document.title = "เพิ่มโรงเรือน"
         ImageCurrent.current.style.transform = `translate(${CurrentP.x}px , ${CurrentP.y}px)`
     } , [])
+    
+
 
     const InputImage = (e) => {
         const file = e.target.files[0]
@@ -249,41 +251,80 @@ const House = ({liff}) => {
         }
     }
 
+    const [getLoadingMap , setLoadingMap] = useState(true)
+    const [getLag , setLag] = useState(0)
+    const [getLng , setLng] = useState(0)
+
+    useEffect(()=>{
+        getGenerateMap()
+    } , [])
+
+    const getGenerateMap = () => {
+        liff.getProfile().then(profile => {
+            const displayName = profile.displayName;
+            const userId = profile.userId;
+            const context = liff.getContext();
+            if (context.type === 'utou') {
+                // คำสั่งสำหรับการดึงตำแหน่งที่ตั้ง
+                const location = context.utou.getLiveLocation();
+                alert(location);
+            }
+        });
+    }
+
     return (
         <section ref={bodySection} onLoad={LoadOn} className="house-add">
-            {/* <div className="loading-show" ref={LoadingPreview}>
+            <div className="content-max-width">
+                <div className="title">เพิ่มโรงเรือน</div>
+                <div className="frame-house-add">
+                    <div className="frame-content-house">
+                        {/* <div className="loading-show" ref={LoadingPreview}>
 
-            </div> */}
-            {/* <PopupAlert  textData={Textdata} open={OpenPop} result={ResultPop} liff={liff}
-                setText={setText} setOpen={setOpen} setResult={setResult}/> */}
-            <ReportAction Open={OpenPop} Text={Textdata} Status={ResultPop}
-                            setOpen={setOpen} setText={setText} setStatus={setResult}
-                            sizeLoad={90} BorderLoad={10} color="green" action={actionArert}/>
-            <div className="content">
-                <div className="name-farmhouse">
-                    <input type="text" ref={namefarm} placeholder="ชื่อโรงเรือน"></input>
-                </div>
-                <div className="box-image">
-                    <div onLoad={LoadPic} ref={Frame} className="frame-picture">
-                        {(LoadingImg) ? 
-                            <div ref={LoadingEle}></div>
-                            :
-                            <div ref={LoadingEle} className="Loading-img">
-                                <Loading size={70} border={8} color="green" animetion={true}/>
+                        </div> */}
+                        {/* <PopupAlert  textData={Textdata} open={OpenPop} result={ResultPop} liff={liff}
+                            setText={setText} setOpen={setOpen} setResult={setResult}/> */}
+                        <div className="content">
+                            <div className="name-farmhouse">
+                                <input type="text" ref={namefarm} placeholder="ชื่อโรงเรือน"></input>
                             </div>
-                        }
-                        <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
-                    </div>
-                    <div className="content-bt">
-                        <div onClick={()=>ControlImage.current.click()} className="bt-upload">อัปโหลดรูปภาพ</div>
+                            <div className="box-image">
+                                <div onLoad={LoadPic} ref={Frame} className="frame-picture">
+                                    {(LoadingImg) ? 
+                                        <div ref={LoadingEle}></div>
+                                        :
+                                        <div ref={LoadingEle} className="Loading-img">
+                                            <Loading size={70} border={8} color="green" animetion={true}/>
+                                        </div>
+                                    }
+                                    <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
+                                </div>
+                                <div className="content-bt-image">
+                                    <div onClick={()=>ControlImage.current.click()} className="bt-upload">อัปโหลดรูปภาพ</div>
+                                </div>
+                                <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input>
+                                <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
+                            </div>
+                            <div className="generate-map">
+                                { getLoadingMap ?
+                                    <div className="loading-map-house">
+                                        <Loading size={"100%"} border={8} animetion={true}/>
+                                    </div> : <></>
+                                }
+                                <div className="map-house">
+                                    <MapsJSX lat={getLag} lng={getLng} w={"100%"} h={"100%"}/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div className="content-bt">
+                    <button onClick={()=>liff.closeWindow()} className="bt cancel">ยกเลิก</button>
+                    <button onClick={confirmData} className="bt submit">บันทึก</button>
+                </div>
             </div>
-            <div className="content-bt">
-                <button onClick={confirmData} className="bt-submit">บันทึก</button>
-            </div>
-            <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input>
-            <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
+            <ReportAction Open={OpenPop} Text={Textdata} Status={ResultPop}
+                setOpen={setOpen} setText={setText} setStatus={setResult}
+                sizeLoad={90} BorderLoad={10} color="green" action={actionArert}/>
         </section>
     )
 }

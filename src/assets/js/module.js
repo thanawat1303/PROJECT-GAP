@@ -312,6 +312,7 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
             backdropFilter : "blur(8px)" ,
             opacity : Open ? "1" : "0" ,
             visibility : Open ? "visible" : "hidden",
+            top : 0,
             transition : "0.5s opacity , 0.5s visibility , 0.5s z-index"
         }}>
             <Body-Report style={{

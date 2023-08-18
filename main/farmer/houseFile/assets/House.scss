@@ -1,14 +1,11 @@
 .house-add {
     display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+    justify-content: center;
+    align-items: start;
+    width: 100vw;
+    height: 100vh;
     flex-direction: column;
-    overflow-y: scroll;
-    // .head {
-    //     display: flex;
-    //     justify-content: center;
-    //     align-items: center;
-    // }
+
     Report-Dom {
         Body-Report {
             padding: 15px 30px;
@@ -45,110 +42,178 @@
             }
         }
     }
-    .loading-show {
-        position: fixed;
-        
-    }
-    .content {
+    .content-max-width {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
+        align-items: center;
         flex-direction: column;
-        align-items: center;
-        .name-farmhouse {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            input {
-                font-family: TH-font;
-                font-size: 7vw;
-                padding: 0px 10px;
-                padding-top: 5px;
-                text-align: center;
-                border: 0;
-                box-shadow: inset 0px 0px 5px green;
-                border-radius: 18px;
-            }
-        }
-        .box-image {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin:0px auto;
-            .frame-picture {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-                overflow: hidden;
-                margin: 20px auto;
-                margin-bottom: 0px;
-                border-radius: 15px;
-        
-                .Loading-img {
-                    position: absolute;
-                    background-color: white;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 10;
-                }
-        
-                img {
-                    transform: translate(0,0);
-                    // transition: 0.5s;
-                }
-                
-                img[size="w"] {
-                    width: 100%;
-                    height: auto;
-                }
-        
-                img[size="h"] {
-                    width: auto;
-                    height: 100%;
-                }
-
-                img[src="/view-preview-img.svg"] {
-                    opacity: 0.3;
-                }
-            }
-    
-            .content-bt {
-                margin-top: 20px;
-                .bt-upload {
-                    background-color: black;
-                    padding: 0px 15px;
-                    padding-top: 3px;
-                    font-family: TH-font;
-                    border-radius: 15px;
-                    font-size: 7vw;
-                    color: white;
-                    box-shadow: 0px 2px 2px gray;
-                }
-            }
-    
-        }
-    }
-    
-
-    .content-bt {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        .bt-submit {
-            // margin-top: 70px;
-            border-radius: 50%;
-            width: 20vw;
-            height: 20vw;
-            padding-top: 2vw;
-            background-color: green;
-            border: 0;
+        max-width: 470px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        .title {
+            text-align: center;
             font-family: TH-font;
             font-size: 10vw;
             font-weight: 900;
-            color: white;
-            box-shadow: 0px 3px 4px gray;
+            padding-top: 7px;
+            background-color: rgb(115, 213, 115);
+            width: 100%;
+            // height: 10%;
+        }
+    
+        .frame-house-add {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            flex-direction: column;
+            width: 90%;
+            // height: 75%;
+            overflow-y: scroll;
+            .frame-content-house {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                flex-direction: column;
+                .loading-show {
+                    position: fixed;
+                }
+                .content {
+                    display: flex;
+                    justify-content: center;
+                    flex-direction: column;
+                    align-items: center;
+                    margin: 10px 0px;
+                    .name-farmhouse {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        input {
+                            font-family: TH-font;
+                            font-size: 7vw;
+                            padding: 0px 10px;
+                            padding-top: 5px;
+                            text-align: center;
+                            border: 0;
+                            box-shadow: inset 0px 0px 5px green;
+                            border-radius: 18px;
+                        }
+                    }
+                    .box-image {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        flex-direction: column;
+                        margin:0px auto;
+                        background-color: #def7e1;
+                        width: 100%;
+                        margin: 10px 0px;
+                        padding-bottom: 5px;
+                        border-radius: 15px;
+                        .frame-picture {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            flex-direction: column;
+                            overflow: hidden;
+                            margin: 0px auto;
+                            border-radius: 15px;
+                            margin: 10px 0px;
+                    
+                            .Loading-img {
+                                position: absolute;
+                                background-color: white;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                z-index: 10;
+                            }
+                    
+                            img {
+                                transform: translate(0,0);
+                                // transition: 0.5s;
+                            }
+                            
+                            img[size="w"] {
+                                width: 100%;
+                                height: auto;
+                            }
+                    
+                            img[size="h"] {
+                                width: auto;
+                                height: 100%;
+                            }
+            
+                            img[src="/view-preview-img.svg"] {
+                                opacity: 0.3;
+                            }
+                        }
+                
+                        .content-bt-image {
+                            margin-top: 0px;
+                            margin-bottom: 10px;
+                            .bt-upload {
+                                background-color: black;
+                                padding: 0px 15px;
+                                padding-top: 3px;
+                                font-family: TH-font;
+                                border-radius: 15px;
+                                font-size: 7vw;
+                                color: white;
+                                box-shadow: 0px 2px 2px gray;
+                            }
+                        }
+                
+                    }
+        
+                    .generate-map {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        position: relative;
+                        flex-direction: column;
+                        margin-top: 20px;
+                        border-radius: 15px;
+                        overflow: hidden;
+        
+                        .loading-map-house {
+                            position: absolute;
+                            width: 25vw;
+                            height: 25vw;
+                        }
+                    }
+                }
+            }
+        }
+    
+        .content-bt {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100%;
+            // height: 10%;
+            padding: 10px 0px;
+            background-color: rgb(115, 213, 115);
+            .bt {
+                border-radius: 15px;
+                width: 30%;
+                padding-top: 2vw;
+                border: 0;
+                font-family: TH-font;
+                font-size: 10vw;
+                font-weight: 900;
+                color: white;
+                box-shadow: 0px 3px 4px gray;
+            }
+
+            .submit {
+                background-color: green;
+            }
+
+            .cancel {
+                background-color: red;
+            }
         }
     }
 }

@@ -284,7 +284,10 @@ const House = ({liff}) => {
                             setText={setText} setOpen={setOpen} setResult={setResult}/> */}
                         <div className="content">
                             <div className="name-farmhouse">
-                                <input type="text" ref={namefarm} placeholder="ชื่อโรงเรือน"></input>
+                                <span>ชื่อโรงเรือน</span>
+                                <input type="text" ref={namefarm} placeholder="แนะนำ 12 ตัวอักษร" onInput={(e)=>{
+                                    e.target.value = e.target.value.slice(0 , 45)
+                                }}></input>
                             </div>
                             <div className="box-image">
                                 <div onLoad={LoadPic} ref={Frame} className="frame-picture">

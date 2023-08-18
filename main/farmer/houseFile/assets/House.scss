@@ -90,7 +90,15 @@
                         display: flex;
                         justify-content: center;
                         align-items: center;
+                        flex-direction: column;
                         width: 100%;
+                        margin-bottom: 20px;
+                        span {
+                            font-family: TH-font;
+                            font-size: 10vw;
+                            font-weight: 900;
+                        }
+
                         input {
                             font-family: TH-font;
                             font-size: 10vw;
@@ -312,6 +320,10 @@
                     }
                     .content {
                         .name-farmhouse {
+                            span {
+                                font-size: 47px;
+                            }
+
                             input {
                                 font-size: 47px;
                                 padding: 0px 10px;
@@ -338,9 +350,7 @@
                             margin-top: 20px;
     
                             span {
-                                font-family: TH-font;
                                 font-size: 47px;
-                                font-weight: 900;
                             }
             
                             .frame-map {

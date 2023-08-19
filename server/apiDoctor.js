@@ -1865,7 +1865,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     SELECT acc_farmer.*
                     FROM acc_farmer , 
                         (
-                            SELECT link_user , uid_line
+                            SELECT link_user
                             FROM housefarm , 
                             (
                                 SELECT id_farm_house
@@ -1874,7 +1874,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as plant
                             WHERE housefarm.id_farm_house = plant.id_farm_house
                         ) as house
-                    WHERE (acc_farmer.link_user = house.link_user OR acc_farmer.uid_line = house.uid_line) AND acc_farmer.station = ?
+                    WHERE acc_farmer.link_user = house.link_user AND acc_farmer.station = ? AND (register_auth = 0 OR register_auth = 1)
                     ORDER BY date_register
                     LIMIT 1
                     ` , [req.query.id_form , result['data']['station_doctor']] ,
@@ -2503,11 +2503,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT id_farm_house
                                 FROM housefarm , 
                                     (
-                                        SELECT uid_line , link_user
+                                        SELECT uid_line , link_user , station
                                         FROM acc_farmer
-                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
+                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "register_auth = 0 OR register_auth = 1"}
                                     ) as farmer
-                                WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
+                                WHERE (housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user) AND farmer.station = "${result['data']['station_doctor']}"
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
                                 ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
@@ -2549,10 +2549,10 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                 ) as plant
                                                 WHERE housefarm.id_farm_house = plant.id_farm_house
                                             ) as house
-                                        WHERE acc_farmer.link_user = house.link_user
+                                        WHERE acc_farmer.link_user = house.link_user AND acc_farmer.station = ? AND (register_auth = 0 OR register_auth = 1)
                                         ORDER BY date_register
                                         LIMIT 1
-                                        ` , [val.id] ,
+                                        ` , [val.id , result['data']['station_doctor']] ,
                                         (err , result) => {
                                             resole(result)
                                         }

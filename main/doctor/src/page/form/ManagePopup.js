@@ -781,6 +781,7 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
                 id_plant : id_plant,
                 password : Password.current.value
             })
+            console.log(id_plant)
 
             if(result === "113") {
                 FetchData()

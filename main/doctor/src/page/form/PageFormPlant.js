@@ -638,7 +638,7 @@ const ExportExcelIn = async (excelData = new Array) => {
         DataExport["วันที่เริ่มปลูก"] = `${DatePlant[2]}-${Mount[parseInt(DatePlant[1])]}-${(parseInt(DatePlant[0]) + 543).toString().slice(2)}`
 
         const DateSuccess = val.dataForm.date_success ? val.dataForm.date_success.split(" ")[0].split("-") : "";
-        DataExport["วันที่เริ่มปลูก"] = DateSuccess ? DateSuccess : `${DateSuccess[2]}-${Mount[parseInt(DateSuccess[1])]}-${(parseInt(DateSuccess[0]) + 543).toString().slice(2)}`
+        DataExport["วันที่เก็บเกี่ยว"] = DateSuccess ? `${DateSuccess[2]}-${Mount[parseInt(DateSuccess[1])]}-${(parseInt(DateSuccess[0]) + 543).toString().slice(2)}` : "ยังไม่ทำการเก็บเกี่ยว"
         return DataExport
     })
 

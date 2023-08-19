@@ -2075,7 +2075,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT EXISTS (
                                     SELECT id
                                     FROM check_plant_detail
-                                    WHERE id_plant = ? and status_check = 0
+                                    WHERE id_plant = ? and state_check = 0
                                 )
                             ) as ResultAfter
                         ` , [ req.body.id_plant ] , 

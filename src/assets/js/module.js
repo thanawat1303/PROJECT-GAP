@@ -228,36 +228,6 @@ const Loading = ({size , MaxSize = 0 , border , color="green" , animetion = fals
     )
 }
 
-import * as FileSaver from "file-saver"
-import XLSX from "sheetjs-style"
-
-const ExportExcel = ({ excelData , fileName , nameBT}) => {
-    const filetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-    const fileExtension = ".xlsx"
-
-    const exportToExcel = async () => {
-        const DataExport = new Map()
-        const NameSheet = new Array()
-        for(let key in excelData){
-            let ws = XLSX.utils.json_to_sheet(excelData[key])
-            NameSheet.push(key)
-            DataExport.set(key , ws)
-        }
-
-        const JsonExport = Object.fromEntries(Array.from(DataExport));
-        const wb = {Sheets : JsonExport , SheetNames : NameSheet}
-        const excelBuffer = XLSX.write(wb , {bookType : "xlsx" , type : "array"})
-
-        
-        const data = new Blob([excelBuffer] , {type : filetype})
-        FileSaver.saveAs(data , fileName , fileExtension)
-    }
-
-    return (
-        <button onClick={(e)=>exportToExcel(fileName)}>{nameBT}</button>
-    )
-}
-
 const ButtonMenu = ({type , textRow1 , textRow2 , action}) => {
     return(
         <div onClick={action} className={`bt-menu-frame ${type}`}>
@@ -604,4 +574,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ExportExcel , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , TabLoad , HrefData}

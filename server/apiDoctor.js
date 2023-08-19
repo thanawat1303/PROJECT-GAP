@@ -2111,7 +2111,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     )
                 })
                 
-                if(!CheckSuccess) {
+                if(CheckInsert && !CheckSuccess) {
                     const Random = await new Promise( async (resole , reject)=>{
                         while(true) {
                             let random = apifunc.generateID(4 , "num")
@@ -2243,7 +2243,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     WHERE id_plant = ?
                     ` , [req.body.id_plant] ,
                     (err , reportChk)=> {
-                        if(reportChk[0].count < 2) {
+                        if(!err) {
                             con.query(
                                 `
                                     INSERT report_detail
@@ -2253,7 +2253,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 ` , [ req.body.id_plant , req.body.report_text , result.data.id_table_doctor ] ,
                                 async (err , result) =>{
                                     if (!err) {
-                                        await SendToFarmerHouse(con , req.body.id_plant , "หมอพืชให้คำแนะนำกับแบบบันทึก")
+                                        await SendToFarmerHouse(con , req.body.id_plant , "หมอพืชให้คำแนะนำกับการปลูก")
                                         con.end()
                                         res.send("113")
                                     } else {
@@ -2264,7 +2264,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             )
                         } else {
                             con.end()
-                            res.send("max")
+                            res.send("")
                         }
                     }
                 )
@@ -2363,9 +2363,9 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     con.query(
                                         `
                                         UPDATE formplant 
-                                        SET submit = 2
+                                        SET submit = 2 , date_success = ?
                                         WHERE id = ? and submit = 1
-                                        ` , [ req.body.id_plant ] , 
+                                        ` , [new Date() , req.body.id_plant ] , 
                                         (err , update)=>{
                                             con.end()
                                             res.send("113")

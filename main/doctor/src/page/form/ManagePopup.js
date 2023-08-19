@@ -728,9 +728,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                             </div>
                                             </> 
                                             : StatePage === "report" ? 
-                                                DataFormManage.list.length != 2 ?
-                                                    <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
-                                                : <></>
+                                                <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
                                             : StatePage === "CheckForm" ? 
                                                 DataFormManage.list.length === 0 ? 
                                                     <a onClick={()=>PopupReport("CheckForm")}>เพิ่มผลตรวจสอบ</a> : <></>

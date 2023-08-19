@@ -281,7 +281,7 @@ const ExportPDF = async (Data) => {
 
         let PresentRow = 365
         if(Export.report.length !== 0) {
-            for(let index in Export.report) {
+            for(let index in Export.report.slice(0 , 2)) {
                 TextBoxHead(pdf , 50 , PresentRow , `ครั้งที่ ${parseInt(index) + 1} คำแนะนำ`)
 
                 PresentRow = TextBoxSplit(pdf , 15 , 40 , `ครั้งที่ ${parseInt(index) + 1} คำแนะนำ` , 16 , 14 , PresentRow , 50 , Export.report[index].report_text)
@@ -513,4 +513,44 @@ const ExportPDF = async (Data) => {
     // )
 }
 
-export {ExportPDF}
+import * as FileSaver from "file-saver"
+import XLSX from "sheetjs-style"
+
+const Mount = ["" , "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
+
+const ExportExcel = async (excelData = new Array) => {
+    const filetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    const fileExtension = ".xlsx"
+
+    const nameSpace = new Set(excelData.map(val=>val.dataForm.name_plant))
+    const DataWs = excelData.map((val , key)=>{
+        const DataExport = {}
+        DataExport["plant"] = val.dataForm.name_plant
+        DataExport["ชื่อเกษตรกร"] = val.farmer[0].fullname.toString().trim()
+        DataExport["รหัสเกษตรกร"] = val.farmer[0].id_farmer.toString().trim()
+
+        const DatePlant = val.dataForm.date_plant.split(" ")[0].split("-") 
+        DataExport["วันที่เริ่มปลูก"] = `${DatePlant[2]}-${Mount[parseInt(DatePlant[1])]}-${(parseInt(DatePlant[0]) + 543).toString().slice(2)}`
+        return DataExport
+    })
+
+    const DataSheets = {}
+    nameSpace.forEach((name)=>{
+        const DataInWs = DataWs.filter(val=>val.plant == name).map((val , key)=>{
+            delete val.plant
+            return {"ลำดับที่" : key + 1 , ...val}
+        })
+        const ws = XLSX.utils.json_to_sheet(DataInWs)
+        DataSheets[name] = ws
+    })
+
+    console.log(DataSheets)
+    // const wb = {Sheets : DataSheets , SheetNames : [...nameSpace]}
+    // const excelBuffer = XLSX.write(wb , {bookType : "xlsx" , type : "array"})
+
+    
+    // const data = new Blob([excelBuffer] , {type : filetype})
+    // FileSaver.saveAs(data , "ทดสอบ" , fileExtension)
+}
+
+export {ExportPDF , ExportExcel}

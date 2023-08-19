@@ -12,6 +12,7 @@ import SessionOut from "./sesionOut";
 import PageFormPlant from "./page/form/PageFormPlant";
 import PageExport from "./page/export/PageExport";
 import PageFarmer from "./page/farmer/PageFarmer";
+import PageData from "./page/data/PageData";
 
 const Doctor = ({setMain , socket , isClick = 0}) => {
     const [body , setBody] = useState(<div></div>)
@@ -64,12 +65,7 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
                     //         setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                     //     }
                     // }
-                    if(path[2] === "ap") {
-                        setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                    }
-                    else if(path[2] === "wt") {
-                        setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`wt:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
-                    }
+                    setBody(<PageFormPlant setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                 } else if(path[1] === "farmer") {
                     if(path[2] === "ap") {
                         setBody(<PageFarmer setMain={setMain} socket={socket} session={sessionoff} LoadType={`ap:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
@@ -80,10 +76,8 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
                     else if(path[2] === "not") {
                         setBody(<PageFarmer setMain={setMain} socket={socket} session={sessionoff} LoadType={`not:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                     }
-                } else if(path[1].indexOf("export") >= 0) {
-                    setBody(<PageExport setMain={setMain} 
-                                socket={socket} setBodyDoctor={setBody} session={sessionoff}
-                                eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                } else if(path[1] === "data") {
+                    setBody(<PageData setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`plant:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                 }
                 
             } else {

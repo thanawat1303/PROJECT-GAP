@@ -18,7 +18,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
     // })
     const [TypeSelectMenu , setTypeSelectMenu] = useState(0)
     const [DataProcess , setDataProcess] = useState(new Map([
-        ["type" , LoadType] , //Loadtype 0 : plant , 1 : ferti , 2 : chemi , 3 : source
+        ["type" , LoadType.split(":")[0]] , //Loadtype 0 : plant , 1 : ferti , 2 : chemi , 3 : source
         // ["search" , ""] ,
         ["statusClick" , type]
     ]))
@@ -326,7 +326,7 @@ const List = ({ session , socket , DataFillter , setTextStatus , StartData , set
             JsonData["StartRow"] = StartRow
             JsonData["Limit"] = Limit ? Limit : MaxLimit;
 
-            if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form${JsonData["type"] ? `?type=${JsonData["type"]}` : ""}`)
+            if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/data${JsonData["type"] ? `?type=${JsonData["type"]}` : ""}`)
 
             const list = await clientMo.post(`/api/doctor/data/get` , JsonData)
             const data = JSON.parse(list)

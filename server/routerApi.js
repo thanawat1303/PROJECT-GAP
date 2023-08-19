@@ -54,6 +54,10 @@ module.exports = function router(app) {
     app.get('/doctor/form' , function(req, res) {
         res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     });
+
+    app.get('/doctor/data' , function(req, res) {
+        res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
+    });
     // app.get('/doctor/form/ap' , function(req, res) {
     //     res.sendFile(__dirname.replace('\server' , '/public/index_doctor.html'));
     // });

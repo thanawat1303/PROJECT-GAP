@@ -421,16 +421,17 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
     const FetchList = async (Limit) => {
         try {
             let JsonData = {}
-            let stringUrl = new Array
+            // let stringUrl = new Array
             DataFillter.forEach((data , key)=>{
                 if(key != "statusClick") { 
                     JsonData[key] = data 
-                    stringUrl.push(`${key}=${data}`)
+                    // stringUrl.push(`${key}=${data}`)
                 }
             })
-            stringUrl = stringUrl.join("&")
-            if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form${stringUrl ? `?${stringUrl}` : ""}`)
-
+            // stringUrl = stringUrl.join("&")
+            // if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form${stringUrl ? `?${stringUrl}` : ""}`)
+            if(DataFillter.get("statusClick")) window.history.pushState({} , "" , `/doctor/form`)
+            
             JsonData["limit"] = Limit
             const list = await clientMo.post('/api/doctor/form/list' , JsonData)
             const data = JSON.parse(list)

@@ -1875,7 +1875,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             WHERE housefarm.id_farm_house = plant.id_farm_house
                         ) as house
                     WHERE acc_farmer.link_user = house.link_user AND station = ? AND register_auth != 2
-                    ORDER BY date_register
+                    ORDER BY date_register DESC , register_auth DESC
                     LIMIT 1
                     ` , [req.query.id_form , result['data']['station_doctor']] ,
                     (err , result) => {
@@ -2550,7 +2550,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                 WHERE housefarm.id_farm_house = plant.id_farm_house
                                             ) as house
                                         WHERE acc_farmer.link_user = house.link_user AND station = ? AND register_auth != 2
-                                        ORDER BY date_register
+                                        ORDER BY date_register DESC , register_auth DESC
                                         LIMIT 1
                                         ` , [val.id , result['data']['station_doctor']] ,
                                         (err , result) => {

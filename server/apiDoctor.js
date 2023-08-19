@@ -534,7 +534,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                                 `ทำการเปลี่ยนข้อมูลของท่าน :`+
                                                                 `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
                                                                 `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
-                                                                `${req.body.station ? `\nศูนย์ในการดูแล : ${Station[0].name}` : ""}`+
+                                                                `${req.body.station ? `\nศูนย์ในการดูแล : ${Station[0] ? Station[0].name : ""}` : ""}`+
                                                                 `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
                                                                 `${req.body.img ? `\nรูปภาพ :` : ""}`
                                                     }

@@ -1605,7 +1605,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     (
                                         SELECT uid_line , link_user , station
                                         FROM acc_farmer
-                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"}
+                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "register_auth = 0 OR register_auth = 1"}
                                     ) as farmer
                                 WHERE (housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user) AND farmer.station = ?
                             ) as house

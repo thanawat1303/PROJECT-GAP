@@ -1607,7 +1607,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         FROM acc_farmer
                                         WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "register_auth = 0 OR register_auth = 1"}
                                     ) as farmer
-                                WHERE (housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user) AND farmer.station = ?
+                                WHERE (housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user) AND farmer.station = "${result['data']['station_doctor']}"
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
                                 ${TypePlant !== null ? `AND formplant.name_plant = '${TypePlant}'` : ""}
@@ -1620,7 +1620,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     ORDER BY submit ASC
                     ${(Limit !== null) ? `LIMIT ${Limit}` : ""}
                     `
-                    , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
+                    , [TextInsert , TextInsert ] , 
                     (err , listFarm)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);

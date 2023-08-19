@@ -1572,7 +1572,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
                 con.query(
                     `
-                    SELECT fromInsert.*
+                    SELECT fromInsert.* 
                     FROM formplant ,
                     (
                         SELECT formplant.id , formplant.submit , formplant.name_plant , formplant.date_plant ,
@@ -1603,24 +1603,24 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT id_farm_house
                                 FROM housefarm , 
                                     (
-                                        SELECT uid_line , link_user , station
+                                        SELECT uid_line , link_user
                                         FROM acc_farmer
-                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "register_auth = 0 OR register_auth = 1"}
+                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} AND station = ?
                                     ) as farmer
-                                WHERE (housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user) AND farmer.station = "${result['data']['station_doctor']}"
+                                WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
-                                ${TypePlant !== null ? `AND formplant.name_plant = '${TypePlant}'` : ""}
-                                ${Submit !== null ? `AND formplant.submit = ${Submit}` : ""}
-                                ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `AND ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') AND UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
+                                ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
+                                ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
+                                ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
                                 
                         ORDER BY ${OrderBy}
                     ) as fromInsert
-                    WHERE formplant.id = fromInsert.id AND ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
+                    WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
                     ORDER BY submit ASC
                     ${(Limit !== null) ? `LIMIT ${Limit}` : ""}
                     `
-                    , [TextInsert , TextInsert ] , 
+                    , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
                     (err , listFarm)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
@@ -1874,7 +1874,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as plant
                             WHERE housefarm.id_farm_house = plant.id_farm_house
                         ) as house
-                    WHERE acc_farmer.link_user = house.link_user AND acc_farmer.station = ? AND (register_auth = 0 OR register_auth = 1)
+                    WHERE acc_farmer.link_user = house.link_user AND station = ? AND register_auth != 2
                     ORDER BY date_register
                     LIMIT 1
                     ` , [req.query.id_form , result['data']['station_doctor']] ,
@@ -2503,11 +2503,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT id_farm_house
                                 FROM housefarm , 
                                     (
-                                        SELECT uid_line , link_user , station
+                                        SELECT uid_line , link_user
                                         FROM acc_farmer
-                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "register_auth = 0 OR register_auth = 1"}
+                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
                                     ) as farmer
-                                WHERE (housefarm.uid_line = farmer.uid_line OR housefarm.link_user = farmer.link_user) AND farmer.station = "${result['data']['station_doctor']}"
+                                WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
                                 ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
@@ -2549,7 +2549,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                 ) as plant
                                                 WHERE housefarm.id_farm_house = plant.id_farm_house
                                             ) as house
-                                        WHERE acc_farmer.link_user = house.link_user AND acc_farmer.station = ? AND (register_auth = 0 OR register_auth = 1)
+                                        WHERE acc_farmer.link_user = house.link_user AND station = ? AND register_auth != 2
                                         ORDER BY date_register
                                         LIMIT 1
                                         ` , [val.id , result['data']['station_doctor']] ,

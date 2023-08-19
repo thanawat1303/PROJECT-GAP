@@ -1572,7 +1572,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
                 con.query(
                     `
-                    SELECT fromInsert.* 
+                    SELECT fromInsert.*
                     FROM formplant ,
                     (
                         SELECT formplant.id , formplant.submit , formplant.name_plant , formplant.date_plant ,
@@ -1600,23 +1600,23 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as success_id_plant
                         FROM formplant , 
                             (
-                                SELECT id_farm_house
+                                SELECT id_farm_house , farmer.station
                                 FROM housefarm , 
                                     (
-                                        SELECT uid_line , link_user
+                                        SELECT uid_line , link_user , station
                                         FROM acc_farmer
-                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"} and station = ?
+                                        WHERE ${StatusFarmer !== null ? `register_auth = ${StatusFarmer}` : "(register_auth = 0 OR register_auth = 1)"}
                                     ) as farmer
-                                WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
+                                WHERE (housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user) AND house.station = ?
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
-                                ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
-                                ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
-                                ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
+                                ${TypePlant !== null ? `AND formplant.name_plant = '${TypePlant}'` : ""}
+                                ${Submit !== null ? `AND formplant.submit = ${Submit}` : ""}
+                                ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `AND ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') AND UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
                                 
                         ORDER BY ${OrderBy}
                     ) as fromInsert
-                    WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
+                    WHERE formplant.id = fromInsert.id AND ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
                     ORDER BY submit ASC
                     ${(Limit !== null) ? `LIMIT ${Limit}` : ""}
                     `

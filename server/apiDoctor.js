@@ -1865,7 +1865,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     SELECT acc_farmer.*
                     FROM acc_farmer , 
                         (
-                            SELECT link_user
+                            SELECT link_user , uid_line
                             FROM housefarm , 
                             (
                                 SELECT id_farm_house
@@ -1874,10 +1874,10 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as plant
                             WHERE housefarm.id_farm_house = plant.id_farm_house
                         ) as house
-                    WHERE acc_farmer.link_user = house.link_user
+                    WHERE (acc_farmer.link_user = house.link_user OR acc_farmer.uid_line = house.uid_line) AND acc_farmer.station = ?
                     ORDER BY date_register
                     LIMIT 1
-                    ` , [req.query.id_form] ,
+                    ` , [req.query.id_form , result['data']['station_doctor']] ,
                     (err , result) => {
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);

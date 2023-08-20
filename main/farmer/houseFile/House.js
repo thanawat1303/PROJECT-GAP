@@ -266,6 +266,10 @@ const House = ({liff}) => {
             setLag(location.coords.latitude)
             setLng(location.coords.longitude)
             setLoadingMap(false)
+        } , (err) => {
+            setLag(-1)
+            setLng(-1)
+            setLoadingMap(false)
         } , null , {
             enableHighAccuracy: true
         })

@@ -7,10 +7,10 @@ CREATE TABLE line_chat_gap.formPlant (
     generation INT NOT NULL,
     date_glow varchar(50) NOT NULL,
     date_plant varchar(50) NOT NULL,
-    posi_w INT NOT NULL,
-    posi_h INT NOT NULL,
+    posi_w FLOAT NOT NULL,
+    posi_h FLOAT NOT NULL,
     qty INT NOT NULL,
-    area INT NOT NULL ,
+    area FLOAT NOT NULL ,
     date_harvest varchar(50) NOT NULL,
     system_glow varchar(50) NOT NULL ,
     water varchar(50) NOT NULL ,
@@ -30,5 +30,9 @@ CREATE TABLE line_chat_gap.formPlant (
 
 -- -- id_uid_line
 
-ALTER TABLE line_chat_gap.formPlant
-RENAME COLUMN id_farmHouse TO id_farm_house;
+-- ALTER TABLE line_chat_gap.formPlant
+-- RENAME COLUMN id_farmHouse TO id_farm_house;
+
+-- ALTER TABLE line_chat_gap.`formplant` CHANGE `posi_w` `posi_w` FLOAT NOT NULL;
+-- ALTER TABLE line_chat_gap.`formplant` CHANGE `posi_h` `posi_h` FLOAT NOT NULL;
+-- ALTER TABLE line_chat_gap.`formplant` CHANGE `area` `area` FLOAT NOT NULL;

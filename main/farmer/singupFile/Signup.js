@@ -53,7 +53,6 @@ const SignUp = ({liff}) => {
         const StepFocus = StatusStep.current.childNodes
         
         //ฟังก์ชั่นเลื่อนขั้นตอนถัดไป
-        console.log(StepIndex , stepOn ,stepApprov , type && (stepOn + 1) == stepApprov && StepFocus.item(StepIndex + 1))
         if(type && (stepOn + 1) == stepApprov && StepFocus.item(StepIndex + 1)) {
             StepFocus.item(StepIndex).removeAttribute('select')
             StepFocus.item(StepIndex + 1).setAttribute('select' , "")
@@ -306,18 +305,14 @@ const StepTwo = (props) => {
     const pullMapEJS = () => {
         navigator.geolocation.getCurrentPosition((location)=>{
             MapEle.current.setAttribute('show','')
-            
             props.data.set("latitude" , location.coords.latitude)
             props.data.set("longitude" , location.coords.longitude)
             clientMo.post("/api/farmer/station/search").then((list)=>{
-
-                const search = new Array
-                const sortMap = new Map
                 try {
-                    JSON.parse(list).map(val=>{
+                    const search = JSON.parse(list).map(val=>{
                         let lag = Math.abs(location.coords.latitude - val.location.x)
                         let lng = Math.abs(location.coords.longitude - val.location.y)
-                        search.push({id : val.id , name : val.name , dist : lag + lng})
+                        return {id : val.id , name : val.name , dist : lag + lng}
                     })
                     
                     setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
@@ -329,6 +324,22 @@ const StepTwo = (props) => {
             })
             CheckData()
             setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
+        }, (err)=>{
+            props.data.set("latitude" , -1)
+            props.data.set("longitude" , -1)
+            clientMo.post("/api/farmer/station/search").then((list)=>{
+                try {
+                    const search = JSON.parse(list).map(val=>{
+                        return {id : val.id , name : val.name}
+                    })
+                    
+                    setStation(search)
+                    setReady(true)
+                } catch (e) {
+                    CloseAccount(list , "")
+                }
+            })
+            CheckData()
         } , null , {
             enableHighAccuracy: true
         })

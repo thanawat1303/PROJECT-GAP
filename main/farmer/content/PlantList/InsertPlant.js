@@ -1,6 +1,6 @@
 import React , {useEffect , useRef, useState} from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
-import { DayJSX, Loading } from "../../../../src/assets/js/module";
+import { DateSelect, DayJSX, Loading } from "../../../../src/assets/js/module";
 import { CloseAccount } from "../../method";
 
 let TimeOut = 0
@@ -136,9 +136,9 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         const qtyInsect = QtyInsect.current
         const seft = Seft.current
         
-        if(type.value && generetion.value && dateGlow.value && datePlant.value && 
+        if(type.value && generetion.value && dateGlow.value.split("-")[0] && datePlant.value && 
             posiW.value && posiH.value && qty.value && area.value && dateOut.value && system.value &&
-            water.value && waterStep.value && history.value && insect.value && qtyInsect.value 
+            water.value && waterStep.value
             // && seft.value
             ) {
                 const data = {
@@ -206,13 +206,13 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         const system = System.current
         const water = Water.current
         const waterStep = WaterStep.current
-        const history = History.current
-        const insect = Insect.current
-        const qtyInsect = QtyInsect.current
+        // const history = History.current
+        // const insect = Insect.current
+        // const qtyInsect = QtyInsect.current
         
-        if(type.value && generetion.value && dateGlow.value && datePlant.value && 
+        if(type.value && generetion.value && dateGlow.value.split("-")[0] && datePlant.value && 
             posiW.value && posiH.value && qty.value && area.value && dateOut.value && system.value &&
-            water.value && waterStep.value && history.value && insect.value && qtyInsect.value 
+            water.value && waterStep.value 
             ) {
                 BTConfirm.current.removeAttribute("no")
         } else {
@@ -239,9 +239,11 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
     }
 
     const MathDateHarvest = (DatePlant , DateQty) => {
-        const DatePlantQty = new Date(DatePlant)
-        DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(DateQty))
-        DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
+        try {
+            const DatePlantQty = new Date(DatePlant)
+            DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(DateQty))
+            DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
+        } catch(e) {}
     }
 
     // const ResetListPopup = () => {
@@ -280,33 +282,35 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                                 </div>
                                             </div> */}
                                         </label>
+                                        <span className="dot-required">*</span>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>รุ่นที่ปลูก</span>
                                             <input onInput={ChangeCHK} ref={Generation} type="number" placeholder="ตัวเลข"></input>
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
-                                            <span>วันที่เพาะกล้า</span>
-                                            <input onInput={ChangeCHK} ref={DateGlow} onClick={()=>clickDate(DateGlow)} type="date" placeholder="ว/ด/ป"></input>
+                                            <span>วันที่เพาะกล้า (เฉพาะปีได้)</span>
+                                            <DateSelect RefDate={DateGlow} methodCheckValue={ChangeCHK}/>
+                                            {/* <input onInput={ChangeCHK} ref={DateGlow} onClick={()=>clickDate(DateGlow)} type="date" placeholder="ว/ด/ป"></input> */}
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>วันที่ปลูก</span>
                                             <input onInput={(e)=>{
                                                 ChangeCHK()
@@ -316,50 +320,51 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox colume">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <div className="full">ระยะการปลูก</div>
                                             <div className="choose">
-                                                <label className="choose">
-                                                    กว้าง
-                                                    <input onInput={ChangeCHK} ref={PositionW} type="number" placeholder="กว้าง"></input>
+                                                <label className="choose colume">
+                                                    ระหว่างต้น
+                                                    <input onInput={ChangeCHK} ref={PositionW} type="number" placeholder="" className="center"></input>
                                                 </label>
-                                                <label className="choose">
-                                                    ยาว
-                                                    <input onInput={ChangeCHK} ref={PositionH} type="number" placeholder="ยาว"></input>
+                                                <div>X</div>
+                                                <label className="choose colume">
+                                                    ระหว่างแถว
+                                                    <input onInput={ChangeCHK} ref={PositionH} type="number" placeholder="" className="center"></input>
                                                 </label>
                                             </div>
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>จำนวนต้น</span>
                                             <input onInput={ChangeCHK} ref={Qty} type="number" placeholder="ตัวเลข"></input>
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>พื้นที่</span>
-                                            <input onInput={ChangeCHK} ref={Area} type="number" placeholder="ตัวเลข"></input>
+                                            <input onInput={ChangeCHK} ref={Area} type="number" placeholder="ตารางเมตร"></input>
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>วันที่คาดว่า <br></br>จะเก็บเกี่ยว</span>
                                             <input onInput={ChangeCHK} ref={DateOut} type="date"></input>
                                         </label>
@@ -370,12 +375,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                 <div className="num">2.</div>
                                 <div className="body">
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
-                                            <span>ระบบการปลูก</span>
+                                            <span>รูปแบบการปลูก</span>
                                             <select onChange={ChangeCHK} ref={System} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
                                                 <option value={"ขึ้นแปลงปลูกตามไหล่เขา"}>ขึ้นแปลงปลูกตามไหล่เขา</option>
@@ -393,11 +398,11 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                 <div className="num">3.</div>
                                 <div className="body">
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>แหล่งน้ำ</span>
                                             <select onChange={ChangeCHK} ref={Water} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
@@ -415,12 +420,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                             <div className="step">
                                 <div className="num">4.</div>
                                 <div className="body">
-                                <div className="row">
+                                    <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <span className="dot-required">*</span>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>วิธีการให้น้ำ</span>
                                             <select onChange={ChangeCHK} ref={WaterStep} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
@@ -438,30 +443,30 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                 <div className="num">5.</div>
                                 <div className="body">
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <></>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span style={{width : "100%"}}>ประวัติการใช้พื้นที่และการเกิดโรคระบาด</span>
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <></>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>พืชที่ปลูกก่อนหน้า</span>
                                             <input onInput={ChangeCHK} ref={History} type="" placeholder="กรอก"></input>
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <></>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>โรค/แมลงที่พบ</span>
                                             <select onChange={ChangeCHK} ref={Insect} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
@@ -472,11 +477,11 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <></>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>ปริมาณการเกิดโรค และแมลงที่พบ</span>
                                             <select onChange={ChangeCHK} ref={QtyInsect} defaultValue={""}>
                                                 <option disabled value="">เลือก</option>
@@ -487,11 +492,11 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                         </label>
                                     </div>
                                     <div className="row">
+                                        { HistoryPlantLoad ? 
+                                            <div className="block-wait"></div>
+                                            : <></>
+                                        }
                                         <label className="frame-textbox">
-                                            { HistoryPlantLoad ? 
-                                                <div className="block-wait"></div>
-                                                : <></>
-                                            }
                                             <span>การป้องกันกำจัด</span>
                                             <textarea ref={Seft} type="text" placeholder="กรอก"></textarea>
                                         </label>

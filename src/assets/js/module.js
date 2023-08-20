@@ -22,12 +22,18 @@ const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"] 
 
     useEffect(()=>{
-        const clientTimezoneOffset = new Date().getTimezoneOffset();
-        const DateIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
+        if(DATE.indexOf("#") < 0) {
+            const clientTimezoneOffset = new Date().getTimezoneOffset();
+            const DateIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
 
-        if(TYPE === "full") setDATE(`${DayWeek[DateIn.getDay()]} ที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ปี พ.ศ. ${DateIn.getFullYear() + 543}`)
-        else if (TYPE === "small") setDATE(`${TEXT ? `${TEXT} ` : ""}${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
-        else setDATE(`วันที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
+            if(TYPE === "full") setDATE(`${DayWeek[DateIn.getDay()]} ที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ปี พ.ศ. ${DateIn.getFullYear() + 543}`)
+            else if (TYPE === "small") setDATE(`${TEXT ? `${TEXT} ` : ""}${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
+            else setDATE(`วันที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
+        } else {
+            const DateSet = DATE.split("-")
+            console.log(DateSet)
+            setDATE(`${DateSet[2] != "##" ? `วันที่ ${DateSet[2]} ` : ""}${DateSet[1] != "##" ? `เดือน ${Mount[DateSet[1]]} ` : ""}${DateSet[0] != "##" ? `ปี ${parseInt(DateSet[0]) + 543}` : ""}`)
+        }
     })
 
     return (<input date_dom="" ref={REF} readOnly value={DateOut}></input>)
@@ -61,7 +67,7 @@ const TimeDiff = ({DATE}) => {
                         parseInt(DiffTime / (1000 * 60)) < 60 ? `${parseInt(DiffTime / (1000 * 60))} นาทีที่แล้ว` :
                         parseInt(DiffTime / (1000 * 60 * 60)) < 24 ? `${parseInt(DiffTime / (1000 * 60 * 60))} ชั่วโมงที่แล้ว` :
                         parseInt(DiffTime / (1000 * 60 * 60 * 24)) < 3 ? `${parseInt(DiffTime / (1000 * 60 * 60 * 24))} วันที่แล้ว` :
-                        `เวลา ${TimeIn.getUTCHours()}:${TimeIn.getMinutes() >= 10 ? TimeIn.getMinutes() : `0${TimeIn.getMinutes()}`}`
+                        `วันที่ ${TimeIn.getDate()}:${TimeIn.getMonth()}:${TimeIn.getFullYear()}`
         setTime(NewTime)
     } , [])
 
@@ -501,6 +507,112 @@ const SetMaxLength = (e , setQty , max) => {
     setQty(e.target.value.length)
 }
 
+const DateSelect = ({RefDate , Value , methodCheckValue}) => {
+    const Mount = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
+    const YearCurrent = new Date().getFullYear()
+
+    const [getDefault , setDefault] = useState(new Date(Value) != "Invalid Date" ? new Date(Value) : "")
+    const [getDay , setDay] = useState([])
+    const [getYearSelect , setYearSelect] = useState([])
+
+    const RefDay = useRef()
+    const RefMount = useRef()
+    const RefYear = useRef()
+
+    useEffect(()=>{
+        const newYear = new Array
+        for(let year = YearCurrent - 50; year <= YearCurrent; year++) {
+            newYear.push(year)
+        }
+        setYearSelect(newYear.reverse())
+    } , [])
+
+    useEffect(()=>{
+        setDefault(new Date(Value) != "Invalid Date" ? new Date(Value) : "")
+        RefDay.current.value = getDefault ? getDefault.getDate() : ""
+        RefMount.current.value = getDefault ? getDefault.getDate() : ""
+        RefYear.current.value = getDefault ? getDefault.getFullYear() : ""
+
+        SetDay()
+        console.log(Value)
+    } , [Value])
+
+    const SetDay = () => {
+        const targetMonth = getDefault ? getDefault.getMonth() : ""; 
+        const targetYear = getDefault ? getDefault.getFullYear() : "";
+        const startDate = new Date(targetYear, targetMonth, 1);
+        const nextMonthDate = new Date(targetYear, targetMonth + 1, 1);
+        console.log((nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+        if(startDate != "Invalid Date" && nextMonthDate != "Invalid Date") {
+            const daysInMonth = (nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+            const newDay = new Array
+            for(let day = 1; day <= daysInMonth; day++) {
+                newDay.push(day)
+            }
+            setDay(newDay)
+        }
+    }
+
+    const SelectSetDay = (Mount , Year) => {
+        const targetMonth = parseInt(Mount); 
+        const targetYear = parseInt(Year);
+        const startDate = new Date(targetYear, targetMonth, 1);
+        const nextMonthDate = new Date(targetYear, targetMonth + 1, 1);
+        console.log((nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+        if(startDate != "Invalid Date" && nextMonthDate != "Invalid Date") {
+            const daysInMonth = (nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+            const newDay = new Array
+            for(let day = 1; day <= daysInMonth; day++) {
+                newDay.push(day)
+            }
+            setDay(newDay)
+        }
+    }
+
+    const ChangeDate = (day , mount , year) => {
+        RefDate.current.value = `${year}-${mount ? mount : "##"}-${day ? day : "##"}`
+        methodCheckValue()
+    }
+
+    return(
+        <div className="date-select">
+            <select className="list-date-select" defaultValue={getDefault ? getDefault.getDate() : ""} ref={RefDay} onChange={(e)=>{
+                ChangeDate(e.target.value , RefMount.current.value , RefYear.current.value)
+            }}>
+                <option value={""}>วันที่</option>
+                { 
+                    getDay.map((val , key)=>
+                        <option value={val} key={key}>{val}</option>
+                    )
+                }
+            </select>
+            <select className="list-date-select" defaultValue={getDefault ? getDefault.getMonth() : ""} ref={RefMount} onChange={(e)=>{
+                SelectSetDay(e.target.value , RefYear.current.value)
+                ChangeDate(RefDay.current.value , e.target.value , RefYear.current.value)
+            }}>
+                <option value={""}>เดือน</option>
+                { 
+                    Mount.map((val , key)=>
+                        <option value={key} key={key}>{val}</option>
+                    )
+                }
+            </select>
+            <select className="list-date-select" defaultValue={getDefault ? getDefault.getFullYear() : ""} ref={RefYear} onChange={(e)=>{
+                SelectSetDay(RefMount.current.value , e.target.value)
+                ChangeDate(RefDay.current.value , RefMount.current.value , e.target.value)
+            }}>
+                <option disabled value={""}>ปี</option>
+                { 
+                    getYearSelect.map((val , key)=>
+                        <option value={val} key={key}>{val + 543}</option>
+                    )
+                }
+            </select>
+            <input hidden ref={RefDate}></input>
+        </div>
+    )
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -574,4 +686,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , TabLoad , HrefData}
+export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , DateSelect , TabLoad , HrefData}

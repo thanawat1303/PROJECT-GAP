@@ -612,7 +612,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                                 ` , 
                                                 [
                                                     new Date().getTime() , data.id_farmhouse , data.name_plant , 
-                                                    data.generetion , new Date(data.dateGlow) , new Date(data.datePlant) , 
+                                                    data.generetion , data.dateGlow.indexOf("#") < 0 ? new Date(data.dateGlow) : data.dateGlow , new Date(data.datePlant) , 
                                                     data.posiW , data.posiH ,
                                                     data.qty , data.area , new Date(data.dateOut) , data.system ,
                                                     data.water , data.waterStep , 

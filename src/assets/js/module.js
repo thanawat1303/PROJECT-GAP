@@ -22,7 +22,7 @@ const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"] 
 
     useEffect(()=>{
-        if(DATE.indexOf("#") < 0) {
+        if(DATE.toString().indexOf("#") < 0) {
             const clientTimezoneOffset = new Date().getTimezoneOffset();
             const DateIn = new Date(new Date(DATE) - (clientTimezoneOffset * 60000));
 
@@ -31,7 +31,6 @@ const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
             else setDATE(`วันที่ ${DateIn.getDate()} ${Mount[DateIn.getMonth()]} ${DateIn.getFullYear() + 543}`)
         } else {
             const DateSet = DATE.split("-")
-            console.log(DateSet)
             setDATE(`${DateSet[2] != "##" ? `วันที่ ${DateSet[2]} ` : ""}${DateSet[1] != "##" ? `เดือน ${Mount[DateSet[1]]} ` : ""}${DateSet[0] != "##" ? `ปี ${parseInt(DateSet[0]) + 543}` : ""}`)
         }
     })

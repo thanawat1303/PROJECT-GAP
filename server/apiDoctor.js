@@ -1605,10 +1605,17 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 FROM success_detail
                                 WHERE id_plant = formplant.id and INSTR(id_success , ?)
                                 GROUP BY id_plant
-                            ) as success_id_plant
+                            ) as success_id_plant ,
+                            (
+                                SELECT acc_farmer.fullname
+                                FROM acc_farmer
+                                WHERE acc_farmer.link_user = house.link_user AND station = ? AND register_auth != 2
+                                ORDER BY date_register DESC , register_auth DESC
+                                LIMIT 1
+                            ) as farmer
                         FROM formplant , 
                             (
-                                SELECT id_farm_house
+                                SELECT id_farm_house , farmer.link_user
                                 FROM housefarm , 
                                     (
                                         SELECT uid_line , link_user
@@ -1628,7 +1635,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     ORDER BY submit ASC
                     ${(Limit !== null) ? `LIMIT ${Limit}` : ""}
                     `
-                    , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
+                    , [TextInsert , result['data']['station_doctor'] , result['data']['station_doctor'] , TextInsert ] , 
                     (err , listFarm)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);

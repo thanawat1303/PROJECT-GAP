@@ -578,6 +578,11 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                                     </div>
                                 </div>
                             </div>
+                            <div className="inrow">
+                                <div className="content">
+                                    <span>ชื่อเกษตรกร</span> {Data.farmer}
+                                </div>
+                            </div>
                         </div>
                     </a>
                 )

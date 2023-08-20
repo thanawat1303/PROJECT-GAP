@@ -253,7 +253,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
         if(ExportFetch) {
             const DataExport = JSON.parse(ExportFetch)
             if(type === "pdf") ExportPDF(DataExport)
-            else if (type === "excel") ExportExcelIn(DataExport)
+            else if (type === "excel") ExportExcel(DataExport)
         } else session()
     }
 
@@ -620,50 +620,6 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
         </div>
         </>
     )
-} 
-
-import * as FileSaver from "file-saver"
-import XLSX from "sheetjs-style"
-
-const Mount = ["" , "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
-
-const ExportExcelIn = async (excelData = new Array) => {
-    const filetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-    const fileExtension = ".xlsx"
-
-    console.log(excelData)
-    const nameSpace = new Set(excelData.map(val=>val.dataForm.name_plant))
-    const DataWs = excelData.map((val , key)=>{
-        const DataExport = {}
-        DataExport["plant"] = val.dataForm.name_plant
-        DataExport["ชื่อเกษตรกร"] = val.farmer[0].fullname.toString().trim()
-        DataExport["รหัสเกษตรกร"] = val.farmer[0].id_farmer.toString().trim()
-
-        const DatePlant = val.dataForm.date_plant.split(" ")[0].split("-") 
-        DataExport["วันที่เริ่มปลูก"] = `${DatePlant[2]}-${Mount[parseInt(DatePlant[1])]}-${(parseInt(DatePlant[0]) + 543).toString().slice(2)}`
-
-        const DateSuccess = val.dataForm.date_success ? val.dataForm.date_success.split(" ")[0].split("-") : "";
-        DataExport["วันที่เก็บเกี่ยว"] = DateSuccess ? `${DateSuccess[2]}-${Mount[parseInt(DateSuccess[1])]}-${(parseInt(DateSuccess[0]) + 543).toString().slice(2)}` : "ยังไม่ทำการเก็บเกี่ยว"
-        return DataExport
-    })
-
-    const DataSheets = {}
-    nameSpace.forEach((name)=>{
-        const DataInWs = DataWs.filter(val=>val.plant == name).map((val , key)=>{
-            delete val.plant
-            return {"ลำดับที่" : key + 1 , ...val}
-        })
-        const ws = XLSX.utils.json_to_sheet(DataInWs)
-        DataSheets[name] = ws
-    })
-
-    console.log(DataSheets)
-    // const wb = {Sheets : DataSheets , SheetNames : [...nameSpace]}
-    // const excelBuffer = XLSX.write(wb , {bookType : "xlsx" , type : "array"})
-
-    
-    // const data = new Blob([excelBuffer] , {type : filetype})
-    // FileSaver.saveAs(data , "ทดสอบ" , fileExtension)
 }
 
 export default PageFormPlant

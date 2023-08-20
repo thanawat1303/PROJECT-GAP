@@ -524,13 +524,44 @@ const ExportExcel = async (excelData = new Array) => {
 
     const nameSpace = new Set(excelData.map(val=>val.dataForm.name_plant))
     const DataWs = excelData.map((val , key)=>{
-        const DataExport = {}
-        DataExport["plant"] = val.dataForm.name_plant
-        DataExport["ชื่อเกษตรกร"] = val.farmer[0].fullname.toString().trim()
-        DataExport["รหัสเกษตรกร"] = val.farmer[0].id_farmer.toString().trim()
 
-        const DatePlant = val.dataForm.date_plant.split(" ")[0].split("-") 
-        DataExport["วันที่เริ่มปลูก"] = `${DatePlant[2]}-${Mount[parseInt(DatePlant[1])]}-${(parseInt(DatePlant[0]) + 543).toString().slice(2)}`
+        const DatePlant = val.dataForm.date_plant.split(" ")[0].split("-")
+        const DateSuccess = val.dataForm.date_success ? val.dataForm.date_success.split(" ")[0].split("-") : "";
+        const DataExport = {
+            "plant" : val.dataForm.name_plant,
+            "ชื่อเกษตรกร" : val.farmer[0].fullname.toString().trim(),
+            "รหัสเกษตรกร" : val.farmer[0].id_farmer.toString().trim(),
+            "วันที่เริ่มปลูก" : `${DatePlant[2]}-${Mount[parseInt(DatePlant[1])]}-${(parseInt(DatePlant[0]) + 543).toString().slice(2)}`,
+            "วันที่ส่งผลผลิต" : DateSuccess ? `${DateSuccess[2]}-${Mount[parseInt(DateSuccess[1])]}-${(parseInt(DateSuccess[0]) + 543).toString().slice(2)}` : "ยังไม่ทำการเก็บเกี่ยว",
+            "จำนวนต้น" : val.dataForm.qty,
+        }
+        
+        if(val.chemi.length != 0) {
+            DataExport["สารเคมี"] = "|"
+            for (let indexChemi in val.chemi) {
+                const DateUse = val.chemi[indexChemi].date.split(" ")[0].split("-")
+                DataExport[`วันเดือนปี ${parseInt(indexChemi) + 1}`] = `${DateUse[2]}-${Mount[parseInt(DateUse[1])]}-${(parseInt(DateUse[0]) + 543).toString().slice(2)}`
+                DataExport[`โรคที่พบ ${parseInt(indexChemi) + 1}`] = val.chemi[indexChemi].insect
+                DataExport[`การป้องกัน ${parseInt(indexChemi) + 1}`] = `กำจัด${val.chemi[indexChemi].insect}`
+                DataExport[`สารเคมี ${parseInt(indexChemi) + 1}`] = val.chemi[indexChemi].formula_name
+                DataExport[`วิธีการใช้ ${parseInt(indexChemi) + 1}`] = val.chemi[indexChemi].use_is
+                DataExport[`อัตราผสม ${parseInt(indexChemi) + 1} (cc/L)`] = val.chemi[indexChemi].rate
+                DataExport[`ปริมาณที่ใช้ ${parseInt(indexChemi) + 1} (cc)`] = val.chemi[indexChemi].volume
+            }
+        }
+
+        if(val.ferti.length != 0) {
+            DataExport["ปัจจัยการผลิต"] = "|"
+            for (let indexFerti in val.ferti) {
+                const DateUse = val.ferti[indexFerti].date.split(" ")[0].split("-")
+                DataExport[`วดป. ${parseInt(indexFerti) + 1}`] = `${DateUse[2]}-${Mount[parseInt(DateUse[1])]}-${(parseInt(DateUse[0]) + 543).toString().slice(2)}`
+                DataExport[`ปัจจัย ${parseInt(indexFerti) + 1}`] = val.ferti[indexFerti].name
+                DataExport[`สูตร ${parseInt(indexFerti) + 1}`] = val.ferti[indexFerti].formula_name
+                DataExport[`วิธีใช้ ${parseInt(indexFerti) + 1}`] = val.ferti[indexFerti].use_is
+                DataExport[`ปริมาณ ${parseInt(indexFerti) + 1}`] = val.ferti[indexFerti].volume
+            }
+        }
+
         return DataExport
     })
 
@@ -541,16 +572,57 @@ const ExportExcel = async (excelData = new Array) => {
             return {"ลำดับที่" : key + 1 , ...val}
         })
         const ws = XLSX.utils.json_to_sheet(DataInWs)
+        let stateColume = ""
+        for(let x of Object.entries(ws)) {
+            if(x[0][x[0].length - 1] == 1 && isNaN(x[0][x[0].length - 2])) {
+                if (ws[x[0]].v == "ลำดับที่") stateColume = "";
+                else if(ws[x[0]].v == "สารเคมี") stateColume = "c";
+                else if (ws[x[0]].v == "ปัจจัยการผลิต") stateColume = "f";
+
+                const colorFill = stateColume == "" ? {
+                    bgColor : { rgb : "81f6e0" },
+                    fgColor : { rgb : "81f6e0" }
+                } : stateColume == "c" ? {
+                    bgColor : { rgb : "FFFF00" },
+                    fgColor : { rgb : "FFFF00" }
+                } : stateColume == "f" ? {
+                    bgColor : { rgb : "1DFF83" },
+                    fgColor : { rgb : "1DFF83" }
+                } : {}
+
+                ws[x[0]].s = { 
+                    font: { 
+                        bold: true , 
+                        name : "TH SarabunPSK"
+                    } ,
+                    alignment : {
+                        vertical : "center",
+                        horizontal : "center",
+                        wrapText: false
+                    } ,
+                    fill : colorFill
+                }
+            } else if (x[0] != "!ref") {
+                ws[x[0]].s = { 
+                    font: { 
+                        name : "TH SarabunPSK"
+                    } ,
+                    alignment : {
+                        vertical : "center",
+                        horizontal : "center",
+                        wrapText: false
+                    }
+                }
+            }
+        }
         DataSheets[name] = ws
     })
 
-    console.log(DataSheets)
-    // const wb = {Sheets : DataSheets , SheetNames : [...nameSpace]}
-    // const excelBuffer = XLSX.write(wb , {bookType : "xlsx" , type : "array"})
-
+    const wb = {Sheets : DataSheets , SheetNames : [...nameSpace]}
+    const excelBuffer = XLSX.write(wb , {bookType : "xlsx" , type : "array"})
     
-    // const data = new Blob([excelBuffer] , {type : filetype})
-    // FileSaver.saveAs(data , "ทดสอบ" , fileExtension)
+    const data = new Blob([excelBuffer] , {type : filetype})
+    FileSaver.saveAs(data , new Date().toLocaleString().split(" ")[0] , fileExtension)
 }
 
 export {ExportPDF , ExportExcel}

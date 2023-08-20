@@ -55,6 +55,7 @@ const TimeJSX = ({DATE , MAX = true}) => {
 
 const TimeDiff = ({DATE}) => {
     const [Time , setTime] = useState("")
+    const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
 
     useEffect(()=>{
         // const clientTimezoneOffset = new Date().getTimezoneOffset();
@@ -67,7 +68,7 @@ const TimeDiff = ({DATE}) => {
                         parseInt(DiffTime / (1000 * 60)) < 60 ? `${parseInt(DiffTime / (1000 * 60))} นาทีที่แล้ว` :
                         parseInt(DiffTime / (1000 * 60 * 60)) < 24 ? `${parseInt(DiffTime / (1000 * 60 * 60))} ชั่วโมงที่แล้ว` :
                         parseInt(DiffTime / (1000 * 60 * 60 * 24)) < 3 ? `${parseInt(DiffTime / (1000 * 60 * 60 * 24))} วันที่แล้ว` :
-                        `วันที่ ${TimeIn.getDate()}:${TimeIn.getMonth()}:${TimeIn.getFullYear()}`
+                        `วันที่ ${TimeIn.getDate()}-${Mount[TimeIn.getMonth()]}-${TimeIn.getFullYear()}`
         setTime(NewTime)
     } , [])
 

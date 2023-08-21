@@ -4,8 +4,6 @@ const CloseAccount = (result , setPage) => {
     return new Promise((resolve , reject)=>{
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
-
-        console.log(result)
         if(result === "close" || result === "error auth" || result === "not found") {
             if(result === "close") {
                 document.querySelector("#session-farmer .body #session-text").innerHTML = "บัญชีถูกปิด กรุณาสมัครใหม่"
@@ -16,9 +14,16 @@ const CloseAccount = (result , setPage) => {
             }
             document.querySelector("#session-farmer").style.opacity = "1"
             document.querySelector("#session-farmer").style.visibility = "visible"
-            setPage("error page")
+            try {
+                setPage("error page")
+            } catch(e) {}
             resolve(0)
-        } else {
+        } else if (result === "not line") {
+            document.querySelector("#session-farmer .body #session-text").innerHTML = "กรุณาเข้าระบบผ่านไลน์"
+            document.querySelector("#session-farmer").style.opacity = "1"
+            document.querySelector("#session-farmer").style.visibility = "visible"
+        }
+        else {
             resolve(1)
         }
     })

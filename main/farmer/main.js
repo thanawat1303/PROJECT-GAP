@@ -9,6 +9,7 @@ import MenuMain from "./content/mainFarmHouse";
 import House from "./houseFile/House";
 import Signup from "./singupFile/Signup"
 import ErrorPage from "./ErrorPage"
+import { CloseAccount } from "./method";
 
 const MainFarmer = ({socket , idLiff , Path}) => {
     const [body , setBody] = useState(<></>)
@@ -28,9 +29,10 @@ const MainFarmer = ({socket , idLiff , Path}) => {
                     liff.login()
                 }
             } else {
-                let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
-                LoadPage(UID , liff)
-                // setBody(<ErrorPage text={"กรุณาเข้าผ่าน LINE Appication"}/>)
+                // let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
+                // LoadPage(UID , liff)
+                CloseAccount("not line")
+                setBody(<ErrorPage text={""}/>)
             }
         }).catch(err=>{
             console.log(err)

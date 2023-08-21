@@ -122,7 +122,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                         <div className="number">2.</div>
                                         <div className="data-row">
                                             <div className="row">
-                                                <div className={`data-main in-1 ${getResize < 450 ? "screen-small" : ""}`}>
+                                                <div className={`data-main in-1 column ${getResize < 450 ? "screen-small" : ""}`}>
                                                     <span className="head-data" style={{width : "110px"}}>รูปแบบการปลูก</span>
                                                     <span className="data-show">{data.system_glow}</span>
                                                 </div>

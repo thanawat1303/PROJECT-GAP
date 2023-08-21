@@ -248,7 +248,7 @@ const ExportPDF = async (Data) => {
         
 
         TextBoxHead(pdf , 30 , 190 , '๓.')
-        TextBoxHead(pdf , 50 , 190 , 'ระบบการปลูก')
+        TextBoxHead(pdf , 50 , 190 , 'รูปแบบการปลูก')
         TextBoxDot(pdf , 114 , 114 , 190 , Export.dataForm.system_glow)
 
 

@@ -32,7 +32,7 @@ const DetailEdit = ({Ref , setRef , setPage , type , Data_on}) => {
                         qty : "จำนวนต้น",
                         area : "พื้นที่",
                         date_harvest : "วันที่คาดว่าจะเก็บเกี่ยว",
-                        system_glow : "ระบบการปลูก",
+                        system_glow : "รูปแบบการปลูก",
                         water : "แหล่งน้ำ",
                         water_flow : "วิธีการให้น้ำ",
                         history : "ประวัติการใช้พื้นที่",

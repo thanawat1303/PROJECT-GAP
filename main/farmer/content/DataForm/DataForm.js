@@ -471,7 +471,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                     <div className="body">
                                         <div className="row">
                                             <label className={`frame-textbox${Data.subjectResult.system_glow == 2 ? " not" : ""}`}>
-                                                <span>ระบบการปลูก</span>
+                                                <span>รูปแบบการปลูก</span>
                                                 { StatusEdit ?
                                                     <select onChange={ChangeEdit} ref={System} defaultValue={Data.system_glow}>
                                                         <option disabled value="">เลือก</option>

@@ -22,17 +22,22 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , type , isCli
 
     useEffect(()=>{
         setPage("Success")
-        setDataPage({
-            id_house : id_house,
-            id_plant : id_plant,
-            type : type.split(":")[1],
-            isClick : isClick
-        })
 
         FetchCheck()
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
     } , [])
+
+    useEffect(()=>{
+        if(!isClick) {
+            setDataPage({
+                id_house : id_house,
+                id_plant : id_plant,
+                type : type.split(":")[1],
+                isClick : isClick
+            })
+        }
+    } , [type])
 
     const ChangeMenu = (type) => {
         setDataPage({
@@ -47,7 +52,6 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , type , isCli
         const result = await clientMo.get(`/api/farmer/report/check?id_farmhouse=${id_house}&id_plant=${id_plant}`)
         if(await CloseAccount(result , setPage)) {
             setDotSome(JSON.parse(result))
-            console.log(JSON.parse(result))
         }
     }
 

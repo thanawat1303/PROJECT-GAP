@@ -79,7 +79,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                             {val.formula_name}
                         </div>
                         <div className="volume">
-                            {val.volume} ก.ก.
+                            {val.volume}
                         </div>
                     </div>
                     <div className="row">
@@ -109,7 +109,6 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
         })
         if(await CloseAccount(result , setPage)) {
             const Ob = JSON.parse(result)
-            console.log(Ob)
             setBodyList(Ob.map((val , key)=>
                 <section key={key} className={`list-factor-content content-${val.id}`}>
                     <div className="row">
@@ -128,7 +127,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                             {val.rate}
                         </div>
                         <div className="volume">
-                            {val.volume} ก.ก.
+                            {val.volume}
                         </div>
                     </div>
                     <div className="row">
@@ -230,7 +229,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
         <Template PopUp={{PopupRef : PopupRef , PopupBody : PopupAdd}} 
             List={BodyList} Loading={Loading} action={getLoadCheckSubmit != -1 ? getLoadCheckSubmit < 2 ? popupInsertFactor : null : null} Option={
                 {
-                    TextHead : typeHraf.type === "z" ? "บันทึกปัจจัยการผลิต" : typeHraf.type === "c" ? "บันทึกสารเคมี" : "", 
+                    TextHead : typeHraf.type === "z" ? "บันทึกปุ๋ยที่ใช้" : typeHraf.type === "c" ? "บันทึกสารเคมี" : "", 
                     img : typeHraf.type === "z" ? "/fertilizer.jpg" : typeHraf.type === "c" ? "/chemical.jpg" : ""
                 }} actionReturn={ReturnPage}/>
         <div className="popup-detail-edit-factor" ref={RefPopHistory}>

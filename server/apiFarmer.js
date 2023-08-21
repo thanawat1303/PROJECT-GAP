@@ -43,6 +43,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 con.end()
                 res.send(auth.result)
             } catch (err) {
+                console.log(err)
                 con.end()
                 if(err === "no" || err === "no account") res.send("close")
                 else res.send("error auth")
@@ -395,7 +396,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                     WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farm_house = ?
                                 ) as houseFarm
                             WHERE formplant.id_farm_house = houseFarm.id_farm_house ${where}
-                            ORDER BY formplant.submit ASC , date_plant DESC
+                            ORDER BY formplant.submit ASC , id DESC
                         ` , 
                         [
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse
@@ -975,7 +976,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                         const ArrayData = data.type_insert === "z" ? 
                                                             [ data.id_plant , data.name , data.formula_name , data.use , data.volume , data.source , new Date(data.date) ] :
                                                         data.type_insert === "c" ? 
-                                                        [ data.id_plant , data.name , data.formula_name , data.insect , data.use , data.rate , data.volume , data.source , new Date(data.dateSafe) , new Date(data.date) ] : []
+                                                            [ data.id_plant , data.name , data.formula_name , data.insect , data.use , data.rate , data.volume , data.source , new Date(data.dateSafe) , new Date(data.date) ] : []
                                         
                                         con.query(sql , ArrayData ,
                                                     (err , insert)=>{

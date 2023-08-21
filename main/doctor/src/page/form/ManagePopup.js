@@ -195,7 +195,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                         </div>
                                         <div className="in-data">
                                             <span>ปริมาณ</span>
-                                            <div>{data.volume} ก.ก.</div>
+                                            <div>{data.volume}</div>
                                         </div>
                                     </div>
                                     <div className="row-in">
@@ -250,7 +250,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                         </div>
                                         <div className="in-data">
                                             <span>ปริมาณ</span>
-                                            {data.volume} cc
+                                            {data.volume}
                                         </div>
                                     </div>
                                     <div className="row-in">

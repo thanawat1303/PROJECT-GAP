@@ -209,6 +209,11 @@ $FontText : 5vw;
                                                     font-size: $FontText;
                                                     width: 40%;
                                                 }
+
+                                                .input-volume {
+                                                    display: flex;
+                                                    width: 50%;
+                                                }
                                                 input , select , textarea {
                                                     margin-left: 2px;
                                                     font-size: $FontText;

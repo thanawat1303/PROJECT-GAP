@@ -3,7 +3,7 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import { CloseAccount } from "../../method";
 
 import "./assets/DataForm.scss"
-import { DayJSX, Loading } from "../../../../src/assets/js/module";
+import { DateSelect, DayJSX, Loading } from "../../../../src/assets/js/module";
 import MenuPlant from "../PlantList/MenuPlant";
 import DetailEdit from "../DetailEdit";
 const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
@@ -65,8 +65,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
             const DataIn = JSON.parse(result)
             setData(DataIn[0])
             setLoad(true)
-
-            console.log(DataIn)
+            setWait(false)
         }
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
@@ -168,7 +167,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
             if( 
                 (type.value && generetion.value && dateGlow.value && datePlant.value && 
                 posiW.value && posiH.value && qty.value && area.value && dateOut.value && system.value &&
-                water.value && waterStep.value && history.value && insect.value && qtyInsect.value && because.value) 
+                water.value && waterStep.value && because.value) 
                 && 
                 (
                     CheckChange.filter(val=>val)[0]
@@ -210,7 +209,6 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                         setWait(true)
                         const result = await clientMo.post("/api/farmer/formplant/edit" , data)
                         if(await CloseAccount(result , setPage)) {
-                            console.log(result)
                             if(result === "133") {
                                 CancelEdit(false)
                                 FetchData()
@@ -218,7 +216,6 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                 CancelEdit(false)
                                 FetchData()
                             }
-                            setWait(false)
                         }  
             } else {
                 let RefObject = [
@@ -277,7 +274,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
         if( 
             (type.value && generetion.value && dateGlow.value && datePlant.value && 
             posiW.value && posiH.value && qty.value && area.value && dateOut.value && system.value &&
-            water.value && waterStep.value && history.value && insect.value && qtyInsect.value && because.value) 
+            water.value && waterStep.value && because.value) 
             && 
             (
                 CheckChange.filter(val=>val)[0]
@@ -380,8 +377,9 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                 <div className="full">
                                                     {
                                                         StatusEdit ? 
-                                                            <input ref={DateGlow} onChange={StatusEdit ? ChangeEdit : null} type="date" 
-                                                            defaultValue={Data.date_glow.split(" ")[0]}></input> 
+                                                            // <input ref={DateGlow} onChange={StatusEdit ? ChangeEdit : null} type="date" 
+                                                            // defaultValue={Data.date_glow.split(" ")[0]}></input> 
+                                                            <DateSelect RefDate={DateGlow} Value={Data.date_glow} methodCheckValue={ChangeEdit}/>
                                                             : 
                                                             <DayJSX DATE={Data.date_glow} TYPE="normal"/>
                                                     }
@@ -410,7 +408,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label>
                                         </div>
                                         <div className="row">
-                                            <label className={`frame-textbox colume${Data.subjectResult.posi_w == 2 || Data.subjectResult.posi_h == 2 ? " not" : ""}`}>
+                                            {/* <label className={`frame-textbox colume${Data.subjectResult.posi_w == 2 || Data.subjectResult.posi_h == 2 ? " not" : ""}`}>
                                                 <div className="full">ระยะระหว่าง</div>
                                                 <div className="choose">
                                                     <label className="choose">
@@ -418,6 +416,20 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                         <input ref={PositionW} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_w} ></input>
                                                     </label>
                                                     <label className="choose">
+                                                        ระหว่างแถว
+                                                        <input ref={PositionH} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_h}></input>
+                                                    </label>
+                                                </div>
+                                            </label> */}
+                                            <label className={`frame-textbox colume${Data.subjectResult.posi_w == 2 || Data.subjectResult.posi_h == 2 ? " not" : ""}`}>
+                                                <div className="full">ระยะการปลูก</div>
+                                                <div className="choose">
+                                                    <label className="choose colume">
+                                                        ระหว่างต้น
+                                                        <input ref={PositionW} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_w} ></input>
+                                                    </label>
+                                                    <div>X</div>
+                                                    <label className="choose colume">
                                                         ระหว่างแถว
                                                         <input ref={PositionH} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_h}></input>
                                                     </label>
@@ -433,7 +445,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                         <div className="row">
                                             <label className={`frame-textbox${Data.subjectResult.area == 2 ? " not" : ""}`}>
                                                 <span>พื้นที่</span>
-                                                <input ref={Area} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.area}></input>
+                                                <input ref={Area} onChange={StatusEdit ? ChangeEdit : null} type={"number"} defaultValue={Data.area}></input>
                                             </label>
                                         </div>
                                         <div className="row">

@@ -7,7 +7,7 @@ CREATE TABLE formChemical (
     insect varchar(100) NOT NULL ,
     use_is varchar(100) NOT NULL ,
     rate varchar(20) NOT NULL ,
-    volume INT NOT NULL ,
+    volume varchar(100) NOT NULL ,
     date_safe varchar(100) NOT NULL ,
     date varchar(100) NOT NULL ,
     source varchar(50) NOT NULL

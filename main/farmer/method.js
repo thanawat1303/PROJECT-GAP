@@ -5,6 +5,7 @@ const CloseAccount = (result , setPage) => {
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
 
+        console.log(result)
         if(result === "close" || result === "error auth" || result === "not found") {
             if(result === "close") {
                 document.querySelector("#session-farmer .body #session-text").innerHTML = "บัญชีถูกปิด กรุณาสมัครใหม่"

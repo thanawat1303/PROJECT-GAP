@@ -507,13 +507,14 @@ const SetMaxLength = (e , setQty , max) => {
     setQty(e.target.value.length)
 }
 
-const DateSelect = ({RefDate , Value , methodCheckValue}) => {
+const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
     const Mount = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
     const YearCurrent = new Date().getFullYear()
 
-    const [getDefault , setDefault] = useState(new Date(Value) != "Invalid Date" ? new Date(Value) : "")
+    const [getDefault , setDefault] = useState(-1)
     const [getDay , setDay] = useState([])
     const [getYearSelect , setYearSelect] = useState([])
+    const [getReady , setReady] = useState(false)
 
     const RefDay = useRef()
     const RefMount = useRef()
@@ -525,24 +526,44 @@ const DateSelect = ({RefDate , Value , methodCheckValue}) => {
             newYear.push(year)
         }
         setYearSelect(newYear.reverse())
+
+        if(Value.toString().indexOf("#") >= 0) {
+            setDefault(Value.split("-"))
+        } else if (new Date(Value) != "Invalid Date") {
+            const clientTimezoneOffset = new Date().getTimezoneOffset();
+            const DateIn = new Date(new Date(Value) - (clientTimezoneOffset * 60000));
+            setDefault([DateIn.getFullYear() , DateIn.getMonth() , DateIn.getDate()])
+        } else {
+            setDefault("")
+        }
+        setReady(true)
     } , [])
 
-    useEffect(()=>{
-        setDefault(new Date(Value) != "Invalid Date" ? new Date(Value) : "")
-        RefDay.current.value = getDefault ? getDefault.getDate() : ""
-        RefMount.current.value = getDefault ? getDefault.getDate() : ""
-        RefYear.current.value = getDefault ? getDefault.getFullYear() : ""
+    // useEffect(()=>{
+    //     // setDefault(new Date(Value) != "Invalid Date" ? new Date(Value) : "")
+    //     const DefaultDate = Value.toString().indexOf("#") >= 0 ? 
+    //                             Value.split("-") : 
+    //                         new Date(Value) != "Invalid Date" ? 
+    //                             [new Date(Value).getFullYear() , new Date(Value).getMonth() + 1 , new Date(Value).getDate()] 
+    //                         : "";
+    //     RefDay.current.value = DefaultDate[2] ? DefaultDate[2] : ""
+    //     RefMount.current.value = DefaultDate[1] ? parseInt(DefaultDate[1]) - 1 : ""
+    //     RefYear.current.value = DefaultDate[0] ? DefaultDate[0] : ""
 
+    //     setDefault(DefaultDate)
+    //     console.log(DefaultDate , Value)
+    // } , [Value])
+
+    useEffect(()=>{
         SetDay()
-        console.log(Value)
-    } , [Value])
+    } , [getDefault])
 
     const SetDay = () => {
-        const targetMonth = getDefault ? getDefault.getMonth() : ""; 
-        const targetYear = getDefault ? getDefault.getFullYear() : "";
+        const targetMonth = getDefault[1] ? parseInt(getDefault[1]) : ""; 
+        const targetYear = getDefault[0] ? parseInt(getDefault[0]) : "";
         const startDate = new Date(targetYear, targetMonth, 1);
         const nextMonthDate = new Date(targetYear, targetMonth + 1, 1);
-        console.log((nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+
         if(startDate != "Invalid Date" && nextMonthDate != "Invalid Date") {
             const daysInMonth = (nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
             const newDay = new Array
@@ -570,13 +591,15 @@ const DateSelect = ({RefDate , Value , methodCheckValue}) => {
     }
 
     const ChangeDate = (day , mount , year) => {
-        RefDate.current.value = `${year}-${mount ? mount : "##"}-${day ? day : "##"}`
+        RefDate.current.value = `${year}-${mount ? parseInt(mount) + 1 : "##"}-${day ? day : "##"}`
         methodCheckValue()
     }
 
     return(
+        getReady ?
         <div className="date-select">
-            <select className="list-date-select" defaultValue={getDefault ? getDefault.getDate() : ""} ref={RefDay} onChange={(e)=>{
+            { getDay.length !== 0 ?
+            <select className="list-date-select" defaultValue={getDefault[2] ?? ""} ref={RefDay} onChange={(e)=>{
                 ChangeDate(e.target.value , RefMount.current.value , RefYear.current.value)
             }}>
                 <option value={""}>วันที่</option>
@@ -585,19 +608,22 @@ const DateSelect = ({RefDate , Value , methodCheckValue}) => {
                         <option value={val} key={key}>{val}</option>
                     )
                 }
-            </select>
-            <select className="list-date-select" defaultValue={getDefault ? getDefault.getMonth() : ""} ref={RefMount} onChange={(e)=>{
+            </select> : <></>
+            }
+            <select className="list-date-select" defaultValue={getDefault[1] ?? ""} ref={RefMount} onChange={(e)=>{
                 SelectSetDay(e.target.value , RefYear.current.value)
                 ChangeDate(RefDay.current.value , e.target.value , RefYear.current.value)
             }}>
                 <option value={""}>เดือน</option>
                 { 
                     Mount.map((val , key)=>
-                        <option value={key} key={key}>{val}</option>
-                    )
+                        {
+                            return <option value={key} key={key}>{val}</option>
+                        }
+                    ) 
                 }
             </select>
-            <select className="list-date-select" defaultValue={getDefault ? getDefault.getFullYear() : ""} ref={RefYear} onChange={(e)=>{
+            <select className="list-date-select" defaultValue={getDefault[0] ?? ""} ref={RefYear} onChange={(e)=>{
                 SelectSetDay(RefMount.current.value , e.target.value)
                 ChangeDate(RefDay.current.value , RefMount.current.value , e.target.value)
             }}>
@@ -608,8 +634,8 @@ const DateSelect = ({RefDate , Value , methodCheckValue}) => {
                     )
                 }
             </select>
-            <input hidden ref={RefDate}></input>
-        </div>
+            <input hidden ref={RefDate} defaultValue={Value}></input>
+        </div> : <></>
     )
 }
 

@@ -12,6 +12,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     const NameFactor = useRef()
     const Use = useRef()
     const Volume = useRef()
+    const Unit = useRef()
     const Source = useRef()
 
     // chemical
@@ -74,7 +75,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                     formula_name : formula_name.value,
                     name : Name.value,
                     use : use.value,
-                    volume : volume.value,
+                    volume : volume.value + " " + Unit.current.value,
                     source : source.value,
                     type_insert : type_path
                 }
@@ -118,7 +119,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                 && insect.value && use.value && rate.value
                 && volume.value && dateSafe.value && source.value
             ) {
-                let data = {
+                const DataInsert = {
                     id_farmhouse : id_house,
                     id_plant : id_form_plant,
                     date : dateUse.value,
@@ -127,14 +128,14 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                     insect : insect.value,
                     use : use.value,
                     rate : rate.value,
-                    volume : volume.value,
+                    volume : volume.value + " " + Unit.current.value,
                     dateSafe : dateSafe.value,
                     source : source.value,
                     type_insert : type_path
                 }
 
                 setWait(true)
-                const result = await clientMo.post("/api/farmer/factor/insert" , data)
+                const result = await clientMo.post("/api/farmer/factor/insert" , DataInsert)
                 if(await CloseAccount(result , setPage)) {
                     cancel()
                     ReloadData()
@@ -289,8 +290,8 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     const setHowUse = () => {
         if(Use.current.value === "") {
             Use.current.value = DataFactor.filter((val)=>
-                            val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
-                                .map((val)=>val.how_use)[0]
+                            val.name_formula === NameMainFactor.current.value && val.name === NameFactor.current.value)
+                                .map((val)=>val.how_use)[0] ?? ""
         }
     }
 
@@ -331,7 +332,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
             <div className="head">แบบบันทึกเกษตรกร</div>
             <div className="form">
                 <div className="head-form">
-                    {type_path === "z" ? <span>ปัจจัยการผลิต</span> : <span>สารเคมี</span>}
+                    {type_path === "z" ? <span>ปัจจัยการผลิต (ปุ๋ยที่ใช้)</span> : <span>สารเคมี</span>}
                 </div>
                 <div className="body-content">
                     <div className="frame-content">
@@ -398,7 +399,13 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ปริมาณที่ใช้</span>
-                                                <input onChange={ChangeFerti} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                <div className="input-volume">
+                                                    <input onChange={ChangeFerti} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                    <select onChange={ChangeFerti} ref={Unit} defaultValue={"ลิตร"}>
+                                                        <option value={"ลิตร"}>ลิตร</option>
+                                                        <option value={"ก.ก"}>ก.ก</option>
+                                                    </select>
+                                                </div>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -487,7 +494,13 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ปริมาณที่ใช้ทั้งหมด</span>
-                                                <input onChange={ChangeChemi} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                <div className="input-volume">
+                                                    <input onChange={ChangeChemi} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                    <select onChange={ChangeChemi} ref={Unit} defaultValue={"กรัม"}>
+                                                        <option value={"กรัม"}>กรัม</option>
+                                                        <option value={"มิลลิลิตร"}>มิลลิลิตร</option>
+                                                    </select>
+                                                </div>
                                             </label>
                                         </div>
                                         <div className="row">

@@ -5,7 +5,7 @@ CREATE TABLE line_chat_gap.formFertilizer (
     name varchar(50) NOT NULL ,
     formula_name varchar(50) NOT NULL ,
     use_is varchar(100) NOT NULL ,
-    volume INT NOT NULL ,
-    source varchar(100) NOT NULL,
+    volume varchar(100) NOT NULL ,
+    source varchar(100) NOT NULL ,
     date varchar(50) NOT NULL
 );

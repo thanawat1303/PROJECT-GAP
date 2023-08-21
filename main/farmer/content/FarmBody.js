@@ -8,6 +8,9 @@ import ListFactor from "./Factor/ListFactor";
 import { CloseAccount, GetPath } from "../method";
 import { PopupDom } from "../../../src/assets/js/module";
 import House from "./House/House";
+import DataForm from "./DataForm/DataForm";
+import Success from "./Success/Success";
+import Report from "./Report/Report";
 
 const FarmBody = ({liff , uid , id_farmhouse}) => {
     const [Body , setBody] = useState(<></>)
@@ -26,7 +29,7 @@ const FarmBody = ({liff , uid , id_farmhouse}) => {
         // setBody(<NavFirst setPage={setPage} path={path} liff={liff}/>)
         
         window.addEventListener('popstate' , checkPage)
-        checkPage()
+        checkPage("")
 
         return ()=>{
             window.removeEventListener('popstate' , checkPage)
@@ -42,7 +45,7 @@ const FarmBody = ({liff , uid , id_farmhouse}) => {
         }
     }
 
-    const checkPage = async () => {
+    const checkPage = async (e , Time = new Date().getTime()) => {
         // check page
         if(GetPath().length === 1){
             const result = await clientMo.post("/api/farmer/account/check")
@@ -66,7 +69,27 @@ const FarmBody = ({liff , uid , id_farmhouse}) => {
                                 typeHraf={{type : "z" , id_form_plant : GetPath()[2]}} liff={liff}/>)
                 }
             }
-                
+            else if(GetPath()[1] === "c") {
+                const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_farmhouse , id_form_plant : GetPath()[2]})
+                if(await CloseAccount(result , setPage)) {
+                    setBody(<ListFactor setBody={setBody} setPage={setPage} id_house={id_farmhouse} 
+                                typeHraf={{type : "c" , id_form_plant : GetPath()[2]}} liff={liff}/>)
+                }
+            }
+            else if(GetPath()[1] === "d") {
+                const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_farmhouse , id_form_plant : GetPath()[2]})
+                if(await CloseAccount(result , setPage)) {
+                    setBody(<DataForm id_house={id_farmhouse} id_plant={GetPath()[2]} setBody={setBody} 
+                                setPage={setPage} liff={liff}/>)
+                }
+            }
+            else if(GetPath()[1] === "r") {
+                const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_farmhouse , id_form_plant : GetPath()[2]})
+                if(await CloseAccount(result , setPage)) {
+                    setBody(<Report setBody={setBody} setPage={setPage} id_house={id_farmhouse} 
+                                id_plant={GetPath()[2]} liff={liff}/>)
+                }
+            }
             // else if(path.has("formcremi")) 
             //     clientMo.post("/api/farmer/account/check" , {uid:uid , page : `authFactor`}).then((result)=>{
             //         if(result === "search") {
@@ -79,6 +102,14 @@ const FarmBody = ({liff , uid , id_farmhouse}) => {
             //     })
 
             // เก็บเกี่ยว ดูคำแนะนำ
+        } else if (GetPath().length === 4) {
+            if(GetPath()[1] === "s" && (GetPath()[3] === "h" || GetPath()[3] === "cf" || GetPath()[3] === "cp")) {
+                const result = await clientMo.post("/api/farmer/formplant/check" , {id_farmhouse:id_farmhouse , id_form_plant : GetPath()[2]})
+                if(await CloseAccount(result , setPage)) {
+                    setBody(<Success setBody={setBody} setPage={setPage} id_house={id_farmhouse} 
+                                id_plant={GetPath()[2]} type={`menu:${GetPath()[3]}:${Time}`} liff={liff}/>)
+                }
+            }
         }
 
         // else if(GetPath().length === 3 && path.has("f") && path.has("p"))

@@ -13,6 +13,7 @@ ObjectData}) => {
     const NameFactor = useRef()
     const Use = useRef()
     const Volume = useRef()
+    const Unit = useRef()
     const Source = useRef()
 
     // chemical
@@ -65,6 +66,7 @@ ObjectData}) => {
             const Name = NameFactor.current
             const use = Use.current
             const volume = Volume.current
+            const unit = Unit.current
             const source = Source.current
 
             const because = Because.current
@@ -74,7 +76,7 @@ ObjectData}) => {
                 formula_name.value != ObjectData.formula_name, 
                 Name.value != ObjectData.name, 
                 use.value != ObjectData.use_is, 
-                volume.value != ObjectData.volume, 
+                volume.value+ " " + unit.value != ObjectData.volume, 
                 source.value != ObjectData.source
             ]
 
@@ -90,7 +92,7 @@ ObjectData}) => {
                                     formula_name.value, 
                                     Name.value, 
                                     use.value,
-                                    volume.value,
+                                    volume.value+ " " + unit.value,
                                     source.value
                                 ]
 
@@ -145,6 +147,7 @@ ObjectData}) => {
             const use = Use.current
             const rate = Rate.current
             const volume = Volume.current
+            const unit = Unit.current
             const dateSafe = DateSafe.current
             const source = Source.current
 
@@ -157,7 +160,7 @@ ObjectData}) => {
                 insect.value != ObjectData.insect , 
                 use.value != ObjectData.use_is , 
                 rate.value != ObjectData.rate , 
-                volume.value != ObjectData.volume , 
+                volume.value+ " " + unit.value != ObjectData.volume , 
                 dateSafe.value != ObjectData.date_safe.split(" ")[0] , 
                 source.value != ObjectData.source
             ]
@@ -179,7 +182,7 @@ ObjectData}) => {
                                     insect.value, 
                                     use.value,
                                     rate.value, 
-                                    volume.value,
+                                    volume.value+ " " + unit.value,
                                     dateSafe.value,
                                     source.value
                                 ]
@@ -246,6 +249,7 @@ ObjectData}) => {
         const Name = NameFactor.current
         const use = Use.current
         const volume = Volume.current
+        const unit = Unit.current
         const source = Source.current
 
         const because = Because.current
@@ -263,7 +267,7 @@ ObjectData}) => {
                     formula_name.value != ObjectData.formula_name || 
                     Name.value != ObjectData.name || 
                     use.value != ObjectData.use_is || 
-                    volume.value != ObjectData.volume || 
+                    volume.value+ " " + unit.value != ObjectData.volume || 
                     source.value != ObjectData.source
                 )
             ) {
@@ -281,6 +285,7 @@ ObjectData}) => {
         const use = Use.current
         const rate = Rate.current
         const volume = Volume.current
+        const unit = Unit.current
         const dateSafe = DateSafe.current
         const source = Source.current
 
@@ -310,7 +315,7 @@ ObjectData}) => {
                     insect.value != ObjectData.insect || 
                     use.value != ObjectData.use_is || 
                     rate.value != ObjectData.rate || 
-                    volume.value != ObjectData.volume || 
+                    volume.value+ " " + unit.value != ObjectData.volume || 
                     dateSafe.value != ObjectData.date_safe.split(" ")[0] || 
                     source.value != ObjectData.source
                 )
@@ -494,8 +499,16 @@ ObjectData}) => {
                                         </div>
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.volume == 2 ? " not" : ""}`}>
+                                                {/* <span>ปริมาณที่ใช้</span>
+                                                <input onChange={ChangeFerti} defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input> */}
                                                 <span>ปริมาณที่ใช้</span>
-                                                <input onChange={ChangeFerti} defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                <div className="input-volume">
+                                                    <input onChange={ChangeFerti} ref={Volume} defaultValue={ObjectData.volume.split(" ")[0]} type="number" placeholder="ตัวเลข"></input>
+                                                    <select onChange={ChangeFerti} ref={Unit} defaultValue={ObjectData.volume.split(" ")[1]}>
+                                                        <option value={"ลิตร"}>ลิตร</option>
+                                                        <option value={"ก.ก"}>ก.ก</option>
+                                                    </select>
+                                                </div>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -590,9 +603,17 @@ ObjectData}) => {
                                         </div>
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.volume == 2 ? " not" : ""}`}>
-                                                <span>ปริมาณที่ใช้ทั้งหมด</span>
+                                                {/* <span>ปริมาณที่ใช้ทั้งหมด</span>
                                                 <input onChange={ChangeChemi} 
-                                                    defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input>
+                                                    defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input> */}
+                                                <span>ปริมาณที่ใช้ทั้งหมด</span>
+                                                <div className="input-volume">
+                                                    <input onChange={ChangeChemi} ref={Volume} defaultValue={ObjectData.volume.split(" ")[0]} type="number" placeholder="ตัวเลข"></input>
+                                                    <select onChange={ChangeChemi} ref={Unit} defaultValue={ObjectData.volume.split(" ")[1]}>
+                                                        <option value={"กรัม"}>กรัม</option>
+                                                        <option value={"มิลลิลิตร"}>มิลลิลิตร</option>
+                                                    </select>
+                                                </div>
                                             </label>
                                         </div>
                                         <div className="row">

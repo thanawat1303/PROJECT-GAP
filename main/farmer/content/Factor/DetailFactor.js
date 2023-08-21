@@ -61,7 +61,7 @@ const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData})
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.volume == 2 ? " not" : ""}`}>
                                                 <span>ปริมาณที่ใช้</span>
-                                                <input readOnly defaultValue={ObjectData.volume} type="number"></input>
+                                                <input readOnly defaultValue={ObjectData.volume} type="text"></input>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -122,8 +122,7 @@ const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData})
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.volume == 2 ? " not" : ""}`}>
                                                 <span>ปริมาณที่ใช้ทั้งหมด</span>
-                                                <input readOnly 
-                                                    defaultValue={ObjectData.volume} type="number"></input>
+                                                <input readOnly defaultValue={ObjectData.volume} type="text"></input>
                                             </label>
                                         </div>
                                         <div className="row">

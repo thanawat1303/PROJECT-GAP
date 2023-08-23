@@ -44,6 +44,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
         const Data = await clientMo.get(`/api/doctor/form/get/detail?id_form=${id_form}&type=${type_form}`)
         try {
             const JsonData = JSON.parse(Data)
+            console.log(Data)
             setContent(
                 JsonData.map((data , key)=>
                     {
@@ -186,6 +187,21 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                             </div>
                                         </div>
                                     </div>
+                                    { 
+                                        data.location_house ?
+                                            data.location_house.x && data.location_house.x ?
+                                            <div className="content-data">
+                                                <div className="data-row">
+                                                    <div className="row">
+                                                        <div className="data-main in-1 column">
+                                                            <span className="head-data">ตำแหน่งที่ทำการเกษตรกร</span>
+                                                            <MapsJSX lat={data.location_house.x} lng={data.location_house.y}/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> : <></> 
+                                        : <></>
+                                    }
                                 </section>
                             )
                         } else if(type_form === 1) {

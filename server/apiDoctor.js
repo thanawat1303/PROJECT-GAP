@@ -1698,12 +1698,18 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             WHERE acc_farmer.link_user = house.link_user
                             ORDER BY date_register
                             LIMIT 1
-                        ) as id_farmer
-                        , (
+                        ) as id_farmer, 
+                        (
                             SELECT type_plant
                             FROM plant_list
                             WHERE name = formplant.name_plant
-                        ) as type_main
+                        ) as type_main ,
+                        (
+                            SELECT location
+                            FROM housefarm
+                            WHERE housefarm.id_farm_house = form${TypeForm}.id_farm_house
+                            LIMIT 1
+                        ) as location_house
                         ` : ''
                     }
                     FROM form${TypeForm}

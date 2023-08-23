@@ -283,7 +283,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(
                         `
-                        SELECT name_house , img_house , id_farm_house
+                        SELECT name_house , img_house , id_farm_house , location
                         FROM housefarm
                         WHERE id_farm_house = ? and link_user = ?
                         ` , 
@@ -316,8 +316,10 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
                 const name = (req.body.name) ? `name_house = "${req.body.name}"` : ""
                 const img = (req.body.img) ? `img_house = "${req.body.img}"` : ""
-                const SET = [name , img].filter(val=>val).join(" , ")
-                con.query(
+                const location = (req.body.lag && req.body.lng) ? `location = POINT(${req.body.lag} , ${req.body.lng})` : ""
+                const SET = [name , img , location].filter(val=>val).join(" , ")
+                if(SET.length != 0) {
+                    con.query(
                         `
                         UPDATE housefarm
                         SET ${SET}
@@ -328,7 +330,8 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             con.end()
                             if (!err) res.send("113")
                             else res.send("error auth")
-                        })
+                    })
+                } else res.send("error auth")
             } catch (err) {
                 con.end()
                 if(err === "no" || err === "no account") res.send("close")

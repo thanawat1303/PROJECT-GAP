@@ -506,9 +506,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const fullname = req.body.fullname ? `fullname = "${req.body.fullname}"` : "";
                 const location = req.body.lag && req.body.lng ? `location = POINT(${req.body.lag} , ${req.body.lng})` : "";
                 const station = req.body.station ? `station = "${req.body.station}"` : "";
+                const tel_number = req.body.tel_number ? `tel_number = "${req.body.tel_number}"` : "";
+                const text_location = req.body.text_location ? `text_location = "${req.body.text_location}"` : "";
                 const newPassword = req.body.newPassword ? `password = SHA2("${req.body.newPassword}" , 256)` : "";
                 
-                const SET = [img , id , fullname , location , station , newPassword].filter(val=>val).join(" , ")
+                const SET = [img , id , fullname , location , station , tel_number , text_location , newPassword].filter(val=>val).join(" , ")
 
                 if(SET) {
                     const checkProfile = await new Promise((resole , reject)=>{
@@ -534,6 +536,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                                 `ทำการเปลี่ยนข้อมูลของท่าน :`+
                                                                 `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
                                                                 `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
+                                                                `${req.body.tel_number ? `\nเบอร์โทร : ${req.body.tel_number}` : ""}`+
+                                                                `${req.body.text_location ? `\nที่อยู่ : ${req.body.text_location}` : ""}`+
                                                                 `${req.body.station ? `\nศูนย์ในการดูแล : ${Station[0] ? Station[0].name : ""}` : ""}`+
                                                                 `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
                                                                 `${req.body.img ? `\nรูปภาพ :` : ""}`

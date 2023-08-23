@@ -427,7 +427,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <>
                                         <div className="row">
                                             <label className="frame-textbox">
-                                                <span>ว/ด/ป ที่ใช้</span>
+                                                <span>ว/ด/ป ที่พ่นสาร</span>
                                                 <input onChange={ChangeChemi} defaultValue={DateNowOnForm} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
                                             </label>
                                         </div>

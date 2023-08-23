@@ -43,7 +43,6 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 con.end()
                 res.send(auth.result)
             } catch (err) {
-                console.log(err)
                 con.end()
                 if(err === "no" || err === "no account") res.send("close")
                 else res.send("error auth")

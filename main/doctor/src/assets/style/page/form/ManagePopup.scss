@@ -479,6 +479,14 @@ $colorBoderBottonData : #3bc69c;
                                                 width: 95%;
                                                 padding: 0px 5px;
                                                 border-radius: 8px;
+                                                text-align: center;
+
+                                                .unit {
+                                                    display: inline-flex;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                    padding-left: 5px;
+                                                }
                                             }
 
                                             input {
@@ -517,6 +525,9 @@ $colorBoderBottonData : #3bc69c;
                                                 width: auto;
                                             }
                                             .data-show {
+                                                display: flex;
+                                                justify-content: center;
+                                                align-items: center;
                                                 width: 100%;
                                             }
                                         }

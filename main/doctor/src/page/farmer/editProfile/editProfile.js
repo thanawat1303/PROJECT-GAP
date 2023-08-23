@@ -12,6 +12,8 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
     const ImageSh = useRef()
     const id_farmer = useRef()
     const fullname = useRef()
+    const Tel_number = useRef()
+    const Text_location = useRef()
     // const lagRef = useRef()
     // const lngRef = useRef()
     const station = useRef()
@@ -97,12 +99,16 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         const ckLocation = lagIn != 0 && lngIn != 0 
                             && (lagIn != DataProfile.location.x || lngIn != DataProfile.location.y)
         const ckStation = station.current.value && station.current.value != DataProfile.station
+        const ckTel = Tel_number.current.value && Tel_number.current.value != DataProfile.tel_number
+        const ckText_location = Text_location.current.value && Text_location.current.value != DataProfile.text_location
         const ckPassword = newPassword.current.value
 
-        if(ckID || ckName || ckLocation || ckStation || ckPassword || ckImage) {
+        if(ckID || ckName || ckLocation || ckStation || ckPassword || ckImage || ckTel || ckText_location) {
             const DataUpdate = {
                 id_farmer : id_farmer.current.value,
                 fullname : fullname.current.value,
+                tel_number : Tel_number.current.value,
+                text_location : Text_location.current.value,
                 lag : lagIn,
                 lng : lngIn,
                 station : station.current.value,
@@ -117,6 +123,8 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                 delete DataUpdate.lng
             }
             if(!ckStation) delete DataUpdate.station
+            if(!ckTel) delete DataUpdate.tel_number
+            if(!ckText_location) delete DataUpdate.text_location
             if(!ckPassword) delete DataUpdate.newPassword
             if(!ckImage) delete DataUpdate.img
 
@@ -164,6 +172,21 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                 <span>ชื่อ - นามสกุล</span>
                 <div className="frame-text">
                     <input onChange={()=>CheckEdit("" , "")} placeholder="เช่น สมชาย ใจดี" ref={fullname} defaultValue={DataProfile.fullname}></input>
+                </div>
+            </div>
+            <div className="text-detail">
+                <span>เบอร์โทร</span>
+                <div className="frame-text">
+                    <input onChange={(e)=>{
+                        CheckEdit("" , "")
+                        e.target.value = e.target.value.slice(0 , 10)
+                    }} placeholder="10 หลัก เช่น 090-2959768" ref={Tel_number} defaultValue={DataProfile.tel_number}></input>
+                </div>
+            </div>
+            <div className="text-detail">
+                <span>ที่อยู่</span>
+                <div className="frame-text">
+                    <input onChange={()=>CheckEdit("" , "")} placeholder="เช่น บ้านเลขที่ 15/2 หมู่ที่ 4" ref={Text_location} defaultValue={DataProfile.text_location}></input>
                 </div>
             </div>
             <div className="text-detail">

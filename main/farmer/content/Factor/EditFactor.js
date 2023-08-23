@@ -532,7 +532,7 @@ ObjectData}) => {
                                         <>
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.date == 2 ? " not" : ""}`}>
-                                                <span>ว/ด/ป ที่ใช้</span>
+                                                <span>ว/ด/ป ที่พ่นสาร</span>
                                                 <input onChange={ChangeChemi} defaultValue={ObjectData.date.split(" ")[0]} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
                                             </label>
                                         </div>

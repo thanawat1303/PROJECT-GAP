@@ -90,7 +90,12 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
                                                     <span className="head-data">พื้นที่</span>
-                                                    <span className="data-show">{data.area}</span>
+                                                    <span className="data-show">
+                                                        {data.area}
+                                                        <div className="unit">
+                                                            ตารางเมตร
+                                                        </div>
+                                                    </span>
                                                 </div>
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
                                                     <span className="head-data">จำนวนต้น</span>
@@ -188,7 +193,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                 <div key={key} className="row-factor">
                                     <div className="row-in">
                                         <div className="in-data date">
-                                            <span>วันที่บันทึก</span>
+                                            <span>ว/ด/ป ที่ใช้</span>
                                             <DayJSX DATE={data.date} TYPE="small" TEXT="วันที่"/>
                                         </div>
                                     </div>
@@ -233,7 +238,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                 <div key={key} className="row-factor">
                                     <div className="row-in">
                                         <div className="in-data date">
-                                            <span>วันที่บันทึก</span>
+                                            <span>ว/ด/ป ที่พ่นสาร</span>
                                             <DayJSX DATE={data.date} TYPE="small" TEXT="วันที่"/>
                                         </div>
                                     </div>
@@ -306,7 +311,6 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
     }
 
     const GetDetailEdit = async (id_form_edit , type) => {
-        console.log(123)
         const context = await clientMo.post('/api/doctor/check')
         if(context) 
             setBodyPopupEdit(<DetailEdit Ref={PopRef} setRef={setBodyPopupEdit} setDetailData={FetchContent} type={type} id_form={id_form_edit} id_from_plant={id_form} session={session}/>)
@@ -348,6 +352,10 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                 <div className="body-text">{val.fullname}</div>
                             </div>
                             <div className="row">
+                                <span className="head-text">เบอร์โทร</span>
+                                <div className="body-text">{val.tel_number ? val.tel_number : "ไม่ระบุ"}</div>
+                            </div>
+                            <div className="row">
                                 <span className="head-text">วันที่สมัคร</span>
                                 <div className="body-text">
                                     <DayJSX DATE={val.date_register} TYPE="small" TEXT="วันที่"/>
@@ -361,6 +369,10 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                         : "ยังไม่ผ่านการตรวจสอบ"
                                     }
                                 </div>
+                            </div>
+                            <div className="row">
+                                <span className="head-text">ที่อยู่</span>
+                                <div className="body-text">{val.text_location ? val.text_location : "ไม่ระบุ"}</div>
                             </div>
                             <div className="row">
                                 <span className="head-text">ตำแหน่งที่ตั้ง</span>

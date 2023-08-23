@@ -49,7 +49,7 @@ const DetailEdit = ({Ref , setRef , setPage , type , Data_on}) => {
                         volume : "ปริมาณที่ใช้" ,
                         source : "แหล่งที่ซื้อ" ,
                         date_safe : "วันที่ปลอดภัย" ,
-                        date : "วันที่ใช้" ,
+                        date : type === "z" ? "ว/ด/ป ที่ใช้" : "ว/ด/ป ที่พ่นสาร" ,
                     }
     
     useEffect(()=>{

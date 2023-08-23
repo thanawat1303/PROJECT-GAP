@@ -399,7 +399,7 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
     }
 
     const CheckEdit = (DataEditIn = DataEdit) => {
-        console.log(DataEditIn)
+        // console.log(DataEditIn)
         if(DataEditIn && RefPasswordEdit.current.value) {
             setBtStateEdit(true)
             setDataEdit(DataEditIn)
@@ -556,19 +556,34 @@ const ManagePopup = ({setPopup , RefPop , resultPage = {
                                         </div> : <></>
                                 }
                                 <div className="text-detail">
-                                    <span>{"ชื่อ - นามสกุล"}</span>
+                                    <span>ชื่อ - นามสกุล</span>
                                     <div className="frame-text">
                                         {TypeDetail === "farmer" ? DetailFarmer.fullname : DetailDoctor.fullname_doctor}
                                     </div>
                                 </div>
                                 {
                                     TypeDetail === "farmer" ?
+                                        <>
+                                        <div className="text-detail">
+                                            <span>เบอร์โทร</span>
+                                            <div className="frame-text">
+                                                {DetailFarmer.tel_number ? DetailFarmer.tel_number : "ไม่ระบุ"}
+                                            </div>
+                                        </div>
+                                        <div className="text-detail">
+                                            <span>ที่อยู่</span>
+                                            <div className="frame-text">
+                                                {DetailFarmer.text_location ? DetailFarmer.text_location : "ไม่ระบุ"}
+                                            </div>
+                                        </div>
                                         <div className="text-detail btm">
-                                            <span>{"ที่อยู่"}</span>
+                                            <span>ตำแหน่งที่อยู่</span>
                                             <div>
                                                 <MapsJSX lat={DetailFarmer.location.x} lng={DetailFarmer.location.y} w={"100%"} h={"10%"}/>
                                             </div>
-                                        </div> : <></>
+                                        </div>
+                                        </>
+                                         : <></>
                                 }
                                 {
                                     TypeDetail === "farmer" ? 

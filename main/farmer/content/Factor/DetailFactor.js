@@ -74,7 +74,7 @@ const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData})
                                         <>
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.date == 2 ? " not" : ""}`}>
-                                                <span>ว/ด/ป ที่ใช้</span>
+                                                <span>ว/ด/ป ที่พ่นสาร</span>
                                                 <input readOnly defaultValue={ObjectData.date.split(" ")[0]} type="date"></input>
                                             </label>
                                         </div>

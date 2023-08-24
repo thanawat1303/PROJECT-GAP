@@ -507,7 +507,13 @@ const SetMaxLength = (e , setQty , max) => {
     setQty(e.target.value.length)
 }
 
-const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
+const DateSelect = ({RefDate , Value = "" , methodCheckValue , 
+Ref = {
+    DayCK : useRef() , 
+    MountCK : useRef() , 
+    YearCK : useRef()
+}}) => {
+    {/* ใน server ทดลอง เดือนจะไม่ตรง แต่ใน  server จริง จะตรง ไม่จำเป็นต้องแก้หากเดือนเพี้ยน */}
     const Mount = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
     const YearCurrent = new Date().getFullYear()
 
@@ -516,9 +522,9 @@ const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
     const [getYearSelect , setYearSelect] = useState([])
     const [getReady , setReady] = useState(false)
 
-    const RefDay = useRef()
-    const RefMount = useRef()
-    const RefYear = useRef()
+    // const RefDay = useRef()
+    // const RefMount = useRef()
+    // const RefYear = useRef()
 
     useEffect(()=>{
         const newYear = new Array
@@ -546,9 +552,9 @@ const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
     //                         new Date(Value) != "Invalid Date" ? 
     //                             [new Date(Value).getFullYear() , new Date(Value).getMonth() + 1 , new Date(Value).getDate()] 
     //                         : "";
-    //     RefDay.current.value = DefaultDate[2] ? DefaultDate[2] : ""
-    //     RefMount.current.value = DefaultDate[1] ? parseInt(DefaultDate[1]) - 1 : ""
-    //     RefYear.current.value = DefaultDate[0] ? DefaultDate[0] : ""
+    //     Ref.DayCK.current.value = DefaultDate[2] ? DefaultDate[2] : ""
+    //     Ref.MountCK.current.value = DefaultDate[1] ? parseInt(DefaultDate[1]) - 1 : ""
+    //     Ref.YearCK.current.value = DefaultDate[0] ? DefaultDate[0] : ""
 
     //     setDefault(DefaultDate)
     //     console.log(DefaultDate , Value)
@@ -579,7 +585,7 @@ const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
         const targetYear = parseInt(Year);
         const startDate = new Date(targetYear, targetMonth, 1);
         const nextMonthDate = new Date(targetYear, targetMonth + 1, 1);
-        console.log((nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+        // console.log((nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
         if(startDate != "Invalid Date" && nextMonthDate != "Invalid Date") {
             const daysInMonth = (nextMonthDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
             const newDay = new Array
@@ -599,8 +605,8 @@ const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
         getReady ?
         <div className="date-select">
             { getDay.length !== 0 ?
-            <select className="list-date-select" defaultValue={getDefault[2] ?? ""} ref={RefDay} onChange={(e)=>{
-                ChangeDate(e.target.value , RefMount.current.value , RefYear.current.value)
+            <select className="list-date-select" defaultValue={getDefault[2] ?? ""} ref={Ref.DayCK} onChange={(e)=>{
+                ChangeDate(e.target.value , Ref.MountCK.current.value , Ref.YearCK.current.value)
             }}>
                 <option value={""}>วันที่</option>
                 { 
@@ -610,9 +616,9 @@ const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
                 }
             </select> : <></>
             }
-            <select className="list-date-select" defaultValue={getDefault[1] ?? ""} ref={RefMount} onChange={(e)=>{
-                SelectSetDay(e.target.value , RefYear.current.value)
-                ChangeDate(RefDay.current.value , e.target.value , RefYear.current.value)
+            <select className="list-date-select" defaultValue={getDefault[1] ?? ""} ref={Ref.MountCK} onChange={(e)=>{
+                SelectSetDay(e.target.value , Ref.YearCK.current.value)
+                ChangeDate(Ref.DayCK.current.value , e.target.value , Ref.YearCK.current.value)
             }}>
                 <option value={""}>เดือน</option>
                 { 
@@ -623,9 +629,9 @@ const DateSelect = ({RefDate , Value = "" , methodCheckValue}) => {
                     ) 
                 }
             </select>
-            <select className="list-date-select" defaultValue={getDefault[0] ?? ""} ref={RefYear} onChange={(e)=>{
-                SelectSetDay(RefMount.current.value , e.target.value)
-                ChangeDate(RefDay.current.value , RefMount.current.value , e.target.value)
+            <select className="list-date-select" defaultValue={getDefault[0] ?? ""} ref={Ref.YearCK} onChange={(e)=>{
+                SelectSetDay(Ref.MountCK.current.value , e.target.value)
+                ChangeDate(Ref.DayCK.current.value , Ref.MountCK.current.value , e.target.value)
             }}>
                 <option disabled value={""}>ปี</option>
                 { 

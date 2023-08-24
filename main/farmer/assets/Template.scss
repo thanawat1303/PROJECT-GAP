@@ -77,6 +77,11 @@
                     .frame-content {
                         overflow-y: scroll;
                         font-family: Sans-font;
+
+                        .report-not {
+                            outline: 2px solid red;
+                        }
+
                         .type-plant {
                             display: flex;
                             justify-content: space-evenly;

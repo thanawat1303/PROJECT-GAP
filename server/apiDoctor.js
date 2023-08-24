@@ -269,7 +269,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ` , [ req.body.uid_line , result.data.id_table_doctor , req.body.uid_line ] ,
                             (err , uid) => {
                                 con.end()
-                                if(!err) if(uid.changedRows != 0) Line.pushMessage(req.body.uid_line , {type : "text" , text : "เชื่อมต่อบัญชีเจ้าหน้าที่กับบัญชีไลน์เรียบร้อยค่ะ"})
+                                if(!err) if(uid.changedRows != 0) Line.pushMessage(req.body.uid_line , {type : "text" , text : "เชื่อมต่อบัญชีเจ้าหน้าที่กับบัญชีไลน์เรียบร้อยค่ะ"}).catch((e)=>{})
                             }
                         )
                     } else {
@@ -542,7 +542,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                                 `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
                                                                 `${req.body.img ? `\nรูปภาพ :` : ""}`
                                                     }
-                                                    await Line.pushMessage(resultSelect[0].uid_line , dataSend)
+                                                    await Line.pushMessage(resultSelect[0].uid_line , dataSend).catch(e=>{})
                                                     resole("")
                                                 }
                                             )
@@ -554,7 +554,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                     "type": "image",
                                                     "originalContentUrl": `${UrlApi}/image/farmer/${req.body.id_table}`,
                                                     "previewImageUrl": `${UrlApi}/image/farmer/${req.body.id_table}`
-                                                })
+                                                }).catch(e=>{})
                                                 resole("")
                                             })
                                         }
@@ -567,7 +567,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                     address : "คลิกตรวจสอบ",
                                                     latitude : req.body.lag,
                                                     longitude : req.body.lng
-                                                })
+                                                }).catch(e=>{})
                                                 resole("")
                                             })
                                         }
@@ -873,7 +873,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                     Line.pushMessage(convert[0].uid_line , {
                                                         type : "text",
                                                         text : `คุณได้ทำการเชื่อมบัญชีเรียบร้อย \u2764`
-                                                    })
+                                                    }).catch(e=>{})
                                                 } catch(e) {}
                                                 resole(1)
                                             }
@@ -911,7 +911,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                 Line.pushMessage(req.body.uid_line , {
                                                     type : "text",
                                                     text : `บัญชีผ่านการตรวจสอบแล้วนะคะ \nและมีการเชื่อมบัญชีกับคุณ ${convert[0].fullname}\u2764`
-                                                })
+                                                }).catch(e=>{})
                                             } catch(e) {}
                                             try {
                                                 await Line.unlinkRichMenuFromUser(req.body.uid_line)
@@ -927,7 +927,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         Line.pushMessage(req.body.uid_line , {
                                             type : "text",
                                             text : "บัญชีผ่านการตรวจสอบแล้วนะคะ \u2764"
-                                        })
+                                        }).catch(e=>{})
                                     } catch (e) {}
                                     try {
                                         await Line.unlinkRichMenuFromUser(req.body.uid_line)
@@ -998,7 +998,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         Line.pushMessage(check[0].uid_line , {
                                             type : "text",
                                             text : "บัญชีไม่ผ่านการตรวจสอบ กรุณาส่งข้อความเพื่อพูดคุยกับเจ้าหน้าที่ หรือสมัครบัญชีอีกครั้งนะคะ \u2764"
-                                        })
+                                        }).catch(e=>{})
                                     } catch (e) {}
                                     try {
                                         await Line.unlinkRichMenuFromUser(check[0].uid_line)
@@ -1158,7 +1158,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             Line.pushMessage(convert[0].uid_line , {
                                 type : "text",
                                 text : `คุณได้ทำการเชื่อมบัญชีเรียบร้อย \u2764`
-                            })
+                            }).catch(e=>{})
                         } catch(e) {}
                         resole(result)
                     })
@@ -1220,7 +1220,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                                 Line.pushMessage(req.body.uid_line , {
                                                     type : "text",
                                                     text : `เชื่อมบัญชีกับคุณ ${convert[0].fullname} \u2764`
-                                                })
+                                                }).catch(e=>{})
                                             } catch(e) {}
                                             con.end()
                                         }
@@ -1344,14 +1344,29 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         `
                         INSERT INTO message_user
                         ( message , uid_line_farmer , id_read , type , type_message ) VALUES ( ? , ? , '{"?" : "read"}' , ? , "text")
-                        ` , [ TextSend , req.body.uid_line , result["data"].id_table_doctor , result["data"].id_table_doctor ] , async (err) => {
+                        ` , [ TextSend , req.body.uid_line , result["data"].id_table_doctor , result["data"].id_table_doctor ] , 
+                        async (err , insertMsg) => {
                             if(err) con.end()
                             else {
-                                con.end()
-                                await Line.pushMessage(req.body.uid_line , {
-                                    type : "text" , text : `ส่งจากหมอ ${result["data"].fullname_doctor} : \n${TextSend}`
-                                })
-                                socket.to(req.body.uid_line).emit("new_msg")
+                                try {
+                                    await Line.pushMessage(req.body.uid_line , {
+                                        type : "text" , text : `ส่งจากหมอ ${result["data"].fullname_doctor} : \n${TextSend}`
+                                    })
+                                    socket.to(req.body.uid_line).emit("new_msg")
+                                    res.send("113")
+                                    con.end()
+                                } catch(e){
+                                    con.query(
+                                        `
+                                        DELETE FROM message_user
+                                        WHERE id = ?
+                                        ` , [ insertMsg.insertId ] , 
+                                        (err)=>{
+                                            con.end()
+                                        }
+                                    )
+                                    res.send("line error")
+                                }
                             }
                         }
                     )

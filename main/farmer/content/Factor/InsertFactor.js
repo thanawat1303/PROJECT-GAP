@@ -37,13 +37,18 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     const [getWait , setWait] = useState(false)
     useEffect(()=>{
         RefPop.current.setAttribute("show" , "");
+        FetchFactor((type_path === "z") ? "fertilizer" : "chemical")
         FetchSource()
         // (type_path === "z") ? FetchFactor("fertilizer") : FetchFactor("chemical")
     } , [])
 
     const FetchFactor = async (type) => {
+        setLoadName(false);
+        setLoadNameMain(false);
         const Data = await clientMo.post("/api/farmer/factor/get/auto" , {type : type})
         if(await CloseAccount(Data , setPage)) {
+            setLoadName(true);
+            setLoadNameMain(true);
             const LIST = JSON.parse(Data)
             setDataFactor(LIST)
             return LIST
@@ -66,7 +71,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const volume = Volume.current
         const source = Source.current
 
-        if( dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value
+        if( dateUse.value && Name.value && use.value && volume.value && source.value
             ) {
                 let data = {
                     id_farmhouse : id_house,
@@ -186,7 +191,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
             }
         }
         
-        if( dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value
+        if( dateUse.value && Name.value && use.value && volume.value && source.value
             ) {
                 BTConfirm.current.removeAttribute("no")
         } else {
@@ -224,10 +229,9 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
 
     // name
     const SearchNameFactor = async (e) => {
-        const type_search = (type_path === "z") ? "fertilizer" : "chemical";
         ListSearchName.current.removeAttribute("remove")
-        setLoadName(false);
-        let search = await FetchFactor(type_search)
+        
+        let search = DataFactor
         search = search.filter((val)=>
                             val.name.indexOf(e.target.value) >= 0 && val.name_formula.indexOf(NameMainFactor.current.value) >= 0)
                                 .map((val)=>val.name)
@@ -237,7 +241,6 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                 <span search_name="" onClick={()=>SetTextInputName(val)} key={val.id}>{val}</span>
             ))
         else ResetListNamePopup()
-        setLoadName(true);
 
         (type_path === "z") ? ChangeFerti() : ChangeChemi()
     }
@@ -256,11 +259,10 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
 
     // other
     const SearchFactorNameOther = async (e) => {
-        const type_search = (type_path === "z") ? "fertilizer" : "chemical";
         ListSearchFactorNameMain.current.removeAttribute("remove")
-        setLoadNameMain(false);
+        
         try {
-            let search = await FetchFactor(type_search)
+            let search = DataFactor
             search = search.filter((val)=>
                                 val.name_formula.indexOf(e.target.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
                                     .map((val)=>val.name_formula)
@@ -276,7 +278,6 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
             }
             else ResetListOtherPopup()
         } catch(e) {}
-        setLoadNameMain(true);
 
         (type_path === "z") ? ChangeFerti() : ChangeChemi()
     }

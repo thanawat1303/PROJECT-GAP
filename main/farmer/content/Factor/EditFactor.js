@@ -80,7 +80,7 @@ ObjectData}) => {
                 source.value != ObjectData.source
             ]
 
-            if( (dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value 
+            if( (dateUse.value && Name.value && use.value && volume.value && source.value 
                     && because.value)
                     && (
                         Check.filter(val => val)[0]
@@ -260,7 +260,7 @@ ObjectData}) => {
             }
         }
         
-        if( (dateUse.value && formula_name.value && Name.value && use.value && volume.value && source.value 
+        if( (dateUse.value && Name.value && use.value && volume.value && source.value 
                 && because.value)
                 && (
                     dateUse.value != ObjectData.date.split(" ")[0] || 

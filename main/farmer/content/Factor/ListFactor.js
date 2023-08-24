@@ -76,7 +76,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                     <div className="row">
                         <div className="nameMain">
                             <span>สูตร</span>
-                            {val.formula_name}
+                            {val.formula_name ? val.formula_name : "ไม่ระบุ"}
                         </div>
                         <div className="volume">
                             {val.volume}

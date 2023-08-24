@@ -1679,7 +1679,10 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 )
                 
                 socket.to(`notify-${stationSend}`).emit("update")
-                if(Uid_line_send.size != 0) line.multicast([...Uid_line_send] , {type : "text" , text : `${msg}`})
+                if(Uid_line_send.size != 0) {
+                    line.multicast([...Uid_line_send] , {type : "text" , text : `${msg}`})
+                        .catch(e=>{})
+                }
             }
         })
     }

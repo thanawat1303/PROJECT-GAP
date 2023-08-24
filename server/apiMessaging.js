@@ -140,50 +140,8 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
                             })
 
                             try {
-                                // const bubble = {
-                                //     type : "flex",
-                                //     altText : "ข้อความจากเกษตรกร",
-                                //     contents : {
-                                //         "type": "bubble",
-                                //         "direction": "ltr",
-                                //         "body": {
-                                //           "type": "box",
-                                //           "layout": "vertical",
-                                //           "contents": [
-                                //             {
-                                //               "type": "text",
-                                //               "text": "Body",
-                                //               "size": "xs",
-                                //               "align": "start",
-                                //               "wrap": true,
-                                //               "contents": []
-                                //             }
-                                //           ]
-                                //         },
-                                //         "footer": {
-                                //           "type": "box",
-                                //           "layout": "horizontal",
-                                //           "height": "50px",
-                                //           "contents": [
-                                //             {
-                                //               "type": "button",
-                                //               "action": {
-                                //                 "type": "uri",
-                                //                 "label": "คลิกตอบกลับ",
-                                //                 "uri": "https://linecorp.com"
-                                //               },
-                                //               "color": "#25AA6EFF",
-                                //               "height": "sm",
-                                //               "style": "primary"
-                                //             }
-                                //           ]
-                                //         }
-                                //     }
-                                // }
-
                                 socket.to(Uid_line).emit("new_msg")
-                                // socket.emit("reload-farmer-list")
-                                
+                                console.log(line.getNumberOfMessagesSentThisMonth())
                                 if(!TimeMessage) {
                                     const checkAuth = SelectProfile.map(val=>val.register_auth.toString())
                                     const typeMessange = checkAuth.indexOf("1") >= 0 ? "บัญชีเกษตรกรที่ผ่านการตรวจสอบ" : 
@@ -222,6 +180,7 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
 
                                     con.end()
                                     line.multicast([...Uid_line_send] , {type : "text" , text : "มีข้อความจาก"+typeMessange})
+                                        .catch(e=>{})
                                 } else con.end()
                             } catch(e) {}
 

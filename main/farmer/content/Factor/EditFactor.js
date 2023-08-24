@@ -350,6 +350,7 @@ ObjectData}) => {
         NameFactor.current.value = name;
         (type_path === "z") ? ChangeFerti() : ChangeChemi();
         ResetListNamePopup()
+        SearchFactorNameOther({target : {value : "" , selectBt : true}})
     }
 
     const ResetListNamePopup = () => {
@@ -367,10 +368,15 @@ ObjectData}) => {
                             val.name_formula.indexOf(e.target.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
                                 .map((val)=>val.name_formula)
         const setSearch = ChangeData(search)
-        if(setSearch.length !== 0) 
-            setListOther(setSearch.map((val)=>
-                <span search_other="" onClick={()=>SetTextInputOrther(val)} key={val.id}>{val}</span>
-            ))
+        if(setSearch.length !== 0) {
+            if(setSearch.length === 1 && e.target.selectBt) {
+                SetTextInputOrther(setSearch[0])
+            } else {
+                setListOther(setSearch.map((val)=>
+                    <span search_other="" onClick={()=>SetTextInputOrther(val)} key={val.id}>{val}</span>
+                ))
+            }
+        }
         else ResetListOtherPopup()
         setLoadNameMain(true);
 
@@ -599,7 +605,7 @@ ObjectData}) => {
                                                 <span>อัตราที่ผสม</span>
                                                 <div className="input-row">
                                                     <input onChange={ChangeChemi} 
-                                                        defaultValue={ObjectData.rate} ref={Rate} type="number" placeholder="ตัวเลข"></input>
+                                                        defaultValue={ObjectData.rate} ref={Rate} type="number" placeholder="cc."></input>
                                                     <div className="unit">/น้ำ20ล.</div>
                                                 </div>
                                             </label>

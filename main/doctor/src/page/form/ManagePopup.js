@@ -281,7 +281,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                     <div className="row-in">
                                         <div className="in-data">
                                             <span>อัตรา</span>
-                                            <div>{data.rate} cc</div>
+                                            <div>{data.rate}/น้ำ20ล.</div>
                                         </div>
                                         <div className="in-data">
                                             <span>ปริมาณ</span>

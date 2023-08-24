@@ -139,10 +139,11 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     const SendMsg = async () => {
         const Data = CheckSend()
         if(Data) {
-            const result = await clientMo.post("/api/doctor/farmer/msg/send" , Data)
-            if(result === "line error") alert("ระบบการส่งข้อความมีปัญหาด้านข้อจำกัด กรุณารอส่งข้อความในเดือนถัดไป")
+            setBtSend(false)
             TextSend.current.value = ""
             TextSend.current.removeAttribute("style")
+            const result = await clientMo.post("/api/doctor/farmer/msg/send" , Data)
+            if(result === "line error") alert("ระบบการส่งข้อความมีปัญหาด้านข้อจำกัด กรุณารอส่งข้อความในเดือนถัดไป")
         }
     }
 

@@ -179,7 +179,12 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
 
                                     con.end()
                                     line.multicast([...Uid_line_send] , {type : "text" , text : "มีข้อความจาก"+typeMessange})
-                                        .catch(e=>{})
+                                        .catch(e=>{
+                                            line.replyMessage(req["body"]['events'][0]["replyToken"] , {
+                                                type : "text",
+                                                text : "พบปัญหาในการส่งข้อความ กรุณารอสักครู่และส่งข้อความใหม่อีกครั้ง \u2764"
+                                            })
+                                        })
                                 } else con.end()
                             } catch(e) {}
 

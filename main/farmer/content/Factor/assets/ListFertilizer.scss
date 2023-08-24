@@ -210,7 +210,14 @@ $FontText : 5vw;
                                                     width: 40%;
                                                 }
 
-                                                .input-volume {
+                                                .unit {
+                                                    font-size: $FontText;
+                                                    display: flex;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                }
+
+                                                .input-row {
                                                     display: flex;
                                                     width: 50%;
                                                 }

@@ -115,8 +115,11 @@ const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData})
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.rate == 2 ? " not" : ""}`}>
                                                 <span>อัตราที่ผสม</span>
-                                                <input readOnly 
-                                                    defaultValue={ObjectData.rate} type="text"></input>
+                                                <div className="input-row">
+                                                    <input readOnly 
+                                                        defaultValue={ObjectData.rate} type="text"></input>
+                                                    <div className="unit">/น้ำ20ล.</div>
+                                                </div>
                                             </label>
                                         </div>
                                         <div className="row">

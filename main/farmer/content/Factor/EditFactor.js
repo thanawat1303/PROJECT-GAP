@@ -502,7 +502,7 @@ ObjectData}) => {
                                                 {/* <span>ปริมาณที่ใช้</span>
                                                 <input onChange={ChangeFerti} defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input> */}
                                                 <span>ปริมาณที่ใช้</span>
-                                                <div className="input-volume">
+                                                <div className="input-row">
                                                     <input onChange={ChangeFerti} ref={Volume} defaultValue={ObjectData.volume.split(" ")[0]} type="number" placeholder="ตัวเลข"></input>
                                                     <select onChange={ChangeFerti} ref={Unit} defaultValue={ObjectData.volume.split(" ")[1]}>
                                                         <option value={"ลิตร"}>ลิตร</option>
@@ -597,8 +597,11 @@ ObjectData}) => {
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.rate == 2 ? " not" : ""}`}>
                                                 <span>อัตราที่ผสม</span>
-                                                <input onChange={ChangeChemi} 
-                                                    defaultValue={ObjectData.rate} ref={Rate} type="text" placeholder="กรอก 00/00"></input>
+                                                <div className="input-row">
+                                                    <input onChange={ChangeChemi} 
+                                                        defaultValue={ObjectData.rate} ref={Rate} type="number" placeholder="ตัวเลข"></input>
+                                                    <div className="unit">/น้ำ20ล.</div>
+                                                </div>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -607,7 +610,7 @@ ObjectData}) => {
                                                 <input onChange={ChangeChemi} 
                                                     defaultValue={ObjectData.volume} ref={Volume} type="number" placeholder="ตัวเลข"></input> */}
                                                 <span>ปริมาณที่ใช้ทั้งหมด</span>
-                                                <div className="input-volume">
+                                                <div className="input-row">
                                                     <input onChange={ChangeChemi} ref={Volume} defaultValue={ObjectData.volume.split(" ")[0]} type="number" placeholder="ตัวเลข"></input>
                                                     <select onChange={ChangeChemi} ref={Unit} defaultValue={ObjectData.volume.split(" ")[1]}>
                                                         <option value={"กรัม"}>กรัม</option>

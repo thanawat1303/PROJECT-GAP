@@ -399,7 +399,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ปริมาณที่ใช้</span>
-                                                <div className="input-volume">
+                                                <div className="input-row">
                                                     <input onChange={ChangeFerti} ref={Volume} type="number" placeholder="ตัวเลข"></input>
                                                     <select onChange={ChangeFerti} ref={Unit} defaultValue={"ลิตร"}>
                                                         <option value={"ลิตร"}>ลิตร</option>
@@ -488,13 +488,16 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>อัตราที่ผสม</span>
-                                                <input onChange={ChangeChemi} ref={Rate} type="text" placeholder="กรอก 00/00"></input>
+                                                <div className="input-row">
+                                                    <input onChange={ChangeChemi} ref={Rate} type="number" placeholder="ตัวเลข"></input>
+                                                    <div className="unit">/น้ำ20ล.</div>
+                                                </div>
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ปริมาณที่ใช้ทั้งหมด</span>
-                                                <div className="input-volume">
+                                                <div className="input-row">
                                                     <input onChange={ChangeChemi} ref={Volume} type="number" placeholder="ตัวเลข"></input>
                                                     <select onChange={ChangeChemi} ref={Unit} defaultValue={"กรัม"}>
                                                         <option value={"กรัม"}>กรัม</option>

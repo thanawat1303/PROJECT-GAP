@@ -75,7 +75,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                     </div>
                     <div className="row">
                         <div className="nameMain">
-                            <span>สูตร :</span>
+                            <span>สูตร</span>
                             {val.formula_name}
                         </div>
                         <div className="volume">
@@ -114,25 +114,28 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                     <div className="row">
                         <div className="name">{val.name}</div>
                         <div className="nameMain">
-                            <span>สูตร :</span>
+                            <span>สูตร</span>
                             {val.formula_name}
                         </div>
                     </div>
                     <div className="row">
                         <div className="insect">
-                            <span>ศัตรูพืช :</span>
+                            <span>ศัตรูพืช</span>
                             {val.insect}
-                        </div>
-                        <div className="rate">
-                            {val.rate}
                         </div>
                         <div className="volume">
                             {val.volume}
                         </div>
                     </div>
                     <div className="row">
+                        <div className="rate">
+                            <span>อัตรา</span>
+                            {val.rate}/น้ำ20ล.
+                        </div>
+                    </div>
+                    <div className="row">
                         <div className="date-safe">
-                            <span>วันที่ปลอดภัย : </span>
+                            <span>วันที่ปลอดภัย</span>
                             <DayJSX DATE={val.date_safe} TYPE="small"/>
                         </div>
                     </div>

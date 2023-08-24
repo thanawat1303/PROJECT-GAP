@@ -220,7 +220,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                                         </div>
                                         <div className="in-data">
                                             <span>สูตร</span>
-                                            <div>{data.formula_name}</div>
+                                            <div>{data.formula_name ? data.formula_name : "ไม่ระบุ"}</div>
                                         </div>
                                     </div>
                                     <div className="row-in">

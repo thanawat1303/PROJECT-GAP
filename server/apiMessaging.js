@@ -141,7 +141,6 @@ module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbp
 
                             try {
                                 socket.to(Uid_line).emit("new_msg")
-                                console.log(line.getNumberOfMessagesSentThisMonth())
                                 if(!TimeMessage) {
                                     const checkAuth = SelectProfile.map(val=>val.register_auth.toString())
                                     const typeMessange = checkAuth.indexOf("1") >= 0 ? "บัญชีเกษตรกรที่ผ่านการตรวจสอบ" : 

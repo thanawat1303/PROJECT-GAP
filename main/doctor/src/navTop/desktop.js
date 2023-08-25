@@ -307,7 +307,9 @@ NotifyContent = {
                 </div>
             </div>
             <div className="content bottom">
-                <div className="menu-list">
+                <div className="menu-list" style={{
+                        marginTop : "0"
+                    }} >
                     <div className="menu-name-list" onClick={()=>{
                         Click.LogoutClick()
                         Close()

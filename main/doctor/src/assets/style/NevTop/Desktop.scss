@@ -177,7 +177,7 @@ $ColorGreen : #22C7A9;
     .background-menu-mobile {
         display: flex;
         width: 100vw;
-        height: 100vh;
+        height: 100%;
         position: fixed;
         top: 0;
         left: 0;
@@ -197,7 +197,7 @@ $ColorGreen : #22C7A9;
             left: 0;
             transition: 0.5s;
             background-color: white;
-            height: 100vh;
+            height: 100%;
     
             .content {
                 width: 100%;
@@ -351,8 +351,7 @@ $ColorGreen : #22C7A9;
 
             .content.bottom {
                 position: absolute;
-                bottom: 0.5em;
-                // margin-bottom: 10px;
+                bottom: 0.8em;
             }
         }
     }

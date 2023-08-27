@@ -58,20 +58,20 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
     }
 
     const FetchNotify = async (id_focus , type) => {
-        const notify = await clientMo.get(`/api/doctor/notify/get?type=${getNotifyContent ? type : "count"}&id=${id_focus}`)
+        // function load notify
+        // getNotifyContent check open popup notify
+        const SelectDataOn = getNotifyContent ? type : "count"
+        const notify = await clientMo.get(`/api/doctor/notify/get?type=${SelectDataOn}&id=${id_focus}`)
         if(notify) {
             const notifyData = JSON.parse(notify)
             setStation(notifyData.station)
-            console.log(notifyData)
-            if(type === "start") {
+            if(SelectDataOn === "start") {
                 setNotifyList(notifyData.List)
                 setNotifyCount(0)
-            } else if (type === "update") {
-                if(getNotifyContent) {
-                    setNotifyList((prevent)=> [...notifyData.List , ...prevent])
-                    setNotifyCount(0)
-                } else setNotifyCount(notifyData.countUn ? notifyData.countUn : 0)
-            } else if (type === "get") {
+            } else if (SelectDataOn === "update") {
+                setNotifyList((prevent)=> [...notifyData.List , ...prevent])
+                setNotifyCount(0)
+            } else if (SelectDataOn === "get") {
                 setNotifyList((prevent)=> [...prevent , ...notifyData.List])
             } else setNotifyCount(notifyData.countUn ? notifyData.countUn : 0)
             return notifyData.List

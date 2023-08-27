@@ -3119,8 +3119,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     )
                 })
 
-                const Oparetor = (req.query.type == "start" || req.query.type == "update") ? ">" : "<"; 
-                const getNotify = await new Promise((resole , reject)=>{
+                const Oparetor = (req.query.type != "count") ? (req.query.type == "start" || req.query.type == "update") ? ">" : "<" : ""; 
+                const getNotify = (Oparetor) ? await new Promise((resole , reject)=>{
                     con.query(
                         `
                         SELECT * ,
@@ -3141,10 +3141,20 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 val.img_farmer = val.img_farmer.toString()
                                 return val
                             })
-                            resole(list)
+
+                            con.query(
+                                `
+                                UPDATE notify_doctor
+                                SET id_read = JSON_SET(id_read, '$."?"', 'read')
+                                WHERE id <= ?
+                                ` , [result["data"].id_table_doctor , list[0] ? list[0].id : 0] , 
+                                (err , read)=>{
+                                    resole(list)
+                                }
+                            )
                         }
                     )
-                })
+                }) : []
                 
                 const Send = {
                     List : getNotify,
@@ -3154,6 +3164,42 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
                 con.end()
                 res.send(Send)
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
+    app.post('/api/doctor/notify/read' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                // fuction api read notify of ID all of client
+                con.query(
+                    `
+                    UPDATE notify_doctor
+                    SET id_read = JSON_SET(id_read, '$."?"', 'read')
+                    WHERE id <= ?
+                    ` , [result["data"].id_table_doctor , req.body.id_notify] , 
+                    (err , read)=>{
+                        // socket.to(req.body.uid_line).emit("new_msg" , "read")
+                        con.end()
+                        res.send("1")
+                    }
+                )
             }
         } catch (err) {
             con.end()

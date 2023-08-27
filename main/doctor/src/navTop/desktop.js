@@ -33,8 +33,8 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
 
     const NotifyConnect = async (id) => {
         if(getFetchStart) {
+            await FetchNotify(0 , "count")
             setFetchStart(false)
-            await FetchNotify(0 , "start")
         } else {
             SocketConnect(id)
         }
@@ -48,7 +48,7 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
             socket.emit("disconnect_notify_doctor" , getStation)
             socket.removeListener("update")
         })
-    } , [getNotifyList])
+    } , [getNotifyList , getFetchStart , getNotifyContent])
 
     const SocketConnect = (id) => {
         socket.emit("connect_notify_doctor" , getStation)
@@ -58,18 +58,23 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
     }
 
     const FetchNotify = async (id_focus , type) => {
-        const notify = await clientMo.get(`/api/doctor/notify/get?type=${type}&id=${id_focus}`)
+        const notify = await clientMo.get(`/api/doctor/notify/get?type=${getNotifyContent ? type : "count"}&id=${id_focus}`)
         if(notify) {
             const notifyData = JSON.parse(notify)
-            setNotifyCount(notifyData.countUn ? notifyData.countUn : 0)
             setStation(notifyData.station)
+            console.log(notifyData)
             if(type === "start") {
                 setNotifyList(notifyData.List)
+                setNotifyCount(0)
             } else if (type === "update") {
-                setNotifyList((prevent)=> [...notifyData.List , ...prevent])
+                if(getNotifyContent) {
+                    setNotifyList((prevent)=> [...notifyData.List , ...prevent])
+                    setNotifyCount(0)
+                } else setNotifyCount(notifyData.countUn ? notifyData.countUn : 0)
             } else if (type === "get") {
                 setNotifyList((prevent)=> [...prevent , ...notifyData.List])
-            }
+            } else setNotifyCount(notifyData.countUn ? notifyData.countUn : 0)
+            return notifyData.List
         } else setSession()
     }
 
@@ -142,7 +147,7 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
                         </a>
                         <div className="notify-content" show={getShowNotify ? "" : null}>
                             { getNotifyContent ?
-                                <Notification setShow={setShowNotify} setContent={setNotifyContent} dataNotification={getNotifyList} FectNotify={()=>FetchNotify(getNotifyList.length != 0 ? getNotifyList[getNotifyList.length - 1].id : 0)}/>
+                                <Notification session={setSession} setCount={setNotifyCount} setShow={setShowNotify} setContent={setNotifyContent} FetchNotifyData={()=>FetchNotify(0 , "start")} dataNotification={getNotifyList} FetchNotify={()=>FetchNotify(getNotifyList.length != 0 ? getNotifyList[getNotifyList.length - 1].id : 0 , "get")}/>
                                 : <></>
                             }
                         </div>
@@ -194,7 +199,7 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
                         }} NotifyContent={{
                             getNotifyCount : getNotifyCount,
                             getNotifyList : getNotifyList
-                        }} FetchNotify={FetchNotify}/>
+                        }} getNotifyContent={getNotifyContent} setNotifyContent={setNotifyContent} FetchNotify={FetchNotify} setCountNotify={setNotifyCount} session={setSession}/>
                         : <></>
                     }
                 </div>
@@ -213,20 +218,23 @@ Click = {
 NotifyContent = {
     getNotifyCount : 0,
     getNotifyList : []
-} , FetchNotify}) => {
+} , getNotifyContent , setNotifyContent
+, FetchNotify , setCountNotify , session}) => {
 
     const [ Menu , setMenu ] = useState(false)
     const [getShowNotify , setShowNotify] = useState(false)
-    const [getNotifyContent , setNotifyContent] = useState(false)
+    // const [getNotifyContent , setNotifyContent] = useState(false)
 
     useEffect(()=>{
         RefMenu.current.style.opacity = "1"
         RefMenu.current.style.visibility = "visible"
         setMenu(true)
+        setNotifyContent(false)
 
         window.addEventListener("click" , CloseCheck)
 
         return(()=>{
+            setNotifyContent(false)
             window.removeEventListener("click" , CloseCheck)
         })
     } , [])
@@ -284,7 +292,7 @@ NotifyContent = {
                     <div className="menu-name-list" notify="" onClick={Notify}>
                         <div notify="" className="notify-content" show={getShowNotify ? "" : null}>
                             { getNotifyContent ?
-                                <Notification setShow={setShowNotify} setContent={setNotifyContent} dataNotification={NotifyContent.getNotifyList} FectNotify={()=>FetchNotify(NotifyContent.getNotifyList.length != 0 ? NotifyContent.getNotifyList[NotifyContent.getNotifyList.length - 1].id : 0)}/>
+                                <Notification session={session} setCount={setCountNotify} setShow={setShowNotify} setContent={setNotifyContent} FetchNotifyData={()=>FetchNotify(0 , "start")} dataNotification={NotifyContent.getNotifyList} FetchNotify={()=>FetchNotify(NotifyContent.getNotifyList.length != 0 ? NotifyContent.getNotifyList[NotifyContent.getNotifyList.length - 1].id : 0 , "get")}/>
                                 : <></>
                             }
                         </div>
@@ -293,7 +301,7 @@ NotifyContent = {
                             <path d="M14.3204 21.5989C14.1445 21.902 13.8922 22.1535 13.5886 22.3284C13.285 22.5033 12.9407 22.5953 12.5904 22.5953C12.24 22.5953 11.8957 22.5033 11.5921 22.3284C11.2885 22.1535 11.0362 21.902 10.8604 21.5989" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                         <span notify="">การแจ้งเตือน</span>
-                        <div notify="" className="count-notify">{NotifyContent.getNotifyCount}</div>
+                        {NotifyContent.getNotifyCount ? <div notify="" className="count-notify">{NotifyContent.getNotifyCount}</div> : <></>}
                     </div>
                     <div className="menu-name-list" onClick={()=>{
                         Click.ProfileClick()
@@ -327,9 +335,13 @@ NotifyContent = {
     )
 }
 
-const Notification = ({setShow , setContent , dataNotification , FectNotify}) => {
+const Notification = ({setShow , setContent , dataNotification , FetchNotifyData , FetchNotify , setCount , session}) => {
+    const [getLoadGet , setLoadGet] = useState(true)
+    const [getListNew , setListNew] = useState([0])
+
     useEffect(()=>{
         window.addEventListener("click" , Close)
+        FetchNotifyData()
         setShow(true)
 
         return(()=>{
@@ -346,11 +358,22 @@ const Notification = ({setShow , setContent , dataNotification , FectNotify}) =>
         }
     }
 
-    const LoadGet = (e = document.getElementById()) => {
-        if(e.target.scrollHeight <= e.target.scrollTop + e.target.clientHeight) {
-            FectNotify()
+    const LoadGet = async (e = document.getElementById()) => {
+        // console.log(parseInt(e.target.scrollHeight) , parseInt(e.target.scrollTop + e.target.clientHeight) + 1)
+        if(parseInt(e.target.scrollHeight) == parseInt(e.target.scrollTop + e.target.clientHeight) + 1 && getLoadGet && getListNew.length != 0) {
+            setLoadGet(false)
+            setListNew(await FetchNotify())
+            setLoadGet(true)
         }
     }
+
+    // const ReadNotify = async () => {
+    //     // function read notify and setCount un read
+    //     const result = await clientMo.post("/api/doctor/notify/read" , {id_notify : dataNotification[0].id})
+    //     if(result) {
+    //         setCount(0)
+    //     } else session()
+    // }
 
     return(
         <section className="body-notification" notify="" onScroll={LoadGet}>

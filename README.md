@@ -48,6 +48,8 @@
       npm i @react-pdf/renderer
       npm install jspdf jspdf-autotable
       npm i wordcut thai-wordcut
+
+      npm i axios
       ```
 
 ### Build Project

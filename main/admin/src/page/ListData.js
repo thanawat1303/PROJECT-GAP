@@ -557,32 +557,36 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
     const GenerateMap = async (e) => {
 
         let valueLocation = await GetLinkUrlOfSearch(e.target.value , "admin")
-        let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
-        if(Location[0]) {
-            Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
+        if(!isNaN(valueLocation[2]) && !isNaN(valueLocation[1])) {
+            setLag(valueLocation[2])
+            setLng(valueLocation[1])
         }
-        if(Location.length == 2) {
-            let lag = Location[1].split(".")
-            lag[0] = lag[0].replace("3d" , "")
-            for(let x=7; x>=4 ; x--) {
-                lag[1] = lag[1].slice(0 , x)
-                if(!isNaN(lag[1])) break
-            }
+        // let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
+        // if(Location[0]) {
+        //     Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
+        // }
+        // if(Location.length == 2) {
+        //     let lag = Location[1].split(".")
+        //     lag[0] = lag[0].replace("3d" , "")
+        //     for(let x=7; x>=4 ; x--) {
+        //         lag[1] = lag[1].slice(0 , x)
+        //         if(!isNaN(lag[1])) break
+        //     }
 
-            let lng = Location[0].split(".")
-            lng[0] = lng[0].replace("4d" , "")
-            for(let x=7; x>=4 ; x--) {
-                lng[1] = lng[1].slice(0 , x)
-                if(!isNaN(lng[1])) break
-            }
+        //     let lng = Location[0].split(".")
+        //     lng[0] = lng[0].replace("4d" , "")
+        //     for(let x=7; x>=4 ; x--) {
+        //         lng[1] = lng[1].slice(0 , x)
+        //         if(!isNaN(lng[1])) break
+        //     }
 
-            const Lagitude = lag.join(".")
-            const Longitude = lng.join(".")
-            if(!isNaN(Lagitude) && !isNaN(Longitude)) {
-                setLag(Lagitude)
-                setLng(Longitude)
-            }
-        }
+        //     const Lagitude = lag.join(".")
+        //     const Longitude = lng.join(".")
+        //     if(!isNaN(Lagitude) && !isNaN(Longitude)) {
+        //         setLag(Lagitude)
+        //         setLng(Longitude)
+        //     }
+        // }
     }
 
     const GenerateMapAuto = () => {

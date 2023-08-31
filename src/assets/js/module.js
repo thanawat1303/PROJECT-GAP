@@ -17,11 +17,12 @@ const MapsJSX = ({lat , lng , w , h}) => {
 }
 
 const GetLinkUrlOfSearch = async (valueLocation , auth) => {
-    if(valueLocation.indexOf("goo.gl/maps") >= 0) {
-        const fecthOfGoogle = await clientMo.get(`/api/${auth}/google/maps/get?link=${valueLocation}`)
-        const convertToArray = eval(fecthOfGoogle)
-        const Location = convertToArray[convertToArray.indexOf("Location") + 1]
-        return Location
+    const Link = valueLocation.split(" ").filter(map=>map.indexOf("maps") >= 0)
+    if(Link.length != 0) {
+        const fecthOfGoogle = await clientMo.get(`/api/${auth}/google/maps/get?link=${Link[0]}`)
+        const MapsStart = fecthOfGoogle.slice(fecthOfGoogle.lastIndexOf("[null,null,null,null,[") + 22)
+        const MapsData = MapsStart.slice(0 , MapsStart.indexOf("]") + 1)
+        return eval(MapsData) ?? []
     } else {
         return valueLocation
     }

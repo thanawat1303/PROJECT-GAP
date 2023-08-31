@@ -1,5 +1,5 @@
 require('dotenv').config().parsed
-const https = require('https');
+const axios = require('axios').default;
 
 module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
   app.post('/api/admin/check' , (req , res)=>{
@@ -514,9 +514,21 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     try {
         const auth = await apifunc.auth(con , username , password , res , "admin")
         if(auth['result'] === "pass") {
-            https.get(req.query.link , (resLink)=>{
-                res.send(resLink.rawHeaders)
-            })
+            try {
+              const Maps = await axios.request({
+                method : "GET",
+                maxBodyLength: Infinity,
+                url : req.query.link,
+                headers : {}
+              })
+              res.send(JSON.stringify(Maps.data))
+            } catch(e) {
+              res.send("")
+            }
+            // https.get(req.query.link , (resLink)=>{
+            //     console.log(resLink)
+            //     res.send(resLink.rawHeaders)
+            // })
         }
     } catch (err) {
       con.end()

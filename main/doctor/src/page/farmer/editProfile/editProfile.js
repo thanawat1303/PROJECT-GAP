@@ -43,48 +43,72 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         try {
 
             let valueLocation = await GetLinkUrlOfSearch(e.target.value , "doctor")
-            let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
-            if(Location[0]) {
-                Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
-            }
-            if(Location.length == 2) {
-                let lag = Location[1].split(".")
-                lag[0] = lag[0].replace("3d" , "")
-                for(let x=7; x>=4 ; x--) {
-                    lag[1] = lag[1].slice(0 , x)
-                    if(!isNaN(lag[1])) break
-                }
-        
-                let lng = Location[0].split(".")
-                lng[0] = lng[0].replace("4d" , "")
-                for(let x=7; x>=4 ; x--) {
-                    lng[1] = lng[1].slice(0 , x)
-                    if(!isNaN(lng[1])) break
-                }
-        
-                const Lagitude = lag.join(".")
-                const Longitude = lng.join(".")
-                if(!isNaN(Lagitude) && !isNaN(Longitude)) {
-                    setLag(Lagitude)
-                    setLng(Longitude)
-                    // setListStation([])
-                    const StationFetch = await clientMo.post("/api/doctor/station/list")
-                    const search = new Array
-                    JSON.parse(StationFetch).map(val=>{
-                        let lag = Math.abs(Lagitude - val.location.x)
-                        let lng = Math.abs(Longitude - val.location.y)
-                        search.push({id : val.id , name : val.name , dist : lag + lng})
-                    })
-                    
-                    setListStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
-                    return { lag : Lagitude , lng : Longitude }
-                }
+
+            if(!isNaN(valueLocation[2]) && !isNaN(valueLocation[1])) {
+                const Lagitude = valueLocation[2]
+                const Longitude = valueLocation[1]
+                setLag(Lagitude)
+                setLng(Longitude)
+                // setListStation([])
+                const StationFetch = await clientMo.post("/api/doctor/station/list")
+                const search = new Array
+                JSON.parse(StationFetch).map(val=>{
+                    let lag = Math.abs(Lagitude - val.location.x)
+                    let lng = Math.abs(Longitude - val.location.y)
+                    search.push({id : val.id , name : val.name , dist : lag + lng})
+                })
+                
+                setListStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
+                return { lag : Lagitude , lng : Longitude }
             } else {
                 setLag(DataProfile.location.x)
                 setLng(DataProfile.location.y)
                 // setListStation([])
                 return { lag : DataProfile.location.x , lng : DataProfile.location.y }
             }
+
+            // let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
+            // if(Location[0]) {
+            //     Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
+            // }
+            // if(Location.length == 2) {
+            //     let lag = Location[1].split(".")
+            //     lag[0] = lag[0].replace("3d" , "")
+            //     for(let x=7; x>=4 ; x--) {
+            //         lag[1] = lag[1].slice(0 , x)
+            //         if(!isNaN(lag[1])) break
+            //     }
+        
+            //     let lng = Location[0].split(".")
+            //     lng[0] = lng[0].replace("4d" , "")
+            //     for(let x=7; x>=4 ; x--) {
+            //         lng[1] = lng[1].slice(0 , x)
+            //         if(!isNaN(lng[1])) break
+            //     }
+        
+            //     const Lagitude = lag.join(".")
+            //     const Longitude = lng.join(".")
+            //     if(!isNaN(Lagitude) && !isNaN(Longitude)) {
+            //         setLag(Lagitude)
+            //         setLng(Longitude)
+            //         // setListStation([])
+            //         const StationFetch = await clientMo.post("/api/doctor/station/list")
+            //         const search = new Array
+            //         JSON.parse(StationFetch).map(val=>{
+            //             let lag = Math.abs(Lagitude - val.location.x)
+            //             let lng = Math.abs(Longitude - val.location.y)
+            //             search.push({id : val.id , name : val.name , dist : lag + lng})
+            //         })
+                    
+            //         setListStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
+            //         return { lag : Lagitude , lng : Longitude }
+            //     }
+            // } else {
+            //     setLag(DataProfile.location.x)
+            //     setLng(DataProfile.location.y)
+            //     // setListStation([])
+            //     return { lag : DataProfile.location.x , lng : DataProfile.location.y }
+            // }
         } catch(e) {
             session() 
         }

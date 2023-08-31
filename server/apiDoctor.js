@@ -1,6 +1,6 @@
 require('dotenv').config().parsed
 const wordcut = require('thai-wordcut')
-const https = require('https');
+const axios = require('axios').default;
 wordcut.init()
 
 const {Server} = require('socket.io')
@@ -3223,9 +3223,17 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                https.get(req.query.link , (resLink)=>{
-                    res.send(resLink.rawHeaders)
-                })
+                try {
+                    const Maps = await axios.request({
+                        method : "GET",
+                        maxBodyLength: Infinity,
+                        url : req.query.link,
+                        headers : {}
+                    })
+                    res.send(JSON.stringify(Maps.data))
+                } catch(e) {
+                    res.send("")
+                }
             }
         } catch (err) {
             con.end()

@@ -6,7 +6,7 @@ import io from "socket.io-client"
 
 import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
-import { DayJSX, PopupDom, TimeDiff } from "../../../../src/assets/js/module";
+import { DayJSX, Loading, PopupDom, TimeDiff } from "../../../../src/assets/js/module";
 import ProfilePage from "../page/profile/Profile";
 
 const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCover , eleBody , setTextStatus , getProfile , FetchProfile}) => {
@@ -338,16 +338,21 @@ NotifyContent = {
 const Notification = ({setShow , setContent , dataNotification , FetchNotifyData , FetchNotify , setCount , session}) => {
     const [getLoadGet , setLoadGet] = useState(true)
     const [getListNew , setListNew] = useState([0])
+    const [getWaitContent , setWaitContent] = useState("w")
 
     useEffect(()=>{
         window.addEventListener("click" , Close)
-        FetchNotifyData()
+        LoadContent()
         setShow(true)
 
         return(()=>{
             window.removeEventListener("click" , Close)
         })
     } , [])
+
+    const LoadContent = async () => {
+        setWaitContent(await FetchNotifyData())
+    }
 
     const Close = (e) => {
         if(e.target.getAttribute("notify") == null) {
@@ -378,22 +383,26 @@ const Notification = ({setShow , setContent , dataNotification , FetchNotifyData
     return(
         <section className="body-notification" notify="" onScroll={LoadGet}>
             <div className="list-notification" notify="">
-                { dataNotification.length ?
-                    dataNotification.map(val=>
-                        <div className="content-notification" key={val.id} notify="">
-                            <div className="box-left" notify="">
-                                <img notify="" src={val.img_farmer}></img>
-                            </div>
-                            <div className="box-right" notify="">
-                                <div className="subject" notify="">
-                                    {val.notify}
+                { 
+                getWaitContent != "w" ?
+                    dataNotification.length ?
+                        dataNotification.map(val=>
+                            <div className="content-notification" key={val.id} notify="">
+                                <div className="box-left" notify="">
+                                    <img notify="" src={val.img_farmer}></img>
                                 </div>
-                                <div className="date" notify="">
-                                    <TimeDiff DATE={val.date}/>
+                                <div className="box-right" notify="">
+                                    <div className="subject" notify="">
+                                        {val.notify}
+                                    </div>
+                                    <div className="date" notify="">
+                                        <TimeDiff DATE={val.date}/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ) : <div>ไม่มีการแจ้งเตือน</div>
+                        ) 
+                    : <div>ไม่มีการแจ้งเตือน</div>
+                : <Loading size={30} MaxSize={30} border={8} color="#22C7A9" animetion={true}/>
                 }
             </div>
         </section>

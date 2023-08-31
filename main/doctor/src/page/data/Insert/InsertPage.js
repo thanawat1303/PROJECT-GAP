@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MapsJSX } from "../../../../../../src/assets/js/module";
+import { GetLinkUrlOfSearch, MapsJSX } from "../../../../../../src/assets/js/module";
 
 const InsertPlant = ({nameInsert , typeInsert , DateQtyInsert , ErrReport , CheckInsert , stateOn}) => {
     useEffect(()=>{
@@ -182,8 +182,9 @@ const InsertSource = ({nameInsert , position , ErrReport , CheckInsert , stateOn
         setLng(0)
     } , [stateOn])
 
-    const GenerateMap = (e) => {
-        let Location = e.target.value.split("/").filter((val)=>val.indexOf("data") >= 0)
+    const GenerateMap = async (e) => {
+        let valueLocation = await GetLinkUrlOfSearch(e.target.value , "doctor")
+        let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
         if(Location[0]) {
             Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
         }
@@ -233,7 +234,7 @@ const InsertSource = ({nameInsert , position , ErrReport , CheckInsert , stateOn
         <div className="row">
             <label className="field-select">
                 <span>ตำแหน่งใน Google Map</span>
-                <input ref={InputUrl} placeholder="URL ปักหมุดแดง" onInput={GenerateMap} type="search"></input>
+                <input ref={InputUrl} placeholder="url/แชร์จาก google map" onInput={GenerateMap} type="search"></input>
             </label>
         </div>
         { Lag && Lng ?

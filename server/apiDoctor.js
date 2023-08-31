@@ -3209,6 +3209,32 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     })
 
+    app.get('/api/doctor/google/maps/get' , async (req , res)=>{
+        let username = req.session.user_doctor
+        let password = req.session.pass_doctor
+    
+        if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+            res.redirect('/api/logout')
+            return 0
+        }
+    
+        let con = Database.createConnection(listDB)
+    
+        try {
+            const result= await apifunc.auth(con , username , password , res , "acc_doctor")
+            if(result['result'] === "pass") {
+                https.get(req.query.link , (resLink)=>{
+                    res.send(resLink.rawHeaders)
+                })
+            }
+        } catch (err) {
+            con.end()
+            if(err == "not pass") {
+                res.redirect('/api/logout')
+            }
+        }
+    })
+
     const ProfileConvertImg = (profile , column_img) => {
         const listFarmer = profile.map((val)=>{
             val[column_img] = val[column_img].toString()

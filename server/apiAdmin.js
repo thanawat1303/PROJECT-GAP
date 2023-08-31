@@ -1,4 +1,6 @@
 require('dotenv').config().parsed
+const https = require('https');
+
 module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
   app.post('/api/admin/check' , (req , res)=>{
     res.redirect('/api/admin/auth');
@@ -497,6 +499,32 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       }
     }
   })
+
+  app.get('/api/admin/google/maps/get' , async (req , res)=>{
+    let username = req.session.user_admin
+    let password = req.session.pass_admin
+  
+    if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
+      res.redirect('/api/logout')
+      return 0
+    }
+  
+    let con = Database.createConnection(listDB)
+
+    try {
+        const auth = await apifunc.auth(con , username , password , res , "admin")
+        if(auth['result'] === "pass") {
+            https.get(req.query.link , (resLink)=>{
+                res.send(resLink.rawHeaders)
+            })
+        }
+    } catch (err) {
+      con.end()
+      if(err == "not pass") {
+        res.redirect('/api/logout')
+      }
+    }
+})
   
   // app.post('/api/admin/delete' , (req , res)=>{
   //   let timeoutSession = 20

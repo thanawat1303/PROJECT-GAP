@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../assets/style/page/data/ManageData.scss"
-import { MapsJSX } from "../../../../../src/assets/js/module";
+import { GetLinkUrlOfSearch, MapsJSX } from "../../../../../src/assets/js/module";
 import { clientMo } from "../../../../../src/assets/js/moduleClient";
 
 const ManageData = ({Ref , setPopup , DataOfPage , Type , Fetch , RowPresent , session}) => {
@@ -462,8 +462,10 @@ const EditSource = ({CheckEdit , Data , ErrReport}) => {
     const nameInsert = useRef()
     const InputUrl = useRef()
 
-    const GenerateMap = (e) => {
-        let Location = e.target.value.split("/").filter((val)=>val.indexOf("data") >= 0)
+    const GenerateMap = async (e) => {
+        let valueLocation = await GetLinkUrlOfSearch(e.target.value , "doctor")
+
+        let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
         if(Location[0]) {
             Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
         }
@@ -521,7 +523,7 @@ const EditSource = ({CheckEdit , Data , ErrReport}) => {
             <div className="row">
                 <label className="field-select">
                     <span>ตำแหน่งใน Google Map</span>
-                    <input ref={InputUrl} placeholder="URL ปักหมุดแดง" onInput={GenerateMap} type="search" 
+                    <input ref={InputUrl} placeholder="url/แชร์จาก google map" onInput={GenerateMap} type="search" 
                         defaultValue={Lag && Lng ? `https://www.google.co.th/maps/place/${Lag.toString().split(".")[0]}%C2%B002'14.2%22N+${Lng.toString().split(".")[0]}%C2%B043'36.0%22E/@${Lag},${Lng},17z/data=!3m1!4b1!4m4!3m3!8m2!3d${Lag}!4d${Lng}?entry=ttu` : ""}></input>
                 </label>
             </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-import { LoadOtherOffset, MapsJSX, ReportAction } from "../../../../src/assets/js/module";
+import { GetLinkUrlOfSearch, LoadOtherOffset, MapsJSX, ReportAction } from "../../../../src/assets/js/module";
 
 import ShowBecause from "./doctor/ShowBecause";
 
@@ -554,8 +554,10 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
         if(e) PageAddRef.current.toggleAttribute("show")
     }
 
-    const GenerateMap = (e) => {
-        let Location = e.target.value.split("/").filter((val)=>val.indexOf("data") >= 0)
+    const GenerateMap = async (e) => {
+
+        let valueLocation = await GetLinkUrlOfSearch(e.target.value , "admin")
+        let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
         if(Location[0]) {
             Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
         }

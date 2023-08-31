@@ -16,6 +16,17 @@ const MapsJSX = ({lat , lng , w , h}) => {
     )
 }
 
+const GetLinkUrlOfSearch = async (valueLocation , auth) => {
+    if(valueLocation.indexOf("goo.gl/maps") >= 0) {
+        const fecthOfGoogle = await clientMo.get(`/api/${auth}/google/maps/get?link=${valueLocation}`)
+        const convertToArray = eval(fecthOfGoogle)
+        const Location = convertToArray[convertToArray.indexOf("Location") + 1]
+        return Location
+    } else {
+        return valueLocation
+    }
+}
+
 const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
     const [DateOut , setDATE] = useState("")
     const DayWeek = [ 'วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'] 
@@ -96,6 +107,7 @@ const useLiff = (idLiff) => {
 }
 
 import "../style/camera.scss"
+import { clientMo } from "./moduleClient";
 const Camera = (props) => { // ยังไม่เสร็จ
     const [StatusCamera , setStatus] = useState(false)
     const [BodyCamera , setBody] = useState(<></>)
@@ -718,4 +730,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , DateSelect , TabLoad , HrefData}
+export {MapsJSX , GetLinkUrlOfSearch , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , DateSelect , TabLoad , HrefData}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MapsJSX, PatternCheck, ResizeImg } from "../../../../../../src/assets/js/module";
+import { GetLinkUrlOfSearch, MapsJSX, PatternCheck, ResizeImg } from "../../../../../../src/assets/js/module";
 import { clientMo } from "../../../../../../src/assets/js/moduleClient";
 
 const EditProfile = ({DataProfile , session , CheckEditFun}) => {
@@ -41,7 +41,9 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
 
     const getMapAndStation = async (e) => {
         try {
-            let Location = e.target.value.split("/").filter((val)=>val.indexOf("data") >= 0)
+
+            let valueLocation = await GetLinkUrlOfSearch(e.target.value , "doctor")
+            let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
             if(Location[0]) {
                 Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
             }
@@ -83,7 +85,9 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                 // setListStation([])
                 return { lag : DataProfile.location.x , lng : DataProfile.location.y }
             }
-        } catch(e) { session() }
+        } catch(e) {
+            session() 
+        }
     }
 
     const CheckEdit = async (Position , img) => {
@@ -98,7 +102,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
         const ckName = PatternCheck(fullname.current.value).fullname && fullname.current.value && fullname.current.value != DataProfile.fullname
         const ckLocation = lagIn != 0 && lngIn != 0 
                             && (lagIn != DataProfile.location.x || lngIn != DataProfile.location.y)
-        const ckStation = station.current.value && station.current.value != DataProfile.station
+        const ckStation = station.current ? station.current.value && station.current.value != DataProfile.station : ""
         const ckTel = Tel_number.current.value && Tel_number.current.value != DataProfile.tel_number
         const ckText_location = Text_location.current.value && Text_location.current.value != DataProfile.text_location
         const ckPassword = newPassword.current.value
@@ -111,7 +115,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                 text_location : Text_location.current.value,
                 lag : lagIn,
                 lng : lngIn,
-                station : station.current.value,
+                station : station.current ? station.current.value : "",
                 newPassword : newPassword.current.value,
                 img : ImageIn
             }
@@ -165,28 +169,31 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
             <div className="text-detail">
                 <span>รหัสประจำตัวเกษตรกร</span>
                 <div className="frame-text">
-                    <input onChange={()=>CheckEdit("" , "")} placeholder="เช่น 11630500" ref={id_farmer} defaultValue={DataProfile.id_farmer}></input>
+                    <input onChange={(e)=>e.nativeEvent.inputType ? CheckEdit("" , "") : e.target.value = ""} placeholder="เช่น 11630500" ref={id_farmer} defaultValue={DataProfile.id_farmer}></input>
                 </div>
             </div>
             <div className="text-detail">
                 <span>ชื่อ - นามสกุล</span>
                 <div className="frame-text">
-                    <input onChange={()=>CheckEdit("" , "")} placeholder="เช่น สมชาย ใจดี" ref={fullname} defaultValue={DataProfile.fullname}></input>
+                    <input onChange={(e)=>e.nativeEvent.inputType ? CheckEdit("" , "") : e.target.value = ""} placeholder="เช่น สมชาย ใจดี" ref={fullname} defaultValue={DataProfile.fullname}></input>
                 </div>
             </div>
             <div className="text-detail">
                 <span>เบอร์โทร</span>
                 <div className="frame-text">
                     <input onChange={(e)=>{
-                        CheckEdit("" , "")
-                        e.target.value = e.target.value.slice(0 , 10)
+                        if(e.nativeEvent.inputType) {
+                            CheckEdit("" , "")
+                            e.target.value = e.target.value.slice(0 , 10)
+                        }
+                        else e.target.value = ""
                     }} placeholder="10 หลัก เช่น 090-2959768" ref={Tel_number} defaultValue={DataProfile.tel_number}></input>
                 </div>
             </div>
             <div className="text-detail">
                 <span>ที่อยู่</span>
                 <div className="frame-text">
-                    <input onChange={()=>CheckEdit("" , "")} placeholder="เช่น บ้านเลขที่ 15/2 หมู่ที่ 4" ref={Text_location} defaultValue={DataProfile.text_location}></input>
+                    <input onInput={(e)=>e.nativeEvent.inputType ? CheckEdit("" , "") : e.target.value = ""} placeholder="เช่น บ้านเลขที่ 15/2 หมู่ที่ 4" ref={Text_location} defaultValue={DataProfile.text_location}></input>
                 </div>
             </div>
             <div className="text-detail">
@@ -195,10 +202,12 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
                     <MapsJSX lat={Lag} lng={Lng} w={"100%"} h={"10%"}/>
                 </div>
                 <div className="frame-text">
-                    <input onChange={ async (e)=>{
-                        const Position = await getMapAndStation(e)
-                        CheckEdit(Position)
-                    }} placeholder="url ที่ปักหมุดแดง" defaultValue={""}></input>
+                    <input onInput={ async (e)=>{
+                        if(e.nativeEvent.inputType) {
+                            const Position = await getMapAndStation(e)
+                            CheckEdit(Position)
+                        } else e.target.value = ""
+                    }} placeholder="url/แชร์จาก google map" defaultValue={""}></input>
                 </div>
             </div>
             <div className="text-detail">
@@ -220,7 +229,7 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
             <div className="text-detail">
                 <span>รหัสผ่านเกษตกร</span>
                 <div className="frame-text">
-                    <input onChange={()=>CheckEdit("" , "")} placeholder="กรอกรหัสผ่านใหม่" type="password" ref={newPassword} defaultValue={""}></input>
+                    <input onInput={(e)=>e.nativeEvent.inputType ? CheckEdit("" , "") : e.target.value = ""} placeholder="กรอกรหัสผ่านใหม่" type="password" ref={newPassword} defaultValue={""}></input>
                 </div>
             </div>
         </div>

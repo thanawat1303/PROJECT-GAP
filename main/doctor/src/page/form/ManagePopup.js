@@ -9,6 +9,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
     const [Content , setContent] = useState(<></>)
     // const [ID_farmer , setID_farmer] = useState("")
     const [LoadContent , setLoadContent] = useState(true)
+    const [getNameFarmer , setNameFarmer] = useState("")
 
     const [BodyPopupEdit , setBodyPopupEdit] = useState(<></>)
     const PopRef = useRef()
@@ -44,7 +45,8 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
         const Data = await clientMo.get(`/api/doctor/form/get/detail?id_form=${id_form}&type=${type_form}`)
         try {
             const JsonData = JSON.parse(Data)
-            console.log(Data)
+            if(!type_form) setNameFarmer(JsonData[0].fullname)
+            console.log(JsonData)
             setContent(
                 JsonData.map((data , key)=>
                     {
@@ -614,6 +616,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
             ExportPDF(DataExport)
         } else session()
     }
+
     return (
         <>
         <div className="content-detail-form">
@@ -705,6 +708,16 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                     </div>
                     :
                     <div className="content-body">
+                        {
+                            TypePage === 0 || TypePage === 1 || TypePage === 2 || TypePage === 4 ? 
+                            <div className="fullname-farmer">
+                                <div className="frame-text">
+                                    <div className="text">
+                                        {getNameFarmer}
+                                    </div>
+                                </div>
+                            </div> : <></>
+                        }
                         <div className="head-content">
                             <div className="text">{TypePage === 0 ? "ข้อมูลการปลูกพืช" : TypePage === 1 ? "ข้อมูลการใช้ปัจจัยการผลิต" : TypePage === 2 ? "ข้อมูลการใช้สารเคมี" : TypePage === 3 ? "ข้อมูลเกษตรกร" : TypePage === 4 ? "บันทึกเจ้าหน้าที่" : ""}</div>
                             { TypePage === 0 ?

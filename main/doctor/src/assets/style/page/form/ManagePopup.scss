@@ -112,9 +112,55 @@ $colorBoderBottonData : #3bc69c;
 
             .content-body {
                 display: flex;
+                position: relative;
                 flex-direction: column;
                 width: 100%;
                 height: 100%;
+                .fullname-farmer {
+                    position: absolute;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #9be8da;
+                    // backdrop-filter: blur(15px);
+                    width: 100%;
+                    height: 54.5px;
+                    z-index: -1;
+                    bottom: 100%;
+                    left: 0;
+                    border-radius: 50px;
+                    
+                    .frame-text {
+                        overflow-x: auto;
+                        overflow-y: hidden;
+                        width: 60%;
+                        .text {
+                            font:900 20px Sans-font;
+                            color: black;
+                            border: 0;
+                            outline: 0;
+                            cursor: default;
+                            text-align: center;
+                            background-color: transparent;
+                            // text-overflow: ellipsis;
+                            // overflow: hidden;
+                            text-wrap: nowrap;
+                        }
+                    }
+
+                    .frame-text::-webkit-scrollbar {
+                        height: 4px;
+                        // width: 2px;
+                        background-color: white;
+                        border-radius: 25px;
+                    }
+
+                    .frame-text::-webkit-scrollbar-thumb {
+                        background-color: #197866;
+                        border-radius: 25px;
+                    }
+                }
+
                 .head-content {
                     display: flex;
                     position: relative;

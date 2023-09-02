@@ -1715,6 +1715,18 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             LIMIT 1
                         ) as id_farmer, 
                         (
+                            SELECT fullname
+                            FROM acc_farmer , 
+                            (
+                                SELECT link_user
+                                FROM housefarm
+                                WHERE id_farm_house = formplant.id_farm_house
+                            ) as house
+                            WHERE acc_farmer.link_user = house.link_user
+                            ORDER BY date_register
+                            LIMIT 1
+                        ) as fullname,
+                        (
                             SELECT type_plant
                             FROM plant_list
                             WHERE name = formplant.name_plant

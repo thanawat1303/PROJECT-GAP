@@ -58,12 +58,12 @@ class moduleClient {
             } catch {
                 return ""
             }
-        }
+        },
         this.addAction = (el = '' , action , deley) => {
             setTimeout(()=>{
                 document.querySelector(el).classList.add(action)
             } , deley)
-        }
+        },
         this.rmAction = (el = '' , action , deley) => {
             setTimeout(()=>{
                 document.querySelector(el).classList.remove(action)
@@ -78,12 +78,14 @@ class moduleClient {
         },
         this.unLoadingPage = () => {
             let Load = document.getElementById("loading")
-            setTimeout(()=>{
-                Load.classList.add('hide')
+            if(!Load.classList.contains('hide')) {
                 setTimeout(()=>{
-                    Load.setAttribute("style" , "display: none; animation: none;")
-                } , 1100)
-            } , 1000)
+                    Load.classList.add('hide')
+                    setTimeout(()=>{
+                        Load.setAttribute("style" , "display: none; animation: none;")
+                    } , 1000)
+                } , 1)
+            }
         }
     }
 }

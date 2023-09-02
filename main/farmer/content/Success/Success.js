@@ -24,7 +24,7 @@ const Success = ({ setBody , id_house , id_plant , liff , setPage , type , isCli
         setPage("Success")
 
         FetchCheck()
-        if(document.getElementById("loading").classList[0] !== "hide")
+        // if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
     } , [])
 

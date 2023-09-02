@@ -19,7 +19,7 @@ const Report = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0})
     useEffect(()=>{
         setPage("Report")
 
-        if(document.getElementById("loading").classList[0] !== "hide")
+        // if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
     } , [])
 

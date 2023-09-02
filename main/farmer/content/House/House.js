@@ -276,13 +276,13 @@ const House = ({Ref , setPopup , id_farmhouse , setPage}) => {
         }
     } 
 
-    let loadnum = true
-    const LoadOn = () => {
-        if(loadnum) {
-            clientMo.unLoadingPage()
-            loadnum = false
-        }
-    }
+    // let loadnum = true
+    // const LoadOn = () => {
+    //     if(loadnum) {
+    //         clientMo.unLoadingPage()
+    //         loadnum = false
+    //     }
+    // }
 
     const actionArert = () => {
         setOpen(0)
@@ -375,7 +375,7 @@ const House = ({Ref , setPopup , id_farmhouse , setPage}) => {
         //     <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input>
         //     <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
         // </section>
-        <section ref={bodySection} onLoad={LoadOn} className="house-detail">
+        <section ref={bodySection} onLoad={clientMo.unLoadingPage} className="house-detail">
             <div className="content-max-width">
                 <div className="title">เพิ่มโรงเรือน</div>
                 <div className="frame-house-detail">

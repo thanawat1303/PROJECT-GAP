@@ -83,7 +83,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
         }
 
         setLoading(true)
-        if(document.getElementById("loading").classList[0] !== "hide")
+        // if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
     }
 

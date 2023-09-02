@@ -113,12 +113,15 @@ const Admin = ({setBodyFileMain , socket}) => {
     }
 
     return (
-        <div onLoad={()=>{
-            if(getLoad) {
-                clientMo.unLoadingPage()
-                setLoad(false)
-            }
-        }} className="admin" 
+        <div onLoad={
+        // ()=>{
+        //     if(getLoad) {
+        //         clientMo.unLoadingPage()
+        //         setLoad(false)
+        //     }
+        // }
+        clientMo.unLoadingPage
+    } className="admin" 
         // onMouseDown={this.hidePopUp} onContextMenu={this.hidePopUp}
         >
             {TabMenuTop}

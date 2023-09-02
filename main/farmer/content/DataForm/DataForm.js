@@ -67,7 +67,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
             setLoad(true)
             setWait(false)
         }
-        if(document.getElementById("loading").classList[0] !== "hide")
+        // if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
     }
 

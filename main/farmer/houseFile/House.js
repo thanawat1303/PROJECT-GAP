@@ -233,13 +233,13 @@ const House = ({liff}) => {
         }
     } 
 
-    let loadnum = true
-    const LoadOn = () => {
-        if(loadnum) {
-            clientMo.unLoadingPage()
-            loadnum = false
-        }
-    }
+    // let loadnum = true
+    // const LoadOn = () => {
+    //     if(loadnum) {
+    //         clientMo.unLoadingPage()
+    //         loadnum = false
+    //     }
+    // }
 
     const actionArert = () => {
         if(ResultPop != 0) {
@@ -276,7 +276,7 @@ const House = ({liff}) => {
     }
 
     return (
-        <section ref={bodySection} onLoad={LoadOn} className="house-add">
+        <section ref={bodySection} onLoad={clientMo.unLoadingPage} className="house-add">
             <div className="content-max-width">
                 <div className="title">เพิ่มโรงเรือน</div>
                 <div className="frame-house-add">

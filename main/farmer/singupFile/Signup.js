@@ -107,13 +107,13 @@ const SignUp = ({liff}) => {
         }
     }
 
-    const LoadPage = (e) => {
-        // setPositionBt()
-        clientMo.unLoadingPage()
-    }
+    // const LoadPage = (e) => {
+    //     // setPositionBt()
+    //     clientMo.unLoadingPage()
+    // }
 
     return (
-        <section id="content-signup-farmer" onLoad={LoadPage}>
+        <section id="content-signup-farmer" onLoad={clientMo.unLoadingPage}>
             <div className="frame-form" ref={frameForm}>
                 {PreviewData}
                 <div className="Loading-preview" ref={LoadingPreview}>

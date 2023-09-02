@@ -20,7 +20,8 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
         // FetchFormPlant()
         FetchCheck()
 
-        if(document.getElementById("loading").classList[0] !== "hide") clientMo.unLoadingPage()
+        // if(document.getElementById("loading").classList[0] !== "hide") 
+        clientMo.unLoadingPage()
     } , [])
 
     // const FetchFormPlant = async () => {

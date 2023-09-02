@@ -26,7 +26,8 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
         setBodyList(<></>)
         if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/${typeHraf.type}/${typeHraf.id_form_plant}`)
 
-        if(document.getElementById("loading").classList[0] !== "hide") clientMo.unLoadingPage();
+        // if(document.getElementById("loading").classList[0] !== "hide") 
+        clientMo.unLoadingPage();
         
         setLoadCheckSubmit(-1);
         fetchCheck();

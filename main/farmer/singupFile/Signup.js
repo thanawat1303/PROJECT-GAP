@@ -107,11 +107,6 @@ const SignUp = ({liff}) => {
         }
     }
 
-    // const LoadPage = (e) => {
-    //     // setPositionBt()
-    //     clientMo.unLoadingPage()
-    // }
-
     return (
         <section id="content-signup-farmer" onLoad={clientMo.unLoadingPage}>
             <div className="frame-form" ref={frameForm}>

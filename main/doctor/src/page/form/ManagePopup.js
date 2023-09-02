@@ -711,6 +711,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                         {
                             TypePage === 0 || TypePage === 1 || TypePage === 2 || TypePage === 4 ? 
                             <div className="fullname-farmer">
+                                <span>ชื่อเกษตรกร</span>
                                 <div className="frame-text">
                                     <div className="text">
                                         {getNameFarmer}

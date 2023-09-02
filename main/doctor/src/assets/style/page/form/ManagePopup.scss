@@ -120,22 +120,27 @@ $colorBoderBottonData : #3bc69c;
                     position: absolute;
                     display: flex;
                     justify-content: center;
+                    flex-direction: column;
                     align-items: center;
-                    background-color: #9be8da;
+                    background: linear-gradient(#9be8da , white);
                     // backdrop-filter: blur(15px);
                     width: 100%;
-                    height: 54.5px;
+                    height: 60px;
                     z-index: -1;
                     bottom: 100%;
                     left: 0;
-                    border-radius: 50px;
+                    border-radius: 45% 45% 0px 0px;
+
+                    span {
+                        font:900 16px Sans-font;
+                    }
                     
                     .frame-text {
                         overflow-x: auto;
                         overflow-y: hidden;
                         width: 60%;
                         .text {
-                            font:900 20px Sans-font;
+                            font:900 18px Sans-font;
                             color: black;
                             border: 0;
                             outline: 0;

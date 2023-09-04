@@ -53,6 +53,7 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
 
         if(ObjectData) {
             const List = JSON.parse(ObjectData)
+            console.log(List)
             if(StartRow != 0) {
                 setDataFetch([...DataFetch , ...List])
                 setRowStart([...DataFetch , ...List].length)

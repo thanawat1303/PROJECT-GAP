@@ -2772,7 +2772,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         SELECT * 
                         FROM ${From}
                         ${QuerySearch.join(" and ") ? `WHERE ${QuerySearch.join(" and ")}` : ""}
-                        ORDER BY is_use DESC , id DESC
+                        ORDER BY is_use DESC , name ASC
                         LIMIT ${Limit} OFFSET ${StartRow}
                         ` , 
                         (err , list) => {

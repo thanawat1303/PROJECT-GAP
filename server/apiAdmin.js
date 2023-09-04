@@ -325,7 +325,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
         con.query(
           `
           SELECT * FROM ${data.type}_list
-          ORDER BY is_use DESC
+          ORDER BY is_use DESC , name ASC
           LIMIT ${Limit} OFFSET ${StartRow}
           `
          , (err , result)=>{

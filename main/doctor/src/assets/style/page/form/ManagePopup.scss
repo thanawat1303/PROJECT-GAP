@@ -381,19 +381,19 @@ $colorBoderBottonData : #3bc69c;
                                         border-radius: 5px;
                                     }
 
-                                    button {
-                                        font-family: Sans-font;
-                                        font-size: 16px;
-                                        border-radius: 10px;
-                                        border: 0;
-                                        outline: 0;
-                                        padding: 0px 18px;
-                                        background-color: #358072;
-                                        color: white;
-                                        font-weight: 900;
-                                        box-shadow:0px 2px 2px #1e6255;
-                                        margin-top: 4px;
-                                    }
+                                    // button {
+                                    //     font-family: Sans-font;
+                                    //     font-size: 16px;
+                                    //     border-radius: 10px;
+                                    //     border: 0;
+                                    //     outline: 0;
+                                    //     padding: 0px 18px;
+                                    //     background-color: #358072;
+                                    //     color: white;
+                                    //     font-weight: 900;
+                                    //     box-shadow:0px 2px 2px #1e6255;
+                                    //     margin-top: 4px;
+                                    // }
                                 }
 
                                 .column {
@@ -432,6 +432,19 @@ $colorBoderBottonData : #3bc69c;
                                         background-color: transparent;
                                         padding: 0;
                                         text-align: end;
+                                    }
+                                }
+
+                                .field.menu-detail {
+                                    background-color: white;
+                                    border-radius: 8px;
+                                    padding: 2px;
+                                    box-shadow: 0px 2px 2px #103932;
+                                    margin-left: 5px;
+                                    .icon-menu {
+                                        font-size: 25px;
+                                        width: 25px;
+                                        fill: #358072;
                                     }
                                 }
                             }
@@ -939,6 +952,71 @@ $colorBoderBottonData : #3bc69c;
                 flex-direction: column;
                 padding: 10px;
                 width: 100%;
+
+                .content-img-report {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    margin-top: 10px;
+                    width: 100%;
+                    background-color: rgba(147, 206, 195, 0.4784313725);
+                    border-radius: 10px;
+                    padding: 10px 0px;
+
+                    .img-report-preview {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 200px;
+                        height: 200px;
+                        overflow: hidden;
+                        margin-bottom: 10px;
+
+    
+                        img[w=""] {
+                            width: 100%;
+                        }
+
+                        img[h=""] {
+                            height: 100%;
+                        }
+
+                        img {
+                            border-radius: 10px;
+                        }
+                    }
+
+                    .bt-manage-img {
+                        display: flex;
+                        justify-content: space-evenly;
+                        align-items: center;
+                        width: 100%;
+
+                        .delete , .add {
+                            color: white;
+                            padding: 0px 8px;
+                            border-radius: 15px;
+                            height: 25px;
+                        }
+
+                        .delete {
+                            background-color: rgb(229, 69, 69);
+                            box-shadow: 0px 4px 4px rgb(91, 25, 25);
+                        }
+                        .delete:active {
+                            box-shadow: 0px 4px 4px rgb(91, 25, 25) inset;
+                        }
+
+                        .add {
+                            background-color: #24806f;
+                            box-shadow: 0px 4px 4px #103932;
+                        }
+                        .add:active {
+                            box-shadow: 0px 4px 4px #103932 inset;
+                        }
+                    }
+                }
             }
 
             .check , .form {

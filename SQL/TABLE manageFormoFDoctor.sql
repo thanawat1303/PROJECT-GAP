@@ -24,3 +24,6 @@ CREATE TABLE check_plant_detail (
     id_table_doctor INT NOT NULL,
     date_check DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ALTER TABLE line_chat_gap.report_detail
+-- ADD image_path VARCHAR(100) NOT NULL;

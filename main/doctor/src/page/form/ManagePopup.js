@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react"
 import { clientMo } from "../../../../../src/assets/js/moduleClient"
 import "../../assets/style/page/form/ManagePopup.scss"
-import { DayJSX, Loading, MapsJSX, PopupDom } from "../../../../../src/assets/js/module"
+import { DayJSX, Loading, MapsJSX, PopupDom, ResizeImg } from "../../../../../src/assets/js/module"
 import DetailEdit from "./DetailEdit"
 import { ExportPDF } from "../../../../../src/assets/js/Export"
+import { ListCheckForm, ListReport } from "./ListManageDoctor"
 
 const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , RefData}) => {
     const [Content , setContent] = useState(<></>)
@@ -467,73 +468,10 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                         </>
                         :
                         type_page === "report" ? 
-                        <>
-                            <div className="row">
-                                <div className="field">
-                                    <span>ครั้งที่</span>
-                                    <div>{key + 1}</div>
-                                </div>
-                                <div className="field date">
-                                    <span>วันที่</span>
-                                    <DayJSX DATE={data.date_report} TYPE="small"/>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="field column">
-                                    <span>ข้อแนะนำ</span>
-                                    <div>{data.report_text}</div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="field">
-                                    <span>เจ้าหน้าที่</span>
-                                    <div>{data.name_doctor}</div>
-                                </div>
-                                <div className="field">
-                                    <span>ไอดีเจ้าหน้าที่</span>
-                                    <div>{data.id_doctor}</div>
-                                </div>
-                            </div>
-                            {
-                                data.check_doctor ?
-                                <div className="row end">
-                                    <div className="field">
-                                        <button className="edit-report" onClick={()=>PopupEditReport(data , "report")}>แก้ไข</button>
-                                    </div>
-                                </div> : <></>
-                            }
-                        </> :
+                            <ListReport data={data} index={key}/> 
+                        :
                         type_page === "CheckForm" ? 
-                        <>
-                        <div className="row">
-                            <div className="field">
-                                <span>ผลตรวจสอบ</span>
-                                <div>{data.status_check ? "ผ่าน" : "ไม่ผ่าน"}</div>
-                            </div>
-                            <div className="field date">
-                                <span>วันที่</span>
-                                <DayJSX DATE={data.date_check} TYPE="small"/>
-                            </div>
-                        </div>
-                        { data.status_check ? <></> :
-                            <div className="row">
-                                <div className="field column">
-                                    <span>การแก้ไข</span>
-                                    <div>{data.note_text ? data.note_text : "ไม่ระบุ"}</div>
-                                </div>
-                            </div>
-                        }
-                        <div className="row">
-                            <div className="field">
-                                <span>เจ้าหน้าที่</span>
-                                <div>{data.name_doctor}</div>
-                            </div>
-                            <div className="field">
-                                <span>ไอดีเจ้าหน้าที่</span>
-                                <div>{data.id_doctor}</div>
-                            </div>
-                        </div>
-                        </>
+                            <ListCheckForm data={data} index={key}/>
                         :
                         type_page === "CheckPlant" ?  
                         <>
@@ -886,6 +824,7 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
 
 const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeInsert , id_plant , statusSuccess}) => {
     const NoteText = useRef()
+    const ImgReport = useRef()
     const [QtyNote , setQtyNote] = useState(0)
     
     const StateCheckBefore = useRef()
@@ -899,10 +838,11 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
     const Password = useRef()
     const BtConfirm = useRef()
 
+    const [getImgPreview , setImgPreview] = useState("")
+
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
-        console.log(statusSuccess)
     } , [])
 
     const close = () => {
@@ -914,8 +854,9 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
         })
     }
 
-    const CheckData = (state = "") => {
+    const CheckData = async (state = "") => {
         const noteText = NoteText.current
+        const Img = ImgReport.current ? ImgReport.current.files[0] ? await ResizeImg(ImgReport.current.files[0] , 600) : "" : ""
         const statusCheck = StatusCheck.current
         let stateCheck = StateCheck
         const Pw = Password.current
@@ -951,6 +892,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
             return typeInsert === "report" ? 
                 { 
                     report_text : noteText.value , 
+                    img_report : Img,
                     password : Pw.value , 
                     id_plant : id_plant
                 } : 
@@ -980,11 +922,11 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
     }
 
     const Confirm = async () => {
-        const Data = CheckData()
+        const Data = await CheckData()
         console.log(Data)
         if(Data) {
             const url = typeInsert === "report" ? '/api/doctor/form/manage/report/insert' : typeInsert === "CheckPlant" ? '/api/doctor/form/manage/checkplant/insert' : '/api/doctor/form/manage/checkform/insert';
-            const result = await clientMo.post(url , Data)
+            const result = await clientMo.postForm(url , Data)
             
             console.log(result)
             if(result === "113" || result === "max") {
@@ -1012,6 +954,40 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                         </div>
                         <div className="show-max-text">{QtyNote}/70</div>
                         <textarea onChange={()=>CheckData()} onInput={(e)=>setQtyNote(e.target.value.length)} ref={NoteText} maxLength={70} placeholder="กรอกข้อความ"></textarea>
+                        <div className="content-img-report">
+                            { getImgPreview ?
+                                <div className="img-report-preview" onLoad={(e)=>{
+                                    if(e.target.clientHeight > e.target.clientWidth) {
+                                        e.target.setAttribute("h" , "")
+                                        e.target.removeAttribute("w")
+                                    } else {
+                                        e.target.setAttribute("w" , "")
+                                        e.target.removeAttribute("h")
+                                    }
+                                }}>
+                                    <img src={getImgPreview}></img>
+                                </div>
+                                : <></>
+                            }
+                            <div className="bt-manage-img">
+                                { getImgPreview ?
+                                    <span className="delete" onClick={()=>{
+                                        setImgPreview("")
+                                        ImgReport.current.value = ""
+                                    }}>ลบรูปภาพ</span> : <></>
+                                }
+                                <label>
+                                    <input capture="user" ref={ImgReport} onChange={(e)=>{
+                                        if(e.target.files[0].type.indexOf("image") >= 0) {
+                                            setImgPreview(URL.createObjectURL(e.target.files[0]))
+                                            CheckData()
+                                            e.preventDefault()
+                                        }
+                                    }} hidden type="file"></input>
+                                    <span className="add">เพิ่มรูปภาพ</span>
+                                </label>
+                            </div>
+                        </div>
                         <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div> :
                     typeInsert === "CheckPlant" ? 

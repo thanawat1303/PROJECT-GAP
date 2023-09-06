@@ -1,6 +1,7 @@
 require('dotenv').config().parsed
 const wordcut = require('thai-wordcut')
 const axios = require('axios').default;
+const fs = require("fs")
 wordcut.init()
 
 const {Server} = require('socket.io')
@@ -2288,38 +2289,50 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                con.query(
-                    `
-                    SELECT COUNT(id) as count
-                    FROM report_detail
-                    WHERE id_plant = ?
-                    ` , [req.body.id_plant] ,
-                    (err , reportChk)=> {
-                        if(!err) {
-                            con.query(
-                                `
-                                    INSERT report_detail
-                                    (id_plant , report_text , id_table_doctor)
-                                    VALUES
-                                    (? , ? , ?)
-                                ` , [ req.body.id_plant , req.body.report_text , result.data.id_table_doctor ] ,
-                                async (err , result) =>{
-                                    if (!err) {
-                                        await SendToFarmerHouse(con , req.body.id_plant , "หมอพืชให้คำแนะนำกับการปลูก")
-                                        con.end()
-                                        res.send("113")
-                                    } else {
-                                        con.end()
-                                        res.send("")
-                                    }
+                try {
+                    const name = req.body.img_report ? 
+                        await new Promise((resole , reject)=>{
+                            const name_image = `${result.data.id_table_doctor}${req.body.id_plant}${new Date().getTime()}.jpg`
+                            const Path = __dirname.replace("server" , "src") + `/assets/img/doctor/report/${name_image}`
+                            const base64Data = req.body.img_report.replace("data:image/jpeg;base64," , "")
+                            const imageBuffer = Buffer.from(base64Data, 'base64');
+                            fs.writeFile( Path , imageBuffer , (err)=>{
+                                if(err) reject("not image")
+                                else resole(name_image)
+                            })
+                        }) : ""
+                    
+                    con.query(
+                        `
+                            INSERT report_detail
+                            (id_plant , report_text , id_table_doctor , image_path)
+                            VALUES
+                            (? , ? , ? , ?)
+                        ` , [ req.body.id_plant , req.body.report_text , result.data.id_table_doctor , name ] ,
+                        async (err , result) =>{
+                            if (!err) {
+                                const arrUID = await SendToFarmerHouse(con , req.body.id_plant , "หมอพืชให้คำแนะนำกับการปลูก" , `\nคำแนะนำ : ${req.body.report_text}`)
+                                if(name) {
+                                    const imageURL = `${UrlApi}/doctor/report/${name}`;
+                                    try{
+                                        Line.multicast(arrUID , {type : "image" , originalContentUrl : imageURL , previewImageUrl : imageURL})
+                                    } catch(e) {}
                                 }
-                            )
-                        } else {
-                            con.end()
-                            res.send("")
+
+                                con.end()
+                                res.send("113")
+                            } else {
+                                con.end()
+                                res.send("not")
+                            }
                         }
+                    )
+                } catch (e) {
+                    if(e === "not image") {
+                        con.end()
+                        res.send("not")
                     }
-                )
+                }
             }
         } catch (err) {
             con.end()
@@ -3263,7 +3276,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         return listFarmer
     }
 
-    const SendToFarmerHouse = async (con , id_plant , textSend) => {
+    const SendToFarmerHouse = async (con , id_plant , textSend , otherText = "") => {
         return await new Promise((resole , reject)=>{
             con.query(
                 `
@@ -3281,17 +3294,19 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 ) as house
                 WHERE house.link_user = acc_farmer.link_user and acc_farmer.register_auth != 2
                 ` , [ id_plant ] ,
-                (err , listFarmer) => {
+                async (err , listFarmer) => {
                     if(!err) {
                         const uid = listFarmer.map(val=>val.uid_line).filter(val=>val)
                         const nameHouse = [...(new Set(listFarmer.map(val=>val.name_house).filter(val=>val)))]
                         if(uid.length != 0 && nameHouse.length != 0) {
                             try {
-                                Line.multicast([...(new Set(uid))] , {type : "text" , text : `${textSend}\nในโรงเรือน : ${nameHouse[0]}`})
-                            } catch(e) {}
-                        }
-                    }
-                    resole("")
+                                await Line.multicast([...(new Set(uid))] , {type : "text" , text : `${textSend}\nในโรงเรือน : ${nameHouse[0]}${otherText}`})
+                                resole([...(new Set(uid))])
+                            } catch(e) {
+                                resole("")
+                            }
+                        } else resole("")
+                    } else resole("")
                 }
             )
         })

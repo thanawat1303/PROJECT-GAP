@@ -937,7 +937,10 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                 Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
             } else if (result === "not") {
                 console.log("not")
-            } else session()
+            } else if (result === "not image") {
+                
+            }
+            else session()
         } 
     }
 

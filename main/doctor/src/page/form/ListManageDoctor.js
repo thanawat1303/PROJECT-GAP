@@ -38,25 +38,26 @@ const ListReport = ({data , index}) => {
                     <div>{data.id_doctor}</div>
                 </div>
             </div> */}
-            {
-                data.check_doctor ?
-                <div className="row end">
-                    { data.image_path ?
-                        <div className="field menu-detail" onClick={OpenImg}>
-                            <svg className="icon-menu" viewBox="0 0 16 16" >
-                                <path id="rect4082" d="M1 1v14h14V1zm1 1h12v12H2z"/>
-                                <path id="path847" d="M5 3a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2zm0 1a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1z" /><path id="path869" d="m3 12 1 1 3-3 1 1 2-2 2 2 1-1-3-3-2 2-1-1z" />
-                            </svg>
-                        </div> : <></>
-                    }
-                    <div className="field menu-detail">
-                        <svg className="icon-menu" viewBox="0 0 1024 1024">
-                            <path d="M160 448a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H608zM160 896a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H608z"/>
+            <div className="row end">
+                { data.image_path ?
+                    <div className="field menu-detail" onClick={OpenImg}>
+                        <svg className="icon-menu" viewBox="0 0 16 16" >
+                            <path id="rect4082" d="M1 1v14h14V1zm1 1h12v12H2z"/>
+                            <path id="path847" d="M5 3a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2zm0 1a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1z" /><path id="path869" d="m3 12 1 1 3-3 1 1 2-2 2 2 1-1-3-3-2 2-1-1z" />
                         </svg>
-                        {/* <button className="edit-report" onClick={()=>PopupEditReport(data , "report")}>แก้ไข</button> */}
-                    </div>
-                </div> : <></>
-            }
+                    </div> : <></>
+                }
+                <div className="field menu-detail">
+                    <svg className="icon-menu" viewBox="0 0 1024 1024">
+                        <path d="M160 448a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H608zM160 896a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H608z"/>
+                    </svg>
+                    {/* <button className="edit-report" onClick={()=>PopupEditReport(data , "report")}>แก้ไข</button> */}
+                </div>
+            </div>
+            {/* {
+                data.check_doctor ?
+                 : <></>
+            } */}
         </>
     )
 }

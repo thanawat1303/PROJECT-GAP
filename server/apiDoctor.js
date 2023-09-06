@@ -5,7 +5,8 @@ const fs = require("fs")
 wordcut.init()
 
 const {Server} = require('socket.io')
-const LINE = require('./configLine')
+const LINE = require('./configLine');
+const reportAdmin = require('./reportToAdmin');
 const io = new Server()
 const RichSign = "richmenu-e6dd99ccb1aebb953c976a8188b20cd7"
 const RichHouse = "richmenu-93377925aa45b5dc5585f85749f8af8b"
@@ -2330,7 +2331,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 } catch (e) {
                     if(e === "not image") {
                         con.end()
-                        res.send("not")
+                        res.send("not image")
                     }
                 }
             }

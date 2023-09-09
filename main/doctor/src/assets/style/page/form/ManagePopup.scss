@@ -370,12 +370,12 @@ $colorBoderBottonData : #3bc69c;
                                 .field {
                                     display: flex;
 
-                                    span {
+                                    span.subject {
                                         font-weight: 900;
                                         margin-right: 4px;
                                     }
 
-                                    div {
+                                    div.value {
                                         background-color: white;
                                         padding: 0px 4px;
                                         border-radius: 5px;
@@ -422,6 +422,7 @@ $colorBoderBottonData : #3bc69c;
                                         padding-left: 8px;
                                         margin-bottom: -8px;
                                         margin-right: 0;
+                                        font-weight: 900;
                                     }
 
                                     input {
@@ -436,6 +437,7 @@ $colorBoderBottonData : #3bc69c;
                                 }
 
                                 .field.menu-detail {
+                                    position: relative;
                                     background-color: white;
                                     border-radius: 8px;
                                     padding: 2px;
@@ -446,10 +448,51 @@ $colorBoderBottonData : #3bc69c;
                                         width: 25px;
                                         fill: #358072;
                                     }
+
+                                    .menu-popup[show=""] {
+                                        opacity: 1;
+                                        visibility: visible;
+                                    }
+
+                                    .menu-popup {
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: center;
+                                        align-items: center;
+                                        position: absolute;
+                                        background-color: white;
+                                        border-radius: 8px;
+                                        box-shadow: 0px 2px 2px #49805f;
+                                        right: 110%;
+                                        bottom: 0;
+                                        width: 70px;
+                                        overflow: hidden;
+                                        opacity: 0;
+                                        visibility: hidden;
+                                        transition: 0.5s opacity , 0.5s visibility;
+
+                                        span {
+                                            width: 100%;
+                                            display: flex;
+                                            justify-content: center;
+                                            align-items: center;
+                                            padding: 2px 0px;
+                                            font-size: 16px;
+                                            font-weight: 900;
+                                            cursor: pointer;
+                                        }
+
+                                        span:hover {
+                                            color: white;
+                                            background-color: #22C7A9;
+                                        }
+                                    }
                                 }
                             }
 
                             .end {
+                                margin: 0;
+                                margin-top: 2px;
                                 justify-content: end;
                             }
                         }
@@ -1151,6 +1194,74 @@ $colorBoderBottonData : #3bc69c;
                     background-color: red;
                 }
             }
+        }
+    }
+
+    .doctor-detail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background-color: white;
+        box-shadow: 0px 0px 8px #103932;
+        width: 85%;
+        max-width: 250px;
+        border-radius: 15px;
+        padding: 2px;
+
+        .head-detail {
+            background-color: #0d562a;
+            width: 100%;
+            border-radius: 15px;
+            font:900 18px Sans-font;
+            text-align: center;
+            color: white;
+        }
+
+        .doctor-detail-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            margin: 8px 0px;
+            
+            .box-detail {
+                width: 95%;
+                text-align: center;
+                margin: 4px 0px;
+                border-radius: 15px;
+                padding-top: 4px;
+                background-color: #22C7A9;
+                box-shadow: 0px 0px 4px #22C7A9;
+                .subject-detail {
+                    font:900 15.5px Sans-font;
+                }
+
+                .value-detail {
+                    background-color: #67e3cd;
+                    border-radius: 15px;
+                    padding: 2px 0px;
+                    font:500 15.5px Sans-font;
+                }
+            }
+        }
+
+        .close {
+            background-color: red;
+            color: white;
+            width: 100%;
+            text-align: center;
+            border-radius: 15px;
+            font:900 18px Sans-font;
+        }
+
+        .close:hover {
+            box-shadow: 0px 0px 2px rgb(96, 21, 21);
+        }
+
+        .close:active {
+            box-shadow: 0px 0px 15px rgb(96, 21, 21) inset;
         }
     }
 }

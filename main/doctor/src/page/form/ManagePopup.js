@@ -4,7 +4,7 @@ import "../../assets/style/page/form/ManagePopup.scss"
 import { DayJSX, Loading, MapsJSX, PopupDom, ResizeImg } from "../../../../../src/assets/js/module"
 import DetailEdit from "./DetailEdit"
 import { ExportPDF } from "../../../../../src/assets/js/Export"
-import { ListCheckForm, ListReport } from "./ListManageDoctor"
+import { DoctorDetail, ListCheckForm, ListCheckPlant, ListReport, ListSuccess } from "./ListManageDoctor"
 
 const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , RefData}) => {
     const [Content , setContent] = useState(<></>)
@@ -444,64 +444,16 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
                     status_check={type_page === "CheckForm" ? data.status_check : null}>
                     {
                         type_page === "success" ? 
-                        <>
-                            <div className="row">
-                                <div className="field">
-                                    <span>ไอดีเก็บเกี่ยว</span>
-                                    <div>{data.id_success}</div>
-                                </div>
-                                <div className="field date">
-                                    <span>วันที่</span>
-                                    <DayJSX DATE={data.date_of_doctor} TYPE="small"/>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="field">
-                                    <span>เจ้าหน้าที่</span>
-                                    <div>{data.name_doctor}</div>
-                                </div>
-                                <div className="field">
-                                    <span>ไอดีเจ้าหน้าที่</span>
-                                    <div>{data.id_doctor}</div>
-                                </div>
-                            </div>
-                        </>
+                            <ListSuccess data={data} index={key} DoctorSuccess={PopupDoctorDetail}/>
                         :
                         type_page === "report" ? 
-                            <ListReport data={data} index={key}/> 
+                            <ListReport data={data} index={key} EditReport={PopupEditReport} DoctorReport={PopupDoctorDetail}/> 
                         :
                         type_page === "CheckForm" ? 
-                            <ListCheckForm data={data} index={key}/>
+                            <ListCheckForm data={data} index={key} DoctorCheck={PopupDoctorDetail}/>
                         :
                         type_page === "CheckPlant" ?  
-                        <>
-                        <div className="row">
-                            <div className="field">
-                                <span>ผลวิเคราะห์</span>
-                                <div>{!data.state_check ? "ก่อน" : "หลัง"} : {data.status_check}</div>
-                            </div>
-                            <div className="field date">
-                                <span>วันที่</span>
-                                <DayJSX DATE={data.date_check} TYPE="small"/>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="field column">
-                                <span>หมายเหตุ</span>
-                                <div>{data.note_text ? data.note_text : "ไม่ระบุ"}</div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="field">
-                                <span>เจ้าหน้าที่</span>
-                                <div>{data.name_doctor}</div>
-                            </div>
-                            <div className="field">
-                                <span>ไอดีเจ้าหน้าที่</span>
-                                <div>{data.id_doctor}</div>
-                            </div>
-                        </div>
-                        </>
+                            <ListCheckPlant data={data} index={key} DoctorPlant={PopupDoctorDetail}/>
                         : ""
                     }
                 </section>
@@ -543,7 +495,6 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
         else session()
     }
 
-
     //export menu 
     const PdfExport = async (id_table) => {
         let JsonData = {textInput : id_table}
@@ -553,6 +504,11 @@ const ManagePopup = ({setPopup , RefPop , id_form , status , session , Fecth , R
             const DataExport = JSON.parse(ExportFetch)
             ExportPDF(DataExport)
         } else session()
+    }
+
+    // doctor Detail
+    const PopupDoctorDetail = async (Data) => {
+        setManagePop(<DoctorDetail Ref={RefManagePopup} setPopup={setManagePop} session={session} Data={Data}/>)
     }
 
     return (
@@ -1045,15 +1001,28 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
 
 const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
     const NoteText = useRef()
+    const ImgReport = useRef()
     const [QtyNote , setQtyNote] = useState(Data.report_text.length)
     
     const Password = useRef()
     const BtConfirm = useRef()
+    const [getImgPreview , setImgPreview] = useState(`/doctor/report/${Data.image_path}`)
 
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
+
+        FetchImage()
     } , [])
+
+    const FetchImage = () => {
+        console.log(window.location.hostname)
+        // fetch(`${window}/doctor/report/${Data.image_path}`)
+        //     .then(response => response.blob())
+        //     .then(blob => {
+        //         const objectURL = URL.createObjectURL(blob);
+        //     })
+    }
 
     const close = () => {
         Ref.current.style.opacity = "0"
@@ -1064,20 +1033,24 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
         })
     }
 
-    const CheckData = () => {
+    const CheckData = async () => {
         const noteText = NoteText.current
         const Pw = Password.current
+        const Image = ImgReport.current.files[0] ? await ResizeImg(ImgReport.current.files[0] , 600) : ""
 
-        if(noteText.value && noteText.value != Data.report_text && Pw.value) {
+        if(((noteText.value && noteText.value != Data.report_text) || (Image)) && Pw.value) {
             BtConfirm.current.setAttribute("pass" , "")
-            return(
-                { 
-                    id : Data.id,
-                    id_plant : Data.id_plant,
-                    report_text : noteText.value , 
-                    password : Pw.value
-                } 
-            )
+            const DataExport = { 
+                id : Data.id,
+                id_plant : Data.id_plant,
+                report_text : noteText.value,
+                image_object : Image,
+                password : Pw.value
+            }
+
+            if(!(noteText.value && noteText.value != Data.report_text)) delete DataExport.report_text
+            if(!Image) delete DataExport.image_object
+            return DataExport
         } else {
             BtConfirm.current.removeAttribute("pass")
             return false
@@ -1085,21 +1058,21 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
     }
 
     const Confirm = async () => {
-        const Data = CheckData()
+        const Data = await CheckData()
         if(Data) {
             console.log(Data)
-            const result = await clientMo.post("/api/doctor/form/manage/report/edit" , Data)
+            // const result = await clientMo.post("/api/doctor/form/manage/report/edit" , Data)
 
-            console.log(result)
-            if(result === "113") {
-                FetchData()
-                close()
-            } else if (result === "password") {
-                Password.current.value = ""
-                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
-            } else if (result === "not") {
-                console.log("not")
-            } else session()
+            // console.log(result)
+            // if(result === "113") {
+            //     FetchData()
+            //     close()
+            // } else if (result === "password") {
+            //     Password.current.value = ""
+            //     Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+            // } else if (result === "not") {
+            //     console.log("not")
+            // } else session()
         } 
     }
 
@@ -1113,6 +1086,41 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
                     </div>
                     <div className="show-max-text">{QtyNote}/70</div>
                     <textarea defaultValue={Data.report_text} onChange={()=>CheckData()} onInput={(e)=>setQtyNote(e.target.value.length)} ref={NoteText} maxLength={70} placeholder="กรอกข้อความ"></textarea>
+                    <div className="content-img-report">
+                        { getImgPreview ?
+                            <div className="img-report-preview" onLoad={(e)=>{
+                                if(e.target.clientHeight > e.target.clientWidth) {
+                                    e.target.setAttribute("h" , "")
+                                    e.target.removeAttribute("w")
+                                } else {
+                                    e.target.setAttribute("w" , "")
+                                    e.target.removeAttribute("h")
+                                }
+                            }}>
+                                <img src={getImgPreview}></img>
+                            </div>
+                            : <></>
+                        }
+                        <div className="bt-manage-img">
+                            { getImgPreview ?
+                                <span className="delete" onClick={()=>{
+                                    setImgPreview("")
+                                    ImgReport.current.value = ""
+                                    CheckData()
+                                }}>ลบรูปภาพ</span> : <></>
+                            }
+                            <label>
+                                <input capture="user" ref={ImgReport} onChange={(e)=>{
+                                    if(e.target.files[0].type.indexOf("image") >= 0) {
+                                        setImgPreview(URL.createObjectURL(e.target.files[0]))
+                                        CheckData()
+                                        e.preventDefault()
+                                    }
+                                }} hidden type="file"></input>
+                                <span className="add">เพิ่มรูปภาพ</span>
+                            </label>
+                        </div>
+                    </div>
                     <input value={`ผู้บันทึก ${Data.name_doctor}`} readOnly className="name-doctor" type="text"></input>
                 </div>
             </div>

@@ -2356,24 +2356,65 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
-                const DateNew = apifunc.DateTime(new Date())
-                con.query(
-                    `
-                    UPDATE report_detail
-                    SET report_text = ? , date_report = ?
-                    WHERE id_plant = ? and id = ? and id_table_doctor = ?
-                    ` , [ req.body.report_text , DateNew , req.body.id_plant , req.body.id , result.data.id_table_doctor ],
-                    (err , resultEdit) => {
-                        if (err) {
-                            dbpacket.dbErrorReturn(con, err, res);
-                            console.log("edit report");
-                            return 0;
-                        }
+                try {
 
-                        con.end()
-                        res.send("113")
+                    const img_path = req.body.image_object != undefined ?
+                        await new Promise((resole , reject)=>{
+                            con.query(
+                                `
+                                SELECT image_path
+                                FROM report_detail
+                                WHERE id_plant = ? and id = ? and id_table_doctor = ?
+                                ` , [ req.body.id_plant , req.body.id , result.data.id_table_doctor ] ,
+                                async (err , resoleImg) => {
+                                    if(!err) {
+                                        const Path = __dirname.replace("server" , "src") + `/assets/img/doctor/report/`
+                                        // หากเจอภาพเก่า จึงลบออก
+                                        if(resoleImg[0].image_path)
+                                            try { fs.rmSync(Path + `${resoleImg[0].image_path}`) } catch(e){}
+
+                                        // อัปไฟล์ใหม่ลง server
+                                        if(req.body.image_object) {
+                                            const name_image = `${result.data.id_table_doctor}${req.body.id_plant}${new Date().getTime()}.jpg`
+                                            const base64Data = req.body.image_object.replace("data:image/jpeg;base64," , "")
+                                            const imageBuffer = Buffer.from(base64Data, 'base64');
+                                            fs.writeFile( Path + name_image , imageBuffer , (err)=>{
+                                                if(err) reject("not image")
+                                                else resole(name_image)
+                                            })
+                                        } else resole("")
+                                    } else reject("not update")
+                                }
+                            )
+                        }) : null;
+
+                    if(req.body.report_text || img_path != null) {
+                        const SET = new Array(req.body.report_text ? `report_text = '${req.body.report_text}'` : "" , img_path != null ? `image_path = '${img_path}'` : "")
+                                        .filter(val=>val).join(",")
+                        
+                        con.query(
+                            `
+                            UPDATE report_detail
+                            SET ${SET}
+                            WHERE id_plant = ? and id = ? and id_table_doctor = ?
+                            ` , [ req.body.id_plant , req.body.id , result.data.id_table_doctor ],
+                            (err , resultEdit) => {
+                                if (err) {
+                                    dbpacket.dbErrorReturn(con, err, res);
+                                    console.log("edit report");
+                                    return 0;
+                                }
+    
+                                con.end()
+                                res.send("113")
+                            }
+                        )
                     }
-                )
+                } catch (e) {
+                    console.log(e)
+                    con.end()
+                    res.send("not")
+                }
             }
         } catch (err) {
             con.end()

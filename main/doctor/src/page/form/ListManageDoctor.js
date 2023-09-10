@@ -174,7 +174,7 @@ const DoctorDetail = ({Ref , setPopup , session , Data}) => {
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
-        console.log(Data)
+        // console.log(Data)
         Check()
     } , [])
 

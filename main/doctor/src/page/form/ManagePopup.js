@@ -1006,23 +1006,14 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
     
     const Password = useRef()
     const BtConfirm = useRef()
-    const [getImgPreview , setImgPreview] = useState(`/doctor/report/${Data.image_path}`)
+
+    const [getReadyImage , setReadyImage] = useState(false)
+    const [getImgPreview , setImgPreview] = useState(Data.image_path ? `/doctor/report/${Data.image_path}` : "")
 
     useEffect(()=>{
         Ref.current.style.opacity = "1"
         Ref.current.style.visibility = "visible"
-
-        FetchImage()
     } , [])
-
-    const FetchImage = () => {
-        console.log(window.location.hostname)
-        // fetch(`${window}/doctor/report/${Data.image_path}`)
-        //     .then(response => response.blob())
-        //     .then(blob => {
-        //         const objectURL = URL.createObjectURL(blob);
-        //     })
-    }
 
     const close = () => {
         Ref.current.style.opacity = "0"
@@ -1033,12 +1024,12 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
         })
     }
 
-    const CheckData = async () => {
+    const CheckData = async (valueImage = false) => {
         const noteText = NoteText.current
         const Pw = Password.current
         const Image = ImgReport.current.files[0] ? await ResizeImg(ImgReport.current.files[0] , 600) : ""
 
-        if(((noteText.value && noteText.value != Data.report_text) || (Image)) && Pw.value) {
+        if(((noteText.value && noteText.value != Data.report_text) || ((getReadyImage || valueImage) && ImgReport.current.value != Data.image_path)) && Pw.value) {
             BtConfirm.current.setAttribute("pass" , "")
             const DataExport = { 
                 id : Data.id,
@@ -1049,7 +1040,7 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
             }
 
             if(!(noteText.value && noteText.value != Data.report_text)) delete DataExport.report_text
-            if(!Image) delete DataExport.image_object
+            if(!(getReadyImage || valueImage)) delete DataExport.image_object
             return DataExport
         } else {
             BtConfirm.current.removeAttribute("pass")
@@ -1061,18 +1052,18 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
         const Data = await CheckData()
         if(Data) {
             console.log(Data)
-            // const result = await clientMo.post("/api/doctor/form/manage/report/edit" , Data)
+            const result = await clientMo.post("/api/doctor/form/manage/report/edit" , Data)
 
-            // console.log(result)
-            // if(result === "113") {
-            //     FetchData()
-            //     close()
-            // } else if (result === "password") {
-            //     Password.current.value = ""
-            //     Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
-            // } else if (result === "not") {
-            //     console.log("not")
-            // } else session()
+            console.log(result)
+            if(result === "113") {
+                FetchData()
+                close()
+            } else if (result === "password") {
+                Password.current.value = ""
+                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+            } else if (result === "not") {
+                // console.log("not")
+            } else session()
         } 
     }
 
@@ -1105,15 +1096,17 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
                             { getImgPreview ?
                                 <span className="delete" onClick={()=>{
                                     setImgPreview("")
+                                    setReadyImage(true)
                                     ImgReport.current.value = ""
-                                    CheckData()
+                                    CheckData(true)
                                 }}>ลบรูปภาพ</span> : <></>
                             }
                             <label>
                                 <input capture="user" ref={ImgReport} onChange={(e)=>{
                                     if(e.target.files[0].type.indexOf("image") >= 0) {
                                         setImgPreview(URL.createObjectURL(e.target.files[0]))
-                                        CheckData()
+                                        setReadyImage(true)
+                                        CheckData(true)
                                         e.preventDefault()
                                     }
                                 }} hidden type="file"></input>

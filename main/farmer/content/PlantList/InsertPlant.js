@@ -1,12 +1,13 @@
 import React , {useEffect , useRef, useState} from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
-import { DateSelect, DayJSX, Loading } from "../../../../src/assets/js/module";
+import { DatePickerThai, DateSelect, DayJSX, Loading } from "../../../../src/assets/js/module";
 import { CloseAccount } from "../../method";
 
 const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage}) =>{
     const [getTimeOut , setTimeOut] = useState(0)
     
     const [DateNowOnForm , setDateNowOnForm] = useState(`${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`)
+    const [getDateOut , setDateOut] = useState("")
     const [DateHarvest , setDateHarvest] = useState("")
 
     const FormContent = useRef()
@@ -158,12 +159,12 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                     name_plant : type.value,
                     generetion : generetion.value,
                     dateGlow : dateGlow.value,
-                    datePlant : datePlant.value,
+                    datePlant : datePlant.value.split("-").reverse().map((val , key)=> key==0 ? parseInt(val) - 543 : val).join("-"),
                     posiW : posiW.value,
                     posiH : posiH.value,
                     qty : qty.value,
                     area : area.value,
-                    dateOut : dateOut.value,
+                    dateOut : dateOut.value.split("-").reverse().map((val , key)=> key==0 ? parseInt(val) - 543 : val).join("-"),
                     system : system.value,
                     water : water.value,
                     waterStep : waterStep.value,
@@ -172,14 +173,15 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                     qtyInsect : qtyInsect.value,
                     seft : seft.value
                 }
+                console.log(data)
 
-                setWait(true)
-                const Data = await clientMo.post("/api/farmer/formplant/insert" , data)
-                if(await CloseAccount(Data , setPage)) {
-                    cancel()
-                    ReloadData()
-                    setWait(false)
-                }
+                // setWait(true)
+                // const Data = await clientMo.post("/api/farmer/formplant/insert" , data)
+                // if(await CloseAccount(Data , setPage)) {
+                //     cancel()
+                //     ReloadData()
+                //     setWait(false)
+                // }
         } else {
             // let RefObject = [
             //             type , generetion , dateGlow , datePlant , 
@@ -283,7 +285,8 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         try {
             const DatePlantQty = new Date(DatePlant)
             DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(DateQty))
-            DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
+            DateOut.current.value = DatePlantQty.toISOString().split("T")[0].split("-").map((val , key)=> key==0 ? parseInt(val) + 543 : val).reverse().join("-")
+            setDateOut(DatePlantQty.toISOString().split("T")[0])
         } catch(e) {}
     }
 
@@ -357,11 +360,19 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                         }
                                         <label className="frame-textbox">
                                             <span>วันที่ปลูก</span>
-                                            <input className="report-not" onInput={(e)=>{
+                                            <DatePickerThai classNameMain="input-date" defaultDate={DateNowOnForm} offsetQtyDate={DateHarvest} refIn={DatePlant}
+                                                onInputIn={(e , offset)=>{
+                                                    ChangeCHK()
+                                                    const DateChis = e.target.value.split("-").reverse().map((val , key)=> key==0 ? parseInt(val) - 543 : val).join("-")
+                                                    setDateNowOnForm(DateChis)
+                                                    MathDateHarvest(DateChis , offset)
+                                                }}
+                                            />
+                                            {/* <input onInput={(e)=>{
                                                 ChangeCHK()
                                                 setDateNowOnForm(e.target.value)
                                                 MathDateHarvest(e.target.value , DateHarvest)
-                                            }} defaultValue={DateNowOnForm} ref={DatePlant} type="date" placeholder="ว/ด/ป"></input>
+                                            }} defaultValue={DateNowOnForm} ref={DatePlant} type="date" placeholder="ว/ด/ป"></input> */}
                                         </label>
                                     </div>
                                     <div className="row">
@@ -411,7 +422,8 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                         }
                                         <label className="frame-textbox">
                                             <span>วันที่คาดว่า <br></br>จะเก็บเกี่ยว</span>
-                                            <input className="report-not" onInput={ChangeCHK} ref={DateOut} type="date"></input>
+                                            <DatePickerThai classNameMain="input-date" defaultDate={getDateOut} onInputIn={ChangeCHK} refIn={DateOut} className="report-not"/>
+                                            {/* <input className="report-not" onInput={ChangeCHK} ref={DateOut} type="date"></input> */}
                                         </label>
                                     </div>
                                 </div>

@@ -1,5 +1,6 @@
 import React, { useRef , useEffect, useState} from "react";
 import "./assets/ListFertilizer.scss"
+import { ConvertDate } from "../../../../src/assets/js/module";
 
 const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData}) => {
     useEffect(()=>{
@@ -31,7 +32,7 @@ const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData})
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.date == 2 ? " not" : ""}`}>
                                                 <span>ว/ด/ป ที่ใช้</span>
-                                                <input readOnly defaultValue={ObjectData.date.split(" ")[0]} type="date"></input>
+                                                <input readOnly defaultValue={ConvertDate(ObjectData.date.split(" ")[0]).buddhistDate} type="text"></input>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -75,7 +76,7 @@ const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData})
                                         <div className="row">
                                             <label className={`frame-textbox${ObjectData.subjectResult.date == 2 ? " not" : ""}`}>
                                                 <span>ว/ด/ป ที่พ่นสาร</span>
-                                                <input readOnly defaultValue={ObjectData.date.split(" ")[0]} type="date"></input>
+                                                <input readOnly defaultValue={ConvertDate(ObjectData.date.split(" ")[0]).buddhistDate} type="text"></input>
                                             </label>
                                         </div>
                                         <div className="row">
@@ -132,7 +133,7 @@ const DetailFactor = ({setPopup , RefPop , type_path , ReloadData , ObjectData})
                                             <label className={`frame-textbox${ObjectData.subjectResult.date_safe == 2 ? " not" : ""}`}>
                                                 <span>วันที่ปลอดภัย</span>
                                                 <input readOnly 
-                                                    defaultValue={ObjectData.date_safe.split(" ")[0]} type="date"></input>
+                                                    defaultValue={ConvertDate(ObjectData.date_safe.split(" ")[0]).buddhistDate} type="text"></input>
                                             </label>
                                         </div>
                                         <div className="row">

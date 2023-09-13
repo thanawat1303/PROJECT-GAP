@@ -3,7 +3,7 @@ import { clientMo } from "../../../../src/assets/js/moduleClient";
 import { CloseAccount } from "../../method";
 
 import "./assets/DataForm.scss"
-import { DateSelect, DayJSX, Loading } from "../../../../src/assets/js/module";
+import { ConvertDate, DatePickerThai, DateSelect, DayJSX, Loading } from "../../../../src/assets/js/module";
 import MenuPlant from "../PlantList/MenuPlant";
 import DetailEdit from "../DetailEdit";
 const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
@@ -12,6 +12,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
     const [StatusEdit , setStatusEdit] = useState(false)
     const [Popup , setPopup] = useState(<></>)
     const [DataPlant , setDataPlant] = useState([])
+    const [getDateOut , setDateOut] = useState("")
     const [QtyDate , setQtyDate] = useState(0)
 
     const [getWait , setWait] = useState(false)
@@ -64,6 +65,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
         if(await CloseAccount(result , setPage)) {
             const DataIn = JSON.parse(result)
             setData(DataIn[0])
+            setDateOut(DataIn[0].date_harvest.split(" ")[0])
             setLoad(true)
             setWait(false)
         }
@@ -114,6 +116,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
 
     const CancelEdit = (cancel = true) => {
         setLoad(false)
+        setDateOut(Data.date_harvest.split(" ")[0])
         setStatusEdit(false)
         DataContent.current.removeAttribute("edit")
         if(cancel) {
@@ -149,12 +152,12 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                 type.value != Data.name_plant ,
                 generetion.value != Data.generation ,
                 dateGlow.value != Data.date_glow.split(" ")[0],
-                datePlant.value != Data.date_plant.split(" ")[0],
+                datePlant.value.split("-").reverse().map((val , key)=> key==0 ? parseInt(val) - 543 : val).join("-") != Data.date_plant.split(" ")[0],
                 posiW.value != Data.posi_w,
                 posiH.value != Data.posi_h ,
                 qty.value != Data.qty ,
                 area.value != Data.area ,
-                dateOut.value != Data.date_harvest.split(" ")[0],
+                dateOut.value.split("-").reverse().map((val , key)=> key==0 ? parseInt(val) - 543 : val).join("-") != Data.date_harvest.split(" ")[0],
                 system.value != Data.system_glow ,
                 water.value != Data.water ,
                 waterStep.value != Data.water_flow ,
@@ -182,12 +185,12 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                         type.value,
                                         generetion.value,
                                         dateGlow.value,
-                                        datePlant.value,
+                                        ConvertDate(datePlant.value).christDate,
                                         posiW.value,
                                         posiH.value,
                                         qty.value,
                                         area.value,
-                                        dateOut.value,
+                                        ConvertDate(dateOut.value).christDate,
                                         system.value,
                                         water.value,
                                         waterStep.value,
@@ -256,12 +259,12 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
             type.value != Data.name_plant ,
             generetion.value != Data.generation ,
             dateGlow.value != Data.date_glow.split(" ")[0],
-            datePlant.value != Data.date_plant.split(" ")[0],
+            ConvertDate(datePlant.value).christDate != Data.date_plant.split(" ")[0],
             posiW.value != Data.posi_w,
             posiH.value != Data.posi_h ,
             qty.value != Data.qty ,
             area.value != Data.area ,
-            dateOut.value != Data.date_harvest.split(" ")[0],
+            ConvertDate(dateOut.value).christDate != Data.date_harvest.split(" ")[0],
             system.value != Data.system_glow ,
             water.value != Data.water ,
             waterStep.value != Data.water_flow ,
@@ -292,10 +295,6 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
         setPopup(<DetailEdit Ref={PopupRef} setRef={setPopup} setPage={setPage} Data_on={{
             id_house : id_house , id_plant : id_plant
         }} type={"plant"}/>)
-    }
-
-    const reportEdit = () => {
-
     }
 
     return (
@@ -381,7 +380,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                             // defaultValue={Data.date_glow.split(" ")[0]}></input> 
                                                             <DateSelect RefDate={DateGlow} Value={Data.date_glow} methodCheckValue={ChangeEdit}/>
                                                             : 
-                                                            <DayJSX DATE={Data.date_glow} TYPE="normal"/>
+                                                            <DayJSX className="w-100" DATE={Data.date_glow} TYPE="normal"/>
                                                     }
                                                 </div>
                                             </label>
@@ -392,17 +391,26 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                 <div className="full">
                                                     {
                                                         StatusEdit ?
-                                                            <input ref={DatePlant} onChange={StatusEdit ? (e)=>{
+                                                            // <input ref={DatePlant} onChange={StatusEdit ? (e)=>{
+                                                            //     ChangeEdit()
+
+                                                            //     const DatePlantQty = new Date(e.target.value)
+                                                            //     DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(QtyDate))
+                                                            //     DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
+
+                                                            // } : null} type="date" 
+                                                            // defaultValue={Data.date_plant.split(" ")[0]}></input> 
+                                                            <DatePickerThai classNameMain="input-date" className="w-100" defaultDate={Data.date_plant.split(" ")[0]} offsetQtyDate={QtyDate} refIn={DatePlant} onInputIn={(e , qty)=>{
                                                                 ChangeEdit()
 
-                                                                const DatePlantQty = new Date(e.target.value)
-                                                                DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(QtyDate))
-                                                                DateOut.current.value = DatePlantQty.toISOString().split("T")[0]
-
-                                                            } : null} type="date" 
-                                                            defaultValue={Data.date_plant.split(" ")[0]}></input> 
+                                                                const DateChis = e.target.value.split("-").reverse().map((val , key)=> key==0 ? parseInt(val) - 543 : val).join("-")
+                                                                const DatePlantQty = new Date(DateChis)
+                                                                DatePlantQty.setDate(DatePlantQty.getDate() + parseInt(qty))
+                                                                DateOut.current.value = DatePlantQty.toISOString().split("T")[0].split("-").map((val , key)=> key==0 ? parseInt(val) + 543 : val).reverse().join("-")
+                                                                setDateOut(DatePlantQty.toISOString().split("T")[0])
+                                                            }}/>
                                                             :
-                                                            <DayJSX DATE={Data.date_plant} TYPE="normal"/>
+                                                            <DayJSX className="w-100" DATE={Data.date_plant} TYPE="normal"/>
                                                     }
                                                 </div>
                                             </label>
@@ -423,13 +431,13 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                             </label> */}
                                             <label className={`frame-textbox colume${Data.subjectResult.posi_w == 2 || Data.subjectResult.posi_h == 2 ? " not" : ""}`}>
                                                 <div className="full">ระยะการปลูก</div>
-                                                <div className="choose">
-                                                    <label className="choose colume">
+                                                <div className="choose w-100">
+                                                    <label className="choose colume w-100">
                                                         ระหว่างต้น
                                                         <input ref={PositionW} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_w} ></input>
                                                     </label>
                                                     <div>X</div>
-                                                    <label className="choose colume">
+                                                    <label className="choose colume w-100">
                                                         ระหว่างแถว
                                                         <input ref={PositionH} onChange={StatusEdit ? ChangeEdit : null} readOnly type="number" defaultValue={Data.posi_h}></input>
                                                     </label>
@@ -455,10 +463,11 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                                                 <div className="full">
                                                     {
                                                         StatusEdit ?
-                                                            <input ref={DateOut} onChange={StatusEdit ? ChangeEdit : null} type="date" 
-                                                            defaultValue={Data.date_harvest.split(" ")[0]}></input> 
+                                                            // <input ref={DateOut} onChange={StatusEdit ? ChangeEdit : null} type="date" 
+                                                            // defaultValue={Data.date_harvest.split(" ")[0]}></input> 
+                                                            <DatePickerThai classNameMain="input-date" className="w-100" defaultDate={getDateOut} refIn={DateOut} onInputIn={ChangeEdit}/>
                                                             :
-                                                            <DayJSX DATE={Data.date_harvest} TYPE="normal"/>
+                                                            <DayJSX className="w-100" DATE={Data.date_harvest} TYPE="normal"/>
                                                     }
                                                 </div>
                                                 </div>

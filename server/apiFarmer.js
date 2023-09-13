@@ -922,7 +922,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     app.post('/api/farmer/factor/get/auto' , async (req , res)=>{
         if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
-
+            
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`SELECT * FROM ${req.body.type}_list WHERE is_use = 1` , (err , result)=>{
@@ -1627,7 +1627,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
-                con.query(`SELECT name FROM source_list WHERE is_use = 1` , (err , result)=>{
+                con.query(`SELECT id , name FROM source_list WHERE is_use = 1` , (err , result)=>{
                     con.end()
                     if(!err) res.send(result)
                     else res.send("error auth")

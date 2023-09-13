@@ -221,6 +221,18 @@ $FontText : 5vw;
                                                     display: flex;
                                                     width: 50%;
                                                 }
+
+                                                .input-date {
+                                                    display: flex;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                    width: 50%;
+    
+                                                    input {
+                                                        width: 100%;
+                                                    }
+                                                }
+
                                                 input , select , textarea {
                                                     margin-left: 2px;
                                                     font-size: $FontText;

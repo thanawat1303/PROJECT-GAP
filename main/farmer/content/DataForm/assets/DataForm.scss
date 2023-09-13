@@ -172,6 +172,17 @@
                                                     font-family: Sans-font;
                                                     font-size: 5vw;
                                                 }
+
+                                                .input-date {
+                                                    display: flex;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                    width: 100%;
+    
+                                                    input {
+                                                        width: 100%;
+                                                    }
+                                                }
     
                                                 textarea {
                                                     text-align: center;
@@ -181,7 +192,7 @@
                                                     width: 99%;
                                                     display: flex;
     
-                                                    * {
+                                                    .w-100 {
                                                         width: 100%;
                                                     }
                                                 }

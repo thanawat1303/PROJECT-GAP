@@ -216,6 +216,18 @@
                                             span {
                                                 width: 40%;
                                             }
+
+                                            .input-date {
+                                                display: flex;
+                                                justify-content: center;
+                                                align-items: center;
+                                                width: 50%;
+
+                                                input {
+                                                    width: 100%;
+                                                }
+                                            }
+
                                             input , select , textarea {
                                                 margin-left: 2px;
                                                 text-align: center;
@@ -223,6 +235,10 @@
                                                 border-radius: 8px;
                                                 width: 50%;
                                                 border: 2px solid transparent;
+                                            }
+
+                                            #date-picker-thai-insert-plant {
+                                                input {}
                                             }
 
                                             textarea {

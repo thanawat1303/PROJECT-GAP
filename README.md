@@ -50,6 +50,8 @@
       npm i wordcut thai-wordcut
 
       npm i axios
+
+      npm install thaidatepicker-react
       ```
 
 ### Build Project

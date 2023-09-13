@@ -2,10 +2,11 @@ import React, { useRef , useEffect, useState} from "react";
 import "./assets/ListFertilizer.scss"
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 import { CloseAccount } from "../../method";
-import { Loading } from "../../../../src/assets/js/module";
+import { ConvertDate, DatePickerThai, Loading } from "../../../../src/assets/js/module";
 
 const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant , type_path , ReloadData , setPage}) => {
     const DateNowOnForm = `${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`
+    const [getDateOut , setDateOut] = useState("")
     // same
     const DateUse = useRef()
     const NameMainFactor = useRef()
@@ -47,10 +48,10 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         setLoadNameMain(false);
         const Data = await clientMo.post("/api/farmer/factor/get/auto" , {type : type})
         if(await CloseAccount(Data , setPage)) {
-            setLoadName(true);
-            setLoadNameMain(true);
             const LIST = JSON.parse(Data)
             setDataFactor(LIST)
+            setLoadName(true);
+            setLoadNameMain(true);
             return LIST
         }
     }
@@ -73,10 +74,10 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
 
         if( dateUse.value && Name.value && use.value && volume.value && source.value
             ) {
-                let data = {
+                const DataInsert = {
                     id_farmhouse : id_house,
                     id_plant : id_form_plant,
-                    date : dateUse.value,
+                    date : ConvertDate(dateUse.value).christDate,
                     formula_name : formula_name.value,
                     name : Name.value,
                     use : use.value,
@@ -86,7 +87,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                 }
 
                 setWait(true)
-                const result = await clientMo.post("/api/farmer/factor/insert" , data)
+                const result = await clientMo.post("/api/farmer/factor/insert" , DataInsert)
                 if(await CloseAccount(result , setPage)) {
                     cancel()
                     ReloadData()
@@ -127,14 +128,14 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                 const DataInsert = {
                     id_farmhouse : id_house,
                     id_plant : id_form_plant,
-                    date : dateUse.value,
+                    date : ConvertDate(dateUse.value).christDate,
                     formula_name : formula_name.value,
                     name : Name.value,
                     insect : insect.value,
                     use : use.value,
                     rate : rate.value,
                     volume : volume.value + " " + Unit.current.value,
-                    dateSafe : dateSafe.value,
+                    dateSafe : ConvertDate(dateSafe.value).christDate,
                     source : source.value,
                     type_insert : type_path
                 }
@@ -159,7 +160,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                         source ,
                         // , seft
                     ]
-            RefObject.forEach((ele , index)=>{
+            RefObject.forEach((ele)=>{
                 if(!ele.value && ele) ele.style.border = "2px solid red"
                 else if (ele.value && ele) ele.style.border = "2px solid transparent"
             })
@@ -171,10 +172,6 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         setTimeout(()=>{
             setPopup(<></>)
         } , 500)
-    }
-
-    const clickDate = (ele) => {
-        ele.current.focus()
     }
 
     const ChangeFerti = (e) => {
@@ -210,6 +207,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         const dateSafe = DateSafe.current
         const source = Source.current
 
+        
         if(!e) {
             if(Name.value && formula_name.value) {
                 setHowUse()
@@ -231,16 +229,18 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
     const SearchNameFactor = async (e) => {
         ListSearchName.current.removeAttribute("remove")
         
-        let search = DataFactor
-        search = search.filter((val)=>
-                            val.name.indexOf(e.target.value) >= 0 && val.name_formula.indexOf(NameMainFactor.current.value) >= 0)
-                                .map((val)=>val.name)
-        const setSearch = ChangeData(search)
-        if(setSearch.length !== 0) 
-            setListName(setSearch.map((val , key)=>
-                <span search_name="" onClick={()=>SetTextInputName(val)} key={val.id}>{val}</span>
-            ))
-        else ResetListNamePopup()
+        try {
+            let search = DataFactor
+            search = search.filter((val)=>
+                                val.name.indexOf(e.target.value) >= 0 && val.name_formula.indexOf(NameMainFactor.current.value) >= 0)
+                                    .map((val)=>val.name)
+            const setSearch = ChangeData(search)
+            if(setSearch.length !== 0) 
+                setListName(setSearch.map((val , key)=>
+                    <span search_name="" onClick={()=>SetTextInputName(val)} key={key}>{val}</span>
+                ));
+            else ResetListNamePopup();
+        } catch(e) {};
 
         (type_path === "z") ? ChangeFerti() : ChangeChemi()
     }
@@ -272,11 +272,11 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                     SetTextInputOrther(setSearch[0])
                 } else {
                     setListOther(setSearch.map((val , key)=>
-                        <span search_other="" onClick={()=>SetTextInputOrther(val)} key={val.id}>{val}</span>
+                        <span search_other="" onClick={()=>SetTextInputOrther(val)} key={key}>{val}</span>
                     ))
                 }
             }
-            else ResetListOtherPopup()
+            else ResetListOtherPopup();
         } catch(e) {}
 
         (type_path === "z") ? ChangeFerti() : ChangeChemi()
@@ -295,23 +295,26 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
 
     // change how use 
     const setHowUse = () => {
-        if(Use.current.value === "") {
-            Use.current.value = DataFactor.filter((val)=>
-                            val.name_formula === NameMainFactor.current.value && val.name === NameFactor.current.value)
-                                .map((val)=>val.how_use)[0] ?? ""
-        }
+        try {
+            if(Use.current.value === "") {
+                Use.current.value = DataFactor.filter((val)=>
+                                val.name_formula === NameMainFactor.current.value && val.name === NameFactor.current.value)
+                                    .map((val)=>val.how_use)[0] ?? ""
+            }
+        } catch(e) {}
     }
 
     // math date sefe chemical
     const setDateSafe = () => {
         try {
             const NumDay = DataFactor.filter((val)=>
-                        val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
-                            .map((val)=>val.date_sefe)[0]
-            const DateUsePut = new Date(DateUse.current.value)
+                            val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
+                                .map((val)=>val.date_sefe)[0]
+            const DateUsePut = new Date(DateUse.current.value ? ConvertDate(DateUse.current.value).christDate : "")
             DateUsePut.setDate(DateUsePut.getDate() + NumDay + 1)
             const result = DateUsePut.toISOString().split("T")[0]
-            DateSafe.current.value = result
+            DateSafe.current.value = ConvertDate(result).buddhistDate
+            setDateOut(result)
         } catch(e) {}
     }
 
@@ -350,7 +353,8 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ว/ด/ป ที่ใช้</span>
-                                                <input onChange={ChangeFerti} defaultValue={DateNowOnForm} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
+                                                <DatePickerThai classNameMain="input-date" defaultDate={DateNowOnForm} refIn={DateUse} onInputIn={ChangeFerti}/>
+                                                {/* <input onChange={ChangeFerti} defaultValue={DateNowOnForm} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input> */}
                                             </label>
                                         </div>
                                         <div className="row">
@@ -358,7 +362,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                                 <span className="full">ชื่อสิ่งที่ใช้ (ชื่อการค้า, ตรา)</span>
                                                 <div className="content-colume-input">
                                                     <div className="input-select-popup">
-                                                        <input onChange={SearchNameFactor} onMouseDown={SearchNameFactor} placeholder="กรอกชื่อปุ๋ย" ref={NameFactor}></input>
+                                                        <input onChange={LoadSearchName ? SearchNameFactor : null} onMouseDown={LoadSearchName ? SearchNameFactor : null} placeholder={!LoadSearchName ? "กำลังโหลด" : "กรอกชื่อปุ๋ย"} ref={NameFactor} readOnly={!LoadSearchName ? true : null} disabled={!LoadSearchNameMain ? true : null}></input>
                                                         <div ref={ListSearchName} remove="" className="list-input-search">
                                                             {LoadSearchName ? 
                                                                 ListSelectName : 
@@ -379,7 +383,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                             <label className="frame-textbox">
                                                 <span>ชื่อสูตรปุ๋ย</span>
                                                 <div className="input-select-other">
-                                                    <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} ref={NameMainFactor} type="text" placeholder="กรอก"></input>
+                                                    <input onChange={LoadSearchNameMain ? SearchFactorNameOther : null} onMouseDown={LoadSearchNameMain ? SearchFactorNameOther : null} ref={NameMainFactor} type="text" placeholder={LoadSearchNameMain ? "กรอกสูตรปุ๋ย" : "กำลังโหลด"} readOnly={!LoadSearchNameMain ? true : null} disabled={!LoadSearchNameMain ? true : null}></input>
                                                     <div ref={ListSearchFactorNameMain} remove="" className="list-input-search">
                                                         {LoadSearchNameMain ? 
                                                             ListSelectNameMain :
@@ -417,15 +421,20 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
                                                 {/* <input onChange={ChangeFerti} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
-                                                <select onChange={ChangeFerti} ref={Source} defaultValue={""}>
-                                                    <option value={""} disabled>เลือก</option>
-                                                        { 
-                                                            DataSource ?
-                                                                DataSource.map((val , key)=>
-                                                                    <option value={val.name} key={val.id}>{val.name}</option>
-                                                                ) : <></>
-                                                        }
-                                                </select>
+                                                { DataSource ?
+                                                    <select onChange={ChangeFerti} ref={Source} defaultValue={""}>
+                                                        <option value={""} disabled>เลือก</option>
+                                                            { 
+                                                                DataSource ?
+                                                                    DataSource.map((val , key)=>
+                                                                        <option value={val.name} key={val.id}>{val.name}</option>
+                                                                    ) : <></>
+                                                            }
+                                                    </select> :
+                                                    <select key={1} disabled defaultValue={""} ref={Source}>
+                                                        <option disabled value={""}>กำลังโหลด</option>
+                                                    </select>
+                                                }
                                             </label>
                                         </div>
                                         </> :
@@ -433,7 +442,8 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>ว/ด/ป ที่พ่นสาร</span>
-                                                <input onChange={ChangeChemi} defaultValue={DateNowOnForm} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input>
+                                                <DatePickerThai classNameMain="input-date" defaultDate={DateNowOnForm} refIn={DateUse} onInputIn={()=>{ChangeChemi()}}/>
+                                                {/* <input onChange={ChangeChemi} defaultValue={DateNowOnForm} onClick={()=>clickDate(DateUse)} ref={DateUse} type="date"></input> */}
                                             </label>
                                         </div>
                                         <div className="row">
@@ -441,7 +451,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                                 <span className="full">ชื่อสารเคมี (ชื่อการค้า, ตรา)</span>
                                                 <div className="content-colume-input">
                                                     <div className="input-select-popup">
-                                                        <input onChange={SearchNameFactor} onMouseDown={SearchNameFactor} placeholder="กรอกชื่อปุ๋ย" ref={NameFactor}></input>
+                                                        <input onChange={LoadSearchName ? SearchNameFactor : null} onMouseDown={LoadSearchName ? SearchNameFactor : null} placeholder={LoadSearchName ? "กรอกชื่อสารเคมี" : "กำลังโหลด"} ref={NameFactor} readOnly={!LoadSearchName ? true : null} disabled={!LoadSearchName ? true : null}></input>
                                                         <div ref={ListSearchName} remove="" className="list-input-search">
                                                             {LoadSearchName ? 
                                                                 ListSelectName : 
@@ -462,7 +472,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                             <label className="frame-textbox">
                                                 <span>ชื่อสามัญสารเคมี</span>
                                                 <div className="input-select-other">
-                                                    <input onChange={SearchFactorNameOther} onMouseDown={SearchFactorNameOther} ref={NameMainFactor} type="text" placeholder="กรอก"></input>
+                                                    <input onChange={LoadSearchNameMain ? SearchFactorNameOther : null} onMouseDown={LoadSearchNameMain ? SearchFactorNameOther : null} ref={NameMainFactor} type="text" placeholder={LoadSearchNameMain ? "กรอกชื่อสามัญ" : "กำลังโหลด"} readOnly={!LoadSearchNameMain ? true : null} disabled={!LoadSearchNameMain ? true : null}></input>
                                                     <div ref={ListSearchFactorNameMain} remove="" className="list-input-search">
                                                         {LoadSearchNameMain ? 
                                                             ListSelectNameMain :
@@ -514,22 +524,28 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>วันที่ปลอดภัย</span>
-                                                <input onChange={ChangeChemi} onClick={()=>clickDate(DateSafe)} ref={DateSafe} type="date"></input>
+                                                <DatePickerThai classNameMain="input-date" defaultDate={getDateOut} refIn={DateSafe} onInputIn={ChangeChemi}/>
+                                                {/* <input onChange={ChangeChemi} onClick={()=>clickDate(DateSafe)} ref={DateSafe} type="date"></input> */}
                                             </label>
                                         </div>
                                         <div className="row">
                                             <label className="frame-textbox">
                                                 <span>แหล่งที่ซื้อ</span>
                                                 {/* <input onChange={ChangeChemi} ref={Source} type="text" placeholder="กรอกข้อมูล"></input> */}
-                                                <select onChange={ChangeChemi} ref={Source} defaultValue={""}>
-                                                    <option value={""} disabled>เลือก</option>
-                                                    { 
-                                                        DataSource ?
-                                                            DataSource.map((val , key)=>
-                                                                <option value={val.name} key={val.id}>{val.name}</option>
-                                                            ) : <></>
-                                                    }
-                                                </select>
+                                                { DataSource ?
+                                                    <select key={0} onChange={ChangeChemi} ref={Source} defaultValue={""}>
+                                                        <option value={""} disabled>เลือก</option>
+                                                        { 
+                                                            DataSource ?
+                                                                DataSource.map((val , key)=>
+                                                                    <option value={val.name} key={val.id}>{val.name}</option>
+                                                                ) : <></>
+                                                        }
+                                                    </select> :
+                                                    <select key={1} disabled defaultValue={""} ref={Source}>
+                                                        <option disabled value={""}>กำลังโหลด</option>
+                                                    </select>
+                                                }
                                             </label>
                                         </div>
                                         </>

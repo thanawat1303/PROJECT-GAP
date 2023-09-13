@@ -28,7 +28,7 @@ const GetLinkUrlOfSearch = async (valueLocation , auth) => {
     }
 }
 
-const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
+const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = "" , className = ""}) => {
     const [DateOut , setDATE] = useState("")
     const DayWeek = [ 'วันอาทิตย์','วันจันทร์','วันอังคาร','วันพุธ','วันพฤหัสบดี','วันศุกร์','วันเสาร์'] 
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"] 
@@ -47,7 +47,7 @@ const DayJSX = ({REF , DATE , TYPE = "full" , TEXT = ""}) => {
         }
     })
 
-    return (<input date_dom="" ref={REF} readOnly value={DateOut}></input>)
+    return (<input className={className} date_dom="" ref={REF} readOnly value={DateOut}></input>)
 }
 
 const TimeJSX = ({DATE , MAX = true}) => {
@@ -718,6 +718,62 @@ Ref = {
     )
 }
 
+
+import { ThaiDatePicker } from "thaidatepicker-react";
+const DatePickerThai = ({defaultDate = "" , offsetQtyDate = undefined , refIn , onInputIn = null , className = "" , classNameMain = ""}) => {
+    const RefDatePicker = useRef()
+    const [selectedDate, setSelectedDate] = useState(defaultDate ? new Date(defaultDate).toString() != 'Invalid Date' ? defaultDate : new Date().toISOString() : new Date().toISOString());
+    const [getOffset , setOffset] = useState(offsetQtyDate)
+
+    useEffect(()=>{
+        // document.getElementById().childNodes
+        RefDatePicker.current.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].style.display = "none"
+        RefDatePicker.current.childNodes[0].childNodes[0].childNodes[0].childNodes[1].style.display = "none"
+        // RefDatePicker.current.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[1].style.display = "none"
+    } , [])
+
+    useEffect(()=>{
+        setOffset(offsetQtyDate)
+    } , [offsetQtyDate])
+
+    useEffect(()=>{
+        setSelectedDate(defaultDate ? new Date(defaultDate).toString() != 'Invalid Date' ? defaultDate : new Date().toISOString() : new Date().toISOString() )
+    } , [defaultDate])
+
+    const handleDatePickerChange = (christDate, buddhistDate) => {
+        refIn.current.value = buddhistDate ? buddhistDate.split("-").reverse().join("-") : "";
+        refIn.current.click();
+        setSelectedDate(christDate);
+    };
+
+    return(
+        <div className={classNameMain}>
+            <input className={className} 
+                onClick={(e)=>{
+                    e.preventDefault()
+                    const picker = RefDatePicker.current.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0]
+                    picker.click()
+                    if(onInputIn) onInputIn(e , getOffset)
+                }} readOnly defaultValue={defaultDate ? defaultDate.split("-").map((val , index)=>index == 0 ? parseInt(val) + 543 : val).reverse().join("-") : ""} 
+                ref={refIn} type="text" placeholder="วัน/เดือน/ปี"
+            ></input>
+            <div ref={RefDatePicker}>
+                <ThaiDatePicker
+                    value={selectedDate}
+                    onChange={handleDatePickerChange}
+                />
+            </div>
+        </div>
+    )
+}
+
+const ConvertDate = (date) => {
+    return({
+        buddhistDate : date ? date.split("-").map((val , key)=> key == 0 ? parseInt(val) + 543 : val).reverse().join("-") : "",
+        christDate : date ? date.split("-").reverse().map((val , key)=> key == 0 ? parseInt(val) - 543 : val).join("-") : ""
+    })
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -791,4 +847,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , GetLinkUrlOfSearch , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , OpenImageMax , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , DateSelect , TabLoad , HrefData}
+export {MapsJSX , GetLinkUrlOfSearch , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , OpenImageMax , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , DateSelect , DatePickerThai , ConvertDate , TabLoad , HrefData}

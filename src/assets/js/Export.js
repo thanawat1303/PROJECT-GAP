@@ -96,7 +96,7 @@ const TableBox = (pdf = new jsPDF() , posiStartX = 0 , posiStartY = 0 , headers 
                 }
                 
                 const Text = newSplit.join("\n")
-                console.log(Text)
+                // console.log(Text)
                 pdf.text(Text , startBodyX + 5 , startBodyY + 12)
             }
 
@@ -188,7 +188,7 @@ const ExportPDF = async (Data) => {
         // ระยะบรรทัด 30 
         // ย่อหน้า 70
         const Export = Data[index]
-        console.log(Export)
+        // console.log(Export)
         pdf.setFontSize(18)
         TextBoxHead(pdf , width / 2 , 40 , 'แบบบันทึกเกษตรกร ระบบการผลิตพืชผักและสมุนไพรภายใต้มาตรฐาน  GAP  มูลนิธิโครงการหลวง' , {align : "center"})
         
@@ -456,68 +456,50 @@ const ExportPDF = async (Data) => {
     }
 
     const [init , liff] = useLiff("1661049098-dorebKYg")
-    init.then( async ()=>{
-        if(liff.isInClient()) {
-            if(liff.isLoggedIn()) {
-                const profile = await liff.getProfile()
-                if(profile.userId) {
-                    const DataPdf = pdf.output("datauristring")
-
-                    liff.sendMessages([{
-                        'type': 'image',
-                        'originalContentUrl': DataPdf,
-                        'previewImageUrl': DataPdf
-                    }]).then(function () {
-                        // ส่งข้อความไปยัง LINE
-                    }).catch(function (error) {
-                        // จัดการข้อผิดพลาด
-                    });
-                }
-            } 
-            else {
-                pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
-            }
-        } else {
+    init.then( async ()=> {
+        if(!liff.isInClient())
             pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
-        }
-    }).catch(err=>{pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)})
+        else alert("กรุณาดาวโหลดผ่านเบราเซอร์")
+    }).catch(err=>{
+        pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
+    })
+    // const [init , liff] = useLiff("1661049098-dorebKYg")
+    // init.then( async ()=>{
+    //     if(liff.isInClient()) {
+    //         if(liff.isLoggedIn()) {
+    //             const profile = await liff.getProfile()
+    //             if(profile.userId) {
+    //                 const DataPdf = pdf.output("datauristring")
+
+    //                 liff.sendMessages([{
+    //                     'type': 'image',
+    //                     'originalContentUrl': DataPdf,
+    //                     'previewImageUrl': DataPdf
+    //                 }]).then(function () {
+    //                     // ส่งข้อความไปยัง LINE
+    //                 }).catch(function (error) {
+    //                     // จัดการข้อผิดพลาด
+    //                 });
+    //             }
+    //         } 
+    //         else {
+    //             pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
+    //         }
+    //     } else {
+    //         pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
+    //     }
+    // }).catch(err=>{
+    //     pdf.save(`${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
+    // })
     // window.open(pdf.output('dataurlnewwindow' , "แบบบันทึกข้อมูล"))
     
     // const DataOut = pdf.output("datauristring" , `${new Date().getDate()}_${new Date().getMonth()}_${new Date().getFullYear()}.pdf`)
-
-    // const a = document.createElement("a")
-    // a.href = DataOut
-    // a.click()
-    // a.remove()
-
-    // const data = document.createElement("section");
-    // data.innerHTML = 
-    // `
-    // 555
-    // `
-    // pdf.addPage().html(data)
-    // pdf.html(data).then(() => {
-    //     pdf.save("shipping_label.pdf");
-    // });
-    // return (
-    //     <PDFViewer>
-    //         <Document>
-    //             <Page size={"A4"}>
-
-    //             </Page>
-    //             <Page size={"A4"}>
-
-    //             </Page>
-    //         </Document>
-    //     </PDFViewer>
-    // )
 }
 
 import * as FileSaver from "file-saver"
 import XLSX from "sheetjs-style"
 
 const Mount = ["" , "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
-
 const ExportExcel = async (excelData = new Array) => {
     const filetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
     const fileExtension = ".xlsx"

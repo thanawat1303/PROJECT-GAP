@@ -106,13 +106,17 @@
                     width: 100%;
                     margin: 5px 0px;
 
-                    button {
+                    .bt {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         border: 0;
                         border-radius: 8px;
                         font-family: Sans-font;
                         font-weight: 900;
                         font-size: 18px;
                         color: white;
+                        height: 30px;
                         width: 30%;
                         box-shadow: 0px 2px 2px #ffffff;
                     }

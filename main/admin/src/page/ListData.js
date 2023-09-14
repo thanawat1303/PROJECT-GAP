@@ -434,7 +434,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
     const [stateOnBt , setstateOnBt] = useState(true)
 
     useEffect(()=>{
-        setSize(PageAddRef.current.clientHeight * 0.3)
+        // setSize(PageAddRef.current.clientHeight * 0.3)
 
         if(type === "station") GenerateMapAuto()
     } , [])
@@ -608,7 +608,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
             <div className="Load-insert">
                 <ReportAction Open={Open} Text={Text} Status={Status}
                     setOpen={setOpen} setStatus={setStatus} setText={setText}
-                    sizeLoad={sizeReport} BorderLoad={8} color={"white"}/>
+                    sizeLoad={73} BorderLoad={8} color={"white"}/>
             </div>
             <div className="body-page">
                 <span className="head">

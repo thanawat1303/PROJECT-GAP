@@ -20,29 +20,30 @@
     
             .Load-insert {
                 Report-Dom {
-                    border-radius: 1.171vw;
+                    border-radius: 18px;
     
                     Body-Report {
                         Text-Report {
                             font-family: Sans-font;
-                            font-size: 0.976vw;
+                            font-size: 15px;
                             font-weight: 900;
                             background-color: white;
-                            padding: 0.065vw 1.302vw;
+                            padding: 1px 20px;
                             border-radius: 20px;
                         }
+
                         Status-Report {
-                            margin: 0.325vw 0px;
+                            margin: 5px 0px;
                         }
     
                         BoxButton-Report {
                             button {
                                 background: linear-gradient(120deg , #52D8C0 , #228774);
                                 border-radius: 20px;
-                                font-size: 1.171vw;
+                                font-size: 18px;
                                 font-family: Sans-font;
                                 font-weight: 900;
-                                padding: 0.065vw 1.302vw;
+                                padding: 1px 20px;
                                 color: white;
                                 cursor: pointer;
                             }

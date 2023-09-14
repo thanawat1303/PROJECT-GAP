@@ -182,7 +182,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         if(Data) {
             const result = await clientMo.post(`/api/doctor/data/check/overlape` , Data)
             if(parseInt(result) === 0) {
-                setBodyPopup(<PopupConfirm Ref={RefPopup} setPopup={setBodyPopup} session={session} Data={Data} RowPresent={StartData} setLimit={setLimit} Reload={Reload} setReload={setReload}/>)
+                setBodyPopup(<PopupConfirm Ref={RefPopup} setPopup={setBodyPopup} session={session} Data={Data} RowPresent={StartData} setLimit={setLimit} Reload={Reload} setReload={setReload} setCloseInsert={CancelInsert}/>)
                 setErrReport(false)
             } else if (parseInt(result) === 1) {
                 setStateOnInsert(!StateOnInsert)

@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import "../../../assets/style/page/data/Insert/ConfirmInsert.scss"
-import { MapsJSX } from "../../../../../../src/assets/js/module"
+import { Loading, MapsJSX } from "../../../../../../src/assets/js/module"
 import { clientMo } from "../../../../../../src/assets/js/moduleClient"
-const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit , Reload , setReload}) => {
+const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit , Reload , setReload , setCloseInsert}) => {
     const BtConfirm = useRef()
     const Password = useRef()
+
+    const [getLoading , setLoading] = useState(false)
     
     useEffect(()=>{
         Ref.current.style.opacity = "1"
@@ -15,11 +17,12 @@ const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit ,
         if(CheckEmply()) {
             Data["password"] = Password.current.value
             Data["data"]["is_use"] = 1
+            setLoading(true)
             const result = await clientMo.post("/api/doctor/data/insert" , Data)
-
             if(result === "insert") {
                 setLimit(RowPresent)
                 setReload(!Reload)
+                setCloseInsert()
                 close()
             } else if (result === "password") {
                 Password.current.value = ""
@@ -28,6 +31,7 @@ const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit ,
             } else if (result === "not") {
                 console.log("not")
             } else session()
+            setLoading(false)
         }
     }
 
@@ -64,7 +68,7 @@ const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit ,
             </span>
             <div className="body">
                 { 
-                    Object.entries(Data.data).map((val , key)=>{
+                    Object.entries(Data.data).filter(val=>val[0] != "is_use").map((val , key)=>{
                         const HEAD = (
                                     val[0] === "name" ? `ชื่อ${
                                         Data.type === "plant" ? "ชนิดพืช" :
@@ -99,8 +103,16 @@ const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit ,
             <div className="bt-insert">
                 <input onChange={CheckEmply} ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่" type="password"></input>
                 <div className="bt-content">
-                    <button style={{backgroundColor : "red"}} onClick={close}>ยกเลิก</button>
-                    <button className="submit" ref={BtConfirm} not="" onClick={Confirm}>ยืนยัน</button>
+                    { !getLoading ?
+                        <button className="bt" style={{backgroundColor : "red"}} onClick={close}>ยกเลิก</button> :
+                        <></>
+                    }
+                    { !getLoading ?
+                        <button className="bt submit" ref={BtConfirm} not="" onClick={Confirm}>ยืนยัน</button> :
+                        <div className="bt submit" not="">
+                            <Loading size={25} border={5} color="white" animetion={true}/>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

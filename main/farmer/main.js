@@ -29,14 +29,12 @@ const MainFarmer = ({socket , idLiff , Path}) => {
                     liff.login()
                 }
             } else {
-                let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
-                LoadPage(UID , liff)
-                // CloseAccount("not line")
-                // setBody(<ErrorPage text={""}/>)
+                // let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
+                // LoadPage(UID , liff)
+                CloseAccount("not line")
+                setBody(<ErrorPage text={""}/>)
             }
-        }).catch(err=>{
-            console.log(err)
-        })
+        }).catch(err=>{})
 
     } , [])
 

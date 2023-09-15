@@ -19,7 +19,7 @@ CREATE TABLE line_chat_gap.formPlant (
     insect varchar(50) NOT NULL,
     qtyInsect varchar(50) NOT NULL,
     seft varchar(200) NOT NULL, 
-    submit INT NOT NULL,
+    state_status INT NOT NULL,
     date_success varchar(50) NOT NULL
 );
 -- ALTER TABLE line_chat_gap.formPlant
@@ -36,3 +36,5 @@ CREATE TABLE line_chat_gap.formPlant (
 -- ALTER TABLE line_chat_gap.`formplant` CHANGE `posi_w` `posi_w` FLOAT NOT NULL;
 -- ALTER TABLE line_chat_gap.`formplant` CHANGE `posi_h` `posi_h` FLOAT NOT NULL;
 -- ALTER TABLE line_chat_gap.`formplant` CHANGE `area` `area` FLOAT NOT NULL;
+-- ALTER TABLE line_chat_gap.`formplant`
+-- RENAME COLUMN submit TO state_status

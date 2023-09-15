@@ -354,7 +354,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 
                 const select = (req.body.id_formplant) ? 
                                     `formplant.*` :
-                                    `formplant.id , formplant.name_plant , formplant.submit , 
+                                    `formplant.id , formplant.name_plant , formplant.state_status , 
                                         formplant.date_plant , formplant.generation , formplant.qty , 
                                     (
                                         SELECT EXISTS (
@@ -398,7 +398,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                     WHERE (housefarm.uid_line = ? || housefarm.link_user = ?) and housefarm.id_farm_house = ?
                                 ) as houseFarm
                             WHERE formplant.id_farm_house = houseFarm.id_farm_house ${where}
-                            ORDER BY formplant.submit ASC , id DESC
+                            ORDER BY formplant.state_status ASC , id DESC
                         ` , 
                         [
                             auth.data.uid_line , auth.data.link_user , req.body.id_farmhouse
@@ -484,7 +484,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`
-                            SELECT formplant.id , formplant.submit
+                            SELECT formplant.id , formplant.state_status
                             FROM formplant , 
                                 (
                                     SELECT id_farm_house FROM housefarm
@@ -602,7 +602,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                                     qty , area , date_harvest, system_glow ,
                                                     water , water_flow ,
                                                     history , insect, qtyInsect,
-                                                    seft , submit , date_success
+                                                    seft , state_status , date_success
                                                 ) VALUES (
                                                     ? , ? , ? , 
                                                     ? , ? , ? , 
@@ -670,7 +670,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             if (!err) {
                                 if(result[0]) {
                                     let data = req.body
-                                    if(result[0].submit == 0 || result[0].submit == 1) {
+                                    if(result[0].state_status == 0 || result[0].state_status == 1) {
                                         con.query(
                                             `
                                             INSERT INTO editform 
@@ -843,10 +843,10 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 const Type = req.body.type == "fertilizer" ? "fertilizer" : "chemical";       
 
                 con.query(`
-                            SELECT form${Type}.* , formPlant.submit
+                            SELECT form${Type}.* , formPlant.state_status
                             FROM form${Type} , 
                                 (
-                                    SELECT formplant.id , formplant.submit
+                                    SELECT formplant.id , formplant.state_status
                                     FROM formplant , 
                                         (
                                             SELECT id_farm_house FROM housefarm
@@ -946,7 +946,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             try {
                 const auth = await authCheck(con , dbpacket , res , req , LINE)
                 con.query(`
-                            SELECT formplant.id , formplant.submit
+                            SELECT formplant.id , formplant.state_status
                             FROM formplant , 
                                 (
                                     SELECT id_farm_house FROM housefarm
@@ -957,7 +957,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                         (err , result)=>{
                             if (!err) {
                                 if(result[0]) {
-                                    if(result[0].submit == 0 || result[0].submit == 1) {
+                                    if(result[0].state_status == 0 || result[0].state_status == 1) {
                                         let data = req.body
                                         const sql = data.type_insert === "z" ? 
                                                         `INSERT INTO formfertilizer 
@@ -1020,10 +1020,10 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                 const TypeFrom = req.body.type_form == "fertilizer" ? "fertilizer" : req.body.type_form == "chemical" ? "chemical" : "";
                 if(TypeFrom) {
                     con.query(` 
-                            SELECT form${TypeFrom}.* , formplant.submit
+                            SELECT form${TypeFrom}.* , formplant.state_status
                             FROM form${TypeFrom} ,
                             (
-                                SELECT formplant.id , formplant.submit
+                                SELECT formplant.id , formplant.state_status
                                 FROM formplant , 
                                     (
                                         SELECT id_farm_house FROM housefarm
@@ -1037,7 +1037,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                             if (!err) {
                                 if(result[0]) {
                                     let data = req.body
-                                    if(result[0].submit == 0 || result[0].submit == 1) {
+                                    if(result[0].state_status == 0 || result[0].state_status == 1) {
                                         con.query(
                                             `
                                             INSERT INTO editform 

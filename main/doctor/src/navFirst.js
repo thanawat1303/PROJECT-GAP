@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 
 import "./assets/style/Navfirst.scss"
 import PageFormPlant from "./page/form/PageFormPlant"
-import PageExport from "./page/export/PageExport"
 import PageFarmer from "./page/farmer/PageFarmer"
 
 import { clientMo } from "../../../src/assets/js/moduleClient"

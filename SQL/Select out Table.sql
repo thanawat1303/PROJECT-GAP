@@ -22,7 +22,7 @@ FROM
                 ) AS acc_farmer
             WHERE (housefarm.uid_line = acc_farmer.uid_line) or (housefarm.id_farmer = acc_farmer.id_farmer)
         ) as House
-    WHERE House.id_farm_house = formplant.id_farm_house and formplant.submit="0"
+    WHERE House.id_farm_house = formplant.id_farm_house and formplant.state_status="0"
     ORDER BY date_plant 
     LIMIT 30
 ) as form

@@ -1569,7 +1569,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     SELECT fromInsert.* 
                     FROM formplant ,
                     (
-                        SELECT formplant.id , formplant.submit , formplant.name_plant , formplant.date_plant ,
+                        SELECT formplant.id , formplant.state_status , formplant.name_plant , formplant.date_plant ,
                         formplant.system_glow , formplant.insect , formplant.generation , formplant.qty , formplant.date_harvest ,
                             (
                                 SELECT COUNT(id)
@@ -1612,13 +1612,13 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
                                 ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
-                                ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
+                                ${Submit !== null ? `and formplant.state_status = ${Submit}` : ""}
                                 ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
                                 
                         ORDER BY ${OrderBy}
                     ) as fromInsert
                     WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
-                    ORDER BY submit ASC
+                    ORDER BY state_status ASC
                     ${(Limit !== null) ? `LIMIT ${Limit}` : ""}
                     `
                     , [TextInsert , result['data']['station_doctor'] , result['data']['station_doctor'] , TextInsert ] , 
@@ -2205,8 +2205,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 con.query(
                                     `
                                     UPDATE formplant 
-                                    SET submit = 1
-                                    WHERE id = ? and submit = 0
+                                    SET state_status = 1
+                                    WHERE id = ? and state_status = 0
                                     ` , [ req.body.id_plant ] , 
                                     (err , update)=>{
                                         con.end()
@@ -2217,8 +2217,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 // con.query(
                                 //     `
                                 //     UPDATE formplant 
-                                //     SET submit = 2
-                                //     WHERE id = ? and submit = 1
+                                //     SET state_status = 2
+                                //     WHERE id = ? and state_status = 1
                                 //     ` , [ req.body.id_plant ] , 
                                 //     (err , update)=>{
                                         
@@ -2435,8 +2435,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     con.query(
                                         `
                                         UPDATE formplant 
-                                        SET submit = 2 , date_success = ?
-                                        WHERE id = ? and submit = 1
+                                        SET state_status = 2 , date_success = ?
+                                        WHERE id = ? and state_status = 1
                                         ` , [new Date() , req.body.id_plant ] , 
                                         (err , update)=>{
                                             con.end()
@@ -2583,7 +2583,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
                                 ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
-                                ${Submit !== null ? `and formplant.submit = ${Submit}` : ""}
+                                ${Submit !== null ? `and formplant.state_status = ${Submit}` : ""}
                                 ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
                                 
                         ORDER BY ${OrderBy}

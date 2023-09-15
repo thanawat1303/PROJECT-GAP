@@ -318,7 +318,7 @@ const DataForm = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0
                             </svg>
                         </div>
                         <div className="manage-menu" ref={ManageMenu}>
-                            { Data.submit < 2 ?
+                            { Data.state_status < 2 ?
                                 <div onClick={EditForm}>แก้ไขข้อมูล</div>
                                 : <></>
                             }

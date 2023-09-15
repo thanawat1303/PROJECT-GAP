@@ -48,7 +48,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
         if(await CloseAccount(result , setPage)) {
             try {
                 const Check = JSON.parse(result)
-                setLoadCheckSubmit(Check[0].submit)
+                setLoadCheckSubmit(Check[0].state_status)
             } catch(e) {}
         }
     }
@@ -88,7 +88,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                         <button onClick={(e)=>OpenManage(val.id , e)}>จัดการ</button>
                         <div className={`manage-form content-${val.id}`}>
                             <div onClick={()=>DetailFrom(val)}>รายละเอียด</div>
-                            { val.submit < 2 ?
+                            { val.state_status < 2 ?
                                 <div onClick={()=>PopupEditForm(val)}>แก้ไขข้อมูล</div>
                                 : <></>
                             }
@@ -145,7 +145,7 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
                         <button onClick={(e)=>OpenManage(val.id , e)}>จัดการ</button>
                         <div className={`manage-form content-${val.id}`}>
                             <div onClick={()=>DetailFrom(val)}>รายละเอียด</div>
-                            { val.submit < 2 ?
+                            { val.state_status < 2 ?
                                 <div onClick={()=>PopupEditForm(val)}>แก้ไขข้อมูล</div>
                                 : <></>
                             }

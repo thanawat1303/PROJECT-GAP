@@ -527,9 +527,9 @@ const ManageList = ({Data , status , session , fetch , count , setCount}) => {
                 const DateHarvestDiff = ((new Date(Data.date_harvest) - new Date()) / (24 * 60 * 60 * 1000)).toString().split(".")[0]
                 return (
                     <a key={keyRow} className="list-some-data-on-page" title="เปิดแบบฟอร์ม"
-                        ref={Ref} status={Data.submit} onClick={()=>showPopup(Data.id , Ref)}
+                        ref={Ref} status={Data.state_status} onClick={()=>showPopup(Data.id , Ref)}
                         >
-                        { Data.submit == 0 && (DateHarvestDiff <= 15 || DateHarvestDiff < 0) ?
+                        { Data.state_status == 0 && (DateHarvestDiff <= 15 || DateHarvestDiff < 0) ?
                             <div className="report-list">
                                 <div className="text">
                                 {

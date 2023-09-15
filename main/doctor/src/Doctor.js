@@ -10,7 +10,6 @@ import "./assets/style/doctorMain.scss"
 import DesktopNev from "./navTop/desktop";
 import SessionOut from "./sesionOut";
 import PageFormPlant from "./page/form/PageFormPlant";
-import PageExport from "./page/export/PageExport";
 import PageFarmer from "./page/farmer/PageFarmer";
 import PageData from "./page/data/PageData";
 

@@ -4,4 +4,4 @@ DELETE FROM check_form_detail;
 DELETE FROM check_plant_detail;
 
 UPDATE formplant
-SET submit = 0;
+SET state_status = 0;

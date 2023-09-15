@@ -154,7 +154,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                     register_auth,
                                     uid_line,
                                     date_doctor_confirm,
-                                    id_doctor,
+                                    id_table_doctor,
                                     link_user,
                                     tel_number,
                                     text_location

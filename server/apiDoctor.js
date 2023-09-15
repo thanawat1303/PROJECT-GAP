@@ -707,7 +707,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     (
                         SELECT fullname_doctor
                         FROM acc_doctor
-                        WHERE acc_doctor.id_table_doctor = acc_farmer.id_doctor
+                        WHERE acc_doctor.id_table_doctor = acc_farmer.id_table_doctor
                     ) as name_doctor ,
                     (
                         SELECT date
@@ -892,7 +892,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         UPDATE acc_farmer 
                         SET 
                             register_auth = 1 , 
-                            id_doctor = ? , 
+                            id_table_doctor = ? , 
                             date_doctor_confirm = ? ,
                             id_farmer = ?
                             ${Link_user ? `, link_user = "${Link_user}"` : ""}
@@ -978,7 +978,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     SET 
                         register_auth = 2 , 
                         date_doctor_confirm = ? ,
-                        id_doctor = ?
+                        id_table_doctor = ?
                     WHERE id_table = ? and (register_auth = 0 || register_auth = 1)
                     ` , [new Date() , result['data']['id_table_doctor'] , req.body.id_table] , 
                     (err, result ) => {

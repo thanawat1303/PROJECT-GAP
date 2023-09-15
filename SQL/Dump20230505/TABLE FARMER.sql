@@ -17,5 +17,8 @@
 --     text_location longtext NOT NULL
 -- )
 
-ALTER TABLE `line_chat_gap`.`acc_farmer`
-ADD COLUMN text_location longtext NOT NULL
+-- ALTER TABLE `line_chat_gap`.`acc_farmer`
+-- ADD COLUMN text_location longtext NOT NULL
+
+-- ALTER TABLE `line_chat_gap`.`acc_farmer`
+-- RENAME COLUMN id_doctor TO id_table_doctor

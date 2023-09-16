@@ -1,4 +1,4 @@
-DROP TABLE line_chat_gap.formPlant;
+-- DROP TABLE line_chat_gap.formPlant;
 -- DELETE FROM line_chat_gap.formPlant;
 CREATE TABLE line_chat_gap.formPlant (
     id varchar(50) NOT NULL PRIMARY KEY,

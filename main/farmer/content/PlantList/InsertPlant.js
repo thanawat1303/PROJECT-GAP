@@ -100,23 +100,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                         QtyInsect.current.value = Object.FromHistory[0].qtyInsect
                         Seft.current.value = Object.FromHistory[0].seft
                     }
-                } catch (err) {
-                    // Generation.current.value = ""
-                    // DateGlow.current.value = ""
-                    // DatePlant.current.value = ""
-                    // PositionW.current.value = ""
-                    // PositionH.current.value = ""
-                    // Qty.current.value = ""
-                    // Area.current.value = ""
-                    // DateOut.current.value = ""
-                    // System.current.value = ""
-                    // Water.current.value = ""
-                    // WaterStep.current.value = ""
-                    // History.current.value = ""
-                    // Insect.current.value = ""
-                    // QtyInsect.current.value = ""
-                    // Seft.current.value = ""
-                }
+                } catch (err) {}
             }
             if(name_plant_list !== "") {
                 FormContent.current.removeAttribute("over")
@@ -128,9 +112,6 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
     }
 
     const Confirm = async () => {
-        // if(!BTConfirm.current.getAttribute("no") == null ) {
-            
-        // }
 
         const type = TypePlantInput.current
         const generetion = Generation.current
@@ -173,26 +154,14 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                     qtyInsect : qtyInsect.value,
                     seft : seft.value
                 }
-                console.log(data)
 
-                // setWait(true)
-                // const Data = await clientMo.post("/api/farmer/formplant/insert" , data)
-                // if(await CloseAccount(Data , setPage)) {
-                //     cancel()
-                //     ReloadData()
-                //     setWait(false)
-                // }
-        } else {
-            // let RefObject = [
-            //             type , generetion , dateGlow , datePlant , 
-            //             posiW , posiH , qty , area , dateOut , system ,
-            //             water , waterStep , history , insect , qtyInsect 
-            //             // , seft
-            //         ]
-            // RefObject.forEach((ele , index)=>{
-            //     if(!ele.value && ele) ele.style.border = "2px solid red"
-            //     else if (ele.value && ele) ele.style.border = "2px solid transparent"
-            // })
+                setWait(true)
+                const Data = await clientMo.post("/api/farmer/formplant/insert" , data)
+                if(await CloseAccount(Data , setPage)) {
+                    cancel()
+                    ReloadData()
+                    setWait(false)
+                }
         }
     }
 
@@ -202,10 +171,6 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
             setPopup(<></>)
         } , 500)
     }
-
-    // const clickDate = (ele) => {
-    //     ele.current.focus()
-    // }
 
     const ChangeCHK = () => {
         const type = TypePlantInput.current

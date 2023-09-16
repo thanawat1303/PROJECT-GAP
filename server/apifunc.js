@@ -25,8 +25,6 @@ const apifunc = {
               // ErrorDB(connectDB, err, res);
               reject("not pass");
             } else {
-              console.log(result)
-
               if (result[0]) {
                 resole({
                   data : result[0],

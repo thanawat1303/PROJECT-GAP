@@ -50,9 +50,12 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     if(process.argv[2] != process.env.BUILD) reactServ(app)
 
     app.use(sessions({
+        name : "chat_gap_line",
         secret : process.env.KEY_SESSION ?? "",
         saveUninitialized: true,
         cookie: {
+            httpOnly: true,
+            // secure : true
             // maxAge: parseInt(process.env.TIME_COKKIE),
             // secure: process.argv[2] != process.env.BUILD ? false : true
         },

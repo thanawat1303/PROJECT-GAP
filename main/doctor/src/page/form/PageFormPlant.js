@@ -278,11 +278,10 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                         </svg> */}
                         <svg viewBox="0 0 400 400">
                             <path d="M360.069 200.5C367.211 200.5 373.05 206.298 372.516 213.419C369.436 254.444 351.767 293.185 322.476 322.476C290.126 354.826 246.25 373 200.5 373C154.75 373 110.874 354.826 78.5241 322.476C49.233 293.185 31.5637 254.444 28.4841 213.419C27.9495 206.298 33.7894 200.5 40.931 200.5V200.5C48.0726 200.5 53.8028 206.302 54.4315 213.415C57.4504 247.572 72.3722 279.75 96.8113 304.189C124.311 331.689 161.609 347.138 200.5 347.138C239.391 347.138 276.689 331.689 304.189 304.189C328.628 279.75 343.55 247.572 346.568 213.415C347.197 206.302 352.927 200.5 360.069 200.5V200.5Z" fill="#22C7A9"/>
-                            <path d="M200 71L200 284" stroke="#22C7A9" stroke-width="35" stroke-linecap="round"/>
-                            <path d="M200 71L263.64 134.64" stroke="#22C7A9" stroke-width="35" stroke-linecap="round"/>
-                            <path d="M200 71L136.36 134.64" stroke="#22C7A9" stroke-width="35" stroke-linecap="round"/>
+                            <path d="M200 71L200 284" stroke="#22C7A9" strokeWidth="35" strokeLinecap="round"/>
+                            <path d="M200 71L263.64 134.64" stroke="#22C7A9" strokeWidth="35" strokeLinecap="round"/>
+                            <path d="M200 71L136.36 134.64" stroke="#22C7A9" strokeWidth="35" strokeLinecap="round"/>
                         </svg>
-
                     </a>
                 </div>
                 <div className="content-option">

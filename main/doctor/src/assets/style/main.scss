@@ -31,20 +31,23 @@
             background-color: #4ed1b9;
         
             padding: 25px 45px;
-            border-radius: 8px;
+            border-radius: 15px;
             box-shadow: 0px 0px 5px #0f7865;
-    
+
             div {
-                font-size: 18pt;
+                font:900 18pt Sans-font;
                 margin-bottom: 15px;
             }
-    
+
             button {
                 padding: 0px 30px;
                 border-radius: 8px;
                 font: 900 14pt Sans-font;
                 background-color: #0b6050;
+                box-shadow: 0px 4px 4px #095244;
                 color: white;
+                outline: 0;
+                border: 0;
                 cursor: pointer;
             }
         } 

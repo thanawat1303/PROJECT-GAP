@@ -150,7 +150,7 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                             name : nameInsert.current.value ,
                             name_formula : formulaChemical.current.value , 
                             how_use : UseText.current.value,
-                            date_sefe : DateQtyInsert.current.value
+                            date_safe_list : DateQtyInsert.current.value
                         },
                         check : {
                             name : nameInsert.current.value ,
@@ -460,7 +460,7 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
                                     <div className="row">
                                         <div className="field-text row-text">
                                             <span>จำนวนวันปลอดภัย</span>
-                                            <div className="data-text">{DataIn.date_sefe} วัน</div>
+                                            <div className="data-text">{DataIn.date_safe_list} วัน</div>
                                         </div>
                                         <a onClick={()=>OpenManageData(DataIn)} className="frame-manage-list position bottom" title="จัดการข้อมูล">
                                             <svg viewBox="0 0 20 20">

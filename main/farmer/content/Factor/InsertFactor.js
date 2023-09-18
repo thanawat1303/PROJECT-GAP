@@ -7,6 +7,7 @@ import { ConvertDate, DatePickerThai, Loading } from "../../../../src/assets/js/
 const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant , type_path , ReloadData , setPage}) => {
     const DateNowOnForm = `${new Date().getFullYear()}-${("0" + (new Date().getMonth() + 1).toString()).slice(-2)}-${("0" + new Date().getDate().toString()).slice(-2)}`
     const [getDateOut , setDateOut] = useState("")
+    
     // same
     const DateUse = useRef()
     const NameMainFactor = useRef()
@@ -309,7 +310,7 @@ const PopupInsertFactor = ({setPopup , RefPop , uid , id_house , id_form_plant ,
         try {
             const NumDay = DataFactor.filter((val)=>
                             val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
-                                .map((val)=>val.date_sefe)[0]
+                                .map((val)=>val.date_safe_list)[0]
             const DateUsePut = new Date(DateUse.current.value ? ConvertDate(DateUse.current.value).christDate : "")
             DateUsePut.setDate(DateUsePut.getDate() + NumDay + 1)
             const result = DateUsePut.toISOString().split("T")[0]

@@ -384,12 +384,13 @@ const DetailChemical = ({Data}) => {
                 </label>
                 <label className="field-select not1">
                     <span className="important ab">จำนวนวันปลอดภัย</span>
-                    <input readOnly defaultValue={Data.date_sefe}></input>
+                    <input readOnly defaultValue={Data.date_safe_list}></input>
                 </label>
             </div>
         </div>
     )
-} 
+}
+
 const EditChemical = ({CheckEdit , Data , ErrReport}) => {
     const formulaChemical = useRef()
     const UseText = useRef()
@@ -426,7 +427,7 @@ const EditChemical = ({CheckEdit , Data , ErrReport}) => {
                     <span className="important ab">จำนวนวันปลอดภัย</span>
                     <input onInput={(e)=>parseInt(e.target.value) <= 0 ? e.target.value = "" : null} 
                             ref={DateQtyInsert} 
-                            onChange={(e)=>CheckEdit(e.target.value , "date_sefe")} placeholder="เช่น 10 30" type="number" defaultValue={Data.date_sefe}></input>
+                            onChange={(e)=>CheckEdit(e.target.value , "date_safe_list")} placeholder="เช่น 10 30" type="number" defaultValue={Data.date_safe_list}></input>
                 </label>
             </div>
         </div>

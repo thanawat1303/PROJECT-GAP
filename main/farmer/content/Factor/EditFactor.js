@@ -392,7 +392,7 @@ ObjectData}) => {
         try {
             const NumDay = DataFactor.filter((val)=>
                             val.name_formula.indexOf(NameMainFactor.current.value) >= 0 && val.name.indexOf(NameFactor.current.value) >= 0)
-                                .map((val)=>val.date_sefe)[0]
+                                .map((val)=>val.date_safe_list)[0]
             const DateUsePut = new Date(DateUse.current.value ? ConvertDate(DateUse.current.value).christDate : "")
             DateUsePut.setDate(DateUsePut.getDate() + NumDay + 1)
             const result = DateUsePut.toISOString().split("T")[0]

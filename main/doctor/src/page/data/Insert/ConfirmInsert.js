@@ -80,7 +80,7 @@ const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit ,
                                     val[0] === "qty_harvest" ? "วันที่คาดว่าจะเก็บเกี่ยว" :
                                     val[0] === "name_formula" ? Data.type === "fertilizer" ? "สูตรปุ๋ย" : "ชื่อสามัญสารเคมี" :
                                     val[0] === "how_use" ? "วิธีการใช้" :
-                                    val[0] === "date_sefe" ? "จำนวนวันปลอดภัย" :
+                                    val[0] === "date_safe_list" ? "จำนวนวันปลอดภัย" :
                                     val[0] === "location" ? "map"
                                     : ""
                                 );

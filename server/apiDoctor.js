@@ -2923,19 +2923,17 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         con.query(
                                             `
                                                 INSERT INTO ${From} 
-                                                ( ${Key.join(" , ")} ) 
+                                                ( ${Key.join(" , ")} )
                                                 VALUES 
                                                 ( ${InsertArray.join(" , ")} )
                                             ` , dataInsert , (err , result)=>{
                                                 if(err){
-                                                    console.log(err)
                                                     con.end()
-                                                    res.send("err")
-                                                    return 0
+                                                    res.send("error")
+                                                } else {
+                                                    con.end()
+                                                    res.send("insert")
                                                 }
-    
-                                                con.end()
-                                                res.send("insert")
                                             }
                                         )
                                     } catch(err) {

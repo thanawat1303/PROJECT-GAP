@@ -171,6 +171,7 @@
                             font-weight: 900;
                             font-size: 15px; //media query
                             width: 100%;
+                            text-wrap: nowrap;
 
                             span {
                                 width: auto;
@@ -181,7 +182,7 @@
                             content: "*";
                             color: red;
                             width: auto;
-                            transform: translateY(-0.2em);
+                            transform: translateY(-0.3em);
                         }
 
                         span.ab::after {

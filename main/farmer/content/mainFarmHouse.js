@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 import FarmBody from "./FarmBody";
-import { GetPath } from "../method";
-import ErrorPage from "../ErrorPage";
+import { CloseAccount, GetPath } from "../method";
 
 const MenuMain = ({liff , uid}) => {
 
@@ -20,8 +19,9 @@ const MenuMain = ({liff , uid}) => {
             id_farmhouse : GetPath()[0],
             uid : uid
         })
+
         if(result === "access") setBody(<FarmBody liff={liff} uid={uid} id_farmhouse={GetPath()[0]}/>)
-        else if (result === "not") setBody(<ErrorPage text={"ไม่พบโรงเรือนนี้"}/>)
+        else if (result === "not") CloseAccount("not line" , null , "ไม่พบโรงเรือนของท่าน")
     }
 
     return (Body)

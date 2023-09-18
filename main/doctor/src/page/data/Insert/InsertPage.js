@@ -150,7 +150,7 @@ const InsertChemical = ({nameInsert , formulaChemical , UseText , DateQtyInsert 
         <div className="row">
             <label className="field-select">
                 <span className="important">ชื่อสามัญสารเคมี</span>
-                <input ref={formulaChemical} onChange={CheckInsert} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current)} placeholder="เช่น "></input>
+                <input ref={formulaChemical} onChange={CheckInsert} onKeyDown={(e)=>InputKeyDownNext(e , UseText.current)} placeholder="เช่น แมนโคเซบ"></input>
             </label>
         </div> 
         <div className="row">

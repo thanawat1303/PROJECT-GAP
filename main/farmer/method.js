@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { clientMo } from "../../src/assets/js/moduleClient"
-const CloseAccount = (result , setPage) => {
+const CloseAccount = (result , setPage , textError = "") => {
     return new Promise((resolve , reject)=>{
         if(document.getElementById("loading").classList[0] !== "hide")
             clientMo.unLoadingPage()
@@ -19,7 +19,7 @@ const CloseAccount = (result , setPage) => {
             } catch(e) {}
             resolve(0)
         } else if (result === "not line") {
-            document.querySelector("#session-farmer .body #session-text").innerHTML = "กรุณาเข้าระบบผ่านไลน์"
+            document.querySelector("#session-farmer .body #session-text").innerHTML = textError
             document.querySelector("#session-farmer").style.opacity = "1"
             document.querySelector("#session-farmer").style.visibility = "visible"
         }
@@ -30,7 +30,7 @@ const CloseAccount = (result , setPage) => {
 }
 
 const GetPath = () => {
-    return window.location.pathname.split("/").slice(3,window.location.pathname.split("/").length)
+    return window.location.pathname.split("/").slice(3,window.location.pathname.split("/").length).filter(val=>val)
 }
 
 export {CloseAccount , GetPath}

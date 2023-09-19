@@ -53,12 +53,12 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
         name : "chat_gap_line",
         secret : process.env.KEY_SESSION ?? "",
         saveUninitialized: true,
-        cookie: {
-            httpOnly: true,
-            // secure : true
-            // maxAge: parseInt(process.env.TIME_COKKIE),
-            // secure: process.argv[2] != process.env.BUILD ? false : true
-        },
+        // cookie: {
+        //     httpOnly: true,
+        //     // secure : true
+        //     // maxAge: parseInt(process.env.TIME_COKKIE),
+        //     // secure: process.argv[2] != process.env.BUILD ? false : true
+        // },
         resave : false
     }))
 

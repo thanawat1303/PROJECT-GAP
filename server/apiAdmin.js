@@ -619,7 +619,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   })
   
   app.get('/api/logout' , (req , res) => {
-    res.clearCookie('connect.sid').send('')
+    res.clearCookie(process.env.cookie).send('')
   })
 }
 

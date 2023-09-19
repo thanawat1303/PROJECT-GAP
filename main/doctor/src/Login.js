@@ -65,6 +65,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
         if(e.target[0].value != '' && e.target[1].value != ''){
             setFormPro(<></>)
             clientMo.LoadingPage()
+            
             const formData = {
                 username : e.target[0].value,
                 password : e.target[1].value,
@@ -72,7 +73,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
             }
 
             setTimeout(()=>{
-                clientMo.post('/api/doctor/auth' , formData).then((context)=>{
+                clientMo.postForm('/api/doctor/auth' , formData).then((context)=>{
                     if(context === "pass") {
                         setMain(<Doctor setMain={setMain} socket={socket} isClick={1}/>)
                     } else if(context === "account") {

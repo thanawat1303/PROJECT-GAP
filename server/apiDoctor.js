@@ -246,8 +246,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             return 0
         }
     
-        let con = Database.createConnection(listDB)
-    
+        let con = Database.createConnection(listDB)    
         // Database.resume()
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{

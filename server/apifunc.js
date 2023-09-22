@@ -1,4 +1,5 @@
 const dbFunc = require('./dbConfig')
+const crypto = require("crypto")
 
 const ErrorDB = (connectDB, err, res) => {
   dbFunc.dbErrorReturn(connectDB, err, res)
@@ -61,7 +62,24 @@ const apifunc = {
     const seconds = String(DateCurrent.getSeconds()).padStart(2, '0');
   
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  }
+  },
+
+  getTokenCsurf : (request) => {
+    const headers = request.headers
+    const patternCsurf = headers["user-agent"] ?? "" + headers["sec-ch-ua"] ?? "" + headers["x-forwarded-for"] ?? "" + headers["sec-ch-ua-platform"] ?? ""
+    const modiText = `${patternCsurf}`.replaceAll(" " , "").trim()
+    const hashedText = crypto.createHash('sha256').update(modiText).digest('hex');
+    return hashedText
+  },
+
+  authCsurf : (authType , request , response) => {
+    const username = (authType === "admin") ? request.session.user_admin : (authType === "doctor") ? request.session.user_doctor : "";
+    const password = (authType === "admin") ? request.session.pass_admin : (authType === "doctor") ? request.session.pass_doctor : "";
+    const token = request.session.tokenSession
+
+    if((username || password) && token !== apifunc.getTokenCsurf(request)) return false
+    else return true
+  },
 };
 
 module.exports = apifunc;

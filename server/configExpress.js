@@ -35,9 +35,6 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     const listDB = dbpacket.listConfig(username , password)
     const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV;
     const HOST_FARMER = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_FARMER;
-    
-    // protocal websocket
-    const io = WebSocket(server)
 
     // secure server
     // app.use(helmat(
@@ -49,18 +46,25 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     // config server and Hot Refresh
     if(process.argv[2] != process.env.BUILD) reactServ(app)
 
-    app.use(sessions({
+    // set session
+    const sessionMiddleware = sessions({
         name : "chat_gap_line",
         secret : process.env.KEY_SESSION ?? "",
-        saveUninitialized: true,
-        // cookie: {
-        //     httpOnly: true,
-        //     // secure : true
-        //     // maxAge: parseInt(process.env.TIME_COKKIE),
-        //     // secure: process.argv[2] != process.env.BUILD ? false : true
-        // },
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            secure : process.argv[2] == process.env.BUILD,
+            maxAge: null,
+            sameSite: 'strict'
+            // secure: process.argv[2] != process.env.BUILD ? false : true
+        },
         resave : false
-    }))
+    })
+
+    // protocal websocket
+    const io = WebSocket(server)
+
+    app.use(sessionMiddleware)
 
     // config environment
     app.use(express.json())
@@ -69,6 +73,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     app.use(express.static('src/assets/style'))
     app.use(express.static('src/assets/font'))
     app.use(express.static('src/assets/img'))
+    app.use(express.static('src/assets/js'))
     app.use(express.static('src/assets/icon'))
     app.use(express.static('public'))
 
@@ -80,6 +85,11 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     apiDoctor(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io , LINE)
     apiFarmer(app , db , apifunc , HOST_FARMER , dbpacket , listDB , io , LINE)
     message(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io)
+
+    // page error 404
+    app.get("*" , (req, res) => {
+        res.sendFile(__dirname.replace('\server' , '/public/index404.html'));
+    });
 
     return server
 }

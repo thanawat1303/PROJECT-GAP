@@ -16,7 +16,7 @@ const MainDoctor = ({socket}) => {
     const FetchCheck = async () => {
         if(window.location.href.indexOf("/doctor/logout") >= 0) {
             window.history.replaceState({} , "" , "/doctor")
-            const result = await clientMo.get('/api/logout')
+            await clientMo.get('/api/logout')
             setBody(<Login socket={socket} setMain={setBody}/>)
         } else {
             const context = await clientMo.post('/api/doctor/check')

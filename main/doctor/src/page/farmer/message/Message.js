@@ -9,6 +9,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     const [Size_input , setSize_input] = useState(30)
 
     const [Open , setOpen] = useState(false)
+    const [getLoadMsg , setLoadMsg] = useState(false)
     const [FocusUnread , setFocusUnread] = useState("start")
 
     const messageRef = useRef()
@@ -36,7 +37,6 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     } , [timeOut])
 
     useEffect(()=>{
-        console.log(is_change , Open)
         if(Open) UpdateMessage()
         setOpen(true)
     } , [is_change])
@@ -70,6 +70,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     }
 
     const FetchMsg = async ( limit , open) => {
+        setLoadMsg(false)
         const data = open === "start" ?
                         {
                             uid_line : Data.uid_line,
@@ -106,6 +107,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
                 Body = [...DataFetch , ...message]
             }
 
+            setLoadMsg(true)
             if(Read) 
                 clientMo.post("/api/doctor/farmer/msg/read" , {
                     uid_line : Data.uid_line
@@ -114,7 +116,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
     }
 
     const LoadMessageOld = (e) => {
-        if(e.target.scrollTop === 0) {
+        if(e.target.scrollTop <= 80 && getLoadMsg) {
             FetchMsg(5 , "load")
             setFocusUnread("load")
         }
@@ -162,7 +164,7 @@ const Messageing = ({Data , FetData , session , socket = io() , is_change}) => {
                             <div key={parseInt(val.id)} className="user-other" is_me={val.is_me ? "" : null}>
                                 { !val.is_me ? 
                                     <div className="img">
-                                        <img src={Data.img}></img>
+                                        <img src={val.img_doctor ?? Data.img}></img>
                                     </div> : <></>
                                 }
                                 <div className="message-detail">
@@ -225,14 +227,18 @@ const DetailMessange = ({Msg , Ref , setOpen}) => {
     const FetchContentMsg = async () => {
         if(Msg.type_message == "image") {
             const url = `https://api-data.line.me/v2/bot/message/${Msg.message}/content`
-            const Data = await fetch(url , {
-                method : "GET",
-                headers : {
-                    Authorization : "Bearer 3bRyKhlM01xFG6hDC+x5ZlfT0r44XF4L5wHORR9CJc87tmjrHoQJad6kLvOa8cbX7hSHVu6SB08UcWx2I9QjdNWRLo6fwsExPTbm7Wuaw7Eq6zh6DJXs9FFQqSbXxZKvHJt4jURZqu4Z0NcP6zJ4wwdB04t89/1O/w1cDnyilFU="
-                }
-            }).then((val)=>val.blob()) // แปลง binary เป็น Blob object
-            const imageUrl = URL.createObjectURL(Data);
-            setFileData(imageUrl)
+            try {
+                const Data = await fetch(url , {
+                    method : "GET",
+                    headers : {
+                        Authorization : "Bearer 3bRyKhlM01xFG6hDC+x5ZlfT0r44XF4L5wHORR9CJc87tmjrHoQJad6kLvOa8cbX7hSHVu6SB08UcWx2I9QjdNWRLo6fwsExPTbm7Wuaw7Eq6zh6DJXs9FFQqSbXxZKvHJt4jURZqu4Z0NcP6zJ4wwdB04t89/1O/w1cDnyilFU="
+                    }
+                })
+                const imageUrl = URL.createObjectURL(Data.blob());  // แปลง binary เป็น Blob object
+                setFileData(imageUrl)
+            } catch(e) {
+                setFileData("not-image")
+            }
         }
     }
 
@@ -244,7 +250,7 @@ const DetailMessange = ({Msg , Ref , setOpen}) => {
         Msg.type_message == "text" ? <div className="msg">{Msg.message}</div> : 
         Msg.type_message == "location" ? <div className="msg">{`ตำแหน่ง ${Msg.message}`}</div> :
         FileData ? 
-            Msg.type_message == "image" ? <img onClick={()=> FileData ? OpenImage(FileData) : null} src={FileData}></img> : 
+            Msg.type_message == "image" ? <img onClick={()=> FileData ? OpenImage(FileData) : null} src={FileData != "not-image" ? FileData : "/no image.png"}></img> : 
             "" 
         : 
         <div style={{

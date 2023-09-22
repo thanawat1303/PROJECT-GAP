@@ -55,7 +55,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
             } else {
                 setLoadUid(true)
             }
-        }).catch(err=>{console.log(err)})
+        }).catch(err=>{})
     }
 
     const submitFrom = (e = document.getElementById("")) => {

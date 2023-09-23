@@ -10,7 +10,7 @@ const MapsJSX = ({lat , lng , w , h}) => {
         setLng(lng)
     } , [lat , lng])
     return(
-        <iframe src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_API_KEY}&q=${latitude},${longtitude}&zoom=18&maptype=satellite`} 
+        <iframe src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_API_KEY_MAP}&q=${latitude},${longtitude}&zoom=18&maptype=satellite`} 
            frameBorder={0} width={w} height={h} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
     )

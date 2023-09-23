@@ -273,6 +273,12 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
                         </Detail-Data-main>
                         <Action-bt>
                             <content-status because={0}>
+                                { status.status === "station" ? 
+                                    <div>
+                                        แก้ไข
+                                    </div> 
+                                : <></>
+                                }
                                 <Bt-status 
                                     onClick={()=>OpenConfirmData(data.id , status.status)}
                                     >

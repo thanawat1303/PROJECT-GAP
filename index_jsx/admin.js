@@ -8,8 +8,6 @@ const root = ReactDOM.createRoot(document.getElementById('root'))
 // const socket = new WebSocket();
 const socket = io(window.location.protocol+"//"+window.location.host)
 
-console.log("admin")
-
 // socket.on('connect' , ()=>{
     
 // })

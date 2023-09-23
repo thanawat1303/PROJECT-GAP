@@ -37,7 +37,7 @@ module.exports = {
                 },
             }), 
             new webpack.DefinePlugin({
-                "process.env.REACT_API_KEY" : JSON.stringify("AIzaSyDgCfVBI9YfvOp1esw8dnuPTtNOpr9YgI4")
+                "process.env.REACT_API_KEY_MAP" : JSON.stringify("AIzaSyDgCfVBI9YfvOp1esw8dnuPTtNOpr9YgI4")
             })
     ] ,
     resolve: {

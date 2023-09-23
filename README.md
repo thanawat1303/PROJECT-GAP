@@ -12,6 +12,11 @@
          cp package-json/package.json  . #Linux
          ```
 
+   - init env
+      ```
+      npm run init-env
+      ```
+
    - Package
       ```
       npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session helmet mysql mysql2 uuid 

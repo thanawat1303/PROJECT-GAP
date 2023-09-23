@@ -20,7 +20,11 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , ses
                     HrefData.get() === "data?station" ? "station" : "",
     })
 
+    const [getTimeOut , setTimeOut] = useState(0)
+    const [getTextSearch , setTextSearch] = useState("")
+
     const PageAddRef = useRef()
+    const TextSearchRef = useRef()
 
     useEffect(()=>{
         // modify(70 , 30 , 
@@ -30,7 +34,13 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , ses
             state()
         }
 
-     } , [HrefData.get()])
+    } , [HrefData.get()])
+
+    useEffect(()=>{
+        return(()=>{
+            clearTimeout(getTimeOut)
+        })
+    } , [getTimeOut])
 
     const state = () => {
         const status =  HrefData.get() === "list?default=pop" ? "default" : 
@@ -48,6 +58,7 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , ses
             if(auth(true)) {
                 setStatus({status : statusClick , changePath : true})
                 HrefData.set(`${HrefData.get().split("?")[0]}?${statusClick}=c`)
+                TextSearchRef.current.value = ""
             }
         }
     }
@@ -73,20 +84,25 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , ses
                     <button className="bt-plant" onClick={()=>ChangeStatus("plant")}>แสดงรายการชนิดพืช</button> :
                 <></>
                 }
-                {/* <div className="search">
+                <div className="search">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
                         <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
                             <path d="m11.25 11.25l3 3"/><circle cx="7.5" cy="7.5" r="4.75"/>
                         </g>
                     </svg>
-                    <input type="text" placeholder="Search"></input>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+                    <input ref={TextSearchRef} onChange={(e)=>{
+                        clearTimeout(getTimeOut)
+                        setTimeOut(setTimeout(()=>{
+                            setTextSearch(e.target.value)
+                        } , 2000))
+                    }} type="text" placeholder="Search"></input>
+                    <svg xmlns="http://www.w3.org/2000/svg" onClick={()=>TextSearchRef.current.value = ""} width="1em" height="1em" viewBox="0 0 32 32">
                         <path fill="currentColor" d="M16 2C8.2 2 2 8.2 2 16s6.2 14 14 14s14-6.2 14-14S23.8 2 16 2zm5.4 21L16 17.6L10.6 23L9 21.4l5.4-5.4L9 10.6L10.6 9l5.4 5.4L21.4 9l1.6 1.6l-5.4 5.4l5.4 5.4l-1.6 1.6z"/>
                     </svg>
-                </div> */}
+                </div>
             </div>
             <div className="list-manage">
-                <ListData status={StatusPage} PageAddRef={PageAddRef} auth={auth} session={session} TabOn={TabOn} HrefPage={HrefData} setStateOnPage={setStateOnPage} modify={modify}/>
+                <ListData status={StatusPage} PageAddRef={PageAddRef} auth={auth} session={session} TabOn={TabOn} HrefPage={HrefData} setStateOnPage={setStateOnPage} modify={modify} textSearch={getTextSearch}/>
             </div>
         </section>
     )

@@ -8,7 +8,7 @@ import ShowBecause from "./doctor/ShowBecause";
 import ManageDoctorPage from "./doctor/ManagePage";
 import ManageDataPage from "./data/ManagePage";
 
-const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , setStateOnPage , modify}) => {
+const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , setStateOnPage , modify , textSearch}) => {
     // const [Body , setBody] = useState(<></>)
     // const [List , setList] = useState(<></>)
 
@@ -17,7 +17,9 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
     // const [ShBecause , setShBecause] = useState(<></>)
 
     const [ListCount , setListCount] = useState(0)
-    const [RowStart , setRowStart] = useState(0)
+    const [getVerifyStart , setVerifyStart] = useState(false)
+    const [RowList , setRowList] = useState(5)
+
     const RefBe = useRef()
     // const ShowBecause = useRef()
 
@@ -26,8 +28,12 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
 
         removePopup()
         fetchDataList(0 , 5)
-
+        setVerifyStart(true)
     } , [status])
+
+    useEffect(()=>{
+        if(getVerifyStart) { fetchDataList( 0 , RowList , textSearch) }
+    } , [textSearch])
 
     const removePopup = () => {
         if(RefBe.current) {
@@ -38,25 +44,27 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
         }
     }
 
-    const fetchDataList = async (StartRow , Limit) => {
+    const fetchDataList = async (StartRow , Limit , textSearch = "") => {
         const ObjectData = 
                 HrefPage.get().split("?")[0] === "list" ? await clientMo.post("/api/admin/doctor/list" , {
                     typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1) , 
                     limit : Limit,
-                    startRow : StartRow
+                    startRow : StartRow,
+                    textSearch : textSearch
                 }) :
                 HrefPage.get().split("?")[0] === "data" ? await clientMo.post("/api/admin/data/list" , {
                     type : status.status,
                     limit : Limit,
-                    startRow : StartRow
+                    startRow : StartRow,
+                    textSearch : textSearch
                 }) : null
 
         if(ObjectData) {
             const List = JSON.parse(ObjectData)
-            console.log(List)
+            // console.log(List)
             if(StartRow != 0) {
                 setDataFetch([...DataFetch , ...List])
-                setRowStart([...DataFetch , ...List].length)
+                setRowList([...DataFetch , ...List].length)
             } else
                 setDataFetch(List)
             
@@ -91,7 +99,7 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
             <div className="load-other" style={{
                 padding : "5px 0px"
             }}>
-                <LoadOtherOffset Fetch={fetchDataList} Data={DataFetch} setRow={setRowStart} Limit={5} style={{
+                <LoadOtherOffset Fetch={fetchDataList} Data={DataFetch} setRow={setRowList} Limit={5} style={{
                     backgroundColor : "#22C7A9" 
                 }}/>
             </div>

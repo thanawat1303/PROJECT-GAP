@@ -91,9 +91,12 @@ const ManageData = ({Ref , setPopup , DataOfPage , Type , Fetch , RowPresent , s
         if(fetchChange === "113") {
             setStatus(DataIN.state)
             Fetch(0 , RowPresent)
-        } else if(fetchChange === "error") {}
+        } else if(fetchChange === "over") {
+            Fetch(0 , RowPresent)
+            close()
+        }
+        else if(fetchChange === "error") {}
         else session()
-        
     }
 
     const close = () => {

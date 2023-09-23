@@ -508,7 +508,7 @@ const LoadOtherOffset = ({Fetch , Data , setRow , Limit , style = {
     const Other = async () => {
         setLoad(false)
         const Row = await Fetch(Data.length , Limit)
-        if(Row.length !== 0) setRow(Row.length)
+        if(Row.length !== 0 && setRow) setRow(Row.length)
         setLoad(true)
     }
 

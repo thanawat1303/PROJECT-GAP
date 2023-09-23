@@ -74,6 +74,9 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
             if(result === "133") {
                 setText(`${status == 1 ? "ปิด" : "เปิด"}${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}สำเร็จ`)
                 setStatus(1)
+            } else if(result === "over") {
+                setText(`มี${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}ใช้งานอยู่`)
+                setStatus(3)
             } else if(result === "because") {
                 setText("เกิดปัญหาทางเซิร์ฟเวอร์")
                 setStatus(3)
@@ -81,7 +84,10 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
                 setText("รหัสผ่านไม่ถูกต้อง")
                 setStatus(3)
                 PasswordRef.current.value = ""
-            } else session()
+            } else {
+                setOpen(0)
+                session()
+            }
         }
     }
 

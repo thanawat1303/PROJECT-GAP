@@ -90,6 +90,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
                                     main={{setMain : setMain , socket : socket}}/>)
                         for(let x = 0; x < e.target.length-1; x++) {
                             let prevent = e.target[x].parentElement;
+                            e.target[x].blur()
                             prevent.classList.remove('empty');
                             e.target[x].value = ''
                         }
@@ -99,6 +100,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
                         ErrorLogin.current.setAttribute("show" , "")
                         for(let x = 0; x < e.target.length-1; x++) {
                             let prevent = e.target[x].parentElement;
+                            e.target[x].blur()
                             prevent.classList.remove('empty');
                             e.target[x].value = ''
                         }

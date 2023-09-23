@@ -11,8 +11,11 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
         status : LoadType.split(":")[0],
         open : type
     })
+
+    const [getTimeOut , setTimeOut] = useState(0)
     const [getTextSearch , setTextSearch] = useState("")
 
+    const TextSearchRef = useRef()
     const SelectOption = useRef()
 
     useEffect(()=>{
@@ -24,6 +27,12 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
         if(LoadType.split(":")[1] === "pop")
             chkPath()
     } , [LoadType])
+
+    useEffect(()=>{
+        return(()=>{
+            clearTimeout(getTimeOut)
+        })
+    } , [getTimeOut])
 
     const chkPath = () => {
         if(LoadType.split(":")[0] === "ap") {
@@ -52,6 +61,8 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
     const changeMenu = (e) => {
         // const typeClick = statusPage.status === "ap" ? "wt" : "ap"
         if(e.target.value !== statusPage.status) {
+            clearTimeout(getTimeOut)
+            TextSearchRef.current.value = ""
             setTextStatus(["หน้าหลัก" , "ทะเบียนเกษตรกร" , (e.target.value === "ap") ? "ตรวจสอบแล้ว" : (e.target.value === "wt") ? "รอการตรวจสอบ" : (e.target.value === "not") ? "บัญชีที่ถูกปิด" : ""])
             setStatus({
                 status : e.target.value,
@@ -74,7 +85,19 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
                         <option value={"wt"}>ยังไม่ตรวจสอบ</option>
                         <option value={"not"}>บัญชีที่ถูกปิด</option>
                     </select>
-                    <input onChange={(e)=>setTextSearch(e.target.value)} placeholder="ค้นหารหัส หรือ ชื่อจริง" className="search-farmer" type="search"></input>
+                    <label className="search">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                            <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
+                                <path d="m11.25 11.25l3 3"/><circle cx="7.5" cy="7.5" r="4.75"/>
+                            </g>
+                        </svg>
+                        <input onChange={(e)=>{
+                            clearTimeout(getTimeOut)
+                            setTimeOut(setTimeout(()=>{
+                                setTextSearch(e.target.value)
+                            } , 1500))
+                        }} placeholder="ค้นหารหัส หรือ ชื่อจริง" ref={TextSearchRef} className="search-farmer" type="search"></input>
+                    </label>
                 </div>
             </div>
             <div className="data-list-content">

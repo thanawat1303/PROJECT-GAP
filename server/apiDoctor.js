@@ -3099,22 +3099,54 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 req.body.type == "source" ? "source_list" : ""
                 const state = req.body.state == 0 ? 0 : 1; 
                 if(From) {
-                    con.query(
-                        `
-                        UPDATE ${From} SET is_use = ? WHERE id = ? and is_use != ?
-                        ` , [ state , req.body.id_list , state ] ,
-                        (err , list) => {
-                            if(err) {
-                                console.log(err)
-                                con.end()
-                                res.send("error")
-                                return 0
-                            }
-    
+                    try {
+                        const checkOver = state ? await new Promise((resole , reject)=>{
+                            const Where = req.body.type == "plant" || req.body.type == "source" ? "fromMain.name = fromSub.name" : 
+                                            req.body.type == "fertilizer" || req.body.type == "chemical" ? "fromMain.name = fromSub.name AND fromMain.name_formula = fromSub.name_formula" : ""
+                            con.query(
+                                `
+                                SELECT (
+                                    SELECT EXISTS (
+                                        SELECT id
+                                        FROM ${From} as fromSub
+                                        WHERE ${Where} and id <> ? and is_use = 1
+                                    )
+                                ) as verify
+                                FROM ${From} as fromMain
+                                WHERE id = ?
+                                ` , [ req.body.id_list , req.body.id_list ] , 
+                                (err , result) => {
+                                    if(err) reject(err)
+                                    else resole(!result[0].verify)
+                                }
+                            )
+                        }) : true
+                        if(checkOver) {
+                            con.query(
+                                `
+                                UPDATE ${From} SET is_use = ? WHERE id = ? and is_use != ?
+                                ` , [ state , req.body.id_list , state ] ,
+                                (err , list) => {
+                                    if(err) {
+                                        console.log(err)
+                                        con.end()
+                                        res.send("error")
+                                        return 0
+                                    }
+            
+                                    con.end()
+                                    res.send('113')
+                                }
+                            )
+                        } else {
                             con.end()
-                            res.send('113')
+                            res.send('over')
                         }
-                    )
+                    } catch(e) {
+                        console.log(e)
+                        con.end()
+                        res.send("error")
+                    }
                 } else {
                     con.end()
                     res.send("error")

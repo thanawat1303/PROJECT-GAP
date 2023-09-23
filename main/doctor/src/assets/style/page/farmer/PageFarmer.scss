@@ -16,7 +16,7 @@
         position: absolute;
         justify-content: center;
         align-items: center;
-        padding: 2px 8px;
+        padding: 6px 0px;
         border-bottom-left-radius: 8px;
         border-top-left-radius: 2px;
         outline: 1.5px solid #22C7A9;
@@ -52,7 +52,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            width: 100%;
+            width: 95%;
 
             select {
                 width: 100%;
@@ -66,16 +66,31 @@
                 outline: 0;
             }
 
-            .search-farmer {
+            .search {
+                display: flex;
+                justify-content: start;
+                align-items: center;
                 background-color: #40d3b8;
-                border-radius: 10px;
-                font : 900 18px Sans-font;
-                border: 0;
-                outline: 0;
-                width: 100%;
-                margin-top: 2px;
-                padding:2px 5px;
-                color: white;
+                border-radius: 50px;
+                margin-top: 6px;
+                svg {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 30px;
+                    // padding: 2px;
+                    margin:0px 3px;
+                    color: white;
+                }
+                .search-farmer {
+                    background-color: transparent;
+                    font : 900 18px Sans-font;
+                    border: 0;
+                    outline: 0;
+                    width: 100%;
+                    padding:2px 0px;
+                    color: white;
+                }
             }
         }
 
@@ -85,8 +100,18 @@
             }
     
             .option-menu {
-                select , .search-farmer {
+                select {
                     font-size: 15px;
+                }
+
+                .search {
+                    svg {
+                        font-size: 25px;
+                    }
+
+                    .search-farmer {
+                        font-size: 15px;
+                    }
                 }
             }
         }
@@ -97,8 +122,18 @@
             }
     
             .option-menu {
-                select , .search-farmer {
+                select {
                     font-size: 12px;
+                }
+
+                .search {
+                    svg {
+                        font-size: 22px;
+                    }
+                    
+                    .search-farmer {
+                        font-size: 12px;
+                    }
                 }
             }
         }

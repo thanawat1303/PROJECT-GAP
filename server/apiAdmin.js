@@ -32,7 +32,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             ) as station
             , id_table_doctor , fullname_doctor , id_doctor , img_doctor ${select}
             FROM acc_doctor
-            WHERE status_delete=? 
+            WHERE status_delete = ? AND ( INSTR( id_doctor , "${data.textSearch}" ) OR INSTR( fullname_doctor , "${data.textSearch}") )
             ORDER BY status_account DESC , id_table_doctor DESC
             LIMIT ${Limit} OFFSET ${StartRow};
           ` 
@@ -46,11 +46,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
               return val
             })
             res.send(result)
-          } else {
-            res.send("")
-          };
-  
-          
+          } else res.send("");
         })
       }
     }).catch((err)=>{
@@ -80,9 +76,10 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
           `
             SELECT 
             (
-                SELECT name FROM station_list WHERE acc_doctor.station_doctor=station_list.id
-            ) as station , id_table_doctor , fullname_doctor , id_doctor , img_doctor , status_account , status_delete
-            FROM acc_doctor
+              SELECT name FROM station_list WHERE doctor_main.station_doctor=station_list.id
+            ) as station , 
+            id_table_doctor , fullname_doctor , id_doctor , img_doctor , status_account , status_delete
+            FROM acc_doctor as doctor_main
             WHERE id_table_doctor=? LIMIT 25;
           ` 
         , 
@@ -170,7 +167,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
           con.query(`
                     SELECT id_table_doctor
                     FROM acc_doctor 
-                    WHERE id_doctor=? and status_delete=0
+                    WHERE id_doctor = ? and status_delete = 0
                     ` , 
           [req.body['id_doctor']] , 
           (err , account)=>{
@@ -325,6 +322,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
         con.query(
           `
           SELECT * FROM ${data.type}_list
+          WHERE INSTR( name , "${data.textSearch}" )
           ORDER BY is_use DESC , name ASC
           LIMIT ${Limit} OFFSET ${StartRow}
           `
@@ -477,21 +475,50 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       if(auth['result'] === "pass") {
         let data = req.body
         if(data.type === "station" || data.type === "plant") {
-          con.query(
-            `
-            UPDATE ${data.type}_list SET is_use = ? WHERE id = ?;
-            `
-            , [ data.state_use , data.id_table] , (err , result)=>{
-            if(err) {
-              dbpacket.dbErrorReturn(con , err , res)
-              console.log(`change ${data.type} err`)
-              return 0
+          try {
+            const verify = data.state_use ? await new Promise((resole , reject)=> {
+              con.query(
+                `
+                SELECT (
+                  SELECT EXISTS (
+                    SELECT id
+                    FROM ${data.type}_list as data_search
+                    WHERE data_main.name = data_search.name and data_search.is_use = 1
+                  )
+                ) as verifyStatus
+                FROM ${data.type}_list as data_main
+                WHERE id = ?
+                `
+                ,[ data.id_table ], (err , result)=>{
+                if(err) reject("")
+                else resole(!result[0].verifyStatus)
+              }) 
+            }) : true
+  
+            if(verify) {
+              con.query(
+                `
+                UPDATE ${data.type}_list SET is_use = ? WHERE id = ?;
+                `
+                , [ data.state_use , data.id_table] , (err , result)=>{
+                if(err) {
+                  dbpacket.dbErrorReturn(con , err , res)
+                  console.log(`change ${data.type} err`)
+                  return 0
+                }
+                con.end()
+                res.send("133")
+              })
+            } else {
+              con.end()
+              res.send("over")
             }
+          } catch(err) {
             con.end()
-            res.send("133")
-          })
+            res.send("")
+          }
         } else res.send("no")
-      }
+      } 
     } catch (err) {
       con.end()
       if(err == "not pass") {

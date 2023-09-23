@@ -47,6 +47,7 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
                         ErrorLogin.current.setAttribute("show" , "")
                         for(let x = 0; x < e.target.length-1; x++) {
                             let prevent = e.target[x].parentElement;
+                            e.target[x].blur()
                             prevent.classList.remove('empty');
                             e.target[x].value = ''
                         }
@@ -103,7 +104,7 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
                 </label>
                 <button type="submit" className="bt-submit-form">เข้าสู่ระบบ</button>
             </form>
-            <p ref={ErrorLogin} className="error-login">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาเข้าสู่ระบบอีกครั้ง.</p>
+            <p ref={ErrorLogin} className="error-login">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</p>
         </div>
     )
 }

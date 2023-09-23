@@ -11,6 +11,7 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
         status : LoadType.split(":")[0],
         open : type
     })
+    const [getTextSearch , setTextSearch] = useState("")
 
     const SelectOption = useRef()
 
@@ -66,32 +67,34 @@ const PageFarmer = ({setMain , session , socket , type = 0 , eleImageCover , Loa
     return(
         <section className="data-list-content-page">
             <div ref={SelectOption} className="bt-action">
-                <div onClick={OptionSelect}>ตัวเลือก</div>
-                <select value={statusPage.status} onChange={changeMenu}>
-                    <option value={"ap"}>ตรวจสอบแล้ว</option>
-                    <option value={"wt"}>ยังไม่ตรวจสอบ</option>
-                    <option value={"not"}>บัญชีที่ถูกปิด</option>
-                </select>
+                <div className="select-open-menu" onClick={OptionSelect}>ตัวเลือก</div>
+                <div className="option-menu">
+                    <select value={statusPage.status} onChange={changeMenu}>
+                        <option value={"ap"}>ตรวจสอบแล้ว</option>
+                        <option value={"wt"}>ยังไม่ตรวจสอบ</option>
+                        <option value={"not"}>บัญชีที่ถูกปิด</option>
+                    </select>
+                    <input onChange={(e)=>setTextSearch(e.target.value)} placeholder="ค้นหารหัส หรือ ชื่อจริง" className="search-farmer" type="search"></input>
+                </div>
             </div>
             <div className="data-list-content">
-                <List session={session} socket={socket} status={statusPage}/>
+                <List session={session} socket={socket} status={statusPage} textSearch={getTextSearch}/>
             </div>
         </section>
     )
-
 }
 
-const List = ({ session , socket , status}) => {
+const List = ({ session , socket , status , textSearch}) => {
     const [Body , setBody] = useState(<></>)
     const [Data , setData] = useState([])
     const [Count , setCount] = useState(10)
+    const [getVerifyStart , setVerifyStart] = useState(false)
 
     const [LoadingList , setLoadList ] = useState(true)
     
     useEffect(()=>{
         setBody(<></>)
         setLoadList(true)
-
         StartList(status)
         
         // socket.removeListener("reload-farmer-list")
@@ -100,6 +103,9 @@ const List = ({ session , socket , status}) => {
         // })
     } , [status])
 
+    useEffect(()=>{
+        if(getVerifyStart) FetchList(Count , textSearch)
+    } , [textSearch])
     // useEffect(()=>{
     //     socket.removeListener("reload-farmer-list")
     //     socket.on("reload-farmer-list" , ()=>{
@@ -108,9 +114,9 @@ const List = ({ session , socket , status}) => {
     //     })
     // } , [Count , status])
 
-    const FetchList = async (limit) => {
+    const FetchList = async (limit , textSearch = "") => {
         try {
-            const list = await clientMo.post('/api/doctor/farmer/list' , {approve:(status.status == "wt") ? 0 : (status.status == "ap") ? 1 : 2 , limit : limit})
+            const list = await clientMo.post('/api/doctor/farmer/list' , {approve:(status.status == "wt") ? 0 : (status.status == "ap") ? 1 : 2 , limit : limit , textSearch : textSearch})
             const data = JSON.parse(list)
             setData(data)
             setLoadList(false)
@@ -122,6 +128,7 @@ const List = ({ session , socket , status}) => {
 
     const StartList = async (status) => {
         await FetchList(10)
+        setVerifyStart(true)
         if(status.open === 1) window.history.pushState({} , "" , `/doctor/farmer/${status.status}`)
     }
 

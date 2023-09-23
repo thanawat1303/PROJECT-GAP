@@ -66,9 +66,9 @@ const apifunc = {
 
   getTokenCsurf : (request) => {
     const headers = request.headers
-    const patternCsurf = headers["user-agent"] ?? "" + headers["sec-ch-ua"] ?? "" + headers["x-forwarded-for"] ?? "" + headers["sec-ch-ua-platform"] ?? ""
-    const modiText = `${patternCsurf}`.replaceAll(" " , "").trim()
-    const hashedText = crypto.createHash('sha256').update(modiText).digest('hex');
+    const patternCsurf = `${headers["user-agent"]} ${headers["sec-ch-ua"]} ${headers["x-forwarded-for"]} ${headers["sec-ch-ua-platform"]}`
+    const modiText = `${patternCsurf}`.replaceAll("undefined" , "").replaceAll(" " , "").trim()
+    const hashedText = crypto.createHmac('sha256' , process.env.KEY_SESSION).update(modiText).digest('hex')
     return hashedText
   },
 

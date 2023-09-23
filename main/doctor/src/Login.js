@@ -95,7 +95,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
                         }
                     }
                     else {
-                        ErrorLogin.current.innerHTML = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาเข้าสู่ระบบอีกครั้ง."
+                        ErrorLogin.current.innerHTML = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"
                         ErrorLogin.current.setAttribute("show" , "")
                         for(let x = 0; x < e.target.length-1; x++) {
                             let prevent = e.target[x].parentElement;
@@ -107,9 +107,15 @@ const Login = ({setMain , socket , isClick = 0}) => {
                 })
             } , 1500)
         } else {
+            let focus = true;
             for(let x = 0; x < e.target.length-1; x++) {
                 let prevent = e.target[x].parentElement;
                 if(e.target[x].value == "") {
+                    if(focus) {
+                        focus = false;
+                        prevent.focus();
+                    }
+
                     prevent.classList.add('empty')
                     e.target[x].previousElementSibling.children[0].setAttribute("emply" , "")
                 }else{

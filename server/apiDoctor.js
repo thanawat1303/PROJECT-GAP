@@ -666,6 +666,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             register_auth = 0
                     ) as filterFarmer
                     WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
+                                and ( INSTR( acc_farmer.id_farmer , '${req.body.textSearch}') || INSTR( acc_farmer.fullname , '${req.body.textSearch}' ))
                     ORDER BY is_msg DESC , filterFarmer.date_register ASC
                     LIMIT ${Limit};
                     `: 
@@ -703,6 +704,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     ) as farmer_main
                     WHERE acc_farmer.link_user = farmer_main.link_user 
                         and acc_farmer.date_register = farmer_main.DateLast
+                        and ( INSTR( acc_farmer.id_farmer , '${req.body.textSearch}') || INSTR( acc_farmer.fullname , '${req.body.textSearch}' ))
                     ORDER BY is_msg DESC , date_register DESC
                     LIMIT ${Limit};
                     ` :
@@ -734,6 +736,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             register_auth = 2
                     ) as filterFarmer
                     WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
+                        and ( INSTR( acc_farmer.id_farmer , '${req.body.textSearch}') || INSTR( acc_farmer.fullname , '${req.body.textSearch}' ))
                     ORDER BY is_msg DESC , filterFarmer.date_register ASC
                     LIMIT ${Limit};
                     `

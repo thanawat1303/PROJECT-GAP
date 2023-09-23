@@ -122,12 +122,13 @@
             font-family: Sans-font;
             font-weight: 900;
             font-size: 18px;
-            margin: 0;
+            margin:30px 5px;
+            margin-bottom: 0px;
             opacity: 0;
             visibility: hidden;
             background-color: rgba(0, 0, 0, 0.259);
             backdrop-filter: blur(8px);
-            padding: 5px 10px;
+            padding: 5px 20px;
             border-radius: 20px;
             overflow: hidden;
             transition: 0.5s opacity , 0.5s visibility;
@@ -169,6 +170,10 @@
                     }
                 }
             }
+
+            .error-login {
+                font-size: 19px;
+            }
         }
 
         @media only screen and (max-width : 300px) {
@@ -194,6 +199,10 @@
                         font-size: 17px;
                     }
                 }
+            }
+
+            .error-login {
+                font-size: 17px;
             }
         }
 

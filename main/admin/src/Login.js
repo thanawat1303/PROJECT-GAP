@@ -55,9 +55,14 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
                 })
             } , 1500)
         } else {
+            let focus = true;
             for(let x = 0; x < e.target.length-1; x++) {
                 let prevent = e.target[x].parentElement;
                 if(e.target[x].value == "") {
+                    if(focus) {
+                        focus = false;
+                        prevent.focus();
+                    }
                     prevent.classList.add('empty')
                     e.target[x].previousElementSibling.children[0].setAttribute("emply" , "")
                 }else{

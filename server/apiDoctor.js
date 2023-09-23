@@ -14,7 +14,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
     app.post('/api/doctor/check' , (req , res)=>{
         if(apifunc.authCsurf("doctor" , req , res)) res.redirect('/api/doctor/auth')
-        else res.clearCookie(process.env.cookie).send("")
+        else res.clearCookie(process.cookieName).send("")
     })
 
     app.get('/api/doctor/name' , (req , res)=>{

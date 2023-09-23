@@ -48,7 +48,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
 
     // set session
     const sessionMiddleware = sessions({
-        name : process.env.cookie,
+        name : process.cookieName,
         secret : process.env.KEY_SESSION ?? "",
         saveUninitialized: false,
         cookie: {

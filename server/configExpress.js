@@ -48,7 +48,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
 
     // set session
     const sessionMiddleware = sessions({
-        name : "chat_gap_line",
+        name : process.env.cookie,
         secret : process.env.KEY_SESSION ?? "",
         saveUninitialized: false,
         cookie: {

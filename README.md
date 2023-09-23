@@ -12,7 +12,7 @@
          cp package-json/package.json  . #Linux
          ```
 
-   - init env
+   - Init env
       ```
       npm run init-env
       ```

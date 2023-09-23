@@ -65,12 +65,12 @@
       npm run server-dev
       ```
    
-   - on Deploy product
+   - Deploy product
       ```
       npm run server 'username-db' 'password-db'
       ```
    
-   - on text Deploy product
+   - Foreground Deploy product
       ```
       npm run server-node 'username-db' 'password-db'
       ```

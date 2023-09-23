@@ -34,9 +34,12 @@ const inputValue = async () => {
 const recovRead = async () => {
     const result = await inputValue()
 
-    if(result) recovRead()
+    if(result) recovRead();
     else {
-        console.log(readJson)
+        const ToArray = Object.entries(readJson)
+        const DataFile = ToArray.map(val=>val.join(" = ")).join("\n")
+
+        fs.writeFileSync(__dirname.replace("initEnv" , "") + ".env" , DataFile)
     }
 }
 

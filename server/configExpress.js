@@ -25,8 +25,8 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     const upload = multer()
     const server = 
                 (process.argv[2] == process.env.BUILD) ? https.createServer({
-                    key: fs.readFileSync("/etc/letsencrypt/live/lesyslab.com/privkey.pem"),
-                    cert: fs.readFileSync(`/etc/letsencrypt/live/lesyslab.com/fullchain.pem`)
+                    key: fs.readFileSync(process.env.pathCertFile),
+                    cert: fs.readFileSync(process.env.pathKeyFile)
                 } , app) 
                 : 
                 http.createServer(app)

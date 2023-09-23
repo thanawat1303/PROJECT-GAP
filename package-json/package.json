@@ -12,7 +12,8 @@
     "server-startup" : "pm2 startup",
     "server-dev": "nodemon server/server.js",
     "server-ngrok": "node server/serverNgrok.js",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "init-env" : "node initEnv/setupEnv.js"
   },
   "repository": {
     "type": "git",

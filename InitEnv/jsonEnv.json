@@ -1,0 +1,21 @@
+{
+    "HOST" : "localhost",
+    "DATABASE_DEV" : "",
+    "USER_DBDEV" : "",
+    "PASSWORD_DBDEV" : "",
+    "DATABASE_SER" : "",
+    "NODE_ENV" : "development",
+    "PORT" : "",
+    "KEY_SESSION" : "",
+    "TIME_COKKIE" : 86400000,
+    "HOST_NAMEDEV" : "localhost",
+    "HOST_TEST" : "",
+    "HOST_SERVER" : "",
+    "BUILD" : "deploy",
+    "channelAccessToken" : "",
+    "channelSecret" : "",
+    "cookie" : "",
+    "REACT_API_KEY_MAP" : "",
+    "pathCertFile" : "",
+    "pathKeyFile" : ""
+}

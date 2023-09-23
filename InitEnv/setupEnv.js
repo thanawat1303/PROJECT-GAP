@@ -18,7 +18,6 @@ const inputValue = async () => {
             readJson[JsonToArr[indexCurrent][0]] = data.trim()
     
             if(indexCurrent == JsonToArr.length - 1) {
-                rl.close()
                 resole(false)
             }
             else {
@@ -39,7 +38,21 @@ const recovRead = async () => {
         const ToArray = Object.entries(readJson)
         const DataFile = ToArray.map(val=>val.join(" = ")).join("\n")
 
-        fs.writeFileSync(__dirname.replace("initEnv" , "") + ".env" , DataFile)
+        if(fs.existsSync(__dirname.replace("initEnv" , "") + ".env")) {
+            rl.question(`Write Replace File (Yes : N) : `, (data) => {
+                if(data.toUpperCase() === "Y") {
+                    fs.writeFileSync(__dirname + "/jsonEnv.json" , JSON.stringify(readJson , null , 2))
+                    fs.writeFileSync(__dirname.replace("initEnv" , "") + ".env" , DataFile)
+                    console.log("Complete Install")
+                } else console.log("Cancel Install");
+                rl.close();
+            })
+        } else {
+            fs.writeFileSync(__dirname + "/jsonEnv.json" , JSON.stringify(readJson , null , 2))
+            fs.writeFileSync(__dirname.replace("initEnv" , "") + ".env" , DataFile)
+            console.log("Complete Install")
+            rl.close()
+        }
     }
 }
 

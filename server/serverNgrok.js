@@ -1,7 +1,8 @@
 const ngrok = require('ngrok')
+require('dotenv').config().parsed
 const fs = require('fs')
 
-ngrok.connect(3001).then((val)=>{
+ngrok.connect(process.env.PORT).then((val)=>{
     const data = {
         url : val
     }

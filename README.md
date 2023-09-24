@@ -60,12 +60,14 @@
       ```
 
 ### Build Project
+
    - After init package-json and .env
       ```
       npm run build
       ```
    
 ### Start Server
+
    - Development
       ```
       npm run server-dev

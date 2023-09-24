@@ -1,7 +1,7 @@
 require('dotenv').config().parsed
 const axios = require('axios').default;
 
-module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB) {
+module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket , line) {
   app.post('/api/admin/check' , (req , res)=>{
     res.redirect('/api/admin/auth');
   })
@@ -359,21 +359,28 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
-        con.query(
-          `
-            SELECT * FROM ${data.type}_list WHERE id=?
-          ` 
-        , 
-        [data.id] ,
-        (err , result)=>{
-          if (err){
-            dbpacket.dbErrorReturn(con , err , res)
-            return 0
-          };
-  
+
+        const From = data.type === "station" ? "station" : data.type === "plant" ? "plant" : false;
+        if(From) {
+          con.query(
+            `
+              SELECT * FROM ${From}_list WHERE id=?
+            ` 
+          , 
+          [data.id] ,
+          (err , result)=>{
+            if (err){
+              dbpacket.dbErrorReturn(con , err , res)
+              return 0
+            };
+    
+            con.end()
+            res.send(result)
+          })
+        } else {
           con.end()
-          res.send(result)
-        })
+          res.send("")
+        }
       }
     } catch (err) {
       con.end()
@@ -502,12 +509,24 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                 `
                 , [ data.state_use , data.id_table] , (err , result)=>{
                 if(err) {
-                  dbpacket.dbErrorReturn(con , err , res)
-                  console.log(`change ${data.type} err`)
-                  return 0
+                  con.end()
+                  res.send("")
+                } else {
+                  if(data.type === "station") {
+                    con.query(
+                      `
+                      SELECT name
+                      FROM station_list
+                      WHERE id = ?
+                      ` , [data.id_table] , (err , result) => {
+                        sendNotifyToDoctor(0 , data.id_table , `${result[0].name}ถูก${data.state_use ? "เปิด" : "ปิด"}`);
+                      }
+                    )
+                  }
+
+                  con.end()
+                  res.send("133")
                 }
-                con.end()
-                res.send("133")
               })
             } else {
               con.end()
@@ -527,7 +546,80 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     }
   })
 
-  app.get('/api/admin/google/maps/get' , async (req , res)=>{
+  app.post('/api/admin/data/edit' , async (req , res)=>{
+    let username = req.session.user_admin
+    let password = req.body['password']
+  
+    if(username === '' || (req.hostname !== HOST_CHECK)) {
+      res.redirect('/api/logout')
+      return 0
+    }
+  
+    let con = Database.createConnection(listDB)
+  
+    try {
+      const auth = await apifunc.auth(con , username , password , res , "admin")
+      if(auth['result'] === "pass") {
+        let data = req.body
+        if(data.type === "station" || data.type === "plant") {
+          try {
+            const verify = data.update.name ? await new Promise((resole , reject)=> {
+              con.query(
+                `
+                SELECT (
+                  SELECT EXISTS (
+                    SELECT id
+                    FROM ${data.type}_list
+                    WHERE ${data.type}_list.name = ? and ${data.type}_list.is_use = 1
+                  )
+                ) as verifyStatus
+                `
+                ,[ data.update.name.replaceAll('"' , "") ], (err , result)=>{
+                if(err) reject("")
+                else resole(!result[0].verifyStatus)
+              }) 
+            }) : true
+  
+            if(verify) {
+              const update = Object.entries(data.update).map(val=>{
+                val[1] = val[1];
+                val = val.join(" = ")
+                return val
+              }).join(" , ");
+              con.query(
+                `
+                UPDATE ${data.type}_list 
+                SET ${update}
+                WHERE id = ?;
+                `
+                , [ data.id_table] , (err , result)=>{
+                if(err) {
+                  con.end()
+                  res.send("")
+                } else {
+                  con.end()
+                  res.send("133")
+                } 
+              })
+            } else {
+              con.end()
+              res.send("over")
+            }
+          } catch(err) {
+            con.end()
+            res.send("")
+          }
+        } else res.send("no")
+      } 
+    } catch (err) {
+      con.end()
+      if(err == "not pass") {
+        res.send("password")
+      }
+    }
+  })
+
+  app.post('/api/admin/google/maps/get' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -545,12 +637,13 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
               const Maps = await axios.request({
                 method : "GET",
                 maxBodyLength: Infinity,
-                url : req.query.link,
+                url : req.body.link,
                 headers : {}
               })
               res.send(JSON.stringify(Maps.data))
             } catch(e) {
-              res.send("")
+              console.log(e)
+              res.send('{}')
             }
             // https.get(req.query.link , (resLink)=>{
             //     console.log(resLink)
@@ -649,6 +742,54 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     req.session.destroy()
     res.send('')
   })
+
+
+  const sendNotifyToDoctor = async (id_table , stationSend , msg) => {
+    let con = Database.createConnection(listDB)
+    con.connect( async ( err )=>{
+        if(!err) {
+            const Uid_line_send = await new Promise( async (resole , reject)=>{
+                const uid_send = new Array
+                await new Promise( async (resole , reject)=>{
+                    const ObjectProfile = await new Promise((resole , reject)=>{
+                        con.query(
+                            `
+                            SELECT uid_line_doctor
+                            FROM acc_doctor
+                            WHERE station_doctor = ? and status_account = 1 and status_delete = 0
+                            ` , [stationSend] , 
+                            (err , doctor) => {
+                                resole(doctor)
+                            }
+                        )
+                    })
+                    if(ObjectProfile.length > 0) {
+                        const List_uid = ObjectProfile.map((val)=>val.uid_line_doctor).filter((val)=>val)
+                        uid_send.push(...List_uid)
+                    }
+                    resole("")
+                })
+                resole(new Set(uid_send))
+            })
+            con.query(
+                `
+                INSERT notify_doctor 
+                (id_table_farmer , id_read , notify , station ) VALUES (? , ? , ? , ? )
+                ` , [id_table , '{}' , msg , stationSend] , 
+                (err , result) => {
+                    con.end()
+                }
+            )
+            
+            socket.to(`notify-${stationSend}`).emit("update")
+            if(Uid_line_send.size != 0) {
+                line.multicast([...Uid_line_send] , {type : "text" , text : `${msg}`})
+                    .catch(e=>{})
+            }
+        }
+    })
+  }
+
 }
 
   // app.post('/api/admin/chkOver' , (req , res)=>{

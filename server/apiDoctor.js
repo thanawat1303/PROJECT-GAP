@@ -3207,7 +3207,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         ` , [ result.data.station_doctor , req.query.id ] , 
                         (err , list) => {
                             if(list.length) list.map(val=>{
-                                val.img_farmer = val.img_farmer.toString()
+                                val.img_farmer = val.img_farmer ? val.img_farmer.toString() : "/admin.jpg"
                                 return val
                             })
 

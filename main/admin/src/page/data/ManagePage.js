@@ -114,8 +114,8 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
         <>
         <ReportAction Open={Open} Text={Text} Status={Status} 
                         setOpen={setOpen} setText={setText} setStatus={setStatus}
-                        sizeLoad={6/100 * ScreenW >= 60 ? 6/100 * ScreenW : 60}
-                        BorderLoad={0.8/100 * ScreenW >= 10 ? 0.8/100 * ScreenW : 10}
+                        sizeLoad={90}
+                        BorderLoad={10}
                         color="#1CFFF1" action={AfterConfirm}/>
         <div className="manage-page">
             <div className="head-page">

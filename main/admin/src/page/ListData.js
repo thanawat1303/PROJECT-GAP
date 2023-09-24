@@ -7,6 +7,7 @@ import ShowBecause from "./doctor/ShowBecause";
 
 import ManageDoctorPage from "./doctor/ManagePage";
 import ManageDataPage from "./data/ManagePage";
+import EditPage from "./data/EditPage";
 
 const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , setStateOnPage , modify , textSearch}) => {
     // const [Body , setBody] = useState(<></>)
@@ -29,6 +30,7 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
         removePopup()
         fetchDataList(0 , 5)
         setVerifyStart(true)
+        console.log(status)
     } , [status])
 
     useEffect(()=>{
@@ -166,6 +168,13 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
         }
     }
 
+    const OpenEditData = async (id , typeStatus) => {
+        if(await auth(true)) {
+            const status = parseInt(document.querySelector(`#data-list-content-${id} Action-bt Bt-status .frame`).getAttribute("status"))
+            setBecause(<EditPage RefOnPage={RefBe} id_table={id} type={typeStatus} setBecause={setBecause} TabOn={TabOn} session={session} ReloadData={Fetch}/>)
+        }
+    }
+
     const OpenDetailManage = async (id_table_doctor , typeStatus) => {
         if(await auth(true)) {
             setBecause(<ShowBecause RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} TabOn={TabOn} setBecause={setBecause}/>)
@@ -274,7 +283,7 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
                         <Action-bt>
                             <content-status because={0}>
                                 { status.status === "station" ? 
-                                    <div>
+                                    <div className="edit-bt" onClick={()=>OpenEditData(data.id , status.status)}>
                                         แก้ไข
                                     </div> 
                                 : <></>

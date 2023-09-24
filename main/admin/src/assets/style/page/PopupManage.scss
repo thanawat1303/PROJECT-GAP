@@ -3,20 +3,24 @@
         Body-Report {
             Text-Report {
                 font-family: Sans-font;
-                font-size: 1.4vw;
+                font-size: 18px;
                 font-weight: 900;
             }
 
             Status-Report {
-                margin: 1vw 0px;
+                margin: 5px 0px;
+                background-color: rgba(255, 255, 255, 0.456);
+                box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.456);
+                border-radius: 50%;
+                margin-bottom: 8px;
             }
 
             BoxButton-Report {
                 button {
                     font-family: Sans-font;
-                    font-size: 1.2vw;
+                    font-size: 16px;
                     font-weight: 900;
-                    padding: 0.1vw 2vw;
+                    padding: 2px 18px;
                     border-radius: 50px;
                     background-color: #10c2b6;
                     color: white;
@@ -110,6 +114,7 @@
                 padding: 10px 0px;
                 overflow: hidden;
                 width: 100%;
+                min-height: 80px;
                 .img {
                     display: flex;
                     justify-content: center;
@@ -183,6 +188,27 @@
                         align-items: center;
                         width: 100%;
                     }
+
+                    .column {
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        width: 90%;
+
+                        .input-value {
+                            display: flex;
+                            font-family: Sans-font;
+                            font-size: 18px;
+                            align-items: center;
+                            border-radius: 8px;
+                            border: 0;
+                            outline: 0;
+                            background-color: #b8f6f688;
+                            width: 85%;
+                            padding: 1px 4px;
+                        }
+                    }
+
                     .name {
                         display: flex;
                         span {
@@ -230,6 +256,36 @@
                         display: flex;
                         justify-content: center;
                         align-items: center;
+
+                        .flied-location-edit {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            width: 100%;
+                            margin: 10px 0px;
+
+                            .head-flied {
+                                text-align: start;
+                                font-weight: 900;
+                                font-size: 18px;
+                                width: 100%;
+                                font-family: Sans-font;
+                            }
+
+                            .input-value {
+                                display: flex;
+                                font-family: Sans-font;
+                                font-size: 18px;
+                                align-items: center;
+                                border-radius: 8px;
+                                border: 0;
+                                outline: 0;
+                                background-color: #b8f6f688;
+                                width: 85%;
+                            }
+                        }
+
                         iframe {
                             border-radius: 15px;
                         }
@@ -329,6 +385,13 @@
                 button.submit {
                     background: linear-gradient(120deg , #10c2b6 , #72f3f3);
                 }
+
+                button.submit[h=""] {
+                    color: rgba(128, 128, 128, 0.416);
+                    background: linear-gradient(120deg , #10c2b671 , #72f3f386);
+                    box-shadow: none;
+                    cursor: not-allowed;
+                }
             }
         }
     }
@@ -371,6 +434,13 @@
                     }
 
                     .data-popup[maxsize=""] {
+
+                        .column {
+                            .input-value {
+                                font-size: 16px;
+                            }
+                        }
+
                         .name {
                             span {
                                 font-size: 16px;
@@ -388,6 +458,19 @@
     
                             div {
                                 font-size: 16px;
+                            }
+                        }
+
+                        .location {
+                            .flied-location-edit {
+    
+                                .head-flied {
+                                    font-size: 16px;
+                                }
+    
+                                .input-value {
+                                    font-size: 16px;
+                                }
                             }
                         }
                     }
@@ -457,6 +540,13 @@
                     }
 
                     .data-popup[maxsize=""] {
+
+                        .column {
+                            .input-value {
+                                font-size: 14px;
+                            }
+                        }
+
                         .name {
                             span {
                                 font-size: 14px;
@@ -478,6 +568,19 @@
     
                             div {
                                 font-size: 14px;
+                            }
+                        }
+
+                        .location {
+                            .flied-location-edit {
+    
+                                .head-flied {
+                                    font-size: 14px;
+                                }
+    
+                                .input-value {
+                                    font-size: 14px;
+                                }
                             }
                         }
                     }

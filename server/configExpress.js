@@ -81,7 +81,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     const HOSTSSL = HOST_TEST
 
     router(app)
-    apiAdmin(app , db , apifunc , HOSTSSL , dbpacket , listDB)
+    apiAdmin(app , db , apifunc , HOSTSSL , dbpacket , listDB , io , LINE)
     apiDoctor(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io , LINE)
     apiFarmer(app , db , apifunc , HOST_TEST , dbpacket , listDB , io , LINE)
     message(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io)

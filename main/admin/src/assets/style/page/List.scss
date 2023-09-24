@@ -460,6 +460,7 @@
                                 cursor: pointer;
                             }
                         }
+
                         Bt-status {
                             display: flex;
                             justify-content: start;
@@ -507,6 +508,26 @@
                                 transform: translateX(-40%);
                                 background-color: #FF5D5D;
                             }
+                        }
+
+                        .edit-bt {
+                            background: linear-gradient(160deg , #60d6cf , #0e6555);
+                            width: 70px;
+                            border-radius: 50px;
+                            font: 900 16px Sans-font;
+                            padding-top: 2px;
+                            margin: 0px 6px;
+                            box-shadow: 0px 2px 4px #135b4d;
+                            color: white;
+                            transition: background 2s;
+                        }
+
+                        .edit-bt:hover {
+                            background: linear-gradient(45deg , #60d6cf , #0e6555);
+                        }
+
+                        .edit-bt:active {
+                            box-shadow: 0px 2px 4px #135b4d inset;
                         }
                     }
 

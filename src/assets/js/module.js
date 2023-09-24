@@ -19,10 +19,25 @@ const MapsJSX = ({lat , lng , w , h}) => {
 const GetLinkUrlOfSearch = async (valueLocation , auth) => {
     const Link = valueLocation.split(" ").filter(map=>map.indexOf("maps") >= 0)
     if(Link.length != 0) {
-        const fecthOfGoogle = await clientMo.get(`/api/${auth}/google/maps/get?link=${Link[0]}`)
-        const MapsStart = fecthOfGoogle.slice(fecthOfGoogle.lastIndexOf("[null,null,null,null,[") + 22)
-        const MapsData = MapsStart.slice(0 , MapsStart.indexOf("]") + 1)
-        return eval(MapsData) ?? []
+        try {
+            const fecthOfGoogle = await clientMo.postForm(`/api/${auth}/google/maps/get` , {link : Link[0]})
+            const MapsStart = fecthOfGoogle.slice(fecthOfGoogle.lastIndexOf("[null,null,null,null,[") + 22)
+            const MapsData = MapsStart.slice(0 , MapsStart.indexOf("]") + 1)
+            try {
+                const result = await new Promise((resole , reject)=>{
+                    if(MapsData.indexOf("lore-rec") >= 0) {
+                        const MapsReStart = fecthOfGoogle.slice(fecthOfGoogle.lastIndexOf(",null,null,null,null,null,[null,null,") + 37)
+                        const MapsReData = MapsReStart.slice(0 , MapsReStart.indexOf("]"))
+                        const newLocation = eval(`[${MapsReData}]`)
+                        newLocation.push(0)
+                        resole(newLocation.reverse())
+                    } else resole(eval(MapsData) ?? []);
+                })
+                return result
+            } catch(e) {
+                return []
+            }
+        } catch(e) {}
     } else {
         return valueLocation
     }

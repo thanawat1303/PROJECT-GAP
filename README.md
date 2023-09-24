@@ -72,11 +72,20 @@
       ```
    
    - Product pm2
-      ```
-      npm run server 'username-db' 'password-db'
-      ```
+      - start
+         ```
+         npm run server 'username-db' 'password-db'
+         ```
+      - restart
+         ```
+         npm run server-restart
+         ```
+      - stop
+         ```
+         npm run server-stop
+         ```
    
-   - product Foreground
+   - Product Foreground
       ```
       npm run server-node 'username-db' 'password-db'
       ```

@@ -512,19 +512,20 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                   con.end()
                   res.send("")
                 } else {
-                  if(data.type === "station") {
+                  if(data.type === "station" && result.changedRows) {
                     con.query(
                       `
                       SELECT name
                       FROM station_list
                       WHERE id = ?
                       ` , [data.id_table] , (err , result) => {
-                        sendNotifyToDoctor(0 , data.id_table , `${result[0].name}ถูก${data.state_use ? "เปิด" : "ปิด"}`);
+                        if(!err) {
+                          con.end()
+                          sendNotifyToDoctor(0 , data.id_table , `${result[0].name}ถูก${data.state_use ? "เปิด" : "ปิด"}`);
+                        }
                       }
                     )
-                  }
-
-                  con.end()
+                  } else con.end();
                   res.send("133")
                 }
               })

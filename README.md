@@ -60,27 +60,28 @@
       ```
 
 ### Build Project
-   ```
-   npm run build
-   ```
+   - After init package-json and .env
+      ```
+      npm run build
+      ```
    
-### Run server 
-   - on Developer
+### Start Server
+   - Development
       ```
       npm run server-dev
       ```
    
-   - Deploy product
+   - Product pm2
       ```
       npm run server 'username-db' 'password-db'
       ```
    
-   - Foreground Deploy product
+   - product Foreground
       ```
       npm run server-node 'username-db' 'password-db'
       ```
 
-   - on Ngrok
+   - Ngrok server
      ```
      npm run server-ngrok
      ```

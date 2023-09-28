@@ -33,8 +33,8 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     // set Server
 
     const listDB = dbpacket.listConfig(username , password)
-    const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV;
-    const HOST_TEST = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_TEST;
+    // const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV;
+    const HOST_SSL = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : JSON.parse(fs.readFileSync(__dirname.replace("server" , "UrlServer.json")));
 
     // secure server
     // app.use(helmat(
@@ -78,13 +78,12 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     app.use(express.static('public'))
 
     // router api url
-    const HOSTSSL = HOST_TEST
-
     router(app)
-    apiAdmin(app , db , apifunc , HOSTSSL , dbpacket , listDB , io , LINE)
-    apiDoctor(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io , LINE)
-    apiFarmer(app , db , apifunc , HOST_TEST , dbpacket , listDB , io , LINE)
-    message(app , db , apifunc , HOSTSSL , dbpacket , listDB , UrlNgrok , io)
+
+    apiAdmin(app , db , apifunc , HOST_SSL , dbpacket , listDB , io , LINE)
+    apiDoctor(app , db , apifunc , HOST_SSL , dbpacket , listDB , UrlNgrok , io , LINE)
+    apiFarmer(app , db , apifunc , HOST_SSL , dbpacket , listDB , io , LINE)
+    message(app , db , apifunc , HOST_SSL , dbpacket , listDB , UrlNgrok , io)
 
     // page error 404
     app.get("*" , (req, res) => {

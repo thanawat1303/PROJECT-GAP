@@ -9,7 +9,6 @@
     "KEY_SESSION" : "",
     "TIME_COKKIE" : 86400000,
     "HOST_NAMEDEV" : "localhost",
-    "HOST_TEST" : "",
     "HOST_SERVER" : "",
     "BUILD" : "deploy",
     "channelAccessToken" : "",

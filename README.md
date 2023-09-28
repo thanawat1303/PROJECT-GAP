@@ -69,9 +69,14 @@
 ### Start Server
 
    - Development
-      ```
-      npm run server-dev
-      ```
+      - First step , start host of application by ngrok
+         ```
+         npm run server-ngrok
+         ```
+      - Next step , start application
+         ```
+         npm run server-dev
+         ```
    
    - Product pm2
       - start
@@ -91,10 +96,5 @@
       ```
       npm run server-node 'username-db' 'password-db'
       ```
-
-   - Ngrok server
-     ```
-     npm run server-ngrok
-     ```
 
 ### Tool and Technical

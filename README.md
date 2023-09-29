@@ -106,5 +106,6 @@
       - Expressjs
       - Web-socket
       - Bot-line-SDK
+      - SQL
    - Tool 
       - LINE Bot Designer

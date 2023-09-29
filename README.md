@@ -98,3 +98,13 @@
       ```
 
 ### Tool and Technical
+   - Fontend
+      - React Library
+      - Google maps API
+      - Scss
+   - Backend
+      - Expressjs
+      - Web-socket
+      - Bot-line-SDK
+   - Tool 
+      - LINE Bot Designer

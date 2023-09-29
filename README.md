@@ -99,7 +99,7 @@
 
 ### Tool and Technical
    - Fontend
-      - React Library
+      - React library
       - Google maps API
       - Scss
    - Backend

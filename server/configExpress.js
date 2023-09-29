@@ -34,7 +34,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
 
     const listDB = dbpacket.listConfig(username , password)
     // const HOST_CHECK = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : process.env.HOST_NAMEDEV;
-    const HOST_SSL = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : JSON.parse(fs.readFileSync(__dirname.replace("server" , "UrlServer.json")));
+    const HOST_SSL = (process.argv[2] == process.env.BUILD) ? process.env.HOST_SERVER : JSON.parse(fs.readFileSync(__dirname.replace("server" , "UrlServer.json"))).url.replace("https://" , "");
 
     // secure server
     // app.use(helmat(

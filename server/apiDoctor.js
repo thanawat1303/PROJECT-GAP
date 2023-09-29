@@ -487,37 +487,38 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     const checkProfile = await new Promise((resole , reject)=>{
                         con.query(
                             `
-                            SELECT uid_line
+                            SELECT uid_line , station
                             FROM acc_farmer
                             WHERE id_table = ? and register_auth = 1 and station = ?
                             ` , [ req.body.id_table , result["data"].station_doctor ] , 
                             async (err , resultSelect) => {
                                 if(!err && resultSelect.length != 0) {
                                     try {
-                                        await new Promise( async (resole , reject)=>{
+                                        const Station = await new Promise( async (resole , reject)=>{
                                             con.query(
                                                 `
                                                 SELECT name
                                                 FROM station_list
                                                 WHERE id = ?
-                                                ` , [req.body.station] , async (err , Station) => {
-                                                    const dataSend = {
-                                                        type : "text" , 
-                                                        text : `ผู้ส่งเสริม ${result["data"].fullname_doctor}\n\n`+
-                                                                `ทำการเปลี่ยนข้อมูลของท่าน :`+
-                                                                `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
-                                                                `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
-                                                                `${req.body.tel_number ? `\nเบอร์โทร : ${req.body.tel_number}` : ""}`+
-                                                                `${req.body.text_location ? `\nที่อยู่ : ${req.body.text_location}` : ""}`+
-                                                                `${req.body.station ? `\nศูนย์ในการดูแล : ${Station[0] ? Station[0].name : ""}` : ""}`+
-                                                                `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
-                                                                `${req.body.img ? `\nรูปภาพ :` : ""}`
-                                                    }
-                                                    await Line.pushMessage(resultSelect[0].uid_line , dataSend).catch(e=>{})
-                                                    resole("")
+                                                ` , [req.body.station ? req.body.station : 0] , async (err , Station) => {
+                                                    resole(Station)
                                                 }
                                             )
                                         })
+
+                                        const dataSend = {
+                                            type : "text" , 
+                                            text : `ผู้ส่งเสริม ${result["data"].fullname_doctor}\n\n`+
+                                                    `ทำการเปลี่ยนข้อมูลของท่าน :`+
+                                                    `${req.body.id_farmer ? `\nรหัสประจำตัวเกษตกร : ${req.body.id_farmer}` : ""}`+
+                                                    `${req.body.fullname ? `\nชื่อ : ${req.body.fullname}` : ""}`+
+                                                    `${req.body.tel_number ? `\nเบอร์โทร : ${req.body.tel_number}` : ""}`+
+                                                    `${req.body.text_location ? `\nที่อยู่ : ${req.body.text_location}` : ""}`+
+                                                    `${req.body.station ? `\nศูนย์ในการดูแล : ${Station[0] ? Station[0].name : ""}` : ""}`+
+                                                    `${req.body.newPassword ? `\nรหัสผ่าน : ${req.body.newPassword}` : ""}`+
+                                                    `${req.body.img ? `\nรูปภาพ :` : ""}`
+                                        }
+                                        await Line.pushMessage(resultSelect[0].uid_line , dataSend).catch(e=>{})
 
                                         if(req.body.img) {
                                             await new Promise( async (resole , reject) => {

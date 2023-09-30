@@ -17,7 +17,7 @@
       npm run init-env
       ```
 
-   - Package
+   - Packages
       ```
       npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session helmet mysql mysql2 uuid 
       
@@ -61,7 +61,7 @@
 
 ### Build Project
 
-   - After init package-json and .env
+   - After install packages and .env
       ```
       npm run build
       ```

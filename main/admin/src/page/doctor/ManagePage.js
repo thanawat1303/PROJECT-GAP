@@ -62,10 +62,6 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
         } , 500)
     }
 
-    const OnLoad = () => {
-        setLoading(false)
-    }
-
     const setSizeScreen = (e) => {
         setScreenW(window.innerWidth)
         setScreenH(window.innerHeight)
@@ -148,7 +144,7 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                     </div>
                     : <></>
                 }
-                <div onLoad={OnLoad} className="detail-data-report">
+                <div onLoad={()=>setLoading(false)} className="detail-data-report">
                     {
                     Profile.id_table ?
                         Profile.isdelete ? 

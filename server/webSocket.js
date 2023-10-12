@@ -1,4 +1,4 @@
-module.exports = function WebSocketServ (server) {
+module.exports = function WebSocketServ (server , sessionMiddleware) {
     // const WebSoc = require('ws')
     // const Socket = new WebSoc.Server({server})
 
@@ -6,8 +6,22 @@ module.exports = function WebSocketServ (server) {
     
     const {Server} = require('socket.io')
     const io = new Server(server)
+    io.engine.use(sessionMiddleware);
 
     io.on("connection" , (socket_client)=>{
+        // socket_client.on("connect-account" , ()=>{
+        //     try {
+        //         const session = Object.entries(socket_client.request.sessionStore.sessions)
+        //         const JsonOB = JSON.parse(session[0][1])
+        //         socket_client.data.username = JsonOB.user_doctor
+        //         socket_client.data.password = JsonOB.pass_doctor     
+        //     } catch(e) {}
+        // })
+
+        // socket_client.on("disconnect-account" , () => {
+        //     console.log(socket_client.data , new Date())
+        // })
+
         socket_client.on("connect msg" , (uid_line)=>{
             socket_client.join(uid_line)
         })
@@ -23,6 +37,11 @@ module.exports = function WebSocketServ (server) {
         socket_client.on("disconnect_notify_doctor" , (station)=>{
             socket_client.leave(`notify-${station}`)
         })
+
+
+        // socket_client.on("disconnect" , () => {
+        //     console.log(socket_client.data , new Date())
+        // })
     })
 
     return io

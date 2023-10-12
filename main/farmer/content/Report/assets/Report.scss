@@ -113,6 +113,19 @@ $font-Page : 4.5vw;
                                     padding: 3px 10px;
                                     padding-bottom: 0;
                                 }
+
+                                .frame-image {
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    width: 100%;
+                                    .image-report {
+                                        width: 95%;
+                                        height: 95%;
+                                        max-width: 300px;
+                                        max-height: 300px;
+                                    }
+                                }
                             }
                         }
                     }

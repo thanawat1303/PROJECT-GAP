@@ -1552,7 +1552,8 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             let con = Database.createConnection(listDB)
 
             try {
-                const auth = await authCheck(con , dbpacket , res , req , LINE)
+                const auth = await authCheck(con , dbpacket , res , req , LINE);
+                //h = เก็บเกี่ยว
                 const Type = req.query.type === "h" ? "success_detail" :
                                 req.query.type === "r" ? "report_detail" :
                                 req.query.type === "cf" ? "check_form_detail" :
@@ -1578,7 +1579,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                         WHERE success_detail.id_plant = formPlant.id
                         ` :
                         `
-                        SELECT ${Type}.* , 
+                        SELECT ${Type === "report_detail" ? `${Type}.date_report , ${Type}.report_text , ${Type}.image_path` : `${Type}.*`} , 
                         (
                             SELECT fullname_doctor
                             FROM acc_doctor

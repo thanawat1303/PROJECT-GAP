@@ -100,6 +100,11 @@ const List = ({liff , setPage , DetailFetchList}) => {
                             <div>{val.name_doctor}</div>
                         </div>
                     </div>
+                    <div className="row">
+                        <div className="frame-image">
+                            <img className="image-report" src={`/doctor/report/${val.image_path}`}></img>
+                        </div>
+                    </div>
                 </div>
             ))
         }

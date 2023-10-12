@@ -585,32 +585,6 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
             setLag(valueLocation[2])
             setLng(valueLocation[1])
         }
-        // let Location = valueLocation.split("/").filter((val)=>val.indexOf("data") >= 0)
-        // if(Location[0]) {
-        //     Location = Location[0].split("!").filter((val)=>val.indexOf("3d") >= 0 || val.indexOf("4d") >= 0).reverse().slice(0 , 2)
-        // }
-        // if(Location.length == 2) {
-        //     let lag = Location[1].split(".")
-        //     lag[0] = lag[0].replace("3d" , "")
-        //     for(let x=7; x>=4 ; x--) {
-        //         lag[1] = lag[1].slice(0 , x)
-        //         if(!isNaN(lag[1])) break
-        //     }
-
-        //     let lng = Location[0].split(".")
-        //     lng[0] = lng[0].replace("4d" , "")
-        //     for(let x=7; x>=4 ; x--) {
-        //         lng[1] = lng[1].slice(0 , x)
-        //         if(!isNaN(lng[1])) break
-        //     }
-
-        //     const Lagitude = lag.join(".")
-        //     const Longitude = lng.join(".")
-        //     if(!isNaN(Lagitude) && !isNaN(Longitude)) {
-        //         setLag(Lagitude)
-        //         setLng(Longitude)
-        //     }
-        // }
     }
 
     const GenerateMapAuto = () => {
@@ -652,7 +626,6 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                                         "ชื่อพืช" :
                                     type === "station" ?
                                         "ชื่อศูนย์ส่งเสริม" 
-                                    // <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"/></svg>
                                     : <></>
                                 }
                             </span>

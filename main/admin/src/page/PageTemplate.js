@@ -90,7 +90,7 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , ses
                             <path d="m11.25 11.25l3 3"/><circle cx="7.5" cy="7.5" r="4.75"/>
                         </g>
                     </svg>
-                    <input ref={TextSearchRef} onChange={(e)=>{
+                    <input ref={TextSearchRef} onInput={(e)=>{
                         clearTimeout(getTimeOut)
                         setTimeOut(setTimeout(()=>{
                             setTextSearch(e.target.value)

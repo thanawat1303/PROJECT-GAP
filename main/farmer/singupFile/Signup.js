@@ -5,7 +5,7 @@ import './assets/Signup.scss'
 import {clientMo}  from "../../../src/assets/js/moduleClient";
 import { CloseAccount } from "../method";
 
-const SignUp = ({liff}) => {
+const SignUp = ({liff , uid}) => {
     const [step , setStep] = useState(1)
     const [stepOn , setstepOn] = useState(1)
     const [stepApprov , setApprov] = useState(1)
@@ -88,13 +88,13 @@ const SignUp = ({liff}) => {
         setbtNext(false)
         switch(stepInMedthod) {
             case 1 :
-                setStep(<StepOne stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext}/>)
+                setStep(<StepOne stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext} uidLine={uid}/>)
                 break;
             case 2 :
-                setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext}/>)
+                setStep(<StepTwo stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext} uidLine={uid}/>)
                 break;
             case 3 :
-                setStep(<StepThree setAnimetion={setAnimetion} LoadingPreview={LoadingPreview} liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext}/>)
+                setStep(<StepThree setAnimetion={setAnimetion} LoadingPreview={LoadingPreview} liff={liff} previewData={setPreviewData} detailBody={DetailProfile} confirm={confirm} stepAp={setApprov} data={DataProfile} profile={ProfileData} update={setProfile} btnext={setbtNext} uidLine={uid}/>)
                 break;
         }
     }
@@ -307,7 +307,7 @@ const StepTwo = (props) => {
                     MapEle.current.setAttribute('show','')
                     props.data.set("latitude" , location.coords.latitude)
                     props.data.set("longitude" , location.coords.longitude)
-                    clientMo.post("/api/farmer/station/search").then((list)=>{
+                    clientMo.post("/api/farmer/station/search" , {uidLine : props.uidLine}).then((list)=>{
                         try {
                             let check_err = false
                             const search = JSON.parse(list).map(val=>{
@@ -336,7 +336,7 @@ const StepTwo = (props) => {
                 }, (err)=>{
                     props.data.set("latitude" , 1)
                     props.data.set("longitude" , 1)
-                    clientMo.post("/api/farmer/station/search").then((list)=>{
+                    clientMo.post("/api/farmer/station/search" , {uidLine : props.uidLine}).then((list)=>{
                         try {
                             const search = JSON.parse(list).map(val=>{
                                 return {id : val.id , name : val.name}
@@ -356,7 +356,7 @@ const StepTwo = (props) => {
         } else {
             props.data.set("latitude" , 1)
             props.data.set("longitude" , 1)
-            clientMo.post("/api/farmer/station/search").then((list)=>{
+            clientMo.post("/api/farmer/station/search" , {uidLine : props.uidLine}).then((list)=>{
                 try {
                     const search = JSON.parse(list).map(val=>{
                         return {id : val.id , name : val.name}
@@ -693,6 +693,7 @@ const StepThree = (props) => {
             updateData()
 
             const data = {
+                "uidLine" : props.uidLine,
                 "firstname" : props.profile.get("firstname"),
                 "lastname" : props.profile.get("lastname"),
                 "password" : props.profile.get("password"),
@@ -783,7 +784,7 @@ const PopUpPreview = (props) => {
 
     const LoadContent = async () => {
         try {
-            const fetchStation = await clientMo.post("/api/farmer/station/get/name" , {id_station : props.data['station']})
+            const fetchStation = await clientMo.post("/api/farmer/station/get/name" , {id_station : props.data['station'] , uidLine : props.data.uidLine})
             const name = JSON.parse(fetchStation)[0].name
             FrameBody.current.style.overflowY = "scroll"
             setLoadPage(false)

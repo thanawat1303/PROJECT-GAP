@@ -51,7 +51,8 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/station/search' , (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+        const uidLine = req.session.uidFarmer ? req.session.uidFarmer : req.body.uidLine
+        if(uidLine && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
@@ -70,21 +71,22 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/station/get/name' , (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+        const uidLine = req.session.uidFarmer ? req.session.uidFarmer : req.body.uidLine
+        if(uidLine && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
-                    res.send("db")
+                    res.send("error auth")
                 } else {
                     con.query(`SELECT name FROM station_list WHERE id=? and is_use = 1`, [req.body.id_station] , 
                     (err , result)=>{
                         con.end()
                         if(!err) res.send(result)
-                        else res.send("station")
+                        else res.send("error auth")
                     })
                 }
             })
-        } else res.send(req.session.uidFarmer)
+        } else res.send("error auth")
     })
 
     app.get("/image/farmer/:id_table" , (req , res)=>{
@@ -125,21 +127,22 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
 
     app.post('/api/farmer/signup' , async (req , res)=>{
+        const uidLine = req.session.uidFarmer ? req.session.uidFarmer : req.body.uidLine
         const userLine = await new Promise( async (resole , reject)=>{
             try {
-                await LINE.getLinkToken(req.session.uidFarmer)
+                await LINE.getLinkToken(uidLine)
                 resole(true)
             } catch(e) {
                 resole(false)
             }
         })
 
-        if(userLine && req.session.uidFarmer && (req.hostname == HOST_CHECK) && /^[ก-ฮะ-์]+$/.test(req.body['firstname']) && /^[ก-ฮะ-์]+$/.test(req.body['firstname'])) {
+        if(userLine && uidLine && (req.hostname == HOST_CHECK) && /^[ก-ฮะ-์]+$/.test(req.body['firstname']) && /^[ก-ฮะ-์]+$/.test(req.body['firstname'])) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (!err) {
                     con.query(`SELECT id_table FROM acc_farmer WHERE uid_line = ? and (register_auth = 0 || register_auth = 1)` , 
-                        [req.session.uidFarmer] , (err , search) => {
+                        [uidLine] , (err , search) => {
                         if (!err) {
                             if(!search[0]) {
                                 con.query(`INSERT INTO acc_farmer(
@@ -165,15 +168,15 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                                     req.body['lat'] ,
                                     req.body['lng'] ,
                                     req.body['password'].trim() ,
-                                    req.session.uidFarmer ,
-                                    req.session.uidFarmer ,
+                                    uidLine ,
+                                    uidLine ,
                                     req.body['telnumber'].trim() ,
                                     req.body['text_location'].trim()
                                 ] , (err , result)=>{
                                     con.end()
                                     if (!err) {
                                         if(result.affectedRows > 0) {
-                                            try {LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)} 
+                                            try {LINE.linkRichMenuToUser(uidLine , RichHouse)} 
                                             catch (e) {
                                                 fs.appendFileSync(__dirname.replace('\server' , '/logs/errorfile.json') , `richMenuAddFarm : {id:${req.session.uidFarmer} , date : ${new Date().getTime}}`)
                                             }

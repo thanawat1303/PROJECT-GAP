@@ -4,7 +4,7 @@ import { Loading , MapsJSX, ReportAction, ResizeImg } from "../../../src/assets/
 
 import "./assets/House.scss"
 
-const House = ({liff}) => {
+const House = ({liff , uid}) => {
     const ImageCurrent = useRef()
     const [PreviewImage , setPreview] = useState("/view-preview-img.svg")
     const ControlImage = useRef()

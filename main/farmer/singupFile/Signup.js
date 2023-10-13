@@ -794,7 +794,13 @@ const PopUpPreview = (props) => {
                 props.setAnimetion(false)
             } , 500)
         } catch (e) {
+            setLoadPage(false)
+            props.LoadingPreview.current.removeAttribute("show")
+            setTimeout(()=>{
+                props.setAnimetion(false)
+            } , 500)
             alert(e)
+            props.previewData(<></>)
         }
     }
 

@@ -123,6 +123,7 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
 
         window.removeEventListener("resize" , sizeScreen)
         window.addEventListener("resize" , sizeScreen)
+        
 
         return() => {
             window.removeEventListener("resize" , sizeScreen)

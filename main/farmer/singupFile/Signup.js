@@ -794,7 +794,7 @@ const PopUpPreview = (props) => {
                 props.setAnimetion(false)
             } , 500)
         } catch (e) {
-            console.log(e)
+            alert(e)
         }
     }
 
@@ -815,7 +815,7 @@ const PopUpPreview = (props) => {
     }
 
     return (
-        <section onLoad={LoadContent} className="popUpPreview" style={getLoadPage ? {} : {
+        <section className="popUpPreview" style={getLoadPage ? {} : {
             opacity : "1",
             visibility : "visible"
         }}>

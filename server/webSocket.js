@@ -8,6 +8,11 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
     const io = new Server(server)
     io.engine.use(sessionMiddleware);
     io.on("connection" , (socket_client)=>{
+
+        //admin
+        // socket_client.on("connect-doctor-list" , async)
+
+        //doctor
         socket_client.on("connect-account" , async ()=>{
             try {
                 const session = Object.entries(socket_client.request.sessionStore.sessions)
@@ -16,6 +21,7 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
                 await UpdateTimeOnline(io , JsonOB.user_doctor , JsonOB.pass_doctor , "online")
                 socket_client.data.username = JsonOB.user_doctor
                 socket_client.data.password = JsonOB.pass_doctor
+                socket_client.data.auth = "doctor"
                 socket_client.join(`${JsonOB.user_doctor}:${JsonOB.pass_doctor}`)
             } catch(e) {
                 console.log(e)
@@ -25,7 +31,7 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
         socket_client.on("disconnect-account" , async () => {
             const username = socket_client.data.username
             const password = socket_client.data.password
-            if(username && password) {
+            if(username && password && socket_client.data.auth == "doctor") {
                 const time_end = new Date().getTime()
 
                 socket_client.leave(`${username}:${password}`)
@@ -54,7 +60,7 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
         socket_client.on("disconnect" , async () => {
             const username = socket_client.data.username
             const password = socket_client.data.password
-            if(username && password) {
+            if(username && password && socket_client.data.auth == "doctor") {
                 const time_end = new Date().getTime()
 
                 socket_client.leave(`${username}:${password}`)

@@ -298,9 +298,9 @@ const StepTwo = (props) => {
     }
 
     const pullMapEJS = () => {
-        setTimeout(()=>{
-            setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
-        } , 10000)
+        // setTimeout(()=>{
+        //     setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
+        // } , 10000)
         navigator.geolocation.getCurrentPosition((location)=>{
             MapEle.current.setAttribute('show','')
             props.data.set("latitude" , location.coords.latitude)
@@ -316,7 +316,7 @@ const StepTwo = (props) => {
                     setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
                     setReady(true)
                 } catch (e) {
-                    CloseAccount(list , "")
+                    CloseAccount("error auth" , "")
                 }
                 // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
             })
@@ -334,7 +334,7 @@ const StepTwo = (props) => {
                     setStation(search)
                     setReady(true)
                 } catch (e) {
-                    CloseAccount(list , "")
+                    CloseAccount("error auth" , "")
                 }
             })
             CheckData()

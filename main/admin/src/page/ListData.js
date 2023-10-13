@@ -20,6 +20,7 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
     const [ListCount , setListCount] = useState(0)
     const [getVerifyStart , setVerifyStart] = useState(false)
     const [RowList , setRowList] = useState(5)
+    const [getInterval , setIntervalTime] = useState(0)
 
     const RefBe = useRef()
     // const ShowBecause = useRef()
@@ -30,10 +31,11 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
         removePopup()
         fetchDataList(0 , 5)
         setVerifyStart(true)
-        socket.emit("unconnect-doctor-list")
-        if(HrefPage.get().split("?")[0] === "list" && status.status === "default") {
-            socket.emit("connect-doctor-list")
-        }
+
+        return(()=>{
+            socket.emit("unconnect-doctor-list")
+            socket.removeListener("update-online")
+        })
     } , [status])
 
     useEffect(()=>{
@@ -50,6 +52,10 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
     }
 
     const fetchDataList = async (StartRow , Limit , textSearch = "") => {
+        socket.emit("unconnect-doctor-list")
+        socket.removeListener("update-online")
+        clearInterval(getInterval)
+
         const ObjectData = 
                 HrefPage.get().split("?")[0] === "list" ? await clientMo.post("/api/admin/doctor/list" , {
                     typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1) , 
@@ -66,12 +72,16 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
 
         if(ObjectData) {
             const List = JSON.parse(ObjectData)
+            let DataSocket = []
             // console.log(List)
             if(StartRow != 0) {
                 setDataFetch([...DataFetch , ...List])
                 setRowList([...DataFetch , ...List].length)
-            } else
+                DataSocket = [...DataFetch , ...List]
+            } else {
                 setDataFetch(List)
+                DataSocket = List
+            }
             
             modify(70 , 30 , 
                 ["หน้าแรก" , 
@@ -83,6 +93,27 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
                     (HrefPage.get().indexOf("station") >= 0) ? "ศูนย์ส่งเสริม" : ""
                 ])
             setStateOnPage({status : status.status})
+
+            if(HrefPage.get().split("?")[0] === "list" && status.status === "default") {
+                socket.emit("connect-doctor-list")
+                socket.on("update-online" , (id_table , newTimeSocket)=>{
+                    const newList = DataSocket.map((DataList)=>{
+                        if(DataList.id_table_doctor == id_table) {
+                            DataList.time_online = newTimeSocket
+                        }
+                        DataList.timeStamp = new Date().getTime()
+                        return DataList
+                    })
+                    setDataFetch(newList)
+                })
+
+                // setInterval(()=>{
+                //     setDataFetch(DataSocket.map((DataList)=>{
+                //         DataList.timeStamp = new Date().getTime()
+                //         return DataList
+                //     }))
+                // } , 2000)
+            }
             return List
         } else {
             session()

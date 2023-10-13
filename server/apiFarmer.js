@@ -69,7 +69,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
         } else res.send("error auth")
     })
 
-    app.post('/api/farmer/station/get' , (req , res)=>{
+    app.post('/api/farmer/station/get/name' , (req , res)=>{
         if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{

@@ -13,7 +13,7 @@ import PageFormPlant from "./page/form/PageFormPlant";
 import PageFarmer from "./page/farmer/PageFarmer";
 import PageData from "./page/data/PageData";
 
-const Doctor = ({setMain , socket , isClick = 0}) => {
+const Doctor = ({setMain , socket , isClick = 0 , username , password}) => {
     const [body , setBody] = useState(<div></div>)
     const [session , setSession] = useState(<div></div>)
     const [TextPage , setTextPage] = useState([])
@@ -34,10 +34,10 @@ const Doctor = ({setMain , socket , isClick = 0}) => {
         ChkPath(null , "web")
         window.addEventListener("popstate" , ChkPath)
         window.addEventListener("resize" , Resize)
-        socket.emit("connect-account")
+        socket.emit("connect-account" , username , password)
 
         return() => {
-            socket.emit("disconnect-account")
+            socket.emit("disconnect-account" , username , password)
             window.removeEventListener("popstate" , ChkPath)
             window.removeEventListener("resize" , Resize)
         }

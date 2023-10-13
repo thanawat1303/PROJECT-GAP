@@ -75,7 +75,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
             setTimeout(()=>{
                 clientMo.postForm('/api/doctor/auth' , formData).then((context)=>{
                     if(context === "pass") {
-                        setMain(<Doctor setMain={setMain} socket={socket} isClick={1}/>)
+                        setMain(<Doctor setMain={setMain} socket={socket} isClick={1} username={formData.username} password={formData.password}/>)
                     } else if(context === "account") {
                         ErrorLogin.current.innerHTML = "บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"
                         ErrorLogin.current.setAttribute("show" , "")
@@ -220,7 +220,7 @@ const FormPersonal = ({ main = {setMain : null , socket : null} , id_doctor , Re
                     password:pw.value
                 })
                 if(result === "pass"){
-                    main.setMain(<Doctor isClick={1} setMain={main.setMain} socket={main.socket}/>)
+                    main.setMain(<Doctor isClick={1} setMain={main.setMain} socket={main.socket} username={id_doctor} password={pw.value}/>)
                 } else if(result === "password") {
                     pw.setAttribute('err' , "")
                     pw.setAttribute('placeholder' , "รหัสผ่านไม่ถูกต้อง")

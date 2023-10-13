@@ -19,29 +19,34 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
         })
 
         //doctor
-        socket_client.on("connect-account" , async ()=>{
+        socket_client.on("connect-account" , async (username , password)=>{
             try {
-                const session = Object.entries(socket_client.request.sessionStore.sessions)
-                const JsonOB = JSON.parse(session[0][1])
 
-                await UpdateTimeOnline(io , JsonOB.user_doctor , JsonOB.pass_doctor , "online")
+                const JsonOB = {
+                    user_doctor : socket_client.request.session.user_doctor ?? username ,
+                    pass_doctor : socket_client.request.session.pass_doctor ?? password
+                }
+
+                const id_table = await UpdateTimeOnline(io , JsonOB.user_doctor , JsonOB.pass_doctor , "online")
                 socket_client.data.username = JsonOB.user_doctor
                 socket_client.data.password = JsonOB.pass_doctor
                 socket_client.data.auth = "doctor"
                 socket_client.join(`${JsonOB.user_doctor}:${JsonOB.pass_doctor}`)
+                if(id_table) io.to("admin:doctor:list").emit("update-online" , id_table , "online")
             } catch(e) {
                 console.log(e)
             }
         })
 
-        socket_client.on("disconnect-account" , async () => {
-            const username = socket_client.data.username
-            const password = socket_client.data.password
+        socket_client.on("disconnect-account" , async (username_in , password_in) => {
+            const username = socket_client.data.username ?? username_in
+            const password = socket_client.data.password ?? password_in
             if(username && password && socket_client.data.auth == "doctor") {
                 const time_end = new Date().getTime()
 
                 socket_client.leave(`${username}:${password}`)
-                await UpdateTimeOnline(io , username , password , time_end)
+                const id_table = await UpdateTimeOnline(io , username , password , time_end)
+                if(id_table) io.to("admin:doctor:list").emit("update-online" , id_table , time_end)
                 delete socket_client.data.username , delete socket_client.data.password;
             }
         })
@@ -70,7 +75,8 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
                 const time_end = new Date().getTime()
 
                 socket_client.leave(`${username}:${password}`)
-                await UpdateTimeOnline(io , username , password , time_end)
+                const id_table = await UpdateTimeOnline(io , username , password , time_end)
+                if(id_table) io.to("admin:doctor:list").emit("update-online" , id_table , time_end)
                 delete socket_client.data.username , delete socket_client.data.password;
             }
         })
@@ -95,12 +101,12 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
                     })
 
                     db.end()
-                    resole()
+                    resole(result.data.id_table_doctor)
                 }).catch((err)=>{
                     db.end()
-                    resole()
+                    resole("")
                 })
-            } else resole()
+            } else resole("")
         })
     }
 

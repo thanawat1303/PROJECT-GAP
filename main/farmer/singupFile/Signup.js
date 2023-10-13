@@ -784,7 +784,7 @@ const PopUpPreview = (props) => {
 
     const LoadContent = async () => {
         try {
-            const fetchStation = await clientMo.post("/api/farmer/station/get" , {id_station : props.data['station']})
+            const fetchStation = await clientMo.post("/api/farmer/station/get/name" , {id_station : props.data['station']})
             const name = JSON.parse(fetchStation)[0].name
             FrameBody.current.style.overflowY = "scroll"
             setLoadPage(false)

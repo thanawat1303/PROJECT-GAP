@@ -220,7 +220,7 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                         {
                             status.status === "default" ? 
                                 <div className="status-online">
-                                    <div className="text-online">
+                                    <div className="text-online" style={ data.time_online == "online" ? {backgroundColor : "#00ff3c"} : {}}>
                                         {
                                             data.time_online ? 
                                             data.time_online == "online" ? "กำลังใช้งาน" : <TimeDiff DATE={parseInt(data.time_online)} DivInput={false} textPresent="ใช้งานเมื่อ "/>

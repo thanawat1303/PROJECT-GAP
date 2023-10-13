@@ -62,7 +62,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     })
 
     // protocal websocket
-    const io = WebSocket(server , sessionMiddleware)
+    const io = WebSocket(server , sessionMiddleware , db , listDB , apifunc)
 
     app.use(sessionMiddleware)
 

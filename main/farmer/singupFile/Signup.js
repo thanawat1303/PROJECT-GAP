@@ -313,6 +313,7 @@ const StepTwo = (props) => {
                     setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
                     setReady(true)
                 } catch (e) {
+                    alert("พบปัญหา")
                     CloseAccount(list , "")
                 }
                 // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
@@ -331,10 +332,12 @@ const StepTwo = (props) => {
                     setStation(search)
                     setReady(true)
                 } catch (e) {
+                    alert("พบปัญหา")
                     CloseAccount(list , "")
                 }
             })
             CheckData()
+            setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
         } , null , {
             enableHighAccuracy: true
         })

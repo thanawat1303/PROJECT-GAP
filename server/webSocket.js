@@ -1,4 +1,4 @@
-module.exports = function WebSocketServ (server , sessionMiddleware) {
+module.exports = function WebSocketServ (server , sessionMiddleware , Database , listDB , apifunc) {
     // const WebSoc = require('ws')
     // const Socket = new WebSoc.Server({server})
 
@@ -9,17 +9,50 @@ module.exports = function WebSocketServ (server , sessionMiddleware) {
     io.engine.use(sessionMiddleware);
 
     io.on("connection" , (socket_client)=>{
-        // socket_client.on("connect-account" , ()=>{
+        // socket_client.on("connect-account" , async ()=>{
         //     try {
         //         const session = Object.entries(socket_client.request.sessionStore.sessions)
         //         const JsonOB = JSON.parse(session[0][1])
+
+        //         await UpdateTimeOnline(io , JsonOB.user_doctor , JsonOB.pass_doctor , "online")
         //         socket_client.data.username = JsonOB.user_doctor
-        //         socket_client.data.password = JsonOB.pass_doctor     
+        //         socket_client.data.password = JsonOB.pass_doctor
+        //         socket_client.join(`${JsonOB.user_doctor}:${JsonOB.pass_doctor}`)
         //     } catch(e) {}
         // })
 
         // socket_client.on("disconnect-account" , () => {
-        //     console.log(socket_client.data , new Date())
+        //     const username = socket_client.data.username
+        //     const password = socket_client.data.password
+        //     delete socket_client.data.username , delete socket_client.data.password;
+
+        //     socket_client.leave(`${username}:${password}`)
+        //     const time_end = new Date()
+
+        //     const clientID = io.sockets.adapter.rooms.get(`${username}:${password}`)
+        //     if(!clientID.size) {
+        //         const db = Database.createConnection(listDB)
+        //         apifunc.auth(db , username , password , null , "acc_doctor")
+        //             .then( async (result)=>{
+        //                 await new Promise((resole)=>{
+        //                     db.query(
+        //                         `
+        //                         UPDATE acc_doctor SET time_online = '${time_end}'
+        //                         WHERE id_table_doctor = ?
+        //                         ` , [ result.id_table_doctor ] , ()=>{
+        //                             resole()
+        //                         }
+        //                     )
+        //                 })
+
+        //                 db.end()
+        //                 socket_client.data.username = JsonOB.user_doctor
+        //                 socket_client.data.password = JsonOB.pass_doctor
+        //                 socket_client.join(`${JsonOB.user_doctor}:${JsonOB.pass_doctor}`)
+        //             }).catch((err)=>{
+        //                 db.end()
+        //             })
+        //     }
         // })
 
         socket_client.on("connect msg" , (uid_line)=>{
@@ -40,9 +73,37 @@ module.exports = function WebSocketServ (server , sessionMiddleware) {
 
 
         // socket_client.on("disconnect" , () => {
-        //     console.log(socket_client.data , new Date())
         // })
     })
+
+    // const UpdateTimeOnline = async (socket_io , username , password , status) => {
+    //     return await new Promise((resole)=> {
+    //         const clientID = socket_io.sockets.adapter.rooms.get(`${username}:${password}`)
+    //         if(!clientID.size) {
+    //             const db = Database.createConnection(listDB)
+    //             apifunc.auth(db , username , password , null , "acc_doctor")
+    //             .then( async (result)=>{
+    //                 await new Promise((resole)=>{
+    //                     db.query(
+    //                         `
+    //                         UPDATE acc_doctor SET time_online = '${status}'
+    //                         WHERE id_table_doctor = ?
+    //                         ` , [ result.id_table_doctor ] , ()=>{
+    //                             resole()
+    //                         }
+    //                     )
+    //                 })
+
+    //                 db.end()
+    //                 resole()
+    //             }).catch((err)=>{
+    //                 db.end()
+    //                 resole()
+    //             })
+    //         } else resole()
+    //     })
+    // }
+
 
     return io
     // io.on("connect" , (socket)=>{

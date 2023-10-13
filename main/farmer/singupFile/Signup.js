@@ -241,7 +241,6 @@ const StepOne = (props) => {
 
 const StepTwo = (props) => {
     const Station = useRef()
-    let timeOutLoad = null
 
     const LoadingMap = useRef()
     const MapEle = useRef()
@@ -253,13 +252,14 @@ const StepTwo = (props) => {
     const [getTextLocation , setTextLocation] = useState(props.profile.get("text-location"))
 
     const [LoadingState , setLoading] = useState(<></>)
+    const [TimeOutLoad , setTimeOutLoad] = useState(0)
     
     useEffect(()=>{
         props.stepAp(2)
         PullMap()
 
         return () => {
-            clearTimeout(timeOutLoad)
+            clearTimeout(TimeOutLoad)
         }
     } , [])
 
@@ -268,7 +268,7 @@ const StepTwo = (props) => {
         setLoading(<Loading size={50} border={8} animetion={true}/>)
         MapEle.current.removeAttribute('show','')
         setCurrent(<></>)
-        timeOutLoad = setTimeout(
+        setTimeOutLoad(setTimeout(
             ()=>{
                 pullMapEJS()
                 // if ('geolocation' in navigator) {
@@ -294,10 +294,13 @@ const StepTwo = (props) => {
                 // } else {
                     
                 // }
-            } , 1000)
+            } , 1000))
     }
 
     const pullMapEJS = () => {
+        setTimeout(()=>{
+            setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
+        } , 10000)
         navigator.geolocation.getCurrentPosition((location)=>{
             MapEle.current.setAttribute('show','')
             props.data.set("latitude" , location.coords.latitude)
@@ -313,7 +316,6 @@ const StepTwo = (props) => {
                     setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
                     setReady(true)
                 } catch (e) {
-                    alert("พบปัญหา")
                     CloseAccount(list , "")
                 }
                 // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
@@ -332,7 +334,6 @@ const StepTwo = (props) => {
                     setStation(search)
                     setReady(true)
                 } catch (e) {
-                    alert("พบปัญหา")
                     CloseAccount(list , "")
                 }
             })

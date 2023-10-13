@@ -106,7 +106,7 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , ses
                 </div>
             </div>
             <div className="list-manage">
-                <ListData status={StatusPage} PageAddRef={PageAddRef} auth={auth} session={session} TabOn={TabOn} HrefPage={HrefData} setStateOnPage={setStateOnPage} modify={modify} textSearch={getTextSearch}/>
+                <ListData socket={socket} status={StatusPage} PageAddRef={PageAddRef} auth={auth} session={session} TabOn={TabOn} HrefPage={HrefData} setStateOnPage={setStateOnPage} modify={modify} textSearch={getTextSearch}/>
             </div>
         </section>
     )

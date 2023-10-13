@@ -74,17 +74,17 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
             let con = Database.createConnection(listDB)
             con.connect(( err )=>{
                 if (err) {
-                    res.send("error auth db")
+                    res.send("db")
                 } else {
                     con.query(`SELECT name FROM station_list WHERE id=? and is_use = 1`, [req.body.id_station] , 
                     (err , result)=>{
                         con.end()
                         if(!err) res.send(result)
-                        else res.send("error auth station")
+                        else res.send("station")
                     })
                 }
             })
-        } else res.send("error auth out")
+        } else res.send("out")
     })
 
     app.get("/image/farmer/:id_table" , (req , res)=>{

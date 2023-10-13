@@ -9,7 +9,7 @@ import ManageDoctorPage from "./doctor/ManagePage";
 import ManageDataPage from "./data/ManagePage";
 import EditPage from "./data/EditPage";
 
-const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , setStateOnPage , modify , textSearch}) => {
+const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefPage , setStateOnPage , modify , textSearch}) => {
     // const [Body , setBody] = useState(<></>)
     // const [List , setList] = useState(<></>)
 
@@ -30,7 +30,10 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
         removePopup()
         fetchDataList(0 , 5)
         setVerifyStart(true)
-        console.log(status)
+        socket.emit("unconnect-doctor-list")
+        if(HrefPage.get().split("?")[0] === "list" && status.status === "default") {
+            socket.emit("connect-doctor-list")
+        }
     } , [status])
 
     useEffect(()=>{
@@ -94,7 +97,7 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
                 <InsertPage PageAddRef={PageAddRef} ReloadAccount={()=>fetchDataList(0 , DataFetch.length)} type={status.status}/> : <></>
             }
             <div className="List-data">
-                <ManageList Data={DataFetch} setBecause={setBecause} ListCount={ListCount} setListCount={setListCount} 
+                <ManageList socket={socket} Data={DataFetch} setBecause={setBecause} ListCount={ListCount} setListCount={setListCount} 
                                     TabOn={TabOn} HrefPage={HrefPage} status={status} 
                                     auth={auth} session={session} RefBe={RefBe} Fetch={()=>fetchDataList(0 , DataFetch.length)}/>
             </div>
@@ -112,7 +115,7 @@ const ListData = ({status , PageAddRef , auth , session , TabOn , HrefPage , set
     )
 }
 
-const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , HrefPage , status , auth , RefBe , session , Fetch}) => {
+const ManageList = ({socket , Data , setBecause , ListCount , setListCount , TabOn , HrefPage , status , auth , RefBe , session , Fetch}) => {
     const [List , setList] = useState(<></>)
 
     useEffect(()=>{
@@ -123,9 +126,6 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
 
         window.removeEventListener("resize" , sizeScreen)
         window.addEventListener("resize" , sizeScreen)
-        if(HrefPage.get().split("?")[0] === "list" && status.status === "default") {
-            
-        }
 
         return() => {
             window.removeEventListener("resize" , sizeScreen)

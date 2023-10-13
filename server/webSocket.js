@@ -14,6 +14,10 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
             socket_client.join("admin:doctor:list")
         })
 
+        socket_client.on("unconnect-doctor-list" , ()=>{
+            socket_client.leave("admin:doctor:list")
+        })
+
         //doctor
         socket_client.on("connect-account" , async ()=>{
             try {

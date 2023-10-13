@@ -495,7 +495,6 @@ const StepThree = (props) => {
     const [sizeHeightImg , setHeightImg] = useState(0)
 
     const frameLate = 1
-    let TimeOut = new Set()
 
     useEffect(()=>{
         Frame.current.style.width = `${props.detailBody.current.clientWidth * 0.8}px`
@@ -785,7 +784,6 @@ const PopUpPreview = (props) => {
     const LoadContent = async () => {
         try {
             const fetchStation = await clientMo.post("/api/farmer/station/get/name" , {id_station : props.data['station']})
-            alert(`Data:${fetchStation}`)
             const name = JSON.parse(fetchStation)[0].name
             FrameBody.current.style.overflowY = "scroll"
             setLoadPage(false)

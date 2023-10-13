@@ -123,7 +123,9 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
 
         window.removeEventListener("resize" , sizeScreen)
         window.addEventListener("resize" , sizeScreen)
-        
+        if(HrefPage.get().split("?")[0] === "list" && status.status === "default") {
+            
+        }
 
         return() => {
             window.removeEventListener("resize" , sizeScreen)

@@ -10,7 +10,9 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
     io.on("connection" , (socket_client)=>{
 
         //admin
-        // socket_client.on("connect-doctor-list" , async)
+        socket_client.on("connect-doctor-list" , ()=>{
+            socket_client.join("admin:doctor:list")
+        })
 
         //doctor
         socket_client.on("connect-account" , async ()=>{

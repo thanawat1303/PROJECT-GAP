@@ -301,30 +301,61 @@ const StepTwo = (props) => {
         // setTimeout(()=>{
         //     setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
         // } , 10000)
-        navigator.geolocation.getCurrentPosition((location)=>{
-            MapEle.current.setAttribute('show','')
-            props.data.set("latitude" , location.coords.latitude)
-            props.data.set("longitude" , location.coords.longitude)
-            clientMo.post("/api/farmer/station/search").then((list)=>{
-                try {
-                    const search = JSON.parse(list).map(val=>{
-                        let lag = Math.abs(location.coords.latitude - val.location.x)
-                        let lng = Math.abs(location.coords.longitude - val.location.y)
-                        return {id : val.id , name : val.name , dist : lag + lng}
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (location)=>{
+                    MapEle.current.setAttribute('show','')
+                    props.data.set("latitude" , location.coords.latitude)
+                    props.data.set("longitude" , location.coords.longitude)
+                    clientMo.post("/api/farmer/station/search").then((list)=>{
+                        try {
+                            let check_err = false
+                            const search = JSON.parse(list).map(val=>{
+                                try {
+                                    let lag = Math.abs(location.coords.latitude - val.location.x)
+                                    let lng = Math.abs(location.coords.longitude - val.location.y)
+                                    return {id : val.id , name : val.name , dist : lag + lng}
+                                } catch (e) {
+                                    return {id : val.id , name : val.name , dist : 0}
+                                }
+                            })
+                            
+                            if(!check_err) {
+                                setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
+                            } else {
+                                setStation(search.sort((a , b)=>a.dist - b.dist))
+                            }
+                            setReady(true)
+                        } catch (e) {
+                            CloseAccount("error auth" , "")
+                        }
+                        // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
                     })
-                    
-                    setStation(search.sort((a , b)=>a.dist - b.dist).slice(0 , 2))
-                    setReady(true)
-                } catch (e) {
-                    CloseAccount("error auth" , "")
-                }
-                // if(props.profile.get("station") == undefined) HeadList.current.setAttribute("selected" , "")
-            })
-            CheckData()
-            setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
-        }, (err)=>{
-            props.data.set("latitude" , -1)
-            props.data.set("longitude" , -1)
+                    CheckData()
+                    setCurrent(<MapsJSX w={"100%"} lat={location.coords.latitude} lng={location.coords.longitude}/>)
+                }, (err)=>{
+                    props.data.set("latitude" , 1)
+                    props.data.set("longitude" , 1)
+                    clientMo.post("/api/farmer/station/search").then((list)=>{
+                        try {
+                            const search = JSON.parse(list).map(val=>{
+                                return {id : val.id , name : val.name}
+                            })
+                            
+                            setStation(search)
+                            setReady(true)
+                        } catch (e) {
+                            CloseAccount("error auth" , "")
+                        }
+                    })
+                    CheckData()
+                    setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
+                } , null , {
+                    enableHighAccuracy: true
+                })
+        } else {
+            props.data.set("latitude" , 1)
+            props.data.set("longitude" , 1)
             clientMo.post("/api/farmer/station/search").then((list)=>{
                 try {
                     const search = JSON.parse(list).map(val=>{
@@ -339,9 +370,7 @@ const StepTwo = (props) => {
             })
             CheckData()
             setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
-        } , null , {
-            enableHighAccuracy: true
-        })
+        }
     }
 
     const reloadMap = () => {

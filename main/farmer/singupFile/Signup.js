@@ -758,7 +758,9 @@ const PopUpPreview = (props) => {
     const [Result , setResult] = useState(0)
     const [OpenPop , setOpenPop] = useState(false)
 
-    let loadNum = 0
+    useEffect(()=>{
+        LoadContent()
+    } , [])
 
     const ConfirmSave = () => {
         setOpenPop(true)
@@ -780,20 +782,17 @@ const PopUpPreview = (props) => {
         })
     }
 
-    const LoadContent = async (e) => {
-        loadNum++
+    const LoadContent = async () => {
         try {
-            if(loadNum == 1) {
-                const name = JSON.parse(await clientMo.post("/api/farmer/station/get" , {id_station : props.data['station']}))[0].name
-                FrameBody.current.style.overflowY = "scroll"
-                setLoadPage(false)
-                setStation(name.trim())
-                props.LoadingPreview.current.removeAttribute("show")
-                setTimeout(()=>{
-                    props.setAnimetion(false)
-                } , 500)
-                loadNum = 0
-            }
+            const fetchStation = await clientMo.post("/api/farmer/station/get" , {id_station : props.data['station']})
+            const name = JSON.parse(fetchStation)[0].name
+            FrameBody.current.style.overflowY = "scroll"
+            setLoadPage(false)
+            setStation(name.trim())
+            props.LoadingPreview.current.removeAttribute("show")
+            setTimeout(()=>{
+                props.setAnimetion(false)
+            } , 500)
         } catch (e) {
             console.log(e)
         }

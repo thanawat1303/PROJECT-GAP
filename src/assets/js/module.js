@@ -79,7 +79,7 @@ const TimeJSX = ({DATE , MAX = true}) => {
     return(<input readOnly value={Time}></input>)
 }
 
-const TimeDiff = ({DATE}) => {
+const TimeDiff = ({DATE , DivInput = true , textPresent = ""}) => {
     const [Time , setTime] = useState("")
     const Mount = [ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
 
@@ -95,10 +95,10 @@ const TimeDiff = ({DATE}) => {
                         parseInt(DiffTime / (1000 * 60 * 60)) < 24 ? `${parseInt(DiffTime / (1000 * 60 * 60))} ชั่วโมงที่แล้ว` :
                         parseInt(DiffTime / (1000 * 60 * 60 * 24)) < 3 ? `${parseInt(DiffTime / (1000 * 60 * 60 * 24))} วันที่แล้ว` :
                         `วันที่ ${TimeIn.getDate()}-${Mount[TimeIn.getMonth()]}-${TimeIn.getFullYear()}`
-        setTime(NewTime)
+        setTime(textPresent + NewTime)
     } , [])
 
-    return(<input readOnly value={Time}></input>)
+    return(DivInput ? <input readOnly value={Time}></input> : Time)
 }
 
 const ClosePopUp = (e , id , stateChange , back=false) => {

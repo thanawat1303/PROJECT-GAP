@@ -273,6 +273,21 @@
                 transition: 0.5s opacity , 0.5s visibility;
                 background-color: #67e6cf4b;
                 margin: 5px;
+
+                .status-online {
+                    display: flex;
+                    justify-content: end;
+                    align-items: center;
+                    padding-right: 2%;
+                    font: 900 14px Sans-font;
+
+                    .text-online {
+                        background-color: white;
+                        padding: 1px 5px;
+                        border-radius: 20px;
+                    }
+                }
+
                 Detail-Data-main {
                     display: flex;
                     justify-content: start;
@@ -630,6 +645,9 @@
         @media only screen and (max-width : 430px) {
             .List-data {
                 List-data-body {
+                    .status-online {
+                        font: 900 12px Sans-font;
+                    }
                     Detail-Data-main {
                         Detail-Image {
                             width: 60px;
@@ -685,6 +703,10 @@
             .List-data {
                 List-data-body {
                     padding: 5px;
+                    .status-online {
+                        font: 900 11px Sans-font;
+                    }
+
                     Detail-Data-main {
                         Detail-Image {
                             width: 50px;

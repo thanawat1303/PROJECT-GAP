@@ -21,7 +21,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     apifunc.auth(con , username , password , res , "admin").then((result)=>{
       if(result['result'] === "pass") {
         let data = req.body
-        let select = data.typeDelete === 0 ? ", status_account" : ""
+        let select = data.typeDelete === 0 ? ", status_account , time_online" : ""
         const Limit = isNaN(parseInt(data.limit)) ? 0 : parseInt(data.limit)
         const StartRow = isNaN(parseInt(data.startRow)) ? 0 : parseInt(data.startRow)
         con.query(

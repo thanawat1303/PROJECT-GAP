@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../src/assets/js/moduleClient";
 
-import { GetLinkUrlOfSearch, LoadOtherOffset, MapsJSX, ReportAction } from "../../../../src/assets/js/module";
+import { GetLinkUrlOfSearch, LoadOtherOffset, MapsJSX, ReportAction, TimeDiff } from "../../../../src/assets/js/module";
 
 import ShowBecause from "./doctor/ShowBecause";
 
@@ -183,6 +183,18 @@ const ManageList = ({Data , setBecause , ListCount , setListCount , TabOn , Href
                 {
                     HrefPage.get().split("?")[0] === "list" ?
                     <>
+                        {
+                            status.status === "default" ? 
+                                <div className="status-online">
+                                    <div className="text-online">
+                                        {
+                                            data.time_online ? 
+                                            data.time_online == "online" ? "กำลังใช้งาน" : <TimeDiff DATE={parseInt(data.time_online)} DivInput={false} textPresent="ใช้งานเมื่อ "/>
+                                            : "ยังไม่ทำการเข้าระบบ"
+                                        }
+                                    </div>
+                                </div> : <></>
+                        }
                         <Detail-Data-main>
                             <Detail-Image>
                                 <img src={data.img_doctor ? data.img_doctor : "/doctor-svgrepo-com.svg"}></img>

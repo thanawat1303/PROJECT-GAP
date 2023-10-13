@@ -7,7 +7,6 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
     const {Server} = require('socket.io')
     const io = new Server(server)
     io.engine.use(sessionMiddleware);
-
     io.on("connection" , (socket_client)=>{
         socket_client.on("connect-account" , async ()=>{
             try {
@@ -18,40 +17,20 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
                 socket_client.data.username = JsonOB.user_doctor
                 socket_client.data.password = JsonOB.pass_doctor
                 socket_client.join(`${JsonOB.user_doctor}:${JsonOB.pass_doctor}`)
-            } catch(e) {}
+            } catch(e) {
+                console.log(e)
+            }
         })
 
-        socket_client.on("disconnect-account" , () => {
+        socket_client.on("disconnect-account" , async () => {
             const username = socket_client.data.username
             const password = socket_client.data.password
-            delete socket_client.data.username , delete socket_client.data.password;
+            if(username && password) {
+                const time_end = new Date().getTime()
 
-            socket_client.leave(`${username}:${password}`)
-            const time_end = new Date()
-
-            const clientID = io.sockets.adapter.rooms.get(`${username}:${password}`)
-            if(!clientID.size) {
-                const db = Database.createConnection(listDB)
-                apifunc.auth(db , username , password , null , "acc_doctor")
-                    .then( async (result)=>{
-                        await new Promise((resole)=>{
-                            db.query(
-                                `
-                                UPDATE acc_doctor SET time_online = '${time_end}'
-                                WHERE id_table_doctor = ?
-                                ` , [ result.id_table_doctor ] , ()=>{
-                                    resole()
-                                }
-                            )
-                        })
-
-                        db.end()
-                        socket_client.data.username = JsonOB.user_doctor
-                        socket_client.data.password = JsonOB.pass_doctor
-                        socket_client.join(`${JsonOB.user_doctor}:${JsonOB.pass_doctor}`)
-                    }).catch((err)=>{
-                        db.end()
-                    })
+                socket_client.leave(`${username}:${password}`)
+                await UpdateTimeOnline(io , username , password , time_end)
+                delete socket_client.data.username , delete socket_client.data.password;
             }
         })
 
@@ -72,13 +51,22 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
         })
 
 
-        socket_client.on("disconnect" , () => {
+        socket_client.on("disconnect" , async () => {
+            const username = socket_client.data.username
+            const password = socket_client.data.password
+            if(username && password) {
+                const time_end = new Date().getTime()
+
+                socket_client.leave(`${username}:${password}`)
+                await UpdateTimeOnline(io , username , password , time_end)
+                delete socket_client.data.username , delete socket_client.data.password;
+            }
         })
     })
 
     const UpdateTimeOnline = async (socket_io , username , password , status) => {
         return await new Promise((resole)=> {
-            const clientID = socket_io.sockets.adapter.rooms.get(`${username}:${password}`)
+            const clientID = socket_io.sockets.adapter.rooms.get(`${username}:${password}`) ?? new Set()
             if(!clientID.size) {
                 const db = Database.createConnection(listDB)
                 apifunc.auth(db , username , password , null , "acc_doctor")
@@ -88,7 +76,7 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
                             `
                             UPDATE acc_doctor SET time_online = '${status}'
                             WHERE id_table_doctor = ?
-                            ` , [ result.id_table_doctor ] , ()=>{
+                            ` , [ result.data.id_table_doctor ] , (err)=>{
                                 resole()
                             }
                         )
@@ -103,6 +91,20 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
             } else resole()
         })
     }
+
+    const dbCheck = Database.createConnection(listDB)
+    dbCheck.connect((err) => {
+        if (!err) {
+            dbCheck.query(
+                `
+                UPDATE acc_doctor SET time_online = '${new Date().getTime()}'
+                WHERE time_online = "online"
+                ` , (err)=>{
+                    dbCheck.end()
+                }
+            )
+        } else dbCheck.end()
+    });
 
 
     return io

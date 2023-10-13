@@ -191,9 +191,10 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                               img_doctor , 
                               station_doctor , 
                               status_account , 
-                              status_delete
+                              status_delete ,
+                              time_online
                             ) 
-                            VALUES ('',?,'',SHA2(?,256),'','',1,0)` , 
+                            VALUES ('',?,'',SHA2(?,256),'','',1,0,"")` , 
                 [req.body['id_doctor'],req.body['passwordDT']] , 
                 (err , result)=>{
                   if(err) {

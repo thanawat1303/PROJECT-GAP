@@ -799,7 +799,7 @@ const PopUpPreview = (props) => {
             setTimeout(()=>{
                 props.setAnimetion(false)
             } , 500)
-            alert(e)
+            // alert(e)
             props.previewData(<></>)
         }
     }

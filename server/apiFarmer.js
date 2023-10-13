@@ -84,7 +84,7 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
                     })
                 }
             })
-        } else res.send("out")
+        } else res.send(req.session.uidFarmer)
     })
 
     app.get("/image/farmer/:id_table" , (req , res)=>{

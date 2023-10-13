@@ -203,6 +203,7 @@ const House = ({liff , uid}) => {
             let CropImage = CropImageToData()
     
             let data = {
+                uidLine : uid,
                 img : CropImage,
                 name : namefarm.current.value,
                 lag : getLag,

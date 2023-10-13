@@ -210,7 +210,8 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
     })
     
     app.post('/api/farmer/farmhouse/add' , async (req , res)=>{
-        if(req.session.uidFarmer && (req.hostname == HOST_CHECK)) {
+        const UidLine = req.session.uidFarmer ? req.session.uidFarmer : req.body.uidLine
+        if(UidLine && (req.hostname == HOST_CHECK)) {
             
             let con = Database.createConnection(listDB)
             try {

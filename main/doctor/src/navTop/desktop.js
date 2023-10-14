@@ -101,7 +101,7 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
 
     const Profile = (e) => {
         if(e) e.preventDefault()
-        setBodyPopup(<ProfilePage RefPop={RefPopup} setPopup={setBodyPopup} session={setSession} returnToHome={Home} FetchProfileReload={FetchProfile}/>)
+        setBodyPopup(<ProfilePage RefPop={RefPopup} setPopup={setBodyPopup} session={setSession} returnToHome={Home} FetchProfileReload={FetchProfile} FetchNotify={FetchNotify}/>)
     }
 
     const Notify = (e) => {

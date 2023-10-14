@@ -3,7 +3,7 @@ import { clientMo } from "../../../../../src/assets/js/moduleClient";
 import "../../assets/style/page/profile/Profile.scss"
 import { Loading, ResizeImg } from "../../../../../src/assets/js/module";
 
-const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileReload}) => {
+const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileReload , FetchNotify}) => {
     const [getProfileOld , setProfileOld] = useState([])
     const [getProfile , setProfile] = useState([])
 
@@ -140,6 +140,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
             if(Edit) {
                 if(Edit === "1") {
                     returnToHome()
+                    await FetchNotify(0 , "count")
                     await FetchProfile()
                     FetchProfileReload()
                     setFetchEditLoad(true)

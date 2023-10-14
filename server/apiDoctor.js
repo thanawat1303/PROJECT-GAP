@@ -3276,7 +3276,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         }
     })
 
-    app.get('/api/doctor/google/maps/get' , async (req , res)=>{
+    app.post('/api/doctor/google/maps/get' , async (req , res)=>{
         let username = req.session.user_doctor
         let password = req.session.pass_doctor
     
@@ -3294,7 +3294,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     const Maps = await axios.request({
                         method : "GET",
                         maxBodyLength: Infinity,
-                        url : req.query.link,
+                        url : req.body.link,
                         headers : {}
                     })
                     res.send(JSON.stringify(Maps.data))

@@ -234,6 +234,7 @@ const DetailMessange = ({Msg , Ref , setOpen}) => {
                         Authorization : "Bearer 3bRyKhlM01xFG6hDC+x5ZlfT0r44XF4L5wHORR9CJc87tmjrHoQJad6kLvOa8cbX7hSHVu6SB08UcWx2I9QjdNWRLo6fwsExPTbm7Wuaw7Eq6zh6DJXs9FFQqSbXxZKvHJt4jURZqu4Z0NcP6zJ4wwdB04t89/1O/w1cDnyilFU="
                     }
                 })
+                console.log(Data)
                 const imageUrl = URL.createObjectURL(Data.blob());  // แปลง binary เป็น Blob object
                 setFileData(imageUrl)
             } catch(e) {

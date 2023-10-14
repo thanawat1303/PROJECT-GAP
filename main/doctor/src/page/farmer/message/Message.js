@@ -237,6 +237,7 @@ const DetailMessange = ({Msg , Ref , setOpen}) => {
                 const imageUrl = URL.createObjectURL(Data.blob());  // แปลง binary เป็น Blob object
                 setFileData(imageUrl)
             } catch(e) {
+                console.log(e)
                 setFileData("not-image")
             }
         }

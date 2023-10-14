@@ -204,7 +204,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 }
                 else {
                     let fullname = req.body['firstname'] + " " + req.body['lastname']
-                    con.query(`UPDATE acc_doctor SET fullname_doctor=? , station_doctor=? WHERE id_doctor = ?`
+                    con.query(`UPDATE acc_doctor SET fullname_doctor = ? , station_doctor = ? WHERE id_doctor = ?`
                     , [fullname , req.body['station'] , username]
                     , (err , val)=>{
                         if (err) {
@@ -212,8 +212,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             console.log("query");
                             return 0
                         }
-                        console.log(val)
                         if(val['changedRows'] == 1){
+                            req.session.tokenSession = apifunc.getTokenCsurf(req)
                             req.session.user_doctor = username
                             req.session.pass_doctor = password
                             res.send('pass')
@@ -3038,7 +3038,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 WHERE id = ?
                                 ` , [req.body.id_list] , (err , select) => {
                                     if(err){
-                                        console.log(err)
                                         con.end()
                                         res.send("err select")
                                         return 0
@@ -3129,7 +3128,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 ` , [ state , req.body.id_list , state ] ,
                                 (err , list) => {
                                     if(err) {
-                                        console.log(err)
                                         con.end()
                                         res.send("error")
                                         return 0
@@ -3144,7 +3142,6 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             res.send('over')
                         }
                     } catch(e) {
-                        console.log(e)
                         con.end()
                         res.send("error")
                     }

@@ -99,9 +99,8 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
                 socket.on("update-online" , (id_table , newTimeSocket)=>{
                     const newList = DataSocket.map((DataList)=>{
                         if(DataList.id_table_doctor == id_table) {
-                            DataList.time_online = newTimeSocket
+                            DataList.time_online = isNaN(newTimeSocket) ? newTimeSocket : "offline"
                         }
-                        DataList.timeStamp = new Date().getTime()
                         return DataList
                     })
                     setDataFetch(newList)
@@ -223,7 +222,9 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                     <div className="text-online" style={ data.time_online == "online" ? {backgroundColor : "#00ff3c"} : {}}>
                                         {
                                             data.time_online ? 
-                                            data.time_online == "online" ? "กำลังใช้งาน" : <TimeDiff DATE={parseInt(data.time_online)} DivInput={false} textPresent="ใช้งานเมื่อ "/>
+                                            data.time_online == "online" ? "กำลังใช้งาน"
+                                            : data.time_online == "offline" ? "ปิดใช้งาน" 
+                                            : <TimeDiff DATE={parseInt(data.time_online)} DivInput={false} textPresent="ใช้งานเมื่อ "/>
                                             : "ยังไม่ทำการเข้าระบบ"
                                         }
                                     </div>

@@ -259,11 +259,11 @@ const FormPersonal = ({ main = {setMain : null , socket : null} , id_doctor , Re
                 <div className="profile">
                     <div className="input-field">
                         <span>ชื่อ</span>
-                        <input onChange={checkValue} ref={firstname} placeholder="ไม่มีคำนำหน้า เช่น สมชาย"></input>
+                        <input onChange={checkValue} ref={firstname} placeholder="ภาษาไทย ไม่มีคำนำหน้า เช่น สมชาย"></input>
                     </div>
                     <div className="input-field">
                         <span>นามสกุล</span>
-                        <input onChange={checkValue} ref={lastname} placeholder="นามสกุล"></input>
+                        <input onChange={checkValue} ref={lastname} placeholder="ภาษาไทย เช่น สุขใจ"></input>
                     </div>
                     <div className="input-field">
                         <span>ศูนย์ปฏิบัติหน้าที่</span>

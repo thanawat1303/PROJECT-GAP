@@ -1,14 +1,13 @@
 require('dotenv').config().parsed
 const line = require('./configLine')
 const fs = require('fs')
-const RichSign = process.RICH_SIGN
-const RichHouse = process.RICH_HOUSE
 
 const {Server} = require('socket.io')
 const io = new Server()
 
 module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket = io , LINE = line) {
-
+    const RichHouse = process.RICH_HOUSE
+    
     app.post('/api/farmer/sign' , async (req , res)=>{
         if(req.session.user_doctor != undefined || req.session.pass_doctor != undefined) {
             delete req.session.pass_doctor
@@ -1693,6 +1692,8 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 }
 
 const authCheck = (con , dbpacket , res , req , LINE) => {
+    const RichSign = process.RICH_SIGN
+    const RichHouse = process.RICH_HOUSE
     return new Promise( async (resole , reject)=>{
         const userLine = await new Promise( async (resole , reject)=>{
             try {
@@ -1717,19 +1718,14 @@ const authCheck = (con , dbpacket , res , req , LINE) => {
                                 if(result.length != 0) {
                                     const ProfilePass = result.filter(profile=>profile.register_auth == 0 || profile.register_auth == 1)
                                     if(ProfilePass.length != 0) {
-                                        let result = ""
                                         if(req.body['page'] === "signup") {
                                             try {
                                                 LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
                                                 LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)
-                                                result = RichHouse
-                                            } catch (e) {
-                                                result = e
-                                            }
+                                            } catch (e) {}
                                         }
                                         resole({
-                                            result : result,
-                                            // result : "search",
+                                            result : "search",
                                             data : ProfilePass[0]
                                         })
                                     } else {

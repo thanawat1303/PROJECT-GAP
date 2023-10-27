@@ -1,13 +1,14 @@
 require('dotenv').config().parsed
 const line = require('./configLine')
 const fs = require('fs')
+const RichSign = process.env.RICH_SIGN
+const RichHouse = process.env.RICH_HOUSE
 
 const {Server} = require('socket.io')
 const io = new Server()
 
 module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket = io , LINE = line) {
-    const RichHouse = process.RICH_HOUSE
-    
+
     app.post('/api/farmer/sign' , async (req , res)=>{
         if(req.session.user_doctor != undefined || req.session.pass_doctor != undefined) {
             delete req.session.pass_doctor
@@ -1692,8 +1693,6 @@ module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbp
 }
 
 const authCheck = (con , dbpacket , res , req , LINE) => {
-    const RichSign = process.RICH_SIGN
-    const RichHouse = process.RICH_HOUSE
     return new Promise( async (resole , reject)=>{
         const userLine = await new Promise( async (resole , reject)=>{
             try {

@@ -8,13 +8,13 @@ const {Server} = require('socket.io')
 const LINE = require('./configLine');
 const io = new Server()
 
+const RichSign = process.env.RICH_SIGN
+const RichHouse = process.env.RICH_HOUSE
 module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io , Line = LINE) {
-    const RichSign = process.RICH_SIGN
-    const RichHouse = process.RICH_HOUSE
 
     app.post('/api/doctor/check' , (req , res)=>{
         if(apifunc.authCsurf("doctor" , req , res)) res.redirect('/api/doctor/auth')
-        else res.clearCookie(process.cookieName).send("")
+        else res.clearCookie(process.env.cookieName).send("")
     })
 
     app.get('/api/doctor/name' , (req , res)=>{

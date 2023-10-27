@@ -1722,7 +1722,7 @@ const authCheck = (con , dbpacket , res , req , LINE) => {
                                             try {
                                                 LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
                                                 LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)
-                                                result = req.session.uidFarmer
+                                                result = RichHouse
                                             } catch (e) {
                                                 result = e
                                             }

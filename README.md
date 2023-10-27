@@ -12,11 +12,6 @@
          cp package-json/package.json  . #Linux
          ```
 
-   - Init env
-      ```
-      npm run init-env
-      ```
-
    - Packages
       ```
       npm i express nodemon dotenv webpack-dev-middleware cookie-parser express-session helmet mysql mysql2 uuid 
@@ -57,6 +52,11 @@
       npm i axios
 
       npm install thaidatepicker-react
+      ```
+
+   - Init env
+      ```
+      npm run init-env
       ```
 
 ### Build Project

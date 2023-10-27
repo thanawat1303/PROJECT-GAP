@@ -38,6 +38,7 @@ const MainFarmer = ({socket , idLiff , Path}) => {
 
     const LoadPage = async (uid , liff) => {
         const result = await clientMo.post("/api/farmer/sign" , {uid:uid , page : Path})
+        alert(Path)
         if(Path === "signup" && result !== "error auth") {
             if(result === "close" || result === "no account") setBody(<Signup liff={liff} uid={uid}/>)
             else if (result === "search") CloseAccount("not line" , null , "บัญชีลงทะเบียนแล้ว")

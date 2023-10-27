@@ -1717,14 +1717,19 @@ const authCheck = (con , dbpacket , res , req , LINE) => {
                                 if(result.length != 0) {
                                     const ProfilePass = result.filter(profile=>profile.register_auth == 0 || profile.register_auth == 1)
                                     if(ProfilePass.length != 0) {
+                                        let result = ""
                                         if(req.body['page'] === "signup") {
                                             try {
                                                 LINE.unlinkRichMenuFromUser(req.session.uidFarmer)
                                                 LINE.linkRichMenuToUser(req.session.uidFarmer , RichHouse)
-                                            } catch (e) {}
+                                                result = "unRich"
+                                            } catch (e) {
+                                                result = e
+                                            }
                                         }
                                         resole({
-                                            result : "search",
+                                            result : result,
+                                            // result : "search",
                                             data : ProfilePass[0]
                                         })
                                     } else {

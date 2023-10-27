@@ -8,8 +8,8 @@ const {Server} = require('socket.io')
 const LINE = require('./configLine');
 const io = new Server()
 
-const RichSign = "richmenu-e6dd99ccb1aebb953c976a8188b20cd7"
-const RichHouse = "richmenu-93377925aa45b5dc5585f85749f8af8b"
+const RichSign = process.RICH_SIGN
+const RichHouse = process.RICH_HOUSE
 module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io , Line = LINE) {
 
     app.post('/api/doctor/check' , (req , res)=>{

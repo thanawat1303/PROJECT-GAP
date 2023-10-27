@@ -1,8 +1,8 @@
 require('dotenv').config().parsed
 const line = require('./configLine')
 const fs = require('fs')
-const RichSign = "richmenu-e6dd99ccb1aebb953c976a8188b20cd7"
-const RichHouse = "richmenu-93377925aa45b5dc5585f85749f8af8b"
+const RichSign = process.RICH_SIGN
+const RichHouse = process.RICH_HOUSE
 
 const {Server} = require('socket.io')
 const io = new Server()

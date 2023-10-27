@@ -31,4 +31,6 @@ REACT_API_KEY_MAP = <-Key-Map-Api->
 pathCertFile = <-Path-Cert-SSL->
 pathKeyFile = <-Path-Key-SSL->
 
+RICH_SIGN = <-ID-Rich-Sign->
+RICH_HOUSE = <-ID-Rich-House->
 # TZ = UTC+7

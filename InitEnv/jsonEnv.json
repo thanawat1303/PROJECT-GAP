@@ -16,5 +16,7 @@
     "cookie" : "",
     "REACT_API_KEY_MAP" : "",
     "pathCertFile" : "",
-    "pathKeyFile" : ""
+    "pathKeyFile" : "",
+    "RICH_SIGN" : "",
+    "RICH_HOUSE" : ""
 }

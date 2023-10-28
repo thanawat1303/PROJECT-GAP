@@ -1,11 +1,11 @@
-<mxfile host="app.diagrams.net" modified="2023-10-12T05:37:42.020Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="0Ephs2Yo94ZtwVfSs5Ih" version="22.0.4" type="google">
+<mxfile host="app.diagrams.net" modified="2023-10-13T14:04:31.952Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="x-94dDteFCPH5NH2p3DS" version="22.0.4" type="google">
   <diagram name="หน้า-1" id="pNeefDOTtBO-vPjjWmoB">
     <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="bKDTo_ecvrzZRoo026qE-148" value="บัญชีผู้ส่งเสริม" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
-          <mxGeometry x="460" y="200" width="250" height="300" as="geometry" />
+          <mxGeometry x="460" y="170" width="250" height="330" as="geometry" />
         </mxCell>
         <mxCell id="bKDTo_ecvrzZRoo026qE-149" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="bKDTo_ecvrzZRoo026qE-148">
           <mxGeometry y="30" width="250" height="30" as="geometry" />
@@ -120,6 +120,19 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="bKDTo_ecvrzZRoo026qE-175" value="สถานะการลบบัญชี" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="bKDTo_ecvrzZRoo026qE-173">
+          <mxGeometry x="30" width="220" height="30" as="geometry">
+            <mxRectangle width="220" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="X3Qk1efAukAQD73clQQM-1" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="bKDTo_ecvrzZRoo026qE-148">
+          <mxGeometry y="300" width="250" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="X3Qk1efAukAQD73clQQM-2" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;" vertex="1" parent="X3Qk1efAukAQD73clQQM-1">
+          <mxGeometry width="30" height="30" as="geometry">
+            <mxRectangle width="30" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="X3Qk1efAukAQD73clQQM-3" value="บันทึกเวลาใช้งาน" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="X3Qk1efAukAQD73clQQM-1">
           <mxGeometry x="30" width="220" height="30" as="geometry">
             <mxRectangle width="220" height="30" as="alternateBounds" />
           </mxGeometry>

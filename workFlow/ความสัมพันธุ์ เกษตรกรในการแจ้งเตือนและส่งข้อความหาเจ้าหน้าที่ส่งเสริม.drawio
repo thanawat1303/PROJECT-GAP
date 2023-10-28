@@ -1,11 +1,11 @@
-<mxfile host="app.diagrams.net" modified="2023-10-12T06:16:57.291Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="mr_G-CgFACNL8_y8eZ3P" version="22.0.4" type="google">
+<mxfile host="app.diagrams.net" modified="2023-10-28T08:27:22.798Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36" etag="WaGSJb2svcvm_k77mEZt" version="22.0.8" type="google">
   <diagram name="หน้า-1" id="x3M6EU8KAMR5XJVaxGxM">
     <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="khlf1IXg7al_b4Y5pBYV-68" value="บัญชีผู้ส่งเสริม" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
-          <mxGeometry x="289" y="200" width="250" height="300" as="geometry" />
+          <mxGeometry x="289" y="200" width="250" height="330" as="geometry" />
         </mxCell>
         <mxCell id="khlf1IXg7al_b4Y5pBYV-69" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="khlf1IXg7al_b4Y5pBYV-68">
           <mxGeometry y="30" width="250" height="30" as="geometry" />
@@ -120,6 +120,19 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="khlf1IXg7al_b4Y5pBYV-95" value="สถานะการลบบัญชี" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="khlf1IXg7al_b4Y5pBYV-93">
+          <mxGeometry x="30" width="220" height="30" as="geometry">
+            <mxRectangle width="220" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3WYlUfkX7w64HbrZwq2e-1" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="khlf1IXg7al_b4Y5pBYV-68">
+          <mxGeometry y="300" width="250" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3WYlUfkX7w64HbrZwq2e-2" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;" vertex="1" parent="3WYlUfkX7w64HbrZwq2e-1">
+          <mxGeometry width="30" height="30" as="geometry">
+            <mxRectangle width="30" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3WYlUfkX7w64HbrZwq2e-3" value="บันทึกเวลาใช้งาน" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="3WYlUfkX7w64HbrZwq2e-1">
           <mxGeometry x="30" width="220" height="30" as="geometry">
             <mxRectangle width="220" height="30" as="alternateBounds" />
           </mxGeometry>
@@ -507,7 +520,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="khlf1IXg7al_b4Y5pBYV-184" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=12;fontColor=default;startArrow=ERoneToMany;startFill=0;endArrow=ERoneToMany;startSize=6;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endFill=0;" edge="1" parent="1" target="khlf1IXg7al_b4Y5pBYV-69">
+        <mxCell id="khlf1IXg7al_b4Y5pBYV-184" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=default;strokeColor=default;fontFamily=Helvetica;fontSize=12;fontColor=default;startArrow=ERoneToMany;startFill=0;endArrow=ERone;startSize=6;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endFill=0;" edge="1" parent="1" target="khlf1IXg7al_b4Y5pBYV-69">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="310" y="40" as="targetPoint" />
             <Array as="points">

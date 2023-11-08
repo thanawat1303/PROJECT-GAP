@@ -59,6 +59,13 @@
       npm run init-env
       ```
 
+   - Install Database
+      - SQL/main/Structure Database.sql
+      - setup user admin
+        ```
+        INSERT INTO `admin` (username , password , phone , address) VALUES ('--username--' , SHA2('--password--', 256) , '0902959765' , POINT(0000 , 0000))
+        ```
+
 ### Build Project
 
    - After install packages and .env

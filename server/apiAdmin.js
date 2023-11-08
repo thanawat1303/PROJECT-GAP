@@ -7,7 +7,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   })
   
 // doctor page
-  app.post('/api/admin/doctor/list' , (req , res)=>{
+  app.post('/api/admin/doctor/list' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -18,7 +18,9 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   
     let con = Database.createConnection(listDB)
   
-    apifunc.auth(con , username , password , res , "admin").then((result)=>{
+    try {
+
+      const result = await apifunc.auth(con , username , password , res , "admin")
       if(result['result'] === "pass") {
         let data = req.body
         let select = data.typeDelete === 0 ? ", status_account , time_online" : ""
@@ -32,12 +34,12 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             ) as station
             , id_table_doctor , fullname_doctor , id_doctor , img_doctor ${select}
             FROM acc_doctor
-            WHERE status_delete = ? AND ( INSTR( id_doctor , "${data.textSearch}" ) OR INSTR( fullname_doctor , "${data.textSearch}") )
+            WHERE status_delete = ? AND ( INSTR( id_doctor , ? ) OR INSTR( fullname_doctor , ? ) )
             ORDER BY status_account DESC , id_table_doctor DESC
             LIMIT ${Limit} OFFSET ${StartRow};
           ` 
         , 
-        [data.typeDelete] ,
+        [data.typeDelete , data.textSearch , data.textSearch] ,
         (err , result)=>{
           con.end()
           if (!err){
@@ -49,12 +51,14 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
           } else res.send("");
         })
       }
-    }).catch((err)=>{
+
+    } catch(err) {
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
       }
-    })
+    }
+    
   })
 
   app.post('/api/admin/doctor/get' , async (req , res)=>{
@@ -80,7 +84,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             ) as station , 
             id_table_doctor , fullname_doctor , id_doctor , img_doctor , status_account , status_delete
             FROM acc_doctor as doctor_main
-            WHERE id_table_doctor=? LIMIT 25;
+            WHERE id_table_doctor = ? LIMIT 25;
           ` 
         , 
         [data.id_table] ,
@@ -252,12 +256,16 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                 }
 
                 if(deleteResult.length) {
+                  const params = type_status === "status" ? 
+                                  [ req.body['id_table'] , username , req.body['because'] , new Date() , req.body['status'] ] : 
+                                  [ req.body['id_table'] , username , req.body['because'] , new Date() ]
+
                   con.query(
                     `
                       INSERT INTO because_${type_status} 
                       (id_table_doctor , id_admin , because_text , date ${type_status === "status" ? ", type_status" : ""}) VALUES 
-                      (? , ? , ? , ? ${type_status === "status" ? `, "${req.body['status']}"` : ""});
-                    ` , [ req.body['id_table'] , username , req.body['because'] , new Date()] ,
+                      (? , ? , ? , ? ${type_status === "status" ? `, ?` : ""});
+                    ` , params ,
                     (err , resultBecause) => {
                       if(err) {
                         dbpacket.dbErrorReturn(con , err , res)
@@ -296,7 +304,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
           res.send('error ID or status')
         }
       }
-    }catch(err) {
+    } catch(err) {
       con.end()
       if(err == "not pass") {
         res.send("password")
@@ -318,19 +326,21 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
-        const Limit = isNaN(parseInt(data.limit)) ? 0 : parseInt(data.limit)
-        const StartRow = isNaN(parseInt(data.startRow)) ? 0 : parseInt(data.startRow)
+
+        const type_data = data.type === "plant" ? data.type : "station";
+        const Limit = isNaN(parseInt(data.limit)) ? 0 : parseInt(data.limit);
+        const StartRow = isNaN(parseInt(data.startRow)) ? 0 : parseInt(data.startRow);
         con.query(
           `
-          SELECT * FROM ${data.type}_list
-          WHERE INSTR( name , "${data.textSearch}" )
+          SELECT * FROM ${type_data}_list
+          WHERE INSTR( name , ? )
           ORDER BY is_use DESC , name ASC
           LIMIT ${Limit} OFFSET ${StartRow}
-          `
+          ` , [data.textSearch]
          , (err , result)=>{
           if(err) {
             dbpacket.dbErrorReturn(con , err , res)
-            console.log(`select ${data.type} err`)
+            console.log(`select ${type_data} err`)
             return 0
           }
           con.end()

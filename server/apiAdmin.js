@@ -415,55 +415,56 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       let con = Database.createConnection(listDB)
   
       try {
-        let auth = await apifunc.auth(con , username , password , res , "admin")
+        const auth = await apifunc.auth(con , username , password , res , "admin")
         if(auth['result'] === "pass") {
-          let data = req.body
+          const data = req.body
+          const From = data.type === "station" ? "station" : data.type === "plant" ? "plant" : "";
           con.query(
             `
-            SELECT * FROM ${data.type}_list WHERE name=? and is_use = 1;
+            SELECT * FROM ${From}_list WHERE name=? and is_use = 1;
             `
             ,[ data.name ], (err , result)=>{
-            if(err) {
-              dbpacket.dbErrorReturn(con , err , res)
-              console.log(`select ${data.type} err`)
-              return 0
-            }
-
-            if(!result.length) {
-              con.query(`
-                          INSERT INTO ${data.type}_list 
-                          (
-                            name , 
-                            is_use 
-                            ${
-                              data.type === "plant" ? ", type_plant , qty_harvest" : 
-                              data.type === "station" ? ", location" : ""
-                            }
-                          ) 
-                          VALUES 
-                          (
-                            ? , 
-                            1 
-                            ${
-                              data.type === "plant" ? `, '${data.type_plant}' , '${data.qtyDate}'` :
-                              data.type === "station" ? `, POINT(${data.lat},${data.lng})` : ""
-                            }
-                          )` , 
-              [ data.name ] , (err , insert)=>{
-                if(err) {
-                  dbpacket.dbErrorReturn(con , err , res)
-                  console.log(`insert ${data.type} err`)
-                  return 0
-                }
-                
+            if(!err) {
+              if(!result.length) {
+                con.query(`
+                            INSERT INTO ${From}_list 
+                            (
+                              name , 
+                              is_use 
+                              ${
+                                data.type === "plant" ? ", type_plant , qty_harvest" : 
+                                data.type === "station" ? ", location" : ""
+                              }
+                            ) 
+                            VALUES 
+                            (
+                              ? , 
+                              1 
+                              ${
+                                data.type === "plant" ? `, '${data.type_plant}' , '${data.qtyDate}'` :
+                                data.type === "station" ? `, POINT(${data.lat},${data.lng})` : ""
+                              }
+                            )` , 
+                [ data.name ] , (err , insert)=>{
+                  if(err) {
+                    dbpacket.dbErrorReturn(con , err , res)
+                    console.log(`insert ${data.type} err`)
+                    return 0
+                  }
+                  
+                  con.end()
+                  res.send(insert.affectedRows.toString())
+                })
+              } else {
                 con.end()
-                res.send(insert.affectedRows.toString())
-              })
+                res.send("overflow")
+              }
             } else {
               con.end()
-              res.send("overflow")
+              res.send('error session')
+              console.log(`select ${From} err`)
             }
-          })  
+          })
         }
       } catch (err) {
         if(err == "not pass") {

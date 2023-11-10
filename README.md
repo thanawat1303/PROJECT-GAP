@@ -58,6 +58,10 @@
       ```
       npm run init-env
       ```
+      or
+      ```
+      node InitEnv/setupEnv.js
+      ```
 
    - Install Database
       - SQL/main/Structure Database.sql

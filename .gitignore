@@ -14,7 +14,7 @@ public/469.main.js
 public/856.main.js
 public/856.main.js.LICENSE.txt
 src/assets/img/doctor/report/*.jpg
-# .env
+.env
 # package.json
 # Admin/.env
 # Admin/package-lock.json

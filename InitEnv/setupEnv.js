@@ -42,14 +42,14 @@ const recovRead = async () => {
             rl.question(`Write Replace File (Yes : N) : `, (data) => {
                 if(data.toUpperCase() === "Y") {
                     fs.writeFileSync(__dirname + "/jsonEnv.json" , JSON.stringify(readJson , null , 2))
-                    fs.writeFileSync(__dirname.replace("initEnv" , "") + ".env" , DataFile)
+                    fs.writeFileSync(__dirname.replace("InitEnv" , "") + ".env" , DataFile)
                     console.log("Complete Install")
                 } else console.log("Cancel Install");
                 rl.close();
             })
         } else {
             fs.writeFileSync(__dirname + "/jsonEnv.json" , JSON.stringify(readJson , null , 2))
-            fs.writeFileSync(__dirname.replace("initEnv" , "") + ".env" , DataFile)
+            fs.writeFileSync(__dirname.replace("InitEnv" , "") + ".env" , DataFile)
             console.log("Complete Install")
             rl.close()
         }

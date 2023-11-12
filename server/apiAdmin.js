@@ -494,7 +494,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     try {
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
-        let data = req.body
+        const data = req.body
         const From = data.type === "station" ? "station" : data.type === "plant" ? "plant" : "";
         if(From) {
           try {
@@ -576,7 +576,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
     try {
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
-        let data = req.body
+        const data = req.body
         const From = data.type === "station" ? "station" : data.type === "plant" ? "plant" : "";
         if(From) {
           try {
@@ -598,10 +598,9 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             }) : true
   
             if(verify) {
-              const arrayPams = new Array
               const update = Object.entries(data.update).map(val=>{
-                val[1] = "?";
-                arrayPams.push(val[1])
+                val[0] = val[0].replaceAll(" " , "")
+                val[1] = val[1].replaceAll(" " , "")
                 val = val.join("=")
                 return val
               }).join(",").replaceAll(" " , "");
@@ -611,7 +610,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                 SET ${update}
                 WHERE id = ?;
                 `
-                , [ ...arrayPams , data.id_table ] , (err , result)=>{
+                , [ data.id_table ] , (err , result)=>{
                 if(err) {
                   con.end()
                   res.send("")

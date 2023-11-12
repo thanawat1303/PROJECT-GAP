@@ -598,8 +598,10 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             }) : true
   
             if(verify) {
+              const arrayPams = new Array
               const update = Object.entries(data.update).map(val=>{
-                // val[1] = val[1];
+                val[1] = "?";
+                arrayPams.push(val[1])
                 val = val.join("=")
                 return val
               }).join(",").replaceAll(" " , "");
@@ -609,7 +611,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                 SET ${update}
                 WHERE id = ?;
                 `
-                , [ data.id_table] , (err , result)=>{
+                , [ ...arrayPams , data.id_table ] , (err , result)=>{
                 if(err) {
                   con.end()
                   res.send("")

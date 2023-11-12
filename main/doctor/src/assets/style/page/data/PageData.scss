@@ -393,6 +393,16 @@
                                 font-size: 14px;
                             }
                         }
+                        
+                        .field-text.ell{
+                            width: 100%;
+
+                            .data-text {
+                                text-wrap: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                            }
+                        }
 
                         .field-text.max-box{
                             width: 100%;

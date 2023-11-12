@@ -395,7 +395,7 @@ const ManageList = ({Data , session , fetch , setRow , Limit , Type}) => {
                         >
                         <div className="frame-data-list">
                             <div className="row">
-                                <div className="field-text">
+                                <div className={`field-text ${Type === "source" ? "ell" : ""}`}>
                                     <span>
                                         {
                                             Type === "plant" ? "ชนิดพืช" :

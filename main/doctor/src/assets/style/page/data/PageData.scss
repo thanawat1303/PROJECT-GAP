@@ -398,6 +398,7 @@
                             width: 100%;
 
                             .data-text {
+                                max-width: 100%;
                                 text-wrap: nowrap;
                                 text-overflow: ellipsis;
                                 overflow: hidden;

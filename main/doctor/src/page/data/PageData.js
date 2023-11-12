@@ -56,6 +56,12 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
         eleBody.current.style.height = "70%"
         clientMo.unLoadingPage()
 
+        if(LoadType.split(":")[1] === "pop") 
+            setDataProcess(new Map([
+                ["type" , LoadType.split(":")[0]] , //Loadtype 0 : plant , 1 : ferti , 2 : chemi , 3 : source
+                // ["search" , ""] ,
+                ["statusClick" , false]
+            ]))
     } , [LoadType])
 
     const OpenOption = (Ref , option) => {
@@ -218,7 +224,10 @@ const PageData = ({setMain , session , socket , type = false , eleImageCover , L
                         <div className="row head-row">
                             <label className="field-select">
                                 <span>ชนิดข้อมูล</span>
-                                <select onChange={(e)=>searchList(e.target , e.target.value , "type")} ref={SelectType} defaultValue={DataProcess.get("type")}>
+                                <select onChange={(e)=>{
+                                    searchList(e.target , e.target.value , "type")
+                                    e.target.value = SelectType.current.value
+                                }} ref={SelectType} value={DataProcess.get("type")}>
                                     <option value={"plant"}>ขนิดพืช</option>
                                     <option value={"fertilizer"}>ปัจจัยการผลิต</option>
                                     <option value={"chemical"}>สารเคมี</option>

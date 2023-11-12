@@ -78,7 +78,11 @@ const Doctor = ({setMain , socket , isClick = 0 , username , password}) => {
                         setBody(<PageFarmer setMain={setMain} socket={socket} session={sessionoff} LoadType={`not:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                     }
                 } else if(path[1] === "data") {
-                    setBody(<PageData setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`plant:${type}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
+                    const search = window.location.search.replaceAll("?" , "").split("&").map(val=>{
+                        const Split = val.split("=")
+                        return (Split[0] === "type") ? Split[1] : ""
+                    })
+                    setBody(<PageData setMain={setMain} socket={socket} setBodyDoctor={setBody} session={sessionoff} LoadType={`${search[0]}:${type}:${new Date().getTime()}`} eleImageCover={ImageCover} eleBody={BodyRef} setTextStatus={setTextPage}/>)
                 }
                 
             } else {

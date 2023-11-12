@@ -426,35 +426,37 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             ,[ data.name ], (err , result)=>{
             if(!err) {
               if(!result.length) {
-                con.query(`
-                            INSERT INTO ${From}_list 
-                            (
-                              name , 
-                              is_use 
-                              ${
-                                data.type === "plant" ? ", type_plant , qty_harvest" : 
-                                data.type === "station" ? ", location" : ""
-                              }
-                            ) 
-                            VALUES 
-                            (
-                              ? , 
-                              1 
-                              ${
-                                data.type === "plant" ? `, '${data.type_plant}' , '${data.qtyDate}'` :
-                                data.type === "station" ? `, POINT(${data.lat},${data.lng})` : ""
-                              }
-                            )` , 
-                [ data.name ] , (err , insert)=>{
-                  if(err) {
-                    dbpacket.dbErrorReturn(con , err , res)
-                    console.log(`insert ${data.type} err`)
-                    return 0
-                  }
-                  
-                  con.end()
-                  res.send(insert.affectedRows.toString())
-                })
+                if(From) {
+                  con.query(`
+                    INSERT INTO ${From}_list 
+                    (
+                      name , 
+                      is_use 
+                      ${
+                        data.type === "plant" ? ", type_plant , qty_harvest" : 
+                        data.type === "station" ? ", location" : ""
+                      }
+                    ) 
+                    VALUES 
+                    (
+                      ? , 
+                      1 
+                      ${
+                        data.type === "plant" ? `, '${data.type_plant}' , '${data.qtyDate}'` :
+                        data.type === "station" ? `, POINT(${data.lat},${data.lng})` : ""
+                      }
+                    )` , 
+                  [ data.name ] , (err , insert)=>{
+                    if(err) {
+                      dbpacket.dbErrorReturn(con , err , res)
+                      console.log(`insert ${data.type} err`)
+                      return 0
+                    }
+                    
+                    con.end()
+                    res.send(insert.affectedRows.toString())
+                  })
+                }
               } else {
                 con.end()
                 res.send("overflow")
@@ -493,7 +495,8 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
-        if(data.type === "station" || data.type === "plant") {
+        const From = data.type === "station" ? "station" : data.type === "plant" ? "plant" : "";
+        if(From) {
           try {
             const verify = data.state_use ? await new Promise((resole , reject)=> {
               con.query(
@@ -501,11 +504,11 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                 SELECT (
                   SELECT EXISTS (
                     SELECT id
-                    FROM ${data.type}_list as data_search
+                    FROM ${From}_list as data_search
                     WHERE data_main.name = data_search.name and data_search.is_use = 1
                   )
                 ) as verifyStatus
-                FROM ${data.type}_list as data_main
+                FROM ${From}_list as data_main
                 WHERE id = ?
                 `
                 ,[ data.id_table ], (err , result)=>{
@@ -517,14 +520,14 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             if(verify) {
               con.query(
                 `
-                UPDATE ${data.type}_list SET is_use = ? WHERE id = ?;
+                UPDATE ${From}_list SET is_use = ? WHERE id = ?;
                 `
                 , [ data.state_use , data.id_table] , (err , result)=>{
                 if(err) {
                   con.end()
                   res.send("")
                 } else {
-                  if(data.type === "station" && result.changedRows) {
+                  if(From === "station" && result.changedRows) {
                     con.query(
                       `
                       SELECT name
@@ -574,7 +577,8 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
         let data = req.body
-        if(data.type === "station" || data.type === "plant") {
+        const From = data.type === "station" ? "station" : data.type === "plant" ? "plant" : "";
+        if(From) {
           try {
             const verify = data.update.name ? await new Promise((resole , reject)=> {
               con.query(
@@ -582,8 +586,8 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                 SELECT (
                   SELECT EXISTS (
                     SELECT id
-                    FROM ${data.type}_list
-                    WHERE ${data.type}_list.name = ? and ${data.type}_list.is_use = 1
+                    FROM ${From}_list
+                    WHERE ${From}_list.name = ? and ${From}_list.is_use = 1
                   )
                 ) as verifyStatus
                 `
@@ -595,13 +599,13 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   
             if(verify) {
               const update = Object.entries(data.update).map(val=>{
-                val[1] = val[1];
-                val = val.join(" = ")
+                // val[1] = val[1];
+                val = val.join("=")
                 return val
-              }).join(" , ");
+              }).join(",").replaceAll(" " , "");
               con.query(
                 `
-                UPDATE ${data.type}_list 
+                UPDATE ${From}_list 
                 SET ${update}
                 WHERE id = ?;
                 `

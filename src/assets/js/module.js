@@ -21,18 +21,31 @@ const GetLinkUrlOfSearch = async (valueLocation , auth) => {
     if(Link.length != 0) {
         try {
             const fecthOfGoogle = await clientMo.postForm(`/api/${auth}/google/maps/get` , {link : Link[0]})
-            const MapsStart = fecthOfGoogle.slice(fecthOfGoogle.lastIndexOf("[null,null,null,null,[") + 22)
-            const MapsData = MapsStart.slice(0 , MapsStart.indexOf("]") + 1)
+            
             try {
                 const result = await new Promise((resole , reject)=>{
-                    if(MapsData.indexOf("lore-rec") >= 0) {
-                        const MapsReStart = fecthOfGoogle.slice(fecthOfGoogle.lastIndexOf(",null,null,null,null,null,[null,null,") + 37)
-                        const MapsReData = MapsReStart.slice(0 , MapsReStart.indexOf("]"))
-                        const newLocation = eval(`[${MapsReData}]`)
-                        newLocation.push(0)
-                        resole(newLocation.reverse())
-                    } else resole(eval(MapsData) ?? []);
+                    const DataJson = String(JSON.parse(fecthOfGoogle).PathMap)
+
+                    if(DataJson.lastIndexOf("!8m2!3d") >= 0 && DataJson.lastIndexOf("!4d") >= 0) {
+                        const DataLocation = DataJson.slice(DataJson.lastIndexOf("!8m2!3d") + "!8m2!3d".length , DataJson.indexOf("?entry")).replaceAll("!4d" , "!")
+                        resole(DataLocation.split("!").slice(0 , 2))
+                    } else if(DataJson.indexOf("/maps/search/") >= 0) {
+                        const DataLocation = DataJson.slice(DataJson.indexOf("/maps/search/") + "/maps/search/".length , DataJson.indexOf("?entry")).replaceAll("+" , "")
+                        resole(DataLocation.split(","))
+                    } else {
+                        const DataFecth = String(JSON.parse(fecthOfGoogle).DataMaps)
+                        const MapsStart = DataFecth.slice(DataFecth.lastIndexOf("[null,null,null,null,[") + 22)
+                        const MapsData = MapsStart.slice(0 , MapsStart.indexOf("]") + 1)
+                        if(MapsData.indexOf("lore-rec") >= 0) {
+                            const MapsReStart = DataFecth.slice(DataFecth.lastIndexOf(",null,null,null,null,null,[null,null,") + 37)
+                            const MapsReData = MapsReStart.slice(0 , MapsReStart.indexOf("]"))
+                            const newLocation = eval(`[${MapsReData}]`)
+                            newLocation.push(0)
+                            resole(newLocation)
+                        } else resole(eval(MapsData).reverse() ?? []);
+                    }
                 })
+                console.log(result)
                 return result
             } catch(e) {
                 return []

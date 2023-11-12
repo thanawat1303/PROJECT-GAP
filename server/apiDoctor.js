@@ -3297,7 +3297,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         url : req.body.link,
                         headers : {}
                     })
-                    res.send(JSON.stringify(Maps.data))
+
+                    res.send({
+                        PathMap : Maps.request.path,
+                        DataMaps : JSON.stringify(Maps.data)
+                    })
+                    // res.send(JSON.stringify(Maps.data))
                 } catch(e) {
                     res.send("")
                 }

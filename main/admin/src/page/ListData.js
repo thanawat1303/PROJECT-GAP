@@ -486,8 +486,8 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
     const GenerateMap = async (e) => {
 
         let valueLocation = await GetLinkUrlOfSearch(e.target.value , "admin")
-        if(!isNaN(valueLocation[2]) && !isNaN(valueLocation[1])) {
-            setLag(valueLocation[2])
+        if(!isNaN(valueLocation[0]) && !isNaN(valueLocation[1])) {
+            setLag(valueLocation[0])
             setLng(valueLocation[1])
         }
     }

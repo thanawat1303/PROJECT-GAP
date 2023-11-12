@@ -658,7 +658,12 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
                 url : req.body.link,
                 headers : {}
               })
-              res.send(JSON.stringify(Maps.data))
+
+              res.send({
+                PathMap : Maps.request.path,
+                DataMaps : JSON.stringify(Maps.data)
+              })
+              // res.send(JSON.stringify(Maps.data))
             } catch(e) {
               console.log(e)
               res.send('{}')

@@ -44,8 +44,8 @@ const EditProfile = ({DataProfile , session , CheckEditFun}) => {
 
             let valueLocation = await GetLinkUrlOfSearch(e.target.value , "doctor")
 
-            if(!isNaN(valueLocation[2]) && !isNaN(valueLocation[1])) {
-                const Lagitude = valueLocation[2]
+            if(!isNaN(valueLocation[0]) && !isNaN(valueLocation[1])) {
+                const Lagitude = valueLocation[0]
                 const Longitude = valueLocation[1]
                 setLag(Lagitude)
                 setLng(Longitude)

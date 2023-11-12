@@ -185,8 +185,8 @@ const InsertSource = ({nameInsert , position , ErrReport , CheckInsert , stateOn
     const GenerateMap = async (e) => {
         let valueLocation = await GetLinkUrlOfSearch(e.target.value , "doctor")
 
-        if(!isNaN(valueLocation[2]) && !isNaN(valueLocation[1])) {
-            setLag(valueLocation[2])
+        if(!isNaN(valueLocation[0]) && !isNaN(valueLocation[1])) {
+            setLag(valueLocation[0])
             setLng(valueLocation[1])
         } else {
             setLag(0)

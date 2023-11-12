@@ -137,8 +137,8 @@ const EditPage = ({RefOnPage , id_table , type , setBecause , TabOn , session , 
             if(e.target.value) {
                 setTimeOut(setTimeout( async ()=>{
                     let valueLocation = await GetLinkUrlOfSearch(e.target.value , "admin")
-                    if(!isNaN(valueLocation[2]) && !isNaN(valueLocation[1])) {
-                        setLag(valueLocation[2])
+                    if(!isNaN(valueLocation[0]) && !isNaN(valueLocation[1])) {
+                        setLag(valueLocation[0])
                         setLng(valueLocation[1])
                     }
                     resole()

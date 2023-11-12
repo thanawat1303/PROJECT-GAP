@@ -45,7 +45,6 @@ const GetLinkUrlOfSearch = async (valueLocation , auth) => {
                         } else resole(eval(MapsData).reverse() ?? []);
                     }
                 })
-                console.log(result)
                 return result
             } catch(e) {
                 return []

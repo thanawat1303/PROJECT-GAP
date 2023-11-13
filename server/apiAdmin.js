@@ -665,7 +665,6 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
               })
               // res.send(JSON.stringify(Maps.data))
             } catch(e) {
-              console.log(e)
               res.send('{}')
             }
             // https.get(req.query.link , (resLink)=>{

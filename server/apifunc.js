@@ -14,12 +14,13 @@ const apifunc = {
           reject("connect");
         }
 
-        let usernameDB = authAccount == "admin" ? "username" : authAccount == "acc_doctor" ? "id_doctor" : "";
-        let passwordDB = authAccount == "admin" ? "password" : authAccount == "acc_doctor" ? "password_doctor" : "";
+        const roleAuth = authAccount === "admin" ? "admin" : authAccount === "acc_doctor" ? "acc_doctor" : "";
+        const usernameDB = roleAuth == "admin" ? "username" : roleAuth == "acc_doctor" ? "id_doctor" : "";
+        const passwordDB = roleAuth == "admin" ? "password" : roleAuth == "acc_doctor" ? "password_doctor" : "";
 
-        let ORDER = authAccount == "admin" ? "" : authAccount == "acc_doctor" ? "ORDER BY status_delete ASC" : "";
+        const ORDER = roleAuth == "admin" ? "" : roleAuth == "acc_doctor" ? "ORDER BY status_delete ASC" : "";
         connectDB.query(
-          `SELECT * FROM ${authAccount} WHERE ${usernameDB} = ? AND ${passwordDB}=SHA2( ? , 256) ${ORDER}`,
+          `SELECT * FROM ${roleAuth} WHERE ${usernameDB} = ? AND ${passwordDB}=SHA2( ? , 256) ${ORDER}`,
           [username, password],
           (err, result) => {
             if (err) {

@@ -8,8 +8,8 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   
 // doctor page
   app.post('/api/admin/doctor/list' , async (req , res)=>{
-    let username = req.session.user_admin
-    let password = req.session.pass_admin
+    const username = req.session.user_admin
+    const password = req.session.pass_admin
   
     if(username === '' || password === '' || (req.hostname !== HOST_CHECK)) {
       res.redirect('/api/logout')

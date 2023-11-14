@@ -167,7 +167,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 con.query(`
                     SELECT id_doctor 
                     FROM acc_doctor 
-                    WHERE uid_line_doctor = "${req.body['id']}"` , 
+                    WHERE uid_line_doctor = ?` , 
+                    [ req.body['id'] ] ,
                     (err , result)=>{
                     con.end()
                     if (result[0]) {
@@ -203,8 +204,11 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     res.send('account')
                 }
                 else {
-                    let fullname = req.body['firstname'] + " " + req.body['lastname']
-                    con.query(`UPDATE acc_doctor SET fullname_doctor = ? , station_doctor = ? WHERE id_doctor = ?`
+                    const fullname = req.body['firstname'] + " " + req.body['lastname']
+                    con.query(
+                        `
+                        UPDATE acc_doctor SET fullname_doctor = ? , station_doctor = ? WHERE id_doctor = ?
+                        `
                     , [fullname , req.body['station'] , username]
                     , (err , val)=>{
                         if (err) {
@@ -391,17 +395,18 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     `
                                     SELECT id_table , link_user
                                     FROM acc_farmer
-                                    WHERE link_user = "${req.body.link_user}" and register_auth = 1 and station = "${result['data']['station_doctor']}"
+                                    WHERE link_user = ? and register_auth = 1 and station = ?
                                     ORDER BY date_register DESC
                                     ` :
                                     `
                                     SELECT id_table , link_user
                                     FROM acc_farmer
-                                    WHERE id_table = "${req.body.id_table}" and register_auth = ${req.body.auth === 0 ? 0 : 2} and station = "${result['data']['station_doctor']}"
+                                    WHERE id_table = ? and register_auth = ? and station = ?
                                     ORDER BY date_register DESC
                                     `
-
-                con.query(queryType, (err , result)=>{
+                const queryParams = req.body.auth === 1 ? [ req.body.link_user , result['data']['station_doctor'] ] : [ req.body.id_table , req.body.auth === 0 ? 0 : 2 , result['data']['station_doctor'] ]
+                
+                con.query(queryType, queryParams , (err , result)=>{
                     if (err){
                         dbpacket.dbErrorReturn(con , err , res)
                         return 0
@@ -436,8 +441,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     `
                     SELECT * 
                     FROM acc_farmer
-                    WHERE id_table = ? and link_user = ? and station = "${result['data']['station_doctor']}"
-                    ` , [ req.body.id_table , req.body.link_user ]
+                    WHERE id_table = ? and link_user = ? and station = ?
+                    ` , [ req.body.id_table , req.body.link_user , result['data']['station_doctor'] ]
                     , (err , result)=>{
                     if (err){
                         dbpacket.dbErrorReturn(con , err , res)
@@ -481,7 +486,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                 const text_location = req.body.text_location ? `text_location = "${req.body.text_location}"` : "";
                 const newPassword = req.body.newPassword ? `password = SHA2("${req.body.newPassword}" , 256)` : "";
                 
-                const SET = [img , id , fullname , location , station , tel_number , text_location , newPassword].filter(val=>val).join(" , ")
+                const SET = [img , id , fullname , location , station , tel_number , text_location , newPassword].filter(val=>val).join(" , ").replaceAll(" " , "")
 
                 if(SET) {
                     const checkProfile = await new Promise((resole , reject)=>{
@@ -602,7 +607,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     SELECT id_doctor , fullname_doctor , img_doctor
                     FROM acc_doctor
                     WHERE id_table_doctor = ?
-                    ` , [ req.body.id_table_doctor]
+                    ` , [ req.body.id_table_doctor ]
                     , (err , result)=>{
                     if (err){
                         dbpacket.dbErrorReturn(con , err , res)
@@ -637,14 +642,14 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
                 const Limit = isNaN(parseInt(req.body.limit)) ? 0 : req.body.limit;
-                let queryType = req.body.approve === 0 ?
+                const queryType = req.body.approve === 0 ?
                     `
                     SELECT filterFarmer.* , 
                     (
                         SELECT date
                         FROM message_user
                         WHERE message_user.uid_line_farmer = acc_farmer.uid_line 
-                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
                                 and type = ""
                         ORDER BY message_user.date DESC
                         LIMIT 1
@@ -657,17 +662,17 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 SELECT id_table 
                                 FROM acc_farmer as farmer
                                 WHERE farmer.uid_line = acc_farmer.uid_line and 
-                                        station = "${result['data']['station_doctor']}" and 
+                                        station = ? and 
                                         register_auth = 1
                             )
                         ) as CheckOver
                         FROM acc_farmer 
                         WHERE 
-                            station = "${result['data']['station_doctor']}" and 
+                            station = ? and 
                             register_auth = 0
                     ) as filterFarmer
                     WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
-                                and ( INSTR( acc_farmer.id_farmer , '${req.body.textSearch}') || INSTR( acc_farmer.fullname , '${req.body.textSearch}' ))
+                                and ( INSTR( acc_farmer.id_farmer , ?) || INSTR( acc_farmer.fullname , ? ))
                     ORDER BY is_msg DESC , filterFarmer.date_register ASC
                     LIMIT ${Limit};
                     `: 
@@ -691,7 +696,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             LIMIT 1
                         ) as farmer
                         WHERE message_user.uid_line_farmer = farmer.uid_line
-                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
                                 and type = ""
                         ORDER BY message_user.date DESC
                         LIMIT 1
@@ -700,12 +705,12 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     (
                         SELECT MAX(date_register) as DateLast , link_user , COUNT(link_user) as Count
                         FROM acc_farmer 
-                        WHERE station = "${result['data']['station_doctor']}" and register_auth = 1
+                        WHERE station = ? and register_auth = 1
                         GROUP BY link_user
                     ) as farmer_main
                     WHERE acc_farmer.link_user = farmer_main.link_user 
                         and acc_farmer.date_register = farmer_main.DateLast
-                        and ( INSTR( acc_farmer.id_farmer , '${req.body.textSearch}') || INSTR( acc_farmer.fullname , '${req.body.textSearch}' ))
+                        and ( INSTR( acc_farmer.id_farmer , ?) || INSTR( acc_farmer.fullname , ? ))
                     ORDER BY is_msg DESC , date_register DESC
                     LIMIT ${Limit};
                     ` :
@@ -715,7 +720,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         SELECT date
                         FROM message_user
                         WHERE message_user.uid_line_farmer = acc_farmer.uid_line 
-                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
                                 and type = ""
                         ORDER BY message_user.date DESC
                         LIMIT 1
@@ -733,24 +738,29 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         ) as CheckOver
                         FROM acc_farmer 
                         WHERE 
-                            station = "${result['data']['station_doctor']}" and 
+                            station = ? and 
                             register_auth = 2
                     ) as filterFarmer
                     WHERE filterFarmer.id_table = acc_farmer.id_table and filterFarmer.CheckOver != 1
-                        and ( INSTR( acc_farmer.id_farmer , '${req.body.textSearch}') || INSTR( acc_farmer.fullname , '${req.body.textSearch}' ))
+                        and ( INSTR( acc_farmer.id_farmer , ?) || INSTR( acc_farmer.fullname , ? ))
                     ORDER BY is_msg DESC , filterFarmer.date_register ASC
                     LIMIT ${Limit};
-                    `
-                con.query(queryType, (err , result)=>{
-                    if (err){
-                        dbpacket.dbErrorReturn(con , err , res)
-                        return 0
-                    };
-
-                    const listFarmer = ProfileConvertImg(result , "img")
-    
-                    con.end()
-                    res.send(listFarmer)
+                    `;
+                
+                const queryParams = req.body.approve === 0 ? [ result['data']['id_table_doctor'] , result['data']['station_doctor'] , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch ] :
+                                    req.body.approve === 1 ? [ result['data']['id_table_doctor'] , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch] :
+                                    [ result['data']['id_table_doctor'] , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch ]
+                
+                con.query(queryType , queryParams ,  (err , result)=>{
+                    if (!err){
+                        const listFarmer = ProfileConvertImg(result , "img")
+                        con.end()
+                        res.send(listFarmer)
+                    } else {
+                        con.end()
+                        res.send("")
+                    }
+                    
                 })
             }
         }).catch((err)=>{

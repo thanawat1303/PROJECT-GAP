@@ -812,8 +812,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             `
                             SELECT link_user , uid_line , fullname
                             FROM acc_farmer
-                            WHERE id_table = ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
-                            ` , [ req.body.id_table_convert ]
+                            WHERE id_table = ? and register_auth = 1 and station = ?
+                            ` , [ req.body.id_table_convert , result['data']['station_doctor'] ]
                             , (err , result)=>{
                             if (err){
                                 dbpacket.dbErrorReturn(con , err , res)
@@ -835,8 +835,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                     `
                                     UPDATE acc_farmer 
                                     SET link_user = ?
-                                    WHERE register_auth = 1 and id_table = ? and station = "${result['data']['station_doctor']}"
-                                    `,[ Link_user , req.body.id_table_convert ],
+                                    WHERE register_auth = 1 and id_table = ? and station = ?
+                                    `,[ Link_user , req.body.id_table_convert , result['data']['station_doctor'] ],
                                     (err, result )=>{
                                         if (err){
                                             dbpacket.dbErrorReturn(con , err , res)
@@ -870,6 +870,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     }
     
                     const statusChange = req.body.status_change === 0 ? 0 : 2;
+                    const LinkUserParams = Link_user ? [ Link_user ] : []
                     con.query(
                         `
                         UPDATE acc_farmer 
@@ -878,9 +879,9 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             id_table_doctor = ? , 
                             date_doctor_confirm = ? ,
                             id_farmer = ?
-                            ${Link_user ? `, link_user = "${Link_user}"` : ""}
-                        WHERE register_auth = ? and id_table = ? and station = "${result['data']['station_doctor']}"
-                        `,[ result['data']['id_table_doctor'] , new Date() , req.body.id_farmer , statusChange , req.body.id_table ],
+                            ${Link_user ? `, link_user = ?` : ""}
+                        WHERE register_auth = ? and id_table = ? and station = ?
+                        `,[ result['data']['id_table_doctor'] , new Date() , req.body.id_farmer , ...LinkUserParams , statusChange , req.body.id_table , result['data']['station_doctor'] ],
                         async (err, result )=>{
                             if (!err){
                                 if(Link_user) {

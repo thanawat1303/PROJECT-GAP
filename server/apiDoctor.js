@@ -3013,7 +3013,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     try {
                         const OverCheck = Object.entries(req.body.check).map((checkData)=>{
                             checkData[1] = `"${checkData[1].trim()}"`
-                            return checkData.join(" = ")
+                            return checkData.join("=").replaceAll(" " , "").replaceAll(";" , "")
                         }).join(" and ")
 
                         const resultCheck = OverCheck.length ? await new Promise((resole , reject)=>{
@@ -3037,7 +3037,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 if(data[0] === "location") data[1] = data[1] != "0" ? `ST_PointFromText("${data[1].trim()}")` : "NULL"
                                 else data[1] = `"${data[1].trim()}"`
                                 return data.join(" = ")
-                            }).join(' , ')
+                            }).join(' , ').replaceAll(";" , "").replaceAll(" " , "")
 
                             await new Promise((resole , reject)=>{
                                 con.query(

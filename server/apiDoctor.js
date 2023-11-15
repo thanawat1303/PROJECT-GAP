@@ -1020,6 +1020,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
     
         apifunc.auth(con , username , password , res , "acc_doctor").then((result)=>{
             if(result['result'] === "pass") {
+                const Limit = isNaN(parseInt(req.body.limit)) ? 0 : req.body.limit;
                 con.query(
                     `
                     SELECT acc_farmer.id_table , acc_farmer.fullname , acc_farmer.img , acc_farmer.id_farmer
@@ -1027,14 +1028,14 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     (
                         SELECT MAX(date_register) as date , MAX(id_table) as id_table
                         FROM acc_farmer
-                        WHERE id_table != ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
+                        WHERE id_table != ? and register_auth = 1 and station = ?
                         GROUP BY link_user
                     ) as selectList
                     WHERE acc_farmer.id_table = selectList.id_table 
                             and (INSTR(acc_farmer.fullname , ?) OR INSTR(acc_farmer.id_farmer , ?))
                     ORDER BY acc_farmer.date_register DESC
-                    LIMIT ${req.body.limit};
-                    ` , [ req.body.id_table , req.body.search , req.body.search]
+                    LIMIT ${Limit};
+                    ` , [ req.body.id_table , result['data']['station_doctor'] , req.body.search , req.body.search]
                     , (err , result)=>{
                     if (err){
                         dbpacket.dbErrorReturn(con , err , res)
@@ -1137,8 +1138,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         `
                         SELECT link_user , uid_line , fullname
                         FROM acc_farmer
-                        WHERE id_table = ? and register_auth = 1 and station = "${result['data']['station_doctor']}"
-                        ` , [ req.body.id_table_convert ]
+                        WHERE id_table = ? and register_auth = 1 and station = ?
+                        ` , [ req.body.id_table_convert , result['data']['station_doctor'] ]
                         , (err , result)=>{
                         try {
                             Line.pushMessage(convert[0].uid_line , {
@@ -1387,8 +1388,8 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                             SELECT COUNT(*) as count_unread
                             FROM message_user
                             WHERE uid_line_farmer = ? 
-                                    and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."${result['data']['id_table_doctor']}"') , 0) = 0
-                            ` , [ req.body.uid_line ] , 
+                                    and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
+                            ` , [ req.body.uid_line , result['data']['id_table_doctor'] ] , 
                             (err , list_unread)=>{
                                 resole(parseInt(list_unread[0].count_unread))
                             }
@@ -1572,7 +1573,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
                 // select out table
                 const TextInsert = req.body.textInput ?? "";
-                const TypePlant = req.body.typePlant ?? null ;
+                const TypePlant = req.body.typePlant ? [ req.body.typePlant ] : [] ;
                 const Submit = (req.body.statusForm >= 0 && req.body.statusForm <= 2) ? req.body.statusForm : null ;
                 const StatusFarmer = (req.body.statusFarmer >= 0 && req.body.statusFarmer <= 1) ? req.body.statusFarmer : null;
                 
@@ -1630,7 +1631,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
-                                ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
+                                ${TypePlant.length == 1 ? `and formplant.name_plant = ?` : ""}
                                 ${Submit !== null ? `and formplant.state_status = ${Submit}` : ""}
                                 ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
                                 
@@ -1640,7 +1641,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     ORDER BY state_status ASC
                     ${(Limit !== null) ? `LIMIT ${Limit}` : ""}
                     `
-                    , [TextInsert , result['data']['station_doctor'] , result['data']['station_doctor'] , TextInsert ] , 
+                    , [TextInsert , result['data']['station_doctor'] , result['data']['station_doctor'] , ...TypePlant , TextInsert ] , 
                     (err , listFarm)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);
@@ -1762,15 +1763,15 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
                 const type = req.body.id_edit ? "*" : "id_edit" ;
-                const where = req.body.id_edit ? `and editform.id_edit = '${req.body.id_edit}'` : "" ;
+                const queryParams = req.body.id_edit ? [ req.body.id_edit ] : [] ;
                 con.query(
                     ` 
                         SELECT editform.${type} 
                         FROM editform
-                        WHERE editform.id_form = ? and type_form = ? ${where}
+                        WHERE editform.id_form = ? and type_form = ? ${queryParams.length == 1 ? `and editform.id_edit = ?` : ""}
                         ORDER BY date DESC
                     ` 
-                , [  req.body.id_form , req.body.type_form ] , 
+                , [  req.body.id_form , req.body.type_form , ...queryParams ] , 
                 (err, result )=>{
                     if (err) {
                         dbpacket.dbErrorReturn(con, err, res);
@@ -1955,126 +1956,132 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
         try {
             const result= await apifunc.auth(con , username , password , res , "acc_doctor")
             if(result['result'] === "pass") {
+                const TypePage = req.query.typePage === "success_detail" || req.query.typePage === "report_detail" || req.query.typePage === "check_form_detail" || req.query.typePage === "check_plant_detail" ?
+                                    req.query.typePage : "";
+
                 const Order = req.query.typePage === "success_detail" ? "date_of_doctor DESC" 
                                 : req.query.typePage === "report_detail" ? "date_report"
                                 : "date_check";
-                con.query(
-                    `
-                        SELECT * , 
-                        (
-                            SELECT fullname_doctor
-                            FROM acc_doctor
-                            WHERE id_table_doctor = ${req.query.typePage}.id_table_doctor
-                        ) as name_doctor ,
-                        (
-                            SELECT id_doctor
-                            FROM acc_doctor
-                            WHERE id_table_doctor = ${req.query.typePage}.id_table_doctor
-                        ) as id_doctor ,
-                        (
-                            SELECT EXISTS (
-                                SELECT id_table_doctor
+                
+                if(TypePage) {
+                    con.query(
+                        `
+                            SELECT * , 
+                            (
+                                SELECT fullname_doctor
                                 FROM acc_doctor
-                                WHERE id_table_doctor = ? and id_table_doctor = ${req.query.typePage}.id_table_doctor
-                            )
-                        ) as check_doctor
-                        FROM ${req.query.typePage}
-                        WHERE id_plant = ?
-                        ORDER BY ${Order}
-                    ` , [result.data.id_table_doctor , req.query.id_plant ] ,
-                    (err, result ) => {
-                        if (err) {
-                            dbpacket.dbErrorReturn(con, err, res);
-                            console.log("get manage");
-                            return 0;
-                        }
-
-                        if(req.query.typePage === "success_detail" || req.query.typePage === "check_plant_detail") {
-                            con.query(
-                                `
-                                SELECT 
-                                ${ req.query.typePage === "success_detail" ?
-                                    `
-                                    (
-                                        SELECT EXISTS (
-                                            SELECT id
-                                            FROM check_plant_detail
-                                            WHERE id_plant = ? and state_check = 0
-                                            LIMIT 1
-                                        )
-                                    ) as check_plant_before 
-                                    , 
-                                    (
-                                        SELECT EXISTS (
-                                            SELECT id
-                                            FROM check_plant_detail
-                                            WHERE id_plant = ? and state_check = 1
-                                            LIMIT 1
-                                        )
-                                    ) as check_plant_after ,
-                                    (
-                                        SELECT EXISTS (
-                                            SELECT id
-                                            FROM success_detail
-                                            WHERE id_plant = ? and type_success = 1
-                                            LIMIT 1
-                                        )
-                                    ) as Check_success_after
-                                    ` : 
-                                    req.query.typePage === "check_plant_detail" ? 
-                                    `
-                                    (
-                                        SELECT EXISTS (
-                                            SELECT id
-                                            FROM success_detail
-                                            WHERE id_plant = ? and type_success = 0
-                                            LIMIT 1
-                                        )
-                                    ) as check_success_before 
-                                    , 
-                                    (
-                                        SELECT EXISTS (
-                                            SELECT id
-                                            FROM success_detail
-                                            WHERE id_plant = ? and type_success = 1
-                                            LIMIT 1
-                                        )
-                                    ) as check_success_after ,
-                                    (
-                                        SELECT EXISTS (
-                                            SELECT id
-                                            FROM check_plant_detail
-                                            WHERE id_plant = ? and state_check = 1
-                                            LIMIT 1
-                                        )
-                                    ) as check_plant_after
-                                    ` 
-                                    : ""
-                                }
-                                ` , [ req.query.id_plant , req.query.id_plant , req.query.id_plant ] ,
-                                (err , optionCheck) => {
-                                    if (err) {
-                                        dbpacket.dbErrorReturn(con, err, res);
-                                        console.log("get manage");
-                                        return 0;
-                                    }
+                                WHERE id_table_doctor = ${TypePage}.id_table_doctor
+                            ) as name_doctor ,
+                            (
+                                SELECT id_doctor
+                                FROM acc_doctor
+                                WHERE id_table_doctor = ${TypePage}.id_table_doctor
+                            ) as id_doctor ,
+                            (
+                                SELECT EXISTS (
+                                    SELECT id_table_doctor
+                                    FROM acc_doctor
+                                    WHERE id_table_doctor = ? and id_table_doctor = ${TypePage}.id_table_doctor
+                                )
+                            ) as check_doctor
+                            FROM ${TypePage}
+                            WHERE id_plant = ?
+                            ORDER BY ${Order}
+                        ` , [result.data.id_table_doctor , req.query.id_plant ] ,
+                        (err, result ) => {
+                            if (err) {
+                                dbpacket.dbErrorReturn(con, err, res);
+                                console.log("get manage");
+                                return 0;
+                            }
     
-                                    con.end()
-                                    res.send({
-                                        list : result,
-                                        option : optionCheck
-                                    })
-                                }
-                            )
-                        } else {
-                            con.end()
-                            res.send({
-                                list : result,
-                                option : []
-                            })
+                            if(TypePage === "success_detail" || TypePage === "check_plant_detail") {
+                                con.query(
+                                    `
+                                    SELECT 
+                                    ${ TypePage === "success_detail" ?
+                                        `
+                                        (
+                                            SELECT EXISTS (
+                                                SELECT id
+                                                FROM check_plant_detail
+                                                WHERE id_plant = ? and state_check = 0
+                                                LIMIT 1
+                                            )
+                                        ) as check_plant_before 
+                                        , 
+                                        (
+                                            SELECT EXISTS (
+                                                SELECT id
+                                                FROM check_plant_detail
+                                                WHERE id_plant = ? and state_check = 1
+                                                LIMIT 1
+                                            )
+                                        ) as check_plant_after ,
+                                        (
+                                            SELECT EXISTS (
+                                                SELECT id
+                                                FROM success_detail
+                                                WHERE id_plant = ? and type_success = 1
+                                                LIMIT 1
+                                            )
+                                        ) as Check_success_after
+                                        ` : 
+                                        TypePage === "check_plant_detail" ? 
+                                        `
+                                        (
+                                            SELECT EXISTS (
+                                                SELECT id
+                                                FROM success_detail
+                                                WHERE id_plant = ? and type_success = 0
+                                                LIMIT 1
+                                            )
+                                        ) as check_success_before 
+                                        , 
+                                        (
+                                            SELECT EXISTS (
+                                                SELECT id
+                                                FROM success_detail
+                                                WHERE id_plant = ? and type_success = 1
+                                                LIMIT 1
+                                            )
+                                        ) as check_success_after ,
+                                        (
+                                            SELECT EXISTS (
+                                                SELECT id
+                                                FROM check_plant_detail
+                                                WHERE id_plant = ? and state_check = 1
+                                                LIMIT 1
+                                            )
+                                        ) as check_plant_after
+                                        ` 
+                                        : ""
+                                    }
+                                    ` , [ req.query.id_plant , req.query.id_plant , req.query.id_plant ] ,
+                                    (err , optionCheck) => {
+                                        if (err) {
+                                            dbpacket.dbErrorReturn(con, err, res);
+                                            console.log("get manage");
+                                            return 0;
+                                        }
+        
+                                        con.end()
+                                        res.send({
+                                            list : result,
+                                            option : optionCheck
+                                        })
+                                    }
+                                )
+                            } else {
+                                con.end()
+                                res.send({
+                                    list : result,
+                                    option : []
+                                })
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         } catch (err) {
             con.end()
@@ -2374,7 +2381,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
                     if(req.body.report_text || img_path != null) {
                         const SET = new Array(req.body.report_text ? `report_text = '${req.body.report_text}'` : "" , img_path != null ? `image_path = '${img_path}'` : "")
-                                        .filter(val=>val).join(",")
+                                        .filter(val=>val).join(",").replaceAll(" " , "")
                         
                         con.query(
                             `
@@ -2562,7 +2569,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
 
                 // select out table
                 const TextInsert = req.body.textInput ?? "";
-                const TypePlant = req.body.typePlant ?? null ;
+                const TypePlant = req.body.typePlant ? [req.body.typePlant] : [] ;
                 const Submit = (req.body.statusForm >= 0 && req.body.statusForm <= 2) ? req.body.statusForm : null ;
                 const StatusFarmer = (req.body.statusFarmer >= 0 && req.body.statusFarmer <= 1) ? req.body.statusFarmer : null;
                 
@@ -2601,7 +2608,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 WHERE housefarm.uid_line = farmer.uid_line or housefarm.link_user = farmer.link_user
                             ) as house
                         WHERE formplant.id_farm_house = house.id_farm_house
-                                ${TypePlant !== null ? `and formplant.name_plant = '${TypePlant}'` : ""}
+                                ${TypePlant.length == 1 ? `and formplant.name_plant = ?` : ""}
                                 ${Submit !== null ? `and formplant.state_status = ${Submit}` : ""}
                                 ${(TypeDate !== null && StartDate !== null && EndDate !== null) ? `and ( UNIX_TIMESTAMP(formplant.${TypeDate}) >= UNIX_TIMESTAMP('${StartDate}') and UNIX_TIMESTAMP(formplant.${TypeDate}) <= UNIX_TIMESTAMP('${EndDate}') )` : ""}
                                 
@@ -2609,7 +2616,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     ) as fromInsert
                     WHERE formplant.id = fromInsert.id and ( INSTR(formplant.id , ?) or formplant.id = fromInsert.success_id_plant )
                     `
-                    , [TextInsert , result['data']['station_doctor'] , TextInsert ] , 
+                    , [TextInsert , result['data']['station_doctor'] , ...TypePlant , TextInsert ] , 
                     async (err , listFarm)=>{
                         if (err) {
                             dbpacket.dbErrorReturn(con, err, res);

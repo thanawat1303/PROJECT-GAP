@@ -2801,12 +2801,14 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                 req.body.type == "source" ? "source_list" : ""
                 
                 const QuerySearch = Object.entries(req.body.check).map((Data)=>{
+                    // Data[0] = Key ของ column ในแต่ละ table ซึ่ง table ก็มี plant fertilizer chemical source , Data[1] ข้อมูลที่ต้องการค้นหา
+                    // Object.entries จะทำการแยก Object ออกเป็น Array จะได้เป็น [ [ key , value ] ]
                     const Check = req.body.type == "plant" ? { name : 1 , type_plant : 1 } : 
                                     req.body.type == "fertilizer" ? { name : 1 , name_formula : 1 } : 
                                     req.body.type == "chemical" ? { name : 1 , name_formula : 1 } :
                                     req.body.type == "source" ? { name : 1 } : ""
                     if(!Check || !Check[Data[0]]) return null
-                    else if(Data[0] == "name_formula" && req.body.type == "fertilizer") return `( ${Data[0]} LIKE '${Data[1]}' )`
+                    else if(Data[0] == "name_formula" && req.body.type == "fertilizer") return `( ${Data[0]} LIKE '${Data[1]}' )` // สำหรับค้นหาสูตรปุ๋ย เลยใช้ LIKE เพราะทาง client จะส่งค่าที่มี %% มาด้วยหากพิมพ์มาไม่ครบช่อง
                     else return `INSTR( ${Data[0]} , '${Data[1]}' )`
                 })
 
@@ -2817,7 +2819,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                         `
                         SELECT * 
                         FROM ${From}
-                        ${QuerySearch.join(" and ") ? `WHERE ${QuerySearch.join(" and ")}` : ""}
+                        ${QuerySearch.join(" and ") ? `WHERE ${QuerySearch.join(" and ").replaceAll(";" , "")}` : ""}
                         ORDER BY is_use DESC , name ASC
                         LIMIT ${Limit} OFFSET ${StartRow}
                         ` , 
@@ -2868,7 +2870,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     try {
                         const where = Object.entries(req.body.check).map((checkData)=>{
                             checkData[1] = `"${checkData[1].trim()}"`
-                            return checkData.join(" = ")
+                            return checkData.join("=").replaceAll(" " , "").replaceAll(";" , "")
                         }).join(" and ")
                         con.query(
                             `
@@ -2926,7 +2928,7 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                     try {
                         const where = Object.entries(req.body.check).map((checkData)=>{
                             checkData[1] = `"${checkData[1].trim()}"`
-                            return checkData.join(" = ")
+                            return checkData.join("=").replaceAll(" " , "").replaceAll(";" , "")
                         }).join(" and ")
                         con.query(
                             `
@@ -2949,9 +2951,9 @@ module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbp
                                         con.query(
                                             `
                                                 INSERT INTO ${From} 
-                                                ( ${Key.join(" , ")} )
+                                                ( ${Key.join(",").replaceAll(" " , "").replaceAll(";" , "")} )
                                                 VALUES 
-                                                ( ${InsertArray.join(" , ")} )
+                                                ( ${InsertArray.join(",")} )
                                             ` , dataInsert , (err , result)=>{
                                                 if(err){
                                                     con.end()

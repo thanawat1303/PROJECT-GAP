@@ -233,7 +233,11 @@ const DetailMessange = ({Msg , Ref , setOpen}) => {
                     headers : {
                         Authorization : "Bearer 3bRyKhlM01xFG6hDC+x5ZlfT0r44XF4L5wHORR9CJc87tmjrHoQJad6kLvOa8cbX7hSHVu6SB08UcWx2I9QjdNWRLo6fwsExPTbm7Wuaw7Eq6zh6DJXs9FFQqSbXxZKvHJt4jURZqu4Z0NcP6zJ4wwdB04t89/1O/w1cDnyilFU="
                     }
-                }).then(data=>data.blob())
+                }).then(data=>{
+                    if(data.status === 200) {
+                        return data.blob()
+                    } else throw "error 404"
+                })
                 const imageUrl = URL.createObjectURL(Data);  // แปลง binary เป็น Blob object
                 setFileData(imageUrl)
             } catch(e) {
@@ -250,7 +254,7 @@ const DetailMessange = ({Msg , Ref , setOpen}) => {
         Msg.type_message == "text" ? <div className="msg">{Msg.message}</div> : 
         Msg.type_message == "location" ? <div className="msg">{`ตำแหน่ง ${Msg.message}`}</div> :
         FileData ? 
-            Msg.type_message == "image" ? <img onClick={()=> FileData ? OpenImage(FileData) : null} src={FileData != "not-image" ? FileData : "/no image.png"}></img> : 
+            Msg.type_message == "image" ? <img onClick={()=> FileData != "not-image" ? OpenImage(FileData) : null} src={FileData != "not-image" ? FileData : "/no image.png"}></img> : 
             "" 
         : 
         <div style={{

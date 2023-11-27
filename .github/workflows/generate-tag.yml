@@ -12,12 +12,11 @@
 #         run: npm install
 #       - name: build
 #         run: npm run build
-#       - name: add
-#         run: git add .
-#       - name: commit
-#         run: git commit -m "build product"
-#       - name: push 
-#         run: git push 
+#       - name: update product
+#         run: |
+#           git add .
+#           git commit -m "build product"
+#           git push
 
 #   deploy:
 #     runs-on: ubuntu-latest

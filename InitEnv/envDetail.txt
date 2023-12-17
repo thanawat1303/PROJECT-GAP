@@ -3,34 +3,34 @@ HOST = localhost
 
 # on dev
 DATABASE_DEV = <-ชื่อ database ในการ dev-> #DATABASE_DEV name
-USER_DBDEV = <-user-database-test->
-PASSWORD_DBDEV = <-password-database-test->
+USER_DBDEV = <-user database dev->
+PASSWORD_DBDEV = <-password database dev->
 
 # on server
-DATABASE_SER = <-name-database-serv-> #DATABASE_DEV name
+DATABASE_SER = <-name database serv-> #DATABASE_DEV name
 # db
 
 # NODE_ENV = 'development'
 # NODE_ENV = 'product'
 PORT = <-PORT Application->
 
-KEY_SESSION = <-Session-Key->
+KEY_SESSION = <-Session Key->
 TIME_COKKIE = 86400000 # 1000 * 60 * 60 * 24
 
 HOST_NAMEDEV = localhost
-HOST_SERVER = <-Host-serv->
+HOST_SERVER = <-Host serv->
 
 channelAccessToken = <-AccessToken Messageing Api->
 channelSecret = <-Secret Messageing Api->
 
-cookie = <-name-cookie-session->
-REACT_API_KEY_MAP = <-Key-Map-Api->
+cookie = <-name cookie session->
+REACT_API_KEY_MAP = <-Key Map Api->
 
-pathCertFile = <-Path-Cert-SSL->
-pathKeyFile = <-Path-Key-SSL->
+pathCertFile = <-Path Cert SSL->
+pathKeyFile = <-Path Key SSL->
 
-RICH_SIGN = <-ID-Rich-Sign->
-RICH_HOUSE = <-ID-Rich-House->
+RICH_SIGN = <-ID Rich Sign->
+RICH_HOUSE = <-ID Rich House->
 # TZ = UTC+7
 
 # ระวังในการเปลี่ยนข้อมูล

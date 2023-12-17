@@ -2,7 +2,7 @@
 HOST = localhost
 
 # on dev
-DATABASE_DEV = <-name-database-test-> #DATABASE_DEV name
+DATABASE_DEV = <-ชื่อ database ในการ dev-> #DATABASE_DEV name
 USER_DBDEV = <-user-database-test->
 PASSWORD_DBDEV = <-password-database-test->
 

@@ -10,7 +10,7 @@ PASSWORD_DBDEV = <-password-database-test->
 DATABASE_SER = <-name-database-serv-> #DATABASE_DEV name
 # db
 
-NODE_ENV = 'development'
+# NODE_ENV = 'development'
 # NODE_ENV = 'product'
 PORT = <-PORT Application->
 
@@ -19,8 +19,6 @@ TIME_COKKIE = 86400000 # 1000 * 60 * 60 * 24
 
 HOST_NAMEDEV = localhost
 HOST_SERVER = <-Host-serv->
-
-BUILD = deploy 
 
 channelAccessToken = <-AccessToken Messageing Api->
 channelSecret = <-Secret Messageing Api->
@@ -34,3 +32,6 @@ pathKeyFile = <-Path-Key-SSL->
 RICH_SIGN = <-ID-Rich-Sign->
 RICH_HOUSE = <-ID-Rich-House->
 # TZ = UTC+7
+
+# ระวังในการเปลี่ยนข้อมูล
+BUILD = deploy <-arg ในคำสั่ง เพื่อกำหนด protocal สำหรับ server เปลี่ยนตามใน package.json->

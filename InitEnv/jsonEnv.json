@@ -4,13 +4,11 @@
     "USER_DBDEV" : "",
     "PASSWORD_DBDEV" : "",
     "DATABASE_SER" : "",
-    "NODE_ENV" : "development",
     "PORT" : "",
     "KEY_SESSION" : "",
     "TIME_COKKIE" : 86400000,
     "HOST_NAMEDEV" : "localhost",
     "HOST_SERVER" : "",
-    "BUILD" : "deploy",
     "channelAccessToken" : "",
     "channelSecret" : "",
     "cookie" : "",
@@ -18,5 +16,6 @@
     "pathCertFile" : "",
     "pathKeyFile" : "",
     "RICH_SIGN" : "",
-    "RICH_HOUSE" : ""
+    "RICH_HOUSE" : "",
+    "BUILD" : "deploy"
 }

@@ -39,7 +39,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     // secure server
     // app.use(helmat(
     //     {
-    //     contentSecurityPolicy: process.env.NODE_ENV == 'development' ? false : true,
+    //     contentSecurityPolicy: process.argv[2] == process.env.BUILD ? false : true,
     //     }
     // ))
 

@@ -1,0 +1,396 @@
+$fontSize: 14pt;
+$fontSizeLabel: 18pt;
+
+#content-plus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    #Pform {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    
+        height: 100%;
+        width: 100%;
+    
+        max-width: 260px;
+
+        bot-head-form {
+            font-family: Sans-font;
+            margin: 15px 0px;
+            font-size: 16pt;
+            font-weight: 900;
+        }
+    
+        .textbox-Pform {
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            flex-direction: row;
+            width: 100%;
+            min-height: 37.2px;
+
+            margin: 5px;
+
+            border: 2px solid greenyellow;
+            box-shadow: 0px 0px 2.5px greenyellow;
+
+            border-radius: 8px;
+            overflow: hidden;
+            
+    
+            .label-Pform {
+                height: 34px;
+                // border-left: 2px solid rgb(15, 191, 15);
+                // background-color: rgb(15, 191, 15);
+                padding: 2px;
+            }
+    
+            input {
+                border-right: 0px;
+                font-size: $fontSize;
+                font-family: Sans-font;
+                outline: 0px;
+
+                border: 0px;
+                padding: 3px 10px;
+
+                width: 100%;
+            }
+
+            input[readOnly] {
+                background-color: rgba(128, 128, 128, 0.168);
+                cursor: default;
+            }
+
+            input[put=""] {
+                font-family: main-font; 
+                font-size:16pt
+            }
+        }
+
+        .textbox-Pform[requireded] {
+            border: 2px solid red !important;
+        }
+
+        .error-notM {
+            font-size: 12pt;
+            font-family: Sans-font;
+            margin-top: 15px;
+            font-weight: 900;
+            color: red;
+
+            opacity: 0;
+            visibility: hidden;
+        }
+    
+        button {
+            margin-top: 15px;
+            width: 100%;
+            text-align: center;
+            border-radius: 15px;
+            padding: 5px 0px;
+
+            font-family: Sans-font;
+            font-size: $fontSize;
+        }
+    }
+
+    #popup-confirm {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 500;
+        transition: 1s;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        background-color: rgba(159, 159, 159, 0.23);
+        backdrop-filter: blur(3px);
+
+        #plus-confirm {
+            background-color: white;
+            // padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 5px rgba(172, 255, 47, 0.489);
+
+            border-bottom: 2.5px solid green;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+
+            overflow: hidden;
+
+            bot-head-confirm {
+                text-align: center;
+                font-family: Sans-font;
+                font-size: 16pt;
+                font-weight: 900;
+                padding: 10px 0px;
+                background-color: green;
+                color: white;
+                width: 100%;
+            }
+
+            #bodyForm-confirm {
+                padding: 5px 25px;
+
+                #detailNewDoctor {
+                    width: 100%;
+                    padding-top: 17px;
+                    font-family: Sans-font;
+
+                    .content-again {
+                        .head-again {
+                            font-weight: 900;
+                        }
+
+                        .data-again {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            
+                            width: 100%;
+                            overflow: hidden;
+                            span {
+                                margin: 2px 15px;
+                                padding: 1.5px 10px;
+                                padding-top: 4px;
+                                border-radius: 4px;
+                                background-color: #eee;
+                            }
+                        }
+                    }
+                }
+
+                #textbox-confirm {
+                    font-family: Sans-font;
+                    font-size: 16pt;
+                    padding: 2px 10px;
+    
+                    text-align: center;
+                    border: 0px;
+                    border-radius: 8px;
+                    outline: 0px;
+    
+                    margin: 15px 0px;
+    
+                    width: 260px;
+                    height: 36px;
+                }
+
+                #textbox-confirm[requireded] {
+                    box-shadow: 0px 0px 5px red;
+                }
+    
+                #bt-container-confirm{
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+    
+                    margin: 5px 0px;
+                    margin-bottom: 10px;
+    
+                    button{
+                        font-family: Sans-font;
+                        font-size: 15pt;
+                        border-radius: 8px;
+                        border: 0px;
+                        outline: 0px;
+    
+                        color: white;
+                        font-weight: 900;
+                    }
+    
+                    #cancal {
+                        width: 35%;
+                        background-color: red;
+                    }
+    
+                    #confirm-bt {
+                        width: 50%;
+                        background-color: rgb(0, 191, 0);
+                    }
+                }
+            }
+
+            #feedback {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: fixed;
+            
+                opacity: 0;
+                visibility: hidden;
+            
+                z-index: 601;
+                transition: opacity 0.5s , visibility 0.5s;
+            
+                width: 310px;
+                height: 260px;
+                margin-top: 52px;
+                border-radius: 0px 0px 8px 8px;
+            
+                padding-bottom: 30px;
+            
+                // left: 0;
+                // top: 0;
+                overflow: hidden;
+                background-color: rgba(159, 159, 159, 0.23);
+                backdrop-filter: blur(3px);
+            
+                #curcle-feedback {
+                    width: 100px;
+                    height: 100px;
+                    background-color: rgba(255, 255, 255, 0);
+                    border-radius: 100%;
+                    // padding: 10px;
+                    border: 7px solid green;
+                    border-top: 5px solid rgba(0, 0, 0, 0);
+                    border-left: 5px solid rgba(0, 0, 0, 0);
+                    animation: Loading-curcle 1s infinite linear;
+                }
+            
+                #box-feedback-img {
+                    width: 100px;
+                    height: 100px;
+                    position: absolute;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    #img-feedback-correct {
+                        width: 125px;
+                        position: fixed;
+                        transform: rotateY(90deg);
+                        transition: transform 1.5s;
+                    }
+            
+                    #img-feedback-error {
+                        width: 80px;
+                        position: fixed;
+                        transform: rotateY(90deg);
+                        transition: transform 1.5s;
+                    }
+                    
+                    #img-feedback-correct[show] , #img-feedback-error[show] {
+                        transform: rotateY(0deg);
+                    }
+                }
+            }
+            
+            @keyframes Loading-curcle {
+                0% {
+                    transform: rotateZ(0deg);
+                }
+                100% {
+                    transform: rotateZ(360deg);
+                }
+            }
+            
+            #feedback[show] {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+
+    #popup-confirm[popup-show]{
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #popup-confirm::-webkit-scrollbar {
+        width: 0;
+    }
+}
+
+@media only screen and (max-width: 460px) {
+    #content-plus {
+        #Pform {
+            bot-head-form {
+                font-size: 5.5vw;
+            }
+
+            .textbox-Pform {
+                min-height: 11vw;
+                max-height: 9vw;
+                width: 90%;
+                .label-Pform {
+                    height: 9vw;
+                    padding: 2px;
+                    // padding-left: 0px;
+                }
+                input {
+                    padding: 3px 5px;
+                    font-size: 5vw;
+                }
+
+                input[put=""] {
+                    font-family: main-font; 
+                    font-size:5.7vw;
+                }
+            }
+
+            button {
+                font-size: 5vw;
+                width: 90%;
+                border-radius: 10px;
+            }
+        }
+
+        #popup-confirm {
+            #plus-confirm {
+                bot-head-confirm {
+                    font-size: 6vw;
+                }
+
+                #bodyForm-confirm {
+                    #detailNewDoctor {
+    
+                        .content-again {
+                            .head-again {
+                                font-size: 5vw;
+                                font-weight: 900;
+                            }
+    
+                            .data-again {
+                                span {
+                                    font-size: 5vw;
+                                }
+                            }
+                        }
+                    }
+
+                    #textbox-confirm {
+                        font-family: Sans-font;
+                        font-size: 7vw;
+        
+                        margin: 15px 0px;
+        
+                        width: 70vw;
+                        height: 33px;
+                    }
+
+                    #bt-container-confirm{
+                        button{
+                            font-size: 6vw;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

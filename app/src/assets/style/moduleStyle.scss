@@ -1,0 +1,65 @@
+.image-size-max {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .option-on-image {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        width: 100%;
+        padding: 8px;
+
+        .close-image {
+            width: 35px;
+            height: 35px;
+            background-color: white;
+            border-radius: 50%;
+            padding: 2px;
+
+            svg {
+                width: 100%;
+                fill: #127261;
+            }
+        }
+
+        .download-image-on-msg {
+            background-color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            svg {
+                width: 100%;
+                height: 100%;
+                fill: transparent;
+            }
+        }
+    }
+
+    .img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 5px;
+        // overflow: hidden;
+    }
+
+    .img.h {
+        // height: 80%;
+        // width: auto;
+        img {
+            height: 80vh;
+        }
+    }
+
+    .img.w {
+        // width: 80%;
+        // height: auto;
+        img {
+            width: 80vw;
+        }
+    }
+}

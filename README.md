@@ -1,70 +1,127 @@
-# Getting Started with Create React App
+﻿# PROJECT-LINE-OA-GAP React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Install Project
+   - Package-json
+      - windows
+         ```
+         cp .\package-json\package.json . #windows
+         ```
 
-## Available Scripts
+      - Linux
+         ```
+         cp package-json/package.json  . #Linux
+         ```
 
-In the project directory, you can run:
+   - Packages
+      ```
+      npm i express nodemon dotenv cookie-parser express-session helmet mysql mysql2 uuid pm2
 
-### `npm start`
+      npm i react react-dom resize-observer-polyfill
+      
+      npm i sass-loader sass css-loader style-loader @pmmmwh/react-refresh-webpack-plugin react-refresh 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+      npm i webpack-hot-middleware webpack webpack-cli webpack-dev-server webpack-dev-middleware
+      
+      npm i html-webpack-plugin babel-loader @babel/preset-env @babel/core @babel/plugin-transform-runtime @babel/preset-react babel-eslint @babel/runtime
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+      npm i multer
 
-### `npm test`
+      npm i @line/bot-sdk #api line
+      npm i @line/liff
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+      npm i @google/maps
+      npm i @react-google-maps/api  
+      npm i google-map-react
 
-### `npm run build`
+      npm i socket.io socket.io-client
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+      npm i typescript
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+      npm i exifr
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+      npm i --save-dev @types/mysql @types/react @types/webpack-hot-middleware @types/webpack @types/cookie-parser @types/express-session @types/multer
 
-### `npm run eject`
+      npm i ngrok
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+      npm i file-saver sheetjs-style
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+      npm i ts-node
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+      npm i @react-pdf/renderer
+      npm i jspdf jspdf-autotable
+      npm i wordcut thai-wordcut
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+      npm i axios
 
-## Learn More
+      npm i thaidatepicker-react
+      ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   - Init env
+      ```
+      npm run init-env
+      ```
+      or
+      ```
+      node InitEnv/setupEnv.js
+      ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   - Install Database
+      - SQL/main/Structure Database.sql
+      - setup user admin
+        ```
+        INSERT INTO `admin` (username , password , phone , address) VALUES ('--username--' , SHA2('--password--', 256) , '--number phone--' , POINT(0000 , 0000))
+        ```
 
-### Code Splitting
+### Build Project
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+   - After install packages and .env
+      ```
+      npm run build
+      ```
+   
+### Start Server
 
-### Analyzing the Bundle Size
+   - Development
+      - First step , start host of application by ngrok
+         ```
+         npm run server-ngrok
+         ```
+      - Next step , start application
+         ```
+         npm run server-dev
+         ```
+   
+   - Product pm2
+      - start
+         ```
+         npm run server 'username-db' 'password-db'
+         ```
+      - restart
+         ```
+         npm run server-restart
+         ```
+      - stop
+         ```
+         npm run server-stop
+         ```
+   
+   - Product Foreground
+      ```
+      npm run server-node 'username-db' 'password-db'
+      ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Tool and Technical
+   - Fontend
+      - React library
+      - Google maps API
+      - Scss
+   - Backend
+      - Expressjs
+      - Web-socket
+      - Bot-line-SDK
+      - SQL
+   - Tool 
+      - LINE Bot Designer
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+mklink /D .\assets\ .\node_modules\
+ln -s .\assets\ .\node_modules\

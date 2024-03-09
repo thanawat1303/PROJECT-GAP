@@ -1,0 +1,232 @@
+.login-admin * {
+    -webkit-user-drag: none;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.login-admin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        padding: 20px 50px;
+        border-radius: 30px;
+        width: 95%;
+        max-width: 393px;
+
+        .Logo-App {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 18px;
+            img {
+                width: 80px;
+            }
+
+            span {
+                font-size: 30px;
+                font-family: main-font;
+                font-weight: 900;
+                margin-left: 15px;
+                padding-top: 8px;
+                letter-spacing: 3px;
+                color: #379B7A;
+            }
+        }
+
+        label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #F3F3F3;
+            border-radius: 10px;
+            margin: 8px 0px;
+            padding: 0px 0px;
+            width: 292.4px;
+            height: 52.4px;
+            outline: 2px solid transparent;
+            span {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0px 10px;
+                svg {
+                    color: #22C7A9;
+                    font-size: 30px;
+                }
+
+                svg[emply=""] {
+                    animation: emplyInput 0.5s 0s alternate;
+                }
+            }
+
+            input {
+                display: flex;
+                border: 0;
+                padding-right: 10px;
+                width: 100%;
+                height: 100%;
+                font-family: Sans-font;
+                font-size: 20px;
+                background-color: transparent;
+                outline: 0;
+                font-weight: 900;
+            }
+            input[type="password"]::placeholder {
+                font-family: Sans-font;
+            }
+            input[type="password"] {
+                font-family: main-font;
+            }
+        }
+
+        .empty {
+            box-shadow: 0px 2px 2px rgba(255, 0, 0, 0.719) !important;
+        }
+
+        button {
+            margin-top: 15px;
+            border-radius: 50px;
+            padding: 2px 55px;
+            background-color: #379B7A;
+            font-family: Sans-font;
+            border: 0;
+            outline: 0;
+            color: white;
+            font-weight: 900;
+            font-size: 15pt;
+            box-shadow: 0px 4px 4px rgb(194, 194, 194);
+        }
+    }
+
+    @media only screen and (max-width : 400px) {
+        form {
+            padding-left: 30px;
+            padding-right: 30px;
+            .Logo-App {
+                img {
+                    width: 4.2em;
+                }
+
+                span {
+                    font-size: 2.3em;
+                }
+            }
+
+            label {
+                width: 100%;
+                height: 50px;
+
+                span {
+                    padding: 0 7px;
+                    svg {
+                        font-size: 30px;
+                    }
+                }
+
+                input {
+                    font-size: 19px;
+                }
+            }
+        }
+
+        .error-login {
+            font-size: 19px;
+        }
+    }
+
+    @media only screen and (max-width : 300px) {
+        form {
+            padding-left: 25px;
+            padding-right: 25px;
+            .Logo-App {
+                margin-bottom: 8px;
+                img {
+                    width: 4em;
+                }
+
+                span {
+                    font-size: 1.8em;
+                }
+            }
+
+            label {
+                width: 100%;
+                height: 48px;
+
+                input {
+                    font-size: 17px;
+                }
+            }
+        }
+
+        .error-login {
+            font-size: 17px;
+        }
+    }
+}
+
+.error-login {
+    color: white;
+    position: absolute;
+    font-family: Sans-font;
+    font-weight: 900;
+    font-size: 18px;
+    margin:30px 5px;
+    margin-bottom: 0px;
+    opacity: 0;
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.259);
+    backdrop-filter: blur(8px);
+    padding: 5px 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: 0.5s opacity , 0.5s visibility;
+    box-shadow: 0px 4px 4px rgba(255, 0, 0, 0.829);
+}
+
+.error-login[show=""] {
+    opacity: 1;
+    visibility: visible;
+}
+
+// responsive computer
+.login-admin[computer=""] {
+    .content-login {
+        button {
+            cursor: pointer;
+        }
+        button:hover {
+            box-shadow: 0px 0px 10px green;
+        }
+    }
+}
+
+@keyframes emplyInput {
+    0% {
+        transform: rotate(20deg);
+    }
+    50% {
+        transform: rotate(-20deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+

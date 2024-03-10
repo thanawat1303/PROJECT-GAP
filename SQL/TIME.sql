@@ -1,0 +1,2 @@
+SELECT UNIX_TIMESTAMP("2023-01-01") as Start , UNIX_TIMESTAMP(date_plant) , UNIX_TIMESTAMP("2023-06-30") as End
+FROM formplant

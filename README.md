@@ -1,59 +1,9 @@
 ﻿# PROJECT-LINE-OA-GAP React
 
 ### Install Project
-   - Package-json
-      - windows
-         ```
-         cp .\package-json\package.json . #windows
-         ```
-
-      - Linux
-         ```
-         cp package-json/package.json  . #Linux
-         ```
-
-   - Packages
+   - Install Package
       ```
-      npm i express nodemon dotenv cookie-parser express-session helmet mysql mysql2 uuid pm2
-
-      npm i react react-dom resize-observer-polyfill
-      
-      npm i sass-loader sass css-loader style-loader @pmmmwh/react-refresh-webpack-plugin react-refresh 
-
-      npm i webpack-hot-middleware webpack webpack-cli webpack-dev-server webpack-dev-middleware
-      
-      npm i html-webpack-plugin babel-loader @babel/preset-env @babel/core @babel/plugin-transform-runtime @babel/preset-react babel-eslint @babel/runtime
-
-      npm i multer
-
-      npm i @line/bot-sdk #api line
-      npm i @line/liff
-
-      npm i @google/maps
-      npm i @react-google-maps/api  
-      npm i google-map-react
-
-      npm i socket.io socket.io-client
-
-      npm i typescript
-
-      npm i exifr
-
-      npm i --save-dev @types/mysql @types/react @types/webpack-hot-middleware @types/webpack @types/cookie-parser @types/express-session @types/multer
-
-      npm i ngrok
-
-      npm i file-saver sheetjs-style
-
-      npm i ts-node
-
-      npm i @react-pdf/renderer
-      npm i jspdf jspdf-autotable
-      npm i wordcut thai-wordcut
-
-      npm i axios
-
-      npm i thaidatepicker-react
+      npm install
       ```
 
    - Init env
@@ -63,6 +13,93 @@
       or
       ```
       node InitEnv/setupEnv.js
+      ```
+
+   - Packages list
+      ```
+      "@babel/core": "^7.16.0",
+      "@google/maps": "^1.1.3",
+      "@line/bot-sdk": "^9.0.0",
+      "@line/liff": "^2.23.2",
+      "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+      "@react-google-maps/api": "^2.19.3",
+      "@react-pdf/renderer": "^3.3.8",
+      "@svgr/webpack": "^5.5.0",
+      "@testing-library/jest-dom": "^5.17.0",
+      "@testing-library/react": "^13.4.0",
+      "@testing-library/user-event": "^13.5.0",
+      "axios": "^1.6.7",
+      "babel-jest": "^27.4.2",
+      "babel-loader": "^8.2.3",
+      "babel-plugin-named-asset-import": "^0.3.8",
+      "babel-preset-react-app": "^10.0.1",
+      "bfj": "^7.0.2",
+      "browserslist": "^4.18.1",
+      "camelcase": "^6.2.1",
+      "case-sensitive-paths-webpack-plugin": "^2.4.0",
+      "cookie-parser": "^1.4.6",
+      "css-loader": "^6.5.1",
+      "css-minimizer-webpack-plugin": "^3.2.0",
+      "dotenv": "^10.0.0",
+      "dotenv-expand": "^5.1.0",
+      "eslint": "^8.3.0",
+      "eslint-config-react-app": "^7.0.1",
+      "eslint-webpack-plugin": "^3.1.1",
+      "exifr": "^7.1.3",
+      "express": "^4.18.3",
+      "express-session": "^1.18.0",
+      "file-loader": "^6.2.0",
+      "file-saver": "^2.0.5",
+      "fs-extra": "^10.0.0",
+      "google-map-react": "^2.2.1",
+      "helmet": "^7.1.0",
+      "html-webpack-plugin": "^5.5.0",
+      "identity-obj-proxy": "^3.0.0",
+      "jest": "^27.4.3",
+      "jest-resolve": "^27.4.2",
+      "jest-watch-typeahead": "^1.0.0",
+      "jspdf": "^2.5.1",
+      "jspdf-autotable": "^3.8.2",
+      "mini-css-extract-plugin": "^2.4.5",
+      "multer": "^1.4.5-lts.1",
+      "mysql": "^2.18.1",
+      "mysql2": "^3.9.2",
+      "ngrok": "^5.0.0-beta.2",
+      "nodemon": "^3.1.0",
+      "pm2": "^5.3.1",
+      "postcss": "^8.4.4",
+      "postcss-flexbugs-fixes": "^5.0.2",
+      "postcss-loader": "^6.2.1",
+      "postcss-normalize": "^10.0.1",
+      "postcss-preset-env": "^7.0.1",
+      "prompts": "^2.4.2",
+      "react": "^18.2.0",
+      "react-app-polyfill": "^3.0.0",
+      "react-dev-utils": "^12.0.1",
+      "react-dom": "^18.2.0",
+      "react-refresh": "^0.11.0",
+      "resize-observer-polyfill": "^1.5.1",
+      "resolve": "^1.20.0",
+      "resolve-url-loader": "^4.0.0",
+      "sass-loader": "^12.3.0",
+      "semver": "^7.3.5",
+      "sheetjs-style": "^0.15.8",
+      "socket.io": "^4.7.4",
+      "socket.io-client": "^4.7.4",
+      "source-map-loader": "^3.0.0",
+      "style-loader": "^3.3.1",
+      "tailwindcss": "^3.0.2",
+      "terser-webpack-plugin": "^5.2.5",
+      "thai-wordcut": "^0.7.7",
+      "thaidatepicker-react": "^1.2.1",
+      "typescript": "^5.4.2",
+      "uuid": "^9.0.1",
+      "web-vitals": "^2.1.4",
+      "webpack": "^5.64.4",
+      "webpack-dev-server": "^4.6.0",
+      "webpack-manifest-plugin": "^4.0.2",
+      "wordcut": "^0.9.1",
+      "workbox-webpack-plugin": "^6.4.1"
       ```
 
    - Install Database
@@ -122,6 +159,3 @@
       - SQL
    - Tool 
       - LINE Bot Designer
-
-mklink /D .\assets\ .\node_modules\
-ln -s .\assets\ .\node_modules\

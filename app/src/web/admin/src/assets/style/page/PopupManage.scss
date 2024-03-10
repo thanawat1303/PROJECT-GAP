@@ -1,13 +1,13 @@
 .page-because-popup{
-    Report-Dom {
-        Body-Report {
-            Text-Report {
+    report-dom {
+        body-report {
+            text-report {
                 font-family: Sans-font;
                 font-size: 18px;
                 font-weight: 900;
             }
 
-            Status-Report {
+            status-report {
                 margin: 5px 0px;
                 background-color: rgba(255, 255, 255, 0.456);
                 box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.456);
@@ -15,7 +15,7 @@
                 margin-bottom: 8px;
             }
 
-            BoxButton-Report {
+            box-button-report {
                 button {
                     font-family: Sans-font;
                     font-size: 16px;
@@ -106,7 +106,7 @@
     
             .detail-data-report {
                 display: flex;
-                justify-content: start;
+                justify-content: flex-start;
                 align-items: center;
                 // border-bottom: 0.2vw solid #22C7A9;
                 box-shadow: 0px 4px 4px rgba(185, 185, 185, 0.566);
@@ -136,7 +136,7 @@
     
                     .text-preview {
                         display: flex;
-                        justify-content: start;
+                        justify-content: flex-start;
                         align-items: start;
                         width: 100%;
                         margin: 2px 0px;
@@ -308,7 +308,7 @@
     
             label {
                 display: flex;
-                justify-content: start;
+                justify-content: flex-start;
                 align-items: center;
                 width: 90%;
                 margin: 5px;

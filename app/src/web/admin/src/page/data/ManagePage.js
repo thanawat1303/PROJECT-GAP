@@ -94,7 +94,7 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
     let Time = 0
     const AfterConfirm = () => {
         if(Status === 1) {
-            // document.querySelector(`#data-list-content-${id_table} Action-bt content-status Bt-status .frame`)
+            // document.querySelector(`#data-list-content-${id_table} action-bt content-status bt-status .frame`)
             //         .setAttribute("status" , status ? 0 : 1)
             close()
             ReloadData()

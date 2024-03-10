@@ -2,7 +2,7 @@
 //     constructor() {
 //         this.post = async (url = "" , data={}) => {
 //             try {
-//                 return fetch(url, {
+//                 return fetch(HOST_API + url, {
 //                     method: 'post',
 //                     headers: {
 //                         'content-type': 'application/json'
@@ -21,7 +21,7 @@
 //                 formData.append(key , data[key])
 //             }
 //             try {
-//                 return fetch(url, {
+//                 return fetch(HOST_API + url, {
 //                     method: 'POST',
 //                     body: formData
 //                 }).then((e)=>e.text().then((context)=>context)).catch(err=>{
@@ -33,7 +33,7 @@
 //         },
 //         this.put = async (url = "" , data={}) => {
 //             try {
-//                 return fetch(url, {
+//                 return fetch(HOST_API + url, {
 //                     method: 'put',
 //                     headers: {
 //                         'content-type': 'application/json'
@@ -48,7 +48,7 @@
 //         },
 //         this.get = async (url = "") => {
 //             try {
-//                 return fetch(url, {
+//                 return fetch(HOST_API + url, {
 //                     headers: {
 //                         'content-type': 'application/json'
 //                     }
@@ -90,15 +90,20 @@
 //     }
 // }
 
+const HOST_API = process.env.NODE_ENV === "development" ? 
+                    "http://" + process.env.REACT_APP_API_LOCAL + ":" + process.env.REACT_APP_API_PORT : 
+                    "https://" + process.env.REACT_APP_API_PUBLIC + ":" + process.env.REACT_APP_API_PORT
+
 const clientMo = {
     post : async (url = "" , data={}) => {
         try {
-            return fetch(url, {
+            return fetch(HOST_API + url, {
                 method: 'post',
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials : 'include'
             }).then((e)=>e.text().then((context)=>context)).catch(err=>{
                 return ""
             })
@@ -112,9 +117,10 @@ const clientMo = {
             formData.append(key , data[key])
         }
         try {
-            return fetch(url, {
+            return fetch(HOST_API + url, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials : 'include'
             }).then((e)=>e.text().then((context)=>context)).catch(err=>{
                 return ""
             })
@@ -124,12 +130,13 @@ const clientMo = {
     },
     put : async (url = "" , data={}) => {
         try {
-            return fetch(url, {
+            return fetch(HOST_API + url, {
                 method: 'put',
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials : 'include'
             }).then((e)=>e.text().then((context)=>context)).catch(err=>{
                 return ""
             })
@@ -139,10 +146,11 @@ const clientMo = {
     },
     get : async (url = "") => {
         try {
-            return fetch(url, {
+            return fetch(HOST_API + url, {
                 headers: {
                     'content-type': 'application/json'
-                }
+                },
+                credentials : 'include'
             }).then((e)=>e.text().then((context)=>context)).catch(err=>{
                 return ""
             })

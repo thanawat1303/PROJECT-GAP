@@ -1,0 +1,367 @@
+.data-list-content-page.form-page {
+    #detail-edit-popup {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 250px;
+        background-color: white;
+        border-radius: 10px 20px 10px 10px;
+        overflow: hidden;
+        box-shadow: 0px 4px 4px rgb(174, 174, 174);
+        
+        .close {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            right: 0;
+            svg {
+                width: 42px;
+                height: 42px;
+            }
+        }
+
+        .close.ab {
+            position: absolute;
+        }
+
+        .menu-edit {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+
+            .frame-menu::-webkit-scrollbar {
+                width: 0;
+                height: 5px;
+            }
+
+            .frame-menu::-webkit-scrollbar-thumb {
+                background-color: #4e9c91;
+                border-radius: 15px;
+            }
+
+            .frame-menu {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                font-family: Sans-font;
+                
+                overflow-x: scroll;
+                overflow-y: hidden;
+                width: 100%;
+                height: 50px;
+                .menu-list {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    a {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        position: relative;
+                        background-color: white;
+                        // overflow: hidden;
+                        width: 50px;
+                        height: 50px;
+                    }
+    
+                    a[select=""] {
+                        background-color: #DAF1EE;
+                    }
+    
+                    a[select=""]::after {
+                        content: url('data:image/svg+xml,%3Csvg%20width%3D%22100%25%22%20height%3D%22100%25%22%20viewBox%3D%220%200%2070%2070%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%200.5C1%2054.9%2046.6667%2068.8333%2069.5%2069H1V0.5Z%22%20fill%3D%22%23DAF1EE%22%20stroke%3D%22%23DAF1EE%22%2F%3E%3C%2Fsvg%3E');
+                        position: absolute;
+                        bottom: 0em;
+                        left: 98%;
+                        width: 20px;
+                        height: 19px;
+                        overflow: hidden;
+                        z-index: 1;
+                    }
+    
+                    a[select=""]::before {
+                        content: url('data:image/svg+xml,%3Csvg%20width%3D%22100%25%22%20height%3D%22100%25%22%20viewBox%3D%220%200%2070%2070%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%200.5C1%2054.9%2046.6667%2068.8333%2069.5%2069H1V0.5Z%22%20fill%3D%22%23DAF1EE%22%20stroke%3D%22%23DAF1EE%22%2F%3E%3C%2Fsvg%3E');
+                        position: absolute;
+                        bottom: 0em;
+                        right: 98%;
+                        width: 20px;
+                        height: 19px;
+                        overflow: hidden;
+                        transform: rotateY(180deg);
+                        z-index: 1;
+                    }
+                }
+            }
+        }
+
+        .body-edit {
+            width: 100%;
+            background-color: #DAF1EE;
+            .head-detail-edit {
+                margin: 6px;
+                padding: 6px 0px;
+                border-radius: 10px;
+                background-color: white;
+                .row-detail {
+                    display: flex;
+                    align-items: center;
+                    font-family: Sans-font;
+                    width: 100%;
+                    // margin: 5.54px 0px;
+                    padding: 0px 11px;
+
+                    span {
+                        font-weight: 900;
+                        font-size: 13.85px;
+                    }
+
+                    .dot {
+                        margin: 0px 2.77px;
+                    }
+
+                    input {
+                        outline: 0;
+                        border: 0;
+                        background-color: transparent;
+                        font-family: Sans-font;
+                        font-weight: 900;
+                        font-size: 13.85px;
+                        width: 100%;
+                    }
+
+                    textarea {
+                        outline: 0;
+                        border: 0;
+                        border-radius: 10px;
+                        padding: 5.54px;
+                        background-color: #DAF1EE;
+                        font-family: Sans-font;
+                        font-size: 12.465px;
+                        width: 90%;
+                        max-height: 50px;
+                    }
+                }
+
+                .row-detail.column {
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    span {
+                        width: 100%;
+                    }
+                }
+
+                .line {
+                    width: 100%;
+                    height: 2.77px;
+                    margin: 2.77px 0px;
+                    background-color: #DAF1EE;
+                }
+            }
+
+            .detail {
+                width: 100%;
+                background-color: #DAF1EE;
+
+                .detail-body {
+                    margin: 5.54px;
+                    padding: 5.54px 0px;
+                    border-radius: 10px;
+                    background-color: white;
+
+                    .line {
+                        width: 100%;
+                        height: 2.77px;
+                        margin: 2.77px 0px;
+                        background-color: #DAF1EE;
+                    }
+
+                    .head {
+                        display: flex;
+                        position: relative;
+                        justify-content: space-evenly;
+                        align-items: center;
+                        font-size: 13.85px;
+                        font-weight: 900;
+                        font-family: Sans-font;
+                        width: 100%;
+                        height: 10%;
+                        .advice {
+                            font-size: 11.08px;
+                            font-weight: 500;
+
+                            .row-advice {
+                                display: flex;
+                                justify-content: flex-start;
+                                align-items: center;
+
+                                .dot {
+                                    width: 13px;
+                                    height: 13px;
+                                    border-radius: 50%;
+                                    margin-right: 2px;
+                                }
+
+                                .dot.old {
+                                    background-color: red;
+                                }
+
+                                .dot.new {
+                                    background-color: green;
+                                }
+                            }
+                        }
+                        justify-content: space-evenly;
+                        font-size: 13.85px;
+                    }
+
+                    .body {
+                        overflow-y: scroll;
+                        max-height: 110.8px;
+                        .list-detail {
+                            display: flex;
+                            flex-direction: column;
+                            font-size: 12.465px;
+                            font-family: Sans-font;
+                            padding: 0px 5.54px;
+                            .subject {
+                                font-weight: 900;
+                            }
+
+                            .content {
+                                display: flex;
+                                justify-content: space-evenly;
+
+                                .old {
+                                    padding: 2.77px 5.54px;
+                                    width: 45%;
+                                    border-radius: 10px;
+                                    border: 1.5px solid red;
+                                }
+
+                                .new {
+                                    padding: 2.77px 5.54px;
+                                    width: 45%;
+                                    border-radius: 10px;
+                                    border: 1.5px solid green;
+                                }
+
+                                input {
+                                    border: 0;
+                                    width: 100%;
+                                    background-color: transparent;
+                                    font-size: 11.08px;
+                                    font-family: Sans-font;
+                                    padding: 0;
+                                }
+                            }
+                        }
+                    }
+
+                    .body-because {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+
+                        textarea {
+                            width: 100%;
+                            height: 100%;
+                            border: 0;
+                            outline: 0;
+                            max-height: 50px;
+                            padding:0px 5px;
+                            font-family: Sans-font;
+                            font-size: 14px;
+                        }
+                    }
+                }
+
+                .bt-confirm-edit {
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    width: 100%;
+                    padding: 4px 0px;
+                    padding-top: 0px;
+                    
+                    a {
+                        text-align: center;
+                        width: 35%;
+                        border-radius: 15px;
+                        border: 0;
+                        outline: 0;
+                        color: white;
+                        font-family: Sans-font;
+                        font-size: 16px;
+                        padding-top: 3px;
+                        font-weight: 900;
+                    }
+
+                    a.not {
+                        background-color: red;
+                        box-shadow: 0px 2px 2px rgb(63, 0, 0);
+                    }
+
+                    a.pass {
+                        background-color: green;
+                        box-shadow: 0px 2px 2px rgb(0, 99, 0);
+                    }
+
+                    a[click-not=""].not {
+                        background-color: rgba(255, 0, 0, 0.429);
+                        box-shadow: none;
+                        cursor: not-allowed;
+                    }
+
+                    a[click-not=""].pass {
+                        background-color: rgba(0, 128, 0, 0.429);
+                        box-shadow: none;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+        }
+
+        .loading-edit {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 138.5px;
+        }
+
+        .not-edit {
+            font-family: Sans-font;
+            font-size:16.62px;
+            font-weight: 900;
+            padding: 20.775px 0px;
+        }
+    }
+
+    report-dom {
+        body-report {
+            text-report {
+                font-size: 18px;
+                font-weight: 900;
+                font-family: Sans-font;
+            }
+
+            box-button-report {
+
+                button {
+                    font-family: Sans-font;
+                    font-size: 18px;
+                    font-weight: 900;
+                    border-radius: 15px;
+                    padding:0px 15px;
+                    margin-top: 5px;
+                    color: white;
+                    background-color: rgb(57 132 122);
+                }
+            }
+        }
+    }
+}

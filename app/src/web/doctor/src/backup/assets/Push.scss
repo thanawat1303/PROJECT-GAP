@@ -1,0 +1,182 @@
+$ScaleBox : 70px;
+
+#page-push-doctor {
+
+    #detail-confirm {
+        position: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+
+        opacity: 0;
+        visibility: hidden;
+
+        transition: 0.5s opacity,0.5s visibility;
+
+        background-color: rgba(255, 255, 255, 0);
+        backdrop-filter: blur(8px);
+        z-index: 8;
+
+        #detail-fm-confirm {
+            // background-color: white;
+            border-radius: 15px;
+            display: flex;
+            #img-fm-confirm {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background-color: white;
+                padding: 10px;
+                border-radius: 10px 0px 0px 10px;
+                box-shadow: 0px 0px 10px gainsboro;
+                img {
+                    width: 120px;
+                }
+            }
+
+            #detail-profile-confirm {
+                border-radius: 0px 10px 10px 10px;
+                box-shadow: 0px 0px 10px gainsboro;
+                background-color: white;
+                padding: 8px;
+            }
+        }
+    }
+
+    #detail-confirm[show=""] {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #list-push-doctor {
+        .container-push {
+            display: inline-flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            border: 2px solid rgba(172, 255, 47, 0.555);
+            border-radius: 8px;
+            padding: 8px;
+            margin-left: 3px;
+    
+            width: 33%;
+            .img-doctor {
+                width: $ScaleBox;
+                border-radius: 5px;
+            }
+    
+            .detail-content-fm {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: start;
+                padding: 2px 0px;
+                padding-left: 8px;
+
+                width: 100%;
+    
+                .name-fm {
+                    width: 100%;
+                    input{
+                        font-family: Sans-font;
+                        font-size: 17px;
+                        font-weight: 900;
+                        border: 0;
+                        outline: 0;
+                        width: 100%;
+                        padding: 0px;
+                        display: flex;
+                        cursor: default;
+                    }
+                }
+    
+                .date-fm {
+                    width: 100%;
+                    input {
+                        font-family: Sans-font;
+                        font-size: 14px;
+                        border: 0;
+                        outline: 0;
+                        width: 100%;
+                        padding: 0px;
+                        display: flex;
+                        cursor: default;
+                    }
+                }
+            }
+        }
+
+        .container-push[checking=""] {
+            opacity: 0.4;
+        }
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    #page-push-doctor {
+        #list-push-doctor {
+            .container-push {
+                margin-left: 3px;
+                width: 49%;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 920px) {
+    #page-push-doctor {
+        #list-push-doctor {
+            .container-push {
+                margin: 3px 0px;
+                width: 100%;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    #page-push-doctor {
+        #list-push-doctor {
+            .container-push {
+                margin: 3px 0px;
+                width: 100%;
+
+                align-items: start;
+
+                padding: 2px 8px;
+
+                .img-doctor {
+                    width: 35px;
+                    border-radius: 5px;
+                    margin-top: 8px;
+                }
+        
+                .detail-content-fm {
+        
+                    .name-fm {
+                        input {
+                            font-family: TH-font;
+                            font-size: 16px;
+                            font-weight: 900;
+                        }
+                    }
+        
+                    .date-fm {
+                        width: 100%;
+                        input {
+                            font-family: TH-font;
+                            font-size: 14px;
+                            font-weight: 600;
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

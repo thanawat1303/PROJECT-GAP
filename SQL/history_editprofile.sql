@@ -1,0 +1,4 @@
+-- CREATE TABLE history_editprofile (
+--     id INT NOT NULL PRIMARY AUTO_INCREMENT,
+--     date 
+-- )

@@ -43,12 +43,11 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
     const FecthProfile = async () => {
         let profile = await clientMo.post("/api/admin/doctor/get" , {id_table : id_table})
         profile = JSON.parse(profile).map((val)=>val)[0]
-        const img = Uint32Array.from(profile.img_doctor.data).toString()
         setProfile({
             id_table : profile.id_table_doctor,
             id : profile.id_doctor,
             fullname : profile.fullname_doctor,
-            img :  img !== "" ? img : "/doctor-svgrepo-com.svg",
+            img :  profile.img_doctor !== "" ? profile.img_doctor : "/doctor-svgrepo-com.svg",
             station : profile.station,
             isdelete : profile.status_delete
         })

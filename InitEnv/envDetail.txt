@@ -1,0 +1,42 @@
+# db
+HOST = localhost
+
+# on dev
+DATABASE_DEV = <-ชื่อ database ในการ dev-> #DATABASE_DEV name
+USER_DBDEV = <-user database dev->
+PASSWORD_DBDEV = <-password database dev->
+
+# on server
+DATABASE_SER = <-ชื่อ database บน server-> #DATABASE_DEV name
+# db
+
+# NODE_ENV = 'development'
+# NODE_ENV = 'product'
+
+KEY_SESSION = <-Session Key->
+TIME_COKKIE = 86400000 # 1000 * 60 * 60 * 24
+
+channelAccessToken = <-AccessToken Messageing Api->
+channelSecret = <-Secret Messageing Api->
+
+cookie = <-name cookie session->
+
+pathCertFile = <-Path Cert SSL->
+pathKeyFile = <-Path Key SSL->
+
+RICH_SIGN = <-ID Rich Sign->
+RICH_HOUSE = <-ID Rich House->
+
+REACT_APP_API_LOCAL = localhost
+REACT_APP_API_PUBLIC = <-Host serv->
+REACT_APP_API_PORT = <-PORT Application->
+REACT_APP_KEY_MAP = <-Key Map Api->
+
+REACT_APP_LINE_SIGNUP = <- ไอดี line liff ของ signup เกษตรกร ->
+REACT_APP_LINE_HOUSE = <- ไอดี line liff ของ house เกษตรกร ->
+REACT_APP_LINE_FORM = <- ไอดี line liff ของ form เกษตรกร ->
+
+# TZ = UTC+7
+
+# ระวังในการเปลี่ยนข้อมูล
+BUILD = deploy <-arg ในคำสั่ง เพื่อกำหนด protocal สำหรับ server เปลี่ยนตามใน package.json->

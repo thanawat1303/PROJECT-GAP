@@ -10,12 +10,12 @@ $ColorGreen : #22C7A9;
     z-index: 2;
     .pg-action {
         display: flex;
-        justify-content: start;
+        justify-content: flex-start;
         align-items: center;
         .Logo {
             display: flex;
             align-items: center;
-            justify-content: start;
+            justify-content: flex-start;
             img {
                 width: 60px;
             }
@@ -41,7 +41,7 @@ $ColorGreen : #22C7A9;
 
     .bt-action {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         align-items: center;
         a {
             margin: 0px 20px;
@@ -94,7 +94,7 @@ $ColorGreen : #22C7A9;
     
             .menu-list {
                 display: flex;
-                justify-content: start;
+                justify-content: flex-start;
                 align-items: center;
                 flex-direction: column;
                 font-family: Sans-font;
@@ -107,7 +107,7 @@ $ColorGreen : #22C7A9;
                 .menu-name-list {
                     margin: 4px 0px;
                     display: flex;
-                    justify-content: start;
+                    justify-content: flex-start;
                     align-items: center;
                 }
             }
@@ -157,7 +157,7 @@ $ColorGreen : #22C7A9;
         
                 .menu-list {
                     display: flex;
-                    justify-content: start;
+                    justify-content: flex-start;
                     align-items: center;
                     flex-direction: column;
                     font-family: Sans-font;

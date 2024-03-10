@@ -1,0 +1,535 @@
+.plant {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100vw;
+    height: 100%;
+    .popup-add[show=""] {
+        opacity: 1;
+        visibility: visible;
+    }
+    .popup-add{
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background-color: transparent;
+        top: 0;
+        backdrop-filter: blur(8px);
+        transition: 0.5s opacity , 0.5s visibility;
+        opacity: 0;
+        visibility: hidden;
+        .popup-content {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+
+            .head {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 8vw;
+                font-weight: 900;
+                font-family: Sans-font;
+                height: 10%;
+            }
+
+            .form {
+                display: flex;
+                flex-direction: column;
+                // justify-content: space-evenly;
+                height: 93%;
+                width: 100%;
+                .head-form {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 5;
+                    span {
+                        background-color: #ACFFB4;
+                        border-radius: 15px;
+                        padding: 5px 15px;
+                        font-family: Sans-font;
+                        font-weight: 900;
+                    }
+                }
+
+                .body-content {
+                    background-color: #DAF1EE;
+                    border-radius: 18px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 10px 10px;
+                    padding-top: 30px;
+                    width: 95%;
+                    height: 85%;
+                    margin: -15px auto;
+                    margin-bottom: 0px;
+
+                    .frame-content[over=""] {
+                        overflow-y: hidden;
+                    }
+                    .frame-content {
+                        overflow-y: scroll;
+                        font-family: Sans-font;
+
+                        .report-not {
+                            outline: 2px solid red;
+                        }
+
+                        .type-plant {
+                            display: flex;
+                            justify-content: space-evenly;
+                            align-items: center;
+
+                            label {
+                                input {
+                                    appearance: none;
+                                    -webkit-appearance: none;
+                                    -moz-appearance: none;
+                                    width: 16px;
+                                    height: 16px;
+                                    border-radius: 50%;
+                                    border: 1px solid red;
+                                    outline: none;
+                                }
+    
+                                input[type="radio"]:checked {
+                                    background-color: green;
+                                }
+                                
+                                /* สถานะ hover */
+                                input[type="radio"]:hover {
+                                    border-color: #555555;
+                                }
+                                
+                                /* สถานะ focus */
+                                input[type="radio"]:focus {
+                                    box-shadow: 0 0 4px #999999;
+                                }
+    
+                                span {
+                                    margin-left: 5px;
+                                }
+                            }
+                        }
+                        .content {
+                            .step {
+                                display: flex;
+                                width: 100%;
+                                margin-bottom: 5px;
+                                .num {
+                                    padding-top: 5px;
+                                    margin-right: 5px;
+                                }
+
+                                .body {
+                                    width: 100%;
+                                    .row {
+                                        display: flex;
+                                        position: relative;
+                                        padding-top: 5px;
+
+                                        .block-wait {
+                                            background-color: rgba(128, 128, 128, 0.584);
+                                            display: flex;
+                                            justify-content: center;
+                                            align-items: center;
+                                            position: absolute;
+                                            width: 100%;
+                                            height: 100%;
+                                            left: 0em;
+                                            top: 0em;
+                                            border-radius:5px;
+                                            z-index: 1;
+                                        }
+
+                                        .dot-required {
+                                            color: red;
+                                            font-weight: 900;
+                                            position: absolute;
+                                            right: 0;
+                                            top: 0.1em;
+                                        }
+
+                                        .frame-textbox {
+                                            display: flex;
+                                            justify-content: flex-start;
+                                            align-items: center;
+                                            width: 100%;
+                                            // margin-bottom: 5px;
+                                            padding-bottom: 5px;
+                                            border-bottom:1px solid green ;
+                                            // position: relative;
+
+                                            // .block-wait {
+                                            //     background-color: rgba(128, 128, 128, 0.584);
+                                            //     display: flex;
+                                            //     justify-content: center;
+                                            //     align-items: center;
+                                            //     position: absolute;
+                                            //     width: 100%;
+                                            //     height: 100%;
+                                            //     left: 0em;
+                                            //     top: 0em;
+                                            //     border-radius:5px;
+                                            //     z-index: 1;
+                                            // }
+
+                                            .input-select-popup {
+                                                position: relative;
+                                                width: 50%;
+
+                                                input {
+                                                    width: 100%;
+                                                }
+
+                                                .list-input-search {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    overflow: scroll;
+                                                    max-height: 100px;
+                                                    position: absolute;
+                                                    background-color: white;
+                                                    width: 100%;
+                                                    border-radius: 8px;
+                                                    box-shadow: 0px 4px 4px rgb(181, 181, 181);
+                                                    padding: 1vw;
+                                                    z-index: 2;
+
+                                                    span {
+                                                        width: 100%;
+                                                    }
+
+                                                }
+
+                                                .list-input-search[remove=""] {
+                                                    display: none;
+                                                }
+                                            }
+
+                                            span {
+                                                width: 40%;
+                                            }
+
+                                            .input-date {
+                                                display: flex;
+                                                justify-content: center;
+                                                align-items: center;
+                                                width: 50%;
+
+                                                input {
+                                                    width: 100%;
+                                                }
+                                            }
+
+                                            input , select , textarea {
+                                                margin-left: 2px;
+                                                text-align: center;
+                                                border: 0;
+                                                border-radius: 8px;
+                                                width: 50%;
+                                                border: 2px solid transparent;
+                                            }
+
+                                            #date-picker-thai-insert-plant {
+                                                input {}
+                                            }
+
+                                            textarea {
+                                                text-align: center;
+                                            }
+
+                                            .full {
+                                                width: 100%;
+                                                display: flex;
+                                            }
+
+                                            .choose {
+                                                display: flex;
+                                                width: 100%;
+                                                label {
+                                                    width: 100%;
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    justify-content: center;
+                                                    align-items: center;
+
+                                                    input {
+                                                        margin:0px 5px;
+                                                        width: 100%;
+                                                    }
+
+                                                    .center {
+                                                        margin: 0;
+                                                    }
+                                                }
+                                            }
+
+                                            .date-select {
+                                                margin-left: 2px;
+                                                text-align: center;
+                                                border: 0;
+                                                border-radius: 8px;
+                                                width: 50%;
+                                                border: 2px solid transparent;
+
+                                                .list-date-select {
+                                                    width: 100%;
+                                                }
+                                            }
+                                        }
+
+                                        .colume {
+                                            flex-direction: column;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .bt-form {
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+
+                    height: 100%;
+                    .bt-confirm-add {
+                        background-color: #23dd36;
+                        border-radius: 5px;
+                        border: 0;
+                        width: 30%;
+                        font-weight: 900;
+                        font-size: 18px;
+                        font-family: Sans-font;
+                        padding: 2px 0px;
+                    }
+
+                    .bt-confirm-add[no=""] {
+                        background-color: #ACFFB4;
+                        color: rgba(16, 16, 16, 0.3);
+                    }
+                }
+            }
+        }
+    }
+    .content-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        .head {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100%;
+            padding: 10px 0px;
+            .title {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                font-weight: 900;
+                font-family: Sans-font;
+                font-size: 7vw;
+                position: relative;
+
+                .return {
+                    background-color: #daf1ee;
+                    height: 1.5em;
+                    left: 0;
+                    display: flex;
+                    position: absolute;
+                    border-radius: 0px 15px 15px 0px;
+                    padding: 0.3em 0.5em;
+                    padding-right: 0.8em;
+                    box-shadow: 0px 2px 2px rgb(173, 173, 173);
+
+                    svg {
+                        fill: rgb(255, 0, 0);
+                        font-weight: 900;
+                    }
+                }
+            }
+            .frame-menu {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 10px;
+                .img {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 25vw;
+                    height: 25vw;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    // background-size:;
+                    img {
+                        height: 100%;
+                    }
+                }
+    
+                span {
+                    margin-top: 10px;
+                    font-family: Sans-font;
+                    font-size: 5vw;
+                    text-align: center;
+                    font-weight: 900;
+                    color: red;
+                }
+            }
+        }
+
+        .list-plant {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100%;
+            overflow: scroll;
+
+            .plant-content {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 95%;
+                background-color: #daf1ee;
+                box-shadow: 0px 4px 4px #5c807b;
+                border-radius: 15px;
+                padding: 5px 5px;
+                margin-bottom: 10px;
+                
+                .top {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: start;
+                    width: 100%;
+
+                    .type-main {
+                        width: 28%;
+                        input {
+                            width: 100%;
+                            font-size: 7vw;
+                            font-weight: 900;
+                            padding: 0;
+                        }
+                    }
+
+                    .date {
+                        display: flex;
+                        justify-content: center;
+                        flex-direction: column;
+                        background-color: white;
+                        border-radius: 0px 15px 0px 15px;
+                        padding-right: 10px;
+                        padding-top: 2px;
+                        span {
+                            display: flex;
+                            flex-direction: column;
+                            text-align: end;
+                            font-size: 4vw;
+                            font-weight: 900;
+                        }
+
+                        input {
+                            text-align: end;
+                            font-size: 4vw;
+                        }
+                    }
+                }
+
+                .body {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+                    margin: 4px 0px;
+                    
+                    .content {
+                        font-size: 5vw;
+                        font-family: Sans-font;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        span {
+                            font-weight: 900;
+                            margin-right: 2px;
+                        }
+
+                        input {
+                            text-align: end;
+                            font-size: 4vw;
+                            width: 100%;
+                        }
+                    }
+                }
+
+                .bottom {
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-between;
+                    align-items: center;
+                    
+                    .content {
+                        font-size: 5vw;
+                        font-family: Sans-font;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        span {
+                            margin-right: 1px;
+                            font-weight: 900;
+                        }
+
+                        div{
+                            margin-left: 1px;
+                        }
+                    }
+
+                    .bt {
+                        display: flex;
+                        justify-content: flex-end;
+                        width: 180px;
+                        button {
+                            font-size: 5vw;
+                            font-family: Sans-font;
+                            border: 0;
+                            border-radius: 15px;
+                            padding: 0px 18px;
+                            font-weight: 900;
+                            background-color: rgb(251, 186, 186);
+                            box-shadow: 2px 2px 2px gray;
+                        }
+                    }
+                }
+
+                input {
+                    border: 0;
+                    background-color: transparent;
+                    outline: 0;
+                    font-family: Sans-font;
+                }
+                span {
+                    font-family: Sans-font;
+                }
+            }
+            
+            .plant-content.submit {
+                background-color: white;
+            }
+        }
+    }
+}

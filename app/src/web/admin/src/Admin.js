@@ -83,7 +83,7 @@ const Admin = ({setBodyFileMain , socket}) => {
             
             // other path
         } else {
-            console.log(15)
+            setBody(<NavFirst session={sessionoff} setBodyFileAdmin={setBody} auth={Auth} socket={socket} modify={modifyMainPage} TabOn={TabOn} HrefData={Href}/>)
         }
     }
 

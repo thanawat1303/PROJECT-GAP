@@ -1,0 +1,29 @@
+-- DELETE FROM `line_chat_gap`.`formplant`
+-- INSERT INTO `line_chat_gap`.`formplant`(
+--     id_plant ,
+--     id_uid_line,
+--     type_plant,
+--     genartion_plant,
+--     -- date_plant,
+--     qty_plant,
+--     space_plant,
+--     date_harvest,
+--     system_plant,
+--     water_plant,
+--     water_flow_plant,
+--     history_plant,
+--     submit_plant 
+-- ) VALUES (
+--     "111475",
+--     "1120",
+--     "เมล่อน",
+--     1,
+--     10,
+--     "1 ไร่",
+--     '14-SEP-2023',
+--     "ปลูกแบบขึ้นข้าง",
+--     "ลำธาร",
+--     "สปริงเกอร์",
+--     "โรคใบจุด",
+--     0
+-- );

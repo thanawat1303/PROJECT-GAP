@@ -19,11 +19,11 @@
             box-shadow: -4px 4px 4px rgba(184, 184, 184, 0.473);
     
             .Load-insert {
-                Report-Dom {
+                report-dom {
                     border-radius: 18px;
     
-                    Body-Report {
-                        Text-Report {
+                    body-report {
+                        text-report {
                             font-family: Sans-font;
                             font-size: 15px;
                             font-weight: 900;
@@ -32,11 +32,11 @@
                             border-radius: 20px;
                         }
 
-                        Status-Report {
+                        status-report {
                             margin: 5px 0px;
                         }
     
-                        BoxButton-Report {
+                        box-button-report {
                             button {
                                 background: linear-gradient(120deg , #52D8C0 , #228774);
                                 border-radius: 20px;
@@ -248,16 +248,16 @@
     
         .List-data {
             text-align: center;
-            List-data-body[remove=""]{
+            list-data-body[remove=""]{
                 opacity: 0;
                 visibility: hidden;
             }
 
-            List-data-body[status="delete"] {
+            list-data-body[status="delete"] {
                 background-color: #fac1c185;
             }
 
-            List-data-body {
+            list-data-body {
                 display: inline-flex;
                 flex-direction: column;
                 position: relative;
@@ -276,7 +276,7 @@
 
                 .status-online {
                     display: flex;
-                    justify-content: end;
+                    justify-content: flex-end;
                     align-items: center;
                     padding-right: 2%;
                     font: 900 14px Sans-font;
@@ -288,11 +288,11 @@
                     }
                 }
 
-                Detail-Data-main {
+                detail-data-main {
                     display: flex;
-                    justify-content: start;
+                    justify-content: flex-start;
                     align-items: center;
-                    Detail-Image {
+                    detail-Image {
                         border-radius: 50%;
                         overflow: hidden;
                         width: 80px;
@@ -310,11 +310,11 @@
                         }
                     }
 
-                    Detail-data {
+                    detail-data {
                         display: flex;
                         flex-direction: column;
                         // width: 340px;
-                        Detail-in-fullname {
+                        detail-in-fullname {
                             text-align: start;
                             border-bottom: 2px solid #22C7A9;
                             margin: 2px 0px;
@@ -328,9 +328,9 @@
                             }
                         }
 
-                        Detail-in {
+                        detail-in {
                             display: flex;
-                            justify-content: start;
+                            justify-content: flex-start;
                             align-items: center;
                             overflow: hidden;
                             .head-data {
@@ -351,14 +351,14 @@
                         }
                     }
 
-                    Detail-Data[flex="station"]{
+                    detail-data[flex="station"]{
                         flex-direction: column;
                     }
-                    Detail-Data[flex="plant"]{
+                    detail-data[flex="plant"]{
                         flex-direction: row;
                     }
 
-                    Detail-Data[maxsize=""] {
+                    detail-data[maxsize=""] {
                         width: 100%;
                         padding-bottom: 0.5vw;
                         // padding: 0px 1vw;
@@ -371,7 +371,7 @@
                         }
                         .name {
                             display: flex;
-                            justify-content: start;
+                            justify-content: flex-start;
                             align-items: center;
                             span {
                                 font-weight: 900;
@@ -431,14 +431,14 @@
                     }
                 }
 
-                Detail-Data-main[column=""] {
+                detail-data-main[column=""] {
                     flex-direction: column;
                 }
 
-                Action-bt {
+                action-bt {
                     display: flex;
                     flex-direction: row;
-                    justify-content: end;
+                    justify-content: flex-end;
                     align-items: center;
                     margin-top: 5px;
                     width: 100%;
@@ -476,9 +476,9 @@
                             }
                         }
 
-                        Bt-status {
+                        bt-status {
                             display: flex;
-                            justify-content: start;
+                            justify-content: flex-start;
                             align-items: center;
                             border-radius: 50px;
                             overflow: hidden;
@@ -487,7 +487,7 @@
                             cursor: pointer;
                             .frame {
                                 display: flex;
-                                justify-content: start;
+                                justify-content: flex-start;
                                 align-items: center;
                                 border-radius: 50px;
                     
@@ -579,7 +579,7 @@
                 }
             }
 
-            List-data-body[status="station"] {
+            list-data-body[status="station"] {
                 padding-left: 0px;
             }
             // Row-List {
@@ -644,25 +644,25 @@
 
         @media only screen and (max-width : 430px) {
             .List-data {
-                List-data-body {
+                list-data-body {
                     .status-online {
                         font: 900 12px Sans-font;
                     }
-                    Detail-Data-main {
-                        Detail-Image {
+                    detail-data-main {
+                        detail-Image {
                             width: 60px;
                             height: 60px;
                         }
 
-                        Detail-data {
+                        detail-data {
                             // width: 250px;
-                            Detail-in-fullname {
+                            detail-in-fullname {
                                 span {
                                     font-size: 16px;
                                 }
                             }
 
-                            Detail-in {
+                            detail-in {
                                 .head-data {
                                     font-size: 14px;
                                 }
@@ -673,7 +673,7 @@
                             }
                         }
 
-                        Detail-data[maxsize=""] {
+                        detail-data[maxsize=""] {
                             .name {
                                 span {
                                     font-size: 14px;
@@ -701,14 +701,14 @@
 
         @media only screen and (max-width : 360px) {
             .List-data {
-                List-data-body {
+                list-data-body {
                     padding: 5px;
                     .status-online {
                         font: 900 11px Sans-font;
                     }
 
-                    Detail-Data-main {
-                        Detail-Image {
+                    detail-data-main {
+                        detail-Image {
                             width: 50px;
                             min-width: 50px;
                             height: 50px;
@@ -716,15 +716,15 @@
                             margin: 0px 5px;
                         }
 
-                        Detail-data {
+                        detail-data {
                             // width: 250px;
-                            Detail-in-fullname {
+                            detail-in-fullname {
                                 span {
                                     font-size: 13px;
                                 }
                             }
 
-                            Detail-in {
+                            detail-in {
                                 .head-data {
                                     font-size: 11px;
                                 }
@@ -736,7 +736,7 @@
                         }
                     }
 
-                    Action-bt {
+                    action-bt {
                         content-status {
                             bt-because {
                                 button {
@@ -744,7 +744,7 @@
                                 }
                             }
 
-                            Bt-status {
+                            bt-status {
                                 .frame {
                                     span {
                                         font-size: 14px;

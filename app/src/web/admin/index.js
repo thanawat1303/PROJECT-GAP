@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM  from "react-dom/client";
 import io from "socket.io-client"
 
-import MainAdmin from "../main/admin/src/main";
+import MainAdmin from "./src/main";
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 // const socket = new WebSocket();

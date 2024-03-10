@@ -179,7 +179,7 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
 
     const OpenConfirmDoctor = async (id_table_doctor , typeStatus) => {
         if(await auth(true)) {
-            const status = parseInt(document.querySelector(`#data-list-content-${id_table_doctor} Action-bt Bt-status .frame`).getAttribute("status"))
+            const status = parseInt(document.querySelector(`#data-list-content-${id_table_doctor} action-bt bt-status .frame`).getAttribute("status"))
             setBecause(<ManageDoctorPage RefOnPage={RefBe} id_table={id_table_doctor} type={typeStatus} status={status} 
                         setBecause={setBecause} TabOn={TabOn} session={session} ReloadFetch={Fetch}/>)
         }
@@ -187,14 +187,14 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
 
     const OpenConfirmData = async (id , typeStatus) => {
         if(await auth(true)) {
-            const status = parseInt(document.querySelector(`#data-list-content-${id} Action-bt Bt-status .frame`).getAttribute("status"))
+            const status = parseInt(document.querySelector(`#data-list-content-${id} action-bt bt-status .frame`).getAttribute("status"))
             setBecause(<ManageDataPage RefOnPage={RefBe} id_table={id} type={typeStatus} status={status} setBecause={setBecause} TabOn={TabOn} session={session} ReloadData={Fetch}/>)
         }
     }
 
     const OpenEditData = async (id , typeStatus) => {
         if(await auth(true)) {
-            const status = parseInt(document.querySelector(`#data-list-content-${id} Action-bt Bt-status .frame`).getAttribute("status"))
+            const status = parseInt(document.querySelector(`#data-list-content-${id} action-bt bt-status .frame`).getAttribute("status"))
             setBecause(<EditPage RefOnPage={RefBe} id_table={id} type={typeStatus} setBecause={setBecause} TabOn={TabOn} session={session} ReloadData={Fetch}/>)
         }
     }
@@ -207,7 +207,7 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
 
     const manageList = () => {
         const doctorList = Data.map((data , key)=>
-            <List-data-body key={key} 
+            <list-data-body key={key} 
                 id={`data-list-content-${
                     HrefPage.get().split("?")[0] === "list" ? data.id_table_doctor :
                     HrefPage.get().split("?")[0] === "data" ? data.id : ""
@@ -230,38 +230,38 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                     </div>
                                 </div> : <></>
                         }
-                        <Detail-Data-main>
-                            <Detail-Image>
+                        <detail-data-main>
+                            <detail-Image>
                                 <img src={data.img_doctor ? data.img_doctor : "/doctor-svgrepo-com.svg"}></img>
-                            </Detail-Image>
-                            <Detail-data>
-                                <Detail-in-fullname>
+                            </detail-Image>
+                            <detail-data>
+                                <detail-in-fullname>
                                     <span>{data.fullname_doctor ? data.fullname_doctor : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
-                                </Detail-in-fullname>
-                                <Detail-in>
+                                </detail-in-fullname>
+                                <detail-in>
                                     <span className="head-data">รหัสประจำตัว</span>
                                     <div className="text-data">{data.id_doctor}</div>
-                                </Detail-in>
-                                <Detail-in>
+                                </detail-in>
+                                <detail-in>
                                     <span className="head-data">ศูนย์</span>
                                     <div className="text-data">{data.station ? data.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
-                                </Detail-in>
-                            </Detail-data>
-                        </Detail-Data-main>
-                        <Action-bt>
+                                </detail-in>
+                            </detail-data>
+                        </detail-data-main>
+                        <action-bt>
                             { status.status === "default" ? 
                                 <>
                                 <content-status because={1}>
                                     <bt-because>
                                         <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
                                     </bt-because>
-                                    <Bt-status onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_account")}>
+                                    <bt-status onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_account")}>
                                         <div className="frame" status={data.status_account ? "1" : "0"}>
                                             <span>ON</span>
                                             <span className="dot"></span>
                                             <span>OFF</span>
                                         </div>
-                                    </Bt-status>
+                                    </bt-status>
                                 </content-status>
                                 <bt-delete>
                                     <button onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
@@ -274,12 +274,12 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                     </bt-because>
                                 </content-status> : <></>
                             }
-                        </Action-bt>
+                        </action-bt>
                     </> :
                     HrefPage.get().split("?")[0] === "data" ?
                     <>
-                        <Detail-Data-main column="">
-                            <Detail-Data maxsize="" flex={status.status}>
+                        <detail-data-main column="">
+                            <detail-data maxsize="" flex={status.status}>
                                 <div className="name" w={status.status}>
                                     { status.status === "plant" ?
                                         <span className={status.status}>ชื่อพืช</span> : <></>
@@ -297,18 +297,18 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                             <MapsJSX lat={data.location.x} lng={data.location.y} w={"300vw"} h={"100vw"}/> : ""
                                     }
                                 </div>
-                            </Detail-Data>
+                            </detail-data>
                             { status.status === "plant" ?
-                                <Detail-Data maxsize="">
+                                <detail-data maxsize="">
                                     <div className="name">
                                         <span className={status.status}>จำนวนวันที่จะเก็บเกี่ยว</span>
                                         <div className={`text-data`}>{`${data.qty_harvest} วัน`}</div>
                                     </div>
-                                </Detail-Data>
+                                </detail-data>
                                 : <></>
                             }
-                        </Detail-Data-main>
-                        <Action-bt>
+                        </detail-data-main>
+                        <action-bt>
                             <content-status because={0}>
                                 { status.status === "station" ? 
                                     <div className="edit-bt" onClick={()=>OpenEditData(data.id , status.status)}>
@@ -316,7 +316,7 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                     </div> 
                                 : <></>
                                 }
-                                <Bt-status 
+                                <bt-status 
                                     onClick={()=>OpenConfirmData(data.id , status.status)}
                                     >
                                     <div className="frame" status={data.is_use}>
@@ -324,13 +324,13 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                         <span className="dot"></span>
                                         <span>OFF</span>
                                     </div>
-                                </Bt-status>
+                                </bt-status>
                             </content-status>
-                        </Action-bt>
+                        </action-bt>
                     </> : <></>
                 }
                 
-            </List-data-body>
+            </list-data-body>
         )
         
         TabOn.addTimeOut(TabOn.end())
@@ -469,10 +469,10 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
         let Qty = QtyDate.current
         let PWadmin = pwAdmin.current
 
-        Data1 ? Data1.value = "" : null;
-        Data2 ? Data2.value = "" : null;
-        Data3 ? Data3.value = "" : null;
-        Qty ? Qty.value = "" : null;
+        Data1 && (Data1.value = "");
+        Data2 && (Data2.value = "");
+        Data3 && (Data3.value = "");
+        Qty && (Qty.value = "");
         PWadmin.value = ""
         if(type === "station") {
             InputMap.current.value = ""
@@ -556,13 +556,13 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                     {
                         type === "default" ?
                             <>
-                            <label>
-                                <div className="field-text">
-                                    <span className="head-text">รหัสผ่านบัญชีผู้ส่งเสริม</span>
-                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
-                                    <input onChange={CheckEmply} ref={RefData.Data2} placeholder="กรอกรหัสผ่าน" type="password"></input>
-                                </div>
-                            </label>
+                                <label>
+                                    <div className="field-text">
+                                        <span className="head-text">รหัสผ่านบัญชีผู้ส่งเสริม</span>
+                                        {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
+                                        <input onChange={CheckEmply} ref={RefData.Data2} placeholder="กรอกรหัสผ่าน" type="password"></input>
+                                    </div>
+                                </label>
                             </> :
                         type === "plant" ?
                             <label>
@@ -573,30 +573,30 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                             </label> : 
                         type === "station" ?
                             <>
-                            <label>
-                                {/* <svg fill="white" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
-                                    width="1em" height="1em" viewBox="0 0 395.71 395.71"
-                                    >
-                                    <g>
-                                        <path d="M197.849,0C122.131,0,60.531,61.609,60.531,137.329c0,72.887,124.591,243.177,129.896,250.388l4.951,6.738
-                                            c0.579,0.792,1.501,1.255,2.471,1.255c0.985,0,1.901-0.463,2.486-1.255l4.948-6.738c5.308-7.211,129.896-177.501,129.896-250.388
-                                            C335.179,61.609,273.569,0,197.849,0z M197.849,88.138c27.13,0,49.191,22.062,49.191,49.191c0,27.115-22.062,49.191-49.191,49.191
-                                            c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
-                                    </g>
-                                </svg> */}
-                                <div className="field-text">
-                                    <span className="head-text">ลิ้งค์ปักหมุดจาก Google Map</span>
-                                    <input ref={InputMap} placeholder="URL ที่ทำการปักหมุดสีแดง" type="text" onChange={CheckEmply} onInput={GenerateMap}></input>
-                                </div>
-                            </label>
-                            <label className="station">
-                                <div className="field-text">
-                                    <input style={{display : "none"}} readOnly ref={RefData.Data2} value={Lag}></input>
-                                    <input style={{display : "none"}} readOnly ref={RefData.Data3} value={Lng}></input>
-                                    <MapsJSX lat={Lag} lng={Lng} w={"100%"}/>
-                                    <button onClick={GenerateMapAuto}>รีโหลดพิกัด</button>
-                                </div>
-                            </label>
+                                <label>
+                                    {/* <svg fill="white" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
+                                        width="1em" height="1em" viewBox="0 0 395.71 395.71"
+                                        >
+                                        <g>
+                                            <path d="M197.849,0C122.131,0,60.531,61.609,60.531,137.329c0,72.887,124.591,243.177,129.896,250.388l4.951,6.738
+                                                c0.579,0.792,1.501,1.255,2.471,1.255c0.985,0,1.901-0.463,2.486-1.255l4.948-6.738c5.308-7.211,129.896-177.501,129.896-250.388
+                                                C335.179,61.609,273.569,0,197.849,0z M197.849,88.138c27.13,0,49.191,22.062,49.191,49.191c0,27.115-22.062,49.191-49.191,49.191
+                                                c-27.114,0-49.191-22.076-49.191-49.191C148.658,110.2,170.734,88.138,197.849,88.138z"/>
+                                        </g>
+                                    </svg> */}
+                                    <div className="field-text">
+                                        <span className="head-text">ลิ้งค์ปักหมุดจาก Google Map</span>
+                                        <input ref={InputMap} placeholder="URL ที่ทำการปักหมุดสีแดง" type="text" onChange={CheckEmply} onInput={GenerateMap}></input>
+                                    </div>
+                                </label>
+                                <label className="station">
+                                    <div className="field-text">
+                                        <input style={{display : "none"}} readOnly ref={RefData.Data2} value={Lag}></input>
+                                        <input style={{display : "none"}} readOnly ref={RefData.Data3} value={Lng}></input>
+                                        <MapsJSX lat={Lag} lng={Lng} w={"100%"}/>
+                                        <button onClick={GenerateMapAuto}>รีโหลดพิกัด</button>
+                                    </div>
+                                </label>
                             </> :
                             <></>
                     }

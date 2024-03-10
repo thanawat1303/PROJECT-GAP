@@ -15,7 +15,7 @@ $widthHeadDetail : 90px;
 
         .doctor-detail {
             display: flex;
-            justify-content: start;
+            justify-content: flex-start;
             align-items: center;
             width: calc(100% - 90px);
             .img-doctor {
@@ -663,7 +663,7 @@ $widthHeadDetail : 90px;
 
             .bt-manage {
                 flex-direction: row;
-                justify-content: end;
+                justify-content: flex-end;
                 margin-top: 10px;
                 // margin-right: 0px;
 

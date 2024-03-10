@@ -1,0 +1,138 @@
+.data-list-content-page {
+    #select-convert-farmer {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        width: 250px;
+        height: 40%;
+        min-width: 250px;
+        min-height: 250px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0px 4px 4px rgb(176, 176, 176);
+    
+        .close {
+            position: absolute;
+            right: -1.5em;
+            top: -1.5em;
+            background-color: white;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+        }
+
+        .search {
+            display: flex;
+            padding-top: 10px;
+            height: 15%;
+            input {
+                font-family: Sans-font;
+                font-size: 18px;
+                background-color: #22C7A9;
+                border: 0;
+                outline: 0;
+                font-weight: 900;
+                color: white;
+                border-radius: 15px;
+                padding:0px 5px;
+            }
+
+            input::placeholder {
+                color: white;
+            }
+        }
+
+        .body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0px;
+            padding-bottom: 0;
+            height: 80%;
+            font-size: 30px;
+            font-weight: 900;
+            font-family: Sans-font;
+            
+            .list-select-convert {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                height: 85%;
+                overflow-y: scroll;
+                padding: 5px 5px;
+                section.list-convet:hover {
+                    background-color: #6ad7c375;
+                }
+                section.list-convet {
+                    display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    width: 100%;
+                    margin: 5px 0px;
+                    padding: 2px;
+                    box-shadow: 0px 2px 2px gray;
+                    border-radius: 10px;
+                    cursor: pointer;
+
+                    .img {
+                        display: flex;
+                        width: 30%;
+                        img {
+                            border-radius: 10px;
+                            width: 100%;
+                        }
+                    }
+    
+                    .detail {
+                        display: flex;
+                        flex-direction: column;
+                        width: 70%;
+                        padding-left: 10px;
+    
+                        span {
+                            font-size: 15px;
+                            font-weight: 900;
+                            font-family: Sans-font;
+                        }
+    
+                        div {
+                            font-size: 15px;
+                            font-weight: 500;
+                        }
+                    }
+                }
+
+                section.list-convet[select=""] {
+                    background-color: #6ad7c3;
+                }
+            }
+
+            .bt {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                // height: 15%;
+                width: 100%;
+                background-color: #6ad7c3;
+                padding: 4px 0px;
+                border-radius: 10px;
+
+                button {
+                    color: white;
+                    font-weight: 900;
+                    font-size: 17px;
+                    font-family: Sans-font;
+                    border-radius: 15px;
+                    background-color: #199d85;
+                    border: 0;
+                    outline: 0;
+                    box-shadow: 0px 2px 2px #0f6e5d;
+                }
+            }
+        }
+    }
+}

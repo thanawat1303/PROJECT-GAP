@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import liff from "@line/liff"
 
+import "../style/camera.scss"
+import { clientMo } from "./moduleClient";
+
+import "../style/moduleStyle.scss"
+
+import { ThaiDatePicker } from "thaidatepicker-react";
+
 const MapsJSX = ({lat , lng , w , h}) => {
     const [latitude , setLag] = useState(0)
     const [longtitude , setLng] = useState(0)
@@ -10,7 +17,7 @@ const MapsJSX = ({lat , lng , w , h}) => {
         setLng(lng)
     } , [lat , lng])
     return(
-        <iframe src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_API_KEY_MAP}&q=${latitude},${longtitude}&zoom=18&maptype=satellite`} 
+        <iframe src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_APP_KEY_MAP}&q=${latitude},${longtitude}&zoom=18&maptype=satellite`} 
            frameBorder={0} width={w} height={h} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
     )
@@ -134,8 +141,6 @@ const useLiff = (idLiff) => {
     return [init , Liff];
 }
 
-import "../style/camera.scss"
-import { clientMo } from "./moduleClient";
 const Camera = (props) => { // ยังไม่เสร็จ
     const [StatusCamera , setStatus] = useState(false)
     const [BodyCamera , setBody] = useState(<></>)
@@ -248,8 +253,6 @@ const ResizeImg = (file , MaxSize) => {
     })
 }
 
-
-import "../style/moduleStyle.scss"
 const OpenImageMax = ({img , Ref , setPopup}) => {
     const [getRatio , setRatio] = useState("")
     const RefImg = useRef()
@@ -375,7 +378,7 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
         setstate(true)
     }
     return (
-        <Report-Dom ref={Control} style={{
+        <report-dom ref={Control} style={{
             display: "flex" ,
             justifyContent : "center",
             alignItems:"center",
@@ -391,7 +394,7 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
             top : 0,
             transition : "0.5s opacity , 0.5s visibility , 0.5s z-index"
         }}>
-            <Body-Report style={{
+            <body-report style={{
                 display: "flex" ,
                 justifyContent : "center",
                 alignItems:"center",
@@ -399,10 +402,10 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
                 backgroundColor: "transparent",
                 // boxShadow : "0px 0px 15px green",
             }}>
-                <Text-Report>
+                <text-report>
                     {Text ? state ? Text : "กำลังตรวจสอบ" : "กำลังตรวจสอบ"}
-                </Text-Report>
-                <Status-Report style={{
+                </text-report>
+                <status-report style={{
                     display : "flex",
                     justifyContent : "center",
                     alignItems:"center",
@@ -437,8 +440,8 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
                     }}>
                         <Loading size={sizeLoad} border={BorderLoad} color={color} animetion={Open}/>
                     </div>
-                </Status-Report>
-                <BoxButton-Report>
+                </status-report>
+                <box-button-report>
                     <button
                         style={{
                             border : "0",
@@ -447,9 +450,9 @@ const ReportAction = ({Open , Text , Status , setText , setStatus , setOpen , si
                             transition : "0.5s opacity , 0.5s visibility"
                         }}
                         onClick={action ?? confirm}>ตกลง</button>
-                </BoxButton-Report>
-            </Body-Report>
-        </Report-Dom>
+                </box-button-report>
+            </body-report>
+        </report-dom>
     )
 }
 
@@ -609,11 +612,22 @@ const SetMaxLength = (e , setQty , max) => {
 
 const DateSelect = ({RefDate , Value = "" , methodCheckValue , 
 Ref = {
-    DayCK : useRef() , 
-    MountCK : useRef() , 
-    YearCK : useRef()
+    DayCK : null , 
+    MountCK : null , 
+    YearCK : null
 }}) => {
     {/* ใน server ทดลอง เดือนจะไม่ตรง แต่ใน  server จริง จะตรง ไม่จำเป็นต้องแก้หากเดือนเพี้ยน */}
+
+    RefDate = {
+        DayCK : useRef() , 
+        MountCK : useRef() , 
+        YearCK : useRef()
+    }
+
+    Ref.DayCK = Ref.DayCK ?? RefDate.DayCK
+    Ref.MountCK = Ref.MountCK ?? RefDate.MountCK
+    Ref.YearCK = Ref.YearCK ?? RefDate.YearCK
+
     const Mount = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
     const YearCurrent = new Date().getFullYear()
 
@@ -652,9 +666,9 @@ Ref = {
     //                         new Date(Value) != "Invalid Date" ? 
     //                             [new Date(Value).getFullYear() , new Date(Value).getMonth() + 1 , new Date(Value).getDate()] 
     //                         : "";
-    //     Ref.DayCK.current.value = DefaultDate[2] ? DefaultDate[2] : ""
-    //     Ref.MountCK.current.value = DefaultDate[1] ? parseInt(DefaultDate[1]) - 1 : ""
-    //     Ref.YearCK.current.value = DefaultDate[0] ? DefaultDate[0] : ""
+    //     RefDate.DayCK.current.value = DefaultDate[2] ? DefaultDate[2] : ""
+    //     RefDate.MountCK.current.value = DefaultDate[1] ? parseInt(DefaultDate[1]) - 1 : ""
+    //     RefDate.YearCK.current.value = DefaultDate[0] ? DefaultDate[0] : ""
 
     //     setDefault(DefaultDate)
     //     console.log(DefaultDate , Value)
@@ -705,8 +719,8 @@ Ref = {
         getReady ?
         <div className="date-select">
             { getDay.length !== 0 ?
-            <select className="list-date-select" defaultValue={getDefault[2] ?? ""} ref={Ref.DayCK} onChange={(e)=>{
-                ChangeDate(e.target.value , Ref.MountCK.current.value , Ref.YearCK.current.value)
+            <select className="list-date-select" defaultValue={getDefault[2] ?? ""} ref={RefDate.DayCK} onChange={(e)=>{
+                ChangeDate(e.target.value , RefDate.MountCK.current.value , RefDate.YearCK.current.value)
             }}>
                 <option value={""}>วันที่</option>
                 { 
@@ -716,9 +730,9 @@ Ref = {
                 }
             </select> : <></>
             }
-            <select className="list-date-select" defaultValue={getDefault[1] ?? ""} ref={Ref.MountCK} onChange={(e)=>{
-                SelectSetDay(e.target.value , Ref.YearCK.current.value)
-                ChangeDate(Ref.DayCK.current.value , e.target.value , Ref.YearCK.current.value)
+            <select className="list-date-select" defaultValue={getDefault[1] ?? ""} ref={RefDate.MountCK} onChange={(e)=>{
+                SelectSetDay(e.target.value , RefDate.YearCK.current.value)
+                ChangeDate(RefDate.DayCK.current.value , e.target.value , RefDate.YearCK.current.value)
             }}>
                 <option value={""}>เดือน</option>
                 { 
@@ -729,9 +743,9 @@ Ref = {
                     ) 
                 }
             </select>
-            <select className="list-date-select" defaultValue={getDefault[0] ?? ""} ref={Ref.YearCK} onChange={(e)=>{
-                SelectSetDay(Ref.MountCK.current.value , e.target.value)
-                ChangeDate(Ref.DayCK.current.value , Ref.MountCK.current.value , e.target.value)
+            <select className="list-date-select" defaultValue={getDefault[0] ?? ""} ref={RefDate.YearCK} onChange={(e)=>{
+                SelectSetDay(RefDate.MountCK.current.value , e.target.value)
+                ChangeDate(RefDate.DayCK.current.value , RefDate.MountCK.current.value , e.target.value)
             }}>
                 <option disabled value={""}>ปี</option>
                 { 
@@ -745,8 +759,6 @@ Ref = {
     )
 }
 
-
-import { ThaiDatePicker } from "thaidatepicker-react";
 const DatePickerThai = ({defaultDate = "" , offsetQtyDate = undefined , refIn , onInputIn = null , className = "" , classNameMain = ""}) => {
     const RefDatePicker = useRef()
     const [selectedDate, setSelectedDate] = useState(defaultDate ? new Date(defaultDate).toString() != 'Invalid Date' ? defaultDate : new Date().toISOString() : new Date().toISOString());

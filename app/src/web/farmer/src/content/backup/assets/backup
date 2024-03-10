@@ -1,0 +1,53 @@
+.row {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100vw;
+            .frame-menu {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                border-radius: 15px;
+                padding: 10px;
+                box-shadow: 0px 4px 4px rgb(179, 179, 179);
+                .img {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 25vw;
+                    height: 25vw;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    // background-size:;
+                    img {
+                        height: 100%;
+                    }
+                }
+
+                span {
+                    margin-top: 10px;
+                    font-family: Sans-font;
+                    font-size: 4vw;
+                    text-align: center;
+                    font-weight: 900;
+                    width: 28vw;
+                }
+            }
+
+            .frame-plant {
+                background: linear-gradient(180deg , rgba(0, 255, 63, 0.35) , white);
+            }
+
+            .frame-ferti {
+                background: linear-gradient(180deg , #ffe5a1 , white);
+            }
+
+            .frame-chemi {
+                background: linear-gradient(180deg , #ffa2a2 , white);
+            }
+
+            .frame-success {
+                background: linear-gradient(180deg , #c070ff , white);
+            }
+        }

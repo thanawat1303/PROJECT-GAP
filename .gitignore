@@ -2,6 +2,7 @@ node_modules
 package-lock.json
 testSetting
 assets/img/doctor/report/*.jpg
+build
 .env
 # /package.json
 # package.json

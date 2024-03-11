@@ -60,6 +60,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
 
     app.use(cors({
         origin : [
+            `http://${process.env.REACT_APP_API_LOCAL}:3001`, 
             `http://${process.env.REACT_APP_API_LOCAL}:3002`, 
             `http://${process.env.REACT_APP_API_LOCAL}:3003`, 
             `http://${process.env.REACT_APP_API_LOCAL}:3004`, 
@@ -85,7 +86,7 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
     app.use(express.static('build/farmer'))
 
     // router api url
-    if(process.argv[2] === process.env.BUILD) router(app)
+    if(process.argv[2] === process.env.BUILD || process.argv[2] === "router") router(app)
 
     apiAdmin(app , db , apifunc , HOST_SSL , dbpackage , listDB , io , LINE)
     apiDoctor(app , db , apifunc , HOST_SSL , dbpackage , listDB , UrlNgrok , io , LINE)

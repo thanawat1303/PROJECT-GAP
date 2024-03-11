@@ -153,7 +153,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   })
 
   app.post('/api/admin/add' , async (req , res)=>{
-    if(req.body['id_doctor'] && req.body['passwordDT'] && req.body['passwordAd'] && (req.hostname == HOST_CHECK || !HOST_CHECK)) {
+    if(req.body['id_doctor'] && req.body['passwordDT'] && req.body['passwordAd']) {
         
       let username = req.session.user_admin
       let password = req.body['passwordAd']

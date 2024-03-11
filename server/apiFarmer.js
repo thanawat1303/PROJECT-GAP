@@ -7,7 +7,7 @@ const RichHouse = process.env.RICH_HOUSE
 const {Server} = require('socket.io')
 const io = new Server()
 
-module.exports = function apiFarmer (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket = io , LINE = line) {
+module.exports = function apiFarmer (app , Database , apifunc , dbpacket , listDB , socket = io , LINE = line) {
 
     app.post('/api/farmer/sign' , async (req , res)=>{
         if(req.session.user_doctor != undefined || req.session.pass_doctor != undefined) {

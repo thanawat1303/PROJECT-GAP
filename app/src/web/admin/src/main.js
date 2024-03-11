@@ -32,7 +32,7 @@ const MainAdmin = ({socket}) => {
     return (
         <div 
             // axial={Responsive} 
-            id="rule-admin" 
+            id="role-admin" 
             style={{
                 height : "100%",
                 width : "100%"

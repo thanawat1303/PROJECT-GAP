@@ -1,7 +1,7 @@
 require('dotenv').config().parsed
 const axios = require('axios').default;
 
-module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , socket , line) {
+module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB , socket , line) {
   app.post('/api/admin/check' , (req , res)=>{
     res.redirect('/api/admin/auth');
   })
@@ -402,7 +402,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   })
 
   app.post('/api/admin/data/insert' , async (req , res)=>{
-    if(req.body.passwordAd && req.body.type && req.hostname == HOST_CHECK) {
+    if(req.body.passwordAd && req.body.type) {
         
       let username = req.session.user_admin
       let password = req.body.passwordAd

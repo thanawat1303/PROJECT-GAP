@@ -6,7 +6,7 @@ const {Server} = require('socket.io')
 const io = new Server()
 const Report = require("./reportToAdmin")
 
-module.exports = function Messaging (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io) {
+module.exports = function Messaging (app , Database , apifunc , dbpacket , listDB , UrlApi , socket = io) {
 
     app.post('/messageAPI' , async (req , res)=>{
         if(req.body.events.length > 0) {

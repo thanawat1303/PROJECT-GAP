@@ -10,7 +10,7 @@ const io = new Server()
 
 const RichSign = process.env.RICH_SIGN
 const RichHouse = process.env.RICH_HOUSE
-module.exports = function apiDoctor (app , Database , apifunc , HOST_CHECK , dbpacket , listDB , UrlApi , socket = io , Line = LINE) {
+module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listDB , UrlApi , socket = io , Line = LINE) {
 
     app.post('/api/doctor/check' , (req , res)=>{
         if(apifunc.authCsurf("doctor" , req , res)) res.redirect('/api/doctor/auth')

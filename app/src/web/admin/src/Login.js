@@ -3,6 +3,7 @@ import {clientMo}  from "../../../assets/js/moduleClient";
 import './assets/style/Login.scss'
 
 import Admin from "./Admin";
+import env from "../../../env";
 
 const Login = ({setBodyFileMain , state = false , socket}) => {
 // this.props.main == Main app
@@ -80,7 +81,7 @@ const Login = ({setBodyFileMain , state = false , socket}) => {
     }
 
     return (
-        <div style={{backgroundImage : "url('/ดอย.jpg')"}} onLoad={()=>clientMo.unLoadingPage()} ref={Body} className="login-admin">
+        <div style={{backgroundImage : `url(${env.Background})`}} onLoad={()=>clientMo.unLoadingPage()} ref={Body} className="login-admin">
             <form ref={Form} autoComplete="off" onSubmit={submitFrom}>
                 <div className="Logo-App">
                     <img src="/logo2.png"></img>

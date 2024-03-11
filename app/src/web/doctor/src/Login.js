@@ -4,6 +4,7 @@ import './assets/style/Login.scss'
 
 import Doctor from "./Doctor";
 import { PatternCheck, PopupDom, useLiff } from "../../../assets/js/module";
+import env from "../../../env";
 
 const Login = ({setMain , socket , isClick = 0}) => {
     // const [Body , setBody] = useState(<></>)
@@ -136,7 +137,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
     return (
         <>
             <PopupDom Ref={Personal} Body={formPersonal} zIndex={5} />
-            <div style={{backgroundImage : "url('/ดอย.jpg')"}} onLoad={()=>clientMo.unLoadingPage()} ref={Body} className="login-doctor">
+            <div style={{backgroundImage : `url(${env.Background})`}} onLoad={()=>clientMo.unLoadingPage()} ref={Body} className="login-doctor">
                 <form ref={Form} autoComplete="off" onSubmit={submitFrom}>
                     <div className="Logo-App">
                         <img src="/logo2.png"></img>

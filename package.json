@@ -67,6 +67,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "resolve": "^1.20.0",
     "resolve-url-loader": "^4.0.0",
+    "sass": "^1.71.1",
     "sass-loader": "^12.3.0",
     "semver": "^7.3.5",
     "sheetjs-style": "^0.15.8",
@@ -91,7 +92,6 @@
     "server-admin": "node scripts/start.js admin",
     "server-doctor": "node scripts/start.js doctor",
     "server-farmer": "node scripts/start.js farmer",
-    
     "build": "node scripts/build.js admin && node scripts/build.js doctor && node scripts/build.js farmer",
     "test": "node scripts/test.js",
     "server": "pm2 start server/server.js -- deploy",

@@ -7,7 +7,7 @@ import './assets/style/main.scss'
 
 const MainAdmin = ({socket}) => {
     const [body , setBody] = useState(<></>)
-    const [Reponsive , setRepon] = useState("")
+    const [Responsive , setRespon] = useState("")
 
     useEffect(()=>{
         CheckSize()
@@ -25,12 +25,12 @@ const MainAdmin = ({socket}) => {
     const CheckSize = () => {
         let ScreenH = window.innerHeight
         let ScreenY = window.innerHeight
-        if(ScreenH < ScreenY) setRepon("horizontal")
-        else setRepon("vertical")
+        if(ScreenH < ScreenY) setRespon("horizontal")
+        else setRespon("vertical")
     }
 
     return (
-        <div axial={Reponsive} id="rule-admin" style={{
+        <div axial={Responsive} id="rule-admin" style={{
             height : "100%",
             width : "100%"
         }}>

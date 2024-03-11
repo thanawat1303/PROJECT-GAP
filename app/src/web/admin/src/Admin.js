@@ -28,8 +28,6 @@ const Admin = ({setBodyFileMain , socket}) => {
 
     const [Responsive , setResponsive] = useState(window.innerWidth)
 
-    const [getLoad , setLoad] = useState(true)
-
     useEffect(()=>{
 
         ChkPath("")

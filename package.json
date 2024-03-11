@@ -88,9 +88,9 @@
     "workbox-webpack-plugin": "^6.4.1"
   },
   "scripts": {
-    "start-admin": "set PORT=3002 && node scripts/start.js admin",
-    "start-doctor": "set PORT=3003 && node scripts/start.js doctor",
-    "start-farmer": "set PORT=3004 && node scripts/start.js farmer",
+    "server-admin": "node scripts/start.js admin",
+    "server-doctor": "node scripts/start.js doctor",
+    "server-farmer": "node scripts/start.js farmer",
     
     "build": "node scripts/build.js admin && node scripts/build.js doctor && node scripts/build.js farmer",
     "test": "node scripts/test.js",

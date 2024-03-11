@@ -141,7 +141,6 @@ const RichMenu = {
 // RichMenu.DeleteRichMenu.All()
 // RichMenu.createRichLogin()
 // RichMenu.createRichAddFarm()
-// RichMenu.GetRichMenu()
 
 // RichMenu.setDefault("richmenu-29008f2338b228f0e50630151d38c29e")
 

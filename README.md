@@ -121,15 +121,34 @@
 ### Start Server
 
    - Development
-      - First step , start host of application by ngrok
+      - start ngrok (หากจะทดสอบ line liff)
          ```
          npm run server-ngrok
          ```
-      - Next step , start application
+      - start server react admin , doctor , farmer
+        - admin
+          ```
+          npm run server-admin
+          ```
+        - doctor
+          ```
+          npm run server-doctor
+          ```
+        - farmer
+          ```
+          npm run server-farmer
+          ```
+      - start API
          ```
          npm run server-dev
          ```
-   
+
+   - Development test after build
+      - start API
+         ```
+         npm run server-dev-router
+         ```
+
    - Product pm2
       - start
          ```

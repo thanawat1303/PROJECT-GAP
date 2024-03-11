@@ -5,7 +5,6 @@
     "PASSWORD_DBDEV" : "",
     "DATABASE_SER" : "",
     "KEY_SESSION" : "",
-    "TIME_COKKIE" : 86400000,
     "channelAccessToken" : "",
     "channelSecret" : "",
     "cookie" : "",
@@ -20,5 +19,8 @@
     "REACT_APP_KEY_MAP" : "",
     "REACT_APP_LINE_SIGNUP" : "",
     "REACT_APP_LINE_HOUSE" : "",
-    "REACT_APP_LINE_FORM" : ""
+    "REACT_APP_LINE_FORM" : "",
+    "ADMIN_PORT" : "",
+    "DOCTOR_PORT" : "",
+    "FARMER_PORT" : ""
 }

@@ -10,30 +10,34 @@ const MainAdmin = ({socket}) => {
     const [Responsive , setRespon] = useState("")
 
     useEffect(()=>{
-        CheckSize()
-        window.addEventListener("resize" , CheckSize)
+        // CheckSize()
+        // window.addEventListener("resize" , CheckSize)
         clientMo.post('/api/admin/check').then((context)=>{
             if(context) setBody(<Admin setBodyFileMain={setBody} socket={socket}/>)
             else setBody(<Login setBodyFileMain={setBody} socket={socket}/>)
         })
 
-        return()=>{
-            window.removeEventListener("resize" , CheckSize)
-        }
+        // return()=>{
+        //     window.removeEventListener("resize" , CheckSize)
+        // }
     },[])
 
-    const CheckSize = () => {
-        let ScreenH = window.innerHeight
-        let ScreenY = window.innerHeight
-        if(ScreenH < ScreenY) setRespon("horizontal")
-        else setRespon("vertical")
-    }
+    // const CheckSize = () => {
+    //     let ScreenH = window.innerHeight
+    //     let ScreenY = window.innerHeight
+    //     if(ScreenH < ScreenY) setRespon("horizontal")
+    //     else setRespon("vertical")
+    // }
 
     return (
-        <div axial={Responsive} id="rule-admin" style={{
-            height : "100%",
-            width : "100%"
-        }}>
+        <div 
+            // axial={Responsive} 
+            id="rule-admin" 
+            style={{
+                height : "100%",
+                width : "100%"
+            }}
+        >
             {body}
         </div>
     )

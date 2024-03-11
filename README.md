@@ -82,6 +82,7 @@
       "resolve": "^1.20.0",
       "resolve-url-loader": "^4.0.0",
       "sass-loader": "^12.3.0",
+      "sass": "^1.71.1",
       "semver": "^7.3.5",
       "sheetjs-style": "^0.15.8",
       "socket.io": "^4.7.4",

@@ -1,5 +1,7 @@
 {
     "HOST" : "localhost",
+    "GENERATE_SOURCEMAP" : false,
+    "BUILD" : "deploy",
     "DATABASE_DEV" : "",
     "USER_DBDEV" : "",
     "PASSWORD_DBDEV" : "",
@@ -12,7 +14,6 @@
     "pathKeyFile" : "",
     "RICH_SIGN" : "",
     "RICH_HOUSE" : "",
-    "BUILD" : "deploy",
     "REACT_APP_API_LOCAL" : "localhost",
     "REACT_APP_API_PUBLIC" : "",
     "REACT_APP_API_PORT" : "",

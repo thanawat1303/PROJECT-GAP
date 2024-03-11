@@ -125,6 +125,10 @@
          ```
          npm run server-ngrok
          ```
+      - start API
+         ```
+         npm run server-dev
+         ```
       - start server react admin , doctor , farmer
         - admin
           ```
@@ -138,10 +142,6 @@
           ```
           npm run server-farmer
           ```
-      - start API
-         ```
-         npm run server-dev
-         ```
 
    - Development test after build
       - start API

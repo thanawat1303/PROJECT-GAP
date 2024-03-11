@@ -7,7 +7,7 @@ import './assets/style/main.scss'
 
 const MainAdmin = ({socket}) => {
     const [body , setBody] = useState(<></>)
-    const [Responsive , setRespon] = useState("")
+    // const [Responsive , setRespon] = useState("")
 
     useEffect(()=>{
         // CheckSize()

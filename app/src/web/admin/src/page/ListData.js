@@ -59,13 +59,13 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
         const ObjectData = 
                 HrefPage.get().split("?")[0] === "list" ? await clientMo.post("/api/admin/doctor/list" , {
                     typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1) , 
-                    limit : Limit,
+                    limit : Limit ? Limit : 10,
                     startRow : StartRow,
                     textSearch : textSearch
                 }) :
                 HrefPage.get().split("?")[0] === "data" ? await clientMo.post("/api/admin/data/list" , {
                     type : status.status,
-                    limit : Limit,
+                    limit : Limit ? Limit : 10,
                     startRow : StartRow,
                     textSearch : textSearch
                 }) : null

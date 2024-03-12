@@ -20,7 +20,7 @@ const PopupConfirm = ({Ref , setPopup , session , Data , RowPresent , setLimit ,
             setLoading(true)
             const result = await clientMo.post("/api/doctor/data/insert" , Data)
             if(result === "insert") {
-                setLimit(RowPresent)
+                setLimit(RowPresent ? RowPresent : 10)
                 setReload(!Reload)
                 setCloseInsert()
                 close()

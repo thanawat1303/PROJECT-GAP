@@ -20,7 +20,7 @@ const apifunc = {
 
         const ORDER = roleAuth == "admin" ? "" : roleAuth == "acc_doctor" ? "ORDER BY status_delete ASC" : "";
         connectDB.query(
-          `SELECT * FROM ${roleAuth} WHERE ${usernameDB} = ? AND ${passwordDB}=SHA2( ? , 256) ${ORDER}`,
+          `SELECT * FROM ${roleAuth} WHERE BINARY ${usernameDB} = ? AND ${passwordDB}=SHA2( ? , 256) ${ORDER}`,
           [username, password],
           (err, result) => {
             if (err) {

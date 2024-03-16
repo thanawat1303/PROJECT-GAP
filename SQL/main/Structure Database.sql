@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `acc_doctor` (
   `id_table_doctor` int NOT NULL,
-  `id_doctor` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `id_doctor` varchar(20) NOT NULL,
   `uid_line_doctor` varchar(50) NOT NULL,
   `password_doctor` varchar(256) NOT NULL,
   `fullname_doctor` varchar(50) NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE `acc_farmer` (
 
 CREATE TABLE `admin` (
   `id` int NOT NULL,
-  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL,
   `phone` varchar(20) NOT NULL,
   `address` point NOT NULL

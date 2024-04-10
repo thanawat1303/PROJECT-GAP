@@ -10,7 +10,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   app.post('/api/admin/doctor/list' , async (req , res)=>{
     const username = req.session.user_admin
     const password = req.session.pass_admin
-  
+    
     if(username === '' || password === '') {
       res.redirect('/api/logout')
       return 0
@@ -53,6 +53,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       }
 
     } catch(err) {
+      console.log(err)
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')
@@ -402,9 +403,10 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
   })
 
   app.post('/api/admin/data/insert' , async (req , res)=>{
-    if(req.body.passwordAd && req.body.type && req.hostname == HOST_CHECK) {
-        
+   
+    if(req.body.passwordAd && req.body.type ) {
       let username = req.session.user_admin
+      console.log ( req.session )
       let password = req.body.passwordAd
   
       if(username === '') {
@@ -425,6 +427,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
             `
             ,[ data.name ], (err , result)=>{
             if(!err) {
+              console.log ( auth)
               if(!result.length) {
                 if(From) {
                   con.query(`
@@ -469,6 +472,7 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
           })
         }
       } catch (err) {
+        console.log (err)
         if(err == "not pass") {
           con.end()
           res.send("incorrect")
@@ -738,9 +742,9 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
       res.redirect('/api/logout')
       return 0
     }
-  
+
     let con = Database.createConnection(listDB)
-  
+
     // Database.resume()
     try {
       let auth = await apifunc.auth(con , username , password , res , "admin")
@@ -749,8 +753,10 @@ module.exports = function apiAdmin (app , Database , apifunc , HOST_CHECK , dbpa
         req.session.user_admin = username
         req.session.pass_admin = password
         res.send('1')
+       
       }
     } catch (err) {
+      console.log(err)
       con.end()
       if(err == "not pass") {
         res.redirect('/api/logout')

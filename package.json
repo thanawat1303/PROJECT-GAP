@@ -91,7 +91,6 @@
     "server-admin": "node scripts/start.js admin",
     "server-doctor": "node scripts/start.js doctor",
     "server-farmer": "node scripts/start.js farmer",
-    
     "build": "node scripts/build.js admin && node scripts/build.js doctor && node scripts/build.js farmer",
     "test": "node scripts/test.js",
     "server": "pm2 start server/server.js -- deploy",

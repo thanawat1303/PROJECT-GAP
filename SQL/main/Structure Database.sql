@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `acc_doctor` (
-  `id_table_doctor` int NOT NULL,
+  `id_table_doctor` varchar(10) NOT NULL,
   `id_doctor` varchar(20) NOT NULL,
   `uid_line_doctor` varchar(50) NOT NULL,
   `password_doctor` varchar(256) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE `acc_doctor` (
 CREATE TABLE `acc_farmer` (
   `id_table` int NOT NULL,
   `id_farmer` varchar(50) NOT NULL,
-  `id_table_doctor` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `id_table_doctor` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `fullname` varchar(50) NOT NULL,
   `img` longblob NOT NULL,
   `station` varchar(50) NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE `admin` (
 
 CREATE TABLE `because_delete` (
   `id` int NOT NULL,
-  `id_table_doctor` varchar(50) NOT NULL,
+  `id_table_doctor` varchar(10) NOT NULL,
   `id_admin` varchar(50) NOT NULL,
   `because_text` longtext NOT NULL,
   `date` varchar(50) NOT NULL
@@ -100,7 +100,7 @@ CREATE TABLE `because_delete` (
 
 CREATE TABLE `because_status` (
   `id` int NOT NULL,
-  `id_table_doctor` varchar(50) NOT NULL,
+  `id_table_doctor` varchar(10) NOT NULL,
   `id_admin` varchar(50) NOT NULL,
   `because_text` longtext NOT NULL,
   `date` varchar(50) NOT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE `check_form_detail` (
   `id_plant` varchar(50) NOT NULL,
   `status_check` int NOT NULL,
   `note_text` longtext NOT NULL,
-  `id_table_doctor` int NOT NULL,
+  `id_table_doctor` varchar(10) NOT NULL,
   `date_check` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -134,7 +134,7 @@ CREATE TABLE `check_plant_detail` (
   `status_check` int NOT NULL,
   `state_check` tinyint(1) NOT NULL,
   `note_text` longtext NOT NULL,
-  `id_table_doctor` int NOT NULL,
+  `id_table_doctor` varchar(10) NOT NULL,
   `date_check` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -346,7 +346,7 @@ CREATE TABLE `report_detail` (
   `id` int NOT NULL,
   `id_plant` varchar(50) NOT NULL,
   `report_text` longtext NOT NULL,
-  `id_table_doctor` int NOT NULL,
+  `id_table_doctor` varchar(10) NOT NULL,
   `date_report` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `image_path` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -388,7 +388,7 @@ CREATE TABLE `success_detail` (
   `id_success` varchar(100) NOT NULL,
   `id_plant` varchar(50) NOT NULL,
   `type_success` tinyint(1) NOT NULL,
-  `id_table_doctor` int NOT NULL,
+  `id_table_doctor` varchar(10) NOT NULL,
   `date_of_doctor` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_of_farmer` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -539,12 +539,6 @@ ALTER TABLE `success_detail`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `acc_doctor`
---
-ALTER TABLE `acc_doctor`
-  MODIFY `id_table_doctor` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `acc_farmer`

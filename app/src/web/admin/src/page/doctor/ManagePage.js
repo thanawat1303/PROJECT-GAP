@@ -41,7 +41,7 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
     } , [])
 
     const FecthProfile = async () => {
-        let profile = await clientMo.post("/api/admin/doctor/get" , {id_table : id_table})
+        let profile = await clientMo.get("/api/admin/doctor/" + id_table)
         profile = JSON.parse(profile).map((val)=>val)[0]
         setProfile({
             id_table : profile.id_table_doctor,

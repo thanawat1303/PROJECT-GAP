@@ -1,4 +1,4 @@
-import React , {useEffect, useRef, useState} from "react";
+import React , {useContext, useEffect, useRef, useState} from "react";
 import { clientMo } from "../../../assets/js/moduleClient";
 import Login from "./Login";
 
@@ -10,8 +10,12 @@ import DesktopNev from "./navTop/desktop";
 import SessionOut from "./sesionOut";
 import PageTemplate from "./page/PageTemplate";
 import { HrefData, TabLoad } from "../../../assets/js/module";
-
+import { AdminProvider } from "./main";
+import Locals from "../../../locals";
 const Admin = ({setBodyFileMain , socket}) => {
+
+    const { lg } = useContext(AdminProvider)
+
     const [body , setBody] = useState(<div></div>)
     const [TabMenuTop , setTabMenu] = useState(<></>)
     const [session , setSession] = useState(<div></div>)
@@ -131,7 +135,7 @@ const Admin = ({setBodyFileMain , socket}) => {
                     <>
                     <div className="text-cover">
                         <div className="icon">
-                            <span>ยินดีต้อนรับ</span>
+                            <span>{Locals[lg]["welcome"]}</span>
                             <img src="/Logo-white.png"></img>
                         </div>
                         <div className="status">
@@ -150,8 +154,8 @@ const Admin = ({setBodyFileMain , socket}) => {
                     <>
                     <div className="text-icon-cover">
                         <div className="text">
-                            <span>ยินดีต้อนรับ</span>
-                            <span style={{fontWeight : 900}}>ผู้ดูแลระบบ</span>
+                            <span>{Locals[lg]["welcome"]}</span>
+                            <span style={{fontWeight : 900}}>{Locals[lg]["admin"]}</span>
                         </div>
                     </div>
                     <div className="frame-image-cover">

@@ -1,5 +1,6 @@
 const dbFunc = require('./dbConfig')
 const crypto = require("crypto")
+const { v4 } = require("uuid")
 
 const ErrorDB = (connectDB, err, res) => {
   dbFunc.dbErrorReturn(connectDB, err, res)
@@ -42,6 +43,11 @@ const apifunc = {
     });
   },
 
+  generateID_TABLE : (length) => {
+    const uuID = v4()
+    return crypto.createHmac("sha256" , 'gap').update(uuID).digest("base64").slice(0 , length)
+  },
+
   generateID : (length , type = "text") => {
       let result = '';
       let charText = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -69,7 +75,7 @@ const apifunc = {
     const headers = request.headers
     const patternCsurf = `${headers["user-agent"]} ${headers["sec-ch-ua"]} ${headers["x-forwarded-for"]} ${headers["sec-ch-ua-platform"]}`
     const modiText = `${patternCsurf}`.replaceAll("undefined" , "").replaceAll(" " , "").trim()
-    const hashedText = crypto.createHmac('sha256' , process.env.KEY_SESSION).update(modiText).digest('hex')
+    const hashedText = crypto.createHmac('sha256' , process.env.KEY_SESSION).update(modiText).digest('base64')
     return hashedText
   },
 

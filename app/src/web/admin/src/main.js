@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {clientMo}  from "../../../assets/js/moduleClient";
 import Login from "./Login";
 import Admin from "./Admin";
 
 import './assets/style/main.scss'
 
+export const AdminProvider = createContext(null)
 const MainAdmin = ({socket}) => {
     const [body , setBody] = useState(<></>)
+    const [ getLang , setLang ] = useState("th")
     // const [Responsive , setRespon] = useState("")
 
     useEffect(()=>{
@@ -30,16 +32,21 @@ const MainAdmin = ({socket}) => {
     // }
 
     return (
-        <div 
+        <AdminProvider.Provider value={{
+            lg : getLang ,
+            setLang
+        }}>
+            <div 
             // axial={Responsive} 
-            id="role-admin" 
-            style={{
-                height : "100%",
-                width : "100%"
-            }}
-        >
-            {body}
-        </div>
+                id="role-admin" 
+                style={{
+                    height : "100%",
+                    width : "100%"
+                }}
+            >
+                {body}
+            </div>
+        </AdminProvider.Provider>
     )
 }
 

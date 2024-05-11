@@ -1,10 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import '../assets/style/page/templatePage.scss'
 import "../assets/style/page/List.scss"
 
 import ListData from "./ListData";
+import Locals from "../../../../locals";
+import { AdminProvider } from "../main";
 
 const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , session , TabOn}) => {
+    
+    const { lg } = useContext(AdminProvider)
+    
     const [StatusPage , setStatus] = useState({
         status :    HrefData.get() === "list?default" ? "default" : 
                     HrefData.get() === "list?delete" ? "delete" : 
@@ -74,14 +79,14 @@ const PageTemplate = ({socket , addHref = false , HrefData , modify , auth , ses
                 }
                 {
                 StateOnPage.status === "default" ? 
-                    <button className="bt-delete" onClick={()=>ChangeStatus("delete")}>แสดงบัญชีที่ถูกลบ</button> : 
+                    <button className="bt-delete" onClick={()=>ChangeStatus("delete")}>{Locals[lg]["account_delete"]}</button> : 
                 StateOnPage.status === "delete" ? 
-                    <button className="bt-default" onClick={()=>ChangeStatus("default")}>แสดงบัญชีที่ยังไม่ถูกลบ</button> :
+                    <button className="bt-default" onClick={()=>ChangeStatus("default")}>{Locals[lg]["account_not_delete"]}</button> :
                 
                 StateOnPage.status === "plant" ? 
-                    <button className="bt-station" onClick={()=>ChangeStatus("station")}>แสดงรายการศูนย์ส่งเสริม</button> :
+                    <button className="bt-station" onClick={()=>ChangeStatus("station")}>{Locals[lg]["station_list"]}</button> :
                 StateOnPage.status === "station" ? 
-                    <button className="bt-plant" onClick={()=>ChangeStatus("plant")}>แสดงรายการชนิดพืช</button> :
+                    <button className="bt-plant" onClick={()=>ChangeStatus("plant")}>{Locals[lg]["plant_list"]}</button> :
                 <></>
                 }
                 <div className="search">

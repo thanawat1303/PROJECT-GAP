@@ -35,7 +35,7 @@ export default class NavAdmin extends Component {
 
             })
         }
-        else if (path[1] + "/" + path[2] == 'admin/plus')
+        else if (path[1] + "/" + path[2] === 'admin/plus')
         {
             clientMo.post('/api/admin/check').then((context)=>{
                 if(context) {
@@ -67,7 +67,7 @@ export default class NavAdmin extends Component {
     selectMenu = (e , ele) => {
         e.preventDefault()
 
-        if(ele == 'account') {
+        if(ele === 'account') {
             clientMo.post('/api/admin/doctor/list').then((list)=>{
                 if(list) {
                     this.props.bodyAdmin.setState({body : <List status={1} main={this.props.main} bodyAdmin={this.props.bodyAdmin} list={list}/>})

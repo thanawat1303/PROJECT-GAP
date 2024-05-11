@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../assets/js/moduleClient";
 
 import { GetLinkUrlOfSearch, LoadOtherOffset, MapsJSX, ReportAction, TimeDiff } from "../../../../assets/js/module";
@@ -8,10 +8,14 @@ import ShowBecause from "./doctor/ShowBecause";
 import ManageDoctorPage from "./doctor/ManagePage";
 import ManageDataPage from "./data/ManagePage";
 import EditPage from "./data/EditPage";
+import Locals from "../../../../locals";
+import { AdminProvider } from "../main";
 
 const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefPage , setStateOnPage , modify , textSearch}) => {
     // const [Body , setBody] = useState(<></>)
     // const [List , setList] = useState(<></>)
+
+    const { lg } = useContext(AdminProvider)
 
     const [DataFetch , setDataFetch] = useState([])
     const [Because , setBecause] = useState(<></>)
@@ -57,7 +61,7 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
         clearInterval(getInterval)
 
         const ObjectData = 
-                HrefPage.get().split("?")[0] === "list" ? await clientMo.post("/api/admin/doctor/list" , {
+                HrefPage.get().split("?")[0] === "list" ? await clientMo.get("/api/admin/doctor/list" , {
                     typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1) , 
                     limit : Limit ? Limit : 10,
                     startRow : StartRow,
@@ -84,13 +88,13 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
             }
             
             modify(70 , 30 , 
-                ["หน้าแรก" , 
-                    (HrefPage.get().split("?")[0] === "list") ? "บัญชีเจ้าหน้าที่ส่งเสริม" : 
-                    (HrefPage.get().split("?")[0] === "data") ? "ข้อมูลเพิ่มเติม" : "" 
+                [Locals[lg]["home"] , 
+                    (HrefPage.get().split("?")[0] === "list") ? Locals[lg]["account_doctor"] : 
+                    (HrefPage.get().split("?")[0] === "data") ? Locals[lg]["information"] : "" 
                     ,
-                    (HrefPage.get().indexOf("delete") >= 0) ? "บัญชีที่ถูกลบ" : 
-                    (HrefPage.get().indexOf("plant") >= 0) ? "ชนิดพืช" :
-                    (HrefPage.get().indexOf("station") >= 0) ? "ศูนย์ส่งเสริม" : ""
+                    (HrefPage.get().indexOf("delete") >= 0) ? Locals[lg]["account_delete"] : 
+                    (HrefPage.get().indexOf("plant") >= 0) ? Locals[lg]["plant_list"] :
+                    (HrefPage.get().indexOf("station") >= 0) ? Locals[lg]["station_list"] : ""
                 ])
             setStateOnPage({status : status.status})
 
@@ -120,6 +124,18 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
         }
     }
 
+    useEffect(()=>{
+        modify(70 , 30 , 
+            [Locals[lg]["home"] , 
+                (HrefPage.get().split("?")[0] === "list") ? Locals[lg]["account_doctor"] : 
+                (HrefPage.get().split("?")[0] === "data") ? Locals[lg]["information"] : "" 
+                ,
+                (HrefPage.get().indexOf("delete") >= 0) ? Locals[lg]["account_delete"] : 
+                (HrefPage.get().indexOf("plant") >= 0) ? Locals[lg]["plant_list"] :
+                (HrefPage.get().indexOf("station") >= 0) ? Locals[lg]["station_list"] : ""
+            ])
+    } , [lg])
+
     return(
         <section className="body-list-manage">
             {
@@ -147,6 +163,7 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
 
 const ManageList = ({socket , Data , setBecause , ListCount , setListCount , TabOn , HrefPage , status , auth , RefBe , session , Fetch}) => {
     const [List , setList] = useState(<></>)
+    const { lg } = useContext(AdminProvider)
 
     useEffect(()=>{
         setList(<></>)
@@ -219,13 +236,13 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                         {
                             status.status === "default" ? 
                                 <div className="status-online">
-                                    <div className="text-online" style={ data.time_online == "online" ? {backgroundColor : "#00ff3c"} : {}}>
+                                    <div className="text-online" style={ data.time_online === "online" ? {backgroundColor : "#00ff3c"} : {}}>
                                         {
                                             data.time_online ? 
-                                            data.time_online == "online" ? "กำลังใช้งาน"
-                                            : data.time_online == "offline" ? "ปิดใช้งาน" 
-                                            : <TimeDiff DATE={parseInt(data.time_online)} DivInput={false} textPresent="ใช้งานเมื่อ "/>
-                                            : "ยังไม่ทำการเข้าระบบ"
+                                            data.time_online === "online" ? Locals[lg]["online"]
+                                            : data.time_online === "offline" ? Locals[lg]["offline"]
+                                            : <TimeDiff DATE={parseInt(data.time_online)} DivInput={false} textPresent={`${Locals[lg]["use_after"]} `}/>
+                                            : Locals[lg]["not_login"]
                                         }
                                     </div>
                                 </div> : <></>
@@ -236,15 +253,15 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                             </detail-Image>
                             <detail-data>
                                 <detail-in-fullname>
-                                    <span>{data.fullname_doctor ? data.fullname_doctor : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
+                                    <span>{data.fullname_doctor ? data.fullname_doctor : Locals[lg]["not_name"]}</span>
                                 </detail-in-fullname>
                                 <detail-in>
-                                    <span className="head-data">รหัสประจำตัว</span>
+                                    <span className="head-data">{Locals[lg]["id"]}</span>
                                     <div className="text-data">{data.id_doctor}</div>
                                 </detail-in>
                                 <detail-in>
-                                    <span className="head-data">ศูนย์</span>
-                                    <div className="text-data">{data.station ? data.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
+                                    <span className="head-data">{Locals[lg]["stationing"]}</span>
+                                    <div className="text-data">{data.station ? data.station : Locals[lg]["station_anonymous"]}</div>
                                 </detail-in>
                             </detail-data>
                         </detail-data-main>
@@ -253,7 +270,7 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                 <>
                                 <content-status because={1}>
                                     <bt-because>
-                                        <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>เหตุผล</button>
+                                        <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_account")}>{Locals[lg]["reason"]}</button>
                                     </bt-because>
                                     <bt-status onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_account")}>
                                         <div className="frame" status={data.status_account ? "1" : "0"}>
@@ -264,13 +281,13 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                                     </bt-status>
                                 </content-status>
                                 <bt-delete>
-                                    <button onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_delete")}>ลบบัญชี</button>  
+                                    <button onClick={()=>OpenConfirmDoctor(data.id_table_doctor , "status_delete")}>{Locals[lg]["delete_account"]}</button>  
                                 </bt-delete>
                                 </> : 
                                 status.status === "delete" ?
                                 <content-status because={0} delete="">
                                     <bt-because>
-                                        <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_delete")}>เหตุผล</button>
+                                        <button onClick={()=>OpenDetailManage(data.id_table_doctor , "status_delete")}>{Locals[lg]["reason"]}</button>
                                     </bt-because>
                                 </content-status> : <></>
                             }
@@ -282,14 +299,14 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                             <detail-data maxsize="" flex={status.status}>
                                 <div className="name" w={status.status}>
                                     { status.status === "plant" ?
-                                        <span className={status.status}>ชื่อพืช</span> : <></>
+                                        <span className={status.status}>{Locals[lg]["plant_name"]}</span> : <></>
 
                                     }
                                     <div className={`text-data ${status.status}`}>{data.name}</div>
                                 </div>
                                 <div className={status.status === "plant" ? "type_plant" : "location"}>
                                     {
-                                        status.status === "plant" ? <span>ประเภท</span> : <></>
+                                        status.status === "plant" ? <span>{Locals[lg]["plant_category"]}</span> : <></>
                                     }
                                     {
                                         status.status === "plant" ? <div className="text-data">{data.type_plant}</div> :
@@ -301,8 +318,8 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                             { status.status === "plant" ?
                                 <detail-data maxsize="">
                                     <div className="name">
-                                        <span className={status.status}>จำนวนวันที่จะเก็บเกี่ยว</span>
-                                        <div className={`text-data`}>{`${data.qty_harvest} วัน`}</div>
+                                        <span className={status.status}>{Locals[lg]["count_day_success"]}</span>
+                                        <div className={`text-data`}>{`${data.qty_harvest} ${Locals[lg]["day"]}`}</div>
                                     </div>
                                 </detail-data>
                                 : <></>
@@ -312,7 +329,7 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
                             <content-status because={0}>
                                 { status.status === "station" ? 
                                     <div className="edit-bt" onClick={()=>OpenEditData(data.id , status.status)}>
-                                        แก้ไข
+                                        {Locals[lg]["edit"]}
                                     </div> 
                                 : <></>
                                 }
@@ -334,13 +351,16 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
         )
         
         TabOn.addTimeOut(TabOn.end())
-        setList(doctorList.length ? doctorList : <div style={{font : "900 18px Sans-font"}}>ไม่พบข้อมูล</div>)
+        setList(doctorList.length ? doctorList : <div style={{font : "900 18px Sans-font"}}>{Locals[lg]["not_data"]}</div>)
     }
 
     return (List)
 }
 
 const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
+
+    const { lg } = useContext(AdminProvider)
+
     const [Open , setOpen] = useState(0)
     const [Text , setText] = useState("")
     const [Status , setStatus] = useState(0)
@@ -426,11 +446,11 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                     type === "default" ? await clientMo.post("/api/admin/add" , Data) :
                     type === "plant" || type === "station" ? await clientMo.post("/api/admin/data/insert" , Data) : ""
             if(result === "1") {
-                setText(`เพิ่ม${
-                            type === "default" ? "บัญชีผู้ส่งเสริม" : 
-                            type === "plant" ? "ชนิดพืช" : 
-                            type === "station" ? "ศูนย์ส่งเสริม" : ""
-                        }สำเร็จ`)
+                setText(`${lg === "th" ? Locals[lg]["add"] : `${Locals[lg]["add"]} `}${
+                            type === "default" ? Locals[lg]["__account_doctor"] : 
+                            type === "plant" ? Locals[lg]["plant_type"] : 
+                            type === "station" ? Locals[lg]["__station"] : ""
+                        }${lg === "th" ? Locals[lg]["success"] : ` ${Locals[lg]["success"]}`}`)
                 setStatus(1)
                 Cancel()
                 setTimeout(()=>{
@@ -438,15 +458,15 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                 } , 100)
             }
             else if(result === "incorrect") {
-                setText("รหัสผู้ดูแลไม่ถูกต้อง")
+                setText(Locals[lg]["admin_password_incorrect"])
                 setStatus(2)
                 pwAdmin.current.value = ""
             } else if (result === "overflow") {
-                setText(`มี${
-                            type === "default" ? "บัญชีผู้ส่งเสริม" : 
-                            type === "plant" ? "ชนิดพืช" : 
-                            type === "station" ? "ศูนย์ส่งเสริม" : ""
-                        }นี้แล้ว`)
+                setText(`${ lg === "th" ? Locals[lg]["found"] : `${Locals[lg]["found"]} ` }${
+                            type === "default" ? Locals[lg]["__account_doctor"] : 
+                            type === "plant" ? Locals[lg]["plant_type"] : 
+                            type === "station" ? Locals[lg]["__station"] : ""
+                        }`)
                 setStatus(2)
                 Cancel()
                 setTimeout(()=>{
@@ -454,7 +474,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                 } , 100)
             }
             else {
-                setText(`มีปัญหาในการเพิ่มข้อมูล`)
+                setText(Locals[lg]["error_add_data"])
                 setStatus(2)
             }
         }
@@ -515,9 +535,9 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
             <div className="body-page">
                 <span className="head">
                     {   
-                        type === "default" ? "เพิ่มบัญชีเจ้าหน้าที่ส่งเสริม" :
-                        type === "plant" ? "เพิ่มรายการชนิดพืช" :
-                        type === "station" ? "เพิ่มรายการศูนย์" : ""
+                        type === "default" ? Locals[lg]["add_doctor"] :
+                        type === "plant" ? Locals[lg]["add_plant"] :
+                        type === "station" ? Locals[lg]["add_station"] : ""
                     }
                 </span>
                 <div className="detail-data">
@@ -526,26 +546,26 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                             <span className="head-text">
                                 { 
                                     type === "default" ?
-                                        "รหัสประจำตัวผู้ส่งเสริม" :
+                                        Locals[lg]["doctor_id"] :
                                     type === "plant" ?
-                                        "ชื่อพืช" :
+                                        Locals[lg]["plant_name"] :
                                     type === "station" ?
-                                        "ชื่อศูนย์ส่งเสริม" 
+                                        Locals[lg]["station_name"] 
                                     : <></>
                                 }
                             </span>
                             <input onChange={CheckEmply} ref={RefData.Data1} 
                                     placeholder={
-                                        type === "default" ? "กรอกรหัสประจำตัว" : 
-                                        type === "plant" ? "เช่น มะเขือเทศ" :
-                                        type === "station" ? "เช่น ศูนย์โครงการหลวง" : ""
+                                        type === "default" ? Locals[lg]["please_id"] : 
+                                        type === "plant" ? Locals[lg]["exam_tomato"] :
+                                        type === "station" ? Locals[lg]["exam_royal"] : ""
                                     }></input>
                         </div>
                         { type === "plant" ?
                             <div className="field-text">
-                                <span className="head-text">ประเภทพืช</span>
+                                <span className="head-text">{Locals[lg]["__plant_category"]}</span>
                                 <select onChange={CheckEmply} ref={RefData.Data2} defaultValue={""} style={{width : "100%"}}>
-                                    <option value={""} disabled>เลือกชนิดพืช</option>
+                                    <option value={""} disabled>{Locals[lg]["select_plant_category"]}</option>
                                     <option value={"พืชผัก"}>พืชผัก</option>
                                     <option value={"สมุนไพร"}>สมุนไพร</option>
                                 </select>
@@ -558,17 +578,17 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                             <>
                                 <label>
                                     <div className="field-text">
-                                        <span className="head-text">รหัสผ่านบัญชีผู้ส่งเสริม</span>
+                                        <span className="head-text">{Locals[lg]["doctor_password"]}</span>
                                         {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/></svg> */}
-                                        <input onChange={CheckEmply} ref={RefData.Data2} placeholder="กรอกรหัสผ่าน" type="password"></input>
+                                        <input onChange={CheckEmply} ref={RefData.Data2} placeholder={Locals[lg]["please_password"]} type="password"></input>
                                     </div>
                                 </label>
                             </> :
                         type === "plant" ?
                             <label>
                                 <div className="field-text">
-                                    <span className="head-text">จำนวนวันที่จะเก็บเกี่ยว</span>
-                                    <input onChange={CheckEmply} ref={QtyDate} placeholder="เช่น 10 , 30" type="number"></input>
+                                    <span className="head-text">{Locals[lg]["count_day_success"]}</span>
+                                    <input onChange={CheckEmply} ref={QtyDate} placeholder={`${Locals[lg]["ex"]} 10 , 30`} type="number"></input>
                                 </div>
                             </label> : 
                         type === "station" ?
@@ -585,8 +605,8 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                                         </g>
                                     </svg> */}
                                     <div className="field-text">
-                                        <span className="head-text">ลิ้งค์ปักหมุดจาก Google Map</span>
-                                        <input ref={InputMap} placeholder="URL ที่ทำการปักหมุดสีแดง" type="text" onChange={CheckEmply} onInput={GenerateMap}></input>
+                                        <span className="head-text">{Locals[lg]["link_google_map"]}</span>
+                                        <input ref={InputMap} placeholder={Locals[lg]["url_red_marker"]} type="text" onChange={CheckEmply} onInput={GenerateMap}></input>
                                     </div>
                                 </label>
                                 <label className="station">
@@ -594,7 +614,7 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                                         <input style={{display : "none"}} readOnly ref={RefData.Data2} value={Lag}></input>
                                         <input style={{display : "none"}} readOnly ref={RefData.Data3} value={Lng}></input>
                                         <MapsJSX lat={Lag} lng={Lng} w={"100%"}/>
-                                        <button onClick={GenerateMapAuto}>รีโหลดพิกัด</button>
+                                        <button onClick={GenerateMapAuto}>{Locals[lg]["reload_map"]}</button>
                                     </div>
                                 </label>
                             </> :
@@ -602,11 +622,11 @@ const InsertPage = ({PageAddRef , ReloadAccount , type}) => {
                     }
                 </div>
                 <label className="admin-confirm">
-                    <input ref={pwAdmin} onChange={CheckEmply} placeholder="รหัสผ่านผู้ดูแลระบบ" type="password"></input>
+                    <input ref={pwAdmin} onChange={CheckEmply} placeholder={Locals[lg]["admin_password"]} type="password"></input>
                 </label>
                 <div className="bt-submit">
-                    <button className="cancel" onClick={Cancel}>ยกเลิก</button>
-                    <button className="submit" onClick={ClickAdd} no={stateOnBt ? "" : null}>เพิ่มข้อมูล</button>
+                    <button className="cancel" onClick={Cancel}>{Locals[lg]["cancel"]}</button>
+                    <button className="submit" onClick={ClickAdd} no={stateOnBt ? "" : null}>{Locals[lg]["add_data"]}</button>
                 </div>
             </div>
         </section>

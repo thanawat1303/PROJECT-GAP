@@ -100,6 +100,7 @@ const RichMenu = {
     })
 
   },
+  
   setDefault : (RichID) => {
     richmenu.deleteDefaultRichMenu().then(()=>{
       richmenu.setDefaultRichMenu(RichID).then(()=>console.log(`Rich menu ID : ${RichID} is Run`))

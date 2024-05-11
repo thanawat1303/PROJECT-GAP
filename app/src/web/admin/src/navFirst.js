@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 
 import "./assets/style/Navfirst.scss"
 import { ButtonMenu } from "../../../assets/js/module"
 
 import PageTemplate from "./page/PageTemplate"
+import { AdminProvider } from "./main"
 
+import Locals from "../../../locals"
 const NavFirst = ({setBodyFileAdmin , auth , session , socket , modify , type = 0 , TabOn , selectPage , HrefData}) => {
     const [ Responsive , setResponsive ] = useState(window.innerWidth)
-    
+    const { lg } = useContext(AdminProvider)
+
     useEffect(()=>{
         if(type === 1 && HrefData.get() !== "HOME") window.history.pushState({} , "" , "/admin")
 
@@ -54,11 +57,11 @@ const NavFirst = ({setBodyFileAdmin , auth , session , socket , modify , type = 
     return (
         <section className="nav-first">
             <div className="head">
-                <span>Menu</span>
+                <span>{Locals[lg]["menu"]}</span>
             </div>
             <div className="content-menu">
-                <ButtonMenu type={"doctor"} textRow1={"ทะเบียน"} textRow2={"เจ้าหน้าที่"} action={doctor}/>
-                <ButtonMenu type={"add-data"} textRow1={"เพิ่มเติม"} textRow2={"ข้อมูล"} action={data}/>
+                <ButtonMenu type={"doctor"} textRow1={Locals[lg]["BtMenuAdminRegister"]["row_1"]} textRow2={Locals[lg]["BtMenuAdminRegister"]["row_2"]} action={doctor}/>
+                <ButtonMenu type={"add-data"} textRow1={Locals[lg]["BtMenuAdminData"]["row_1"]} textRow2={Locals[lg]["BtMenuAdminData"]["row_2"]} action={data}/>
             </div>
         </section>
     )

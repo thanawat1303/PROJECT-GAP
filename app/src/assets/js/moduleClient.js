@@ -144,9 +144,13 @@ const clientMo = {
             return ""
         }
     },
-    get : async (url = "") => {
+    get : async (url = "" , query = {}) => {
+        const query_get = Object.entries(query).map((Data)=>{
+            return `${Data[0]}=${Data[1]}`
+        }).join("&")
+        const url_get = url + ((query_get) ? `?${query_get}` : "")
         try {
-            return fetch(HOST_API + url, {
+            return fetch(HOST_API + url_get, {
                 headers: {
                     'content-type': 'application/json'
                 },

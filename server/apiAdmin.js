@@ -1,13 +1,14 @@
 require('dotenv').config().parsed
 const axios = require('axios').default;
+const express = require('express');
 
-module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB , socket , line) {
+module.exports = function apiAdmin (app = express() , Database , apifunc , dbpacket , listDB , socket , line) {
   app.post('/api/admin/check' , (req , res)=>{
     res.redirect('/api/admin/auth');
   })
   
 // doctor page
-  app.post('/api/admin/doctor/list' , async (req , res)=>{
+  app.get('/api/admin/doctor/list' , async (req , res)=>{
     const username = req.session.user_admin
     const password = req.session.pass_admin
   
@@ -22,7 +23,7 @@ module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB
 
       const result = await apifunc.auth(con , username , password , res , "admin")
       if(result['result'] === "pass") {
-        let data = req.body
+        let data = req.query
         let select = data.typeDelete === 0 ? ", status_account , time_online" : ""
         const Limit = isNaN(parseInt(data.limit)) ? 0 : parseInt(data.limit)
         const StartRow = isNaN(parseInt(data.startRow)) ? 0 : parseInt(data.startRow)
@@ -35,7 +36,7 @@ module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB
             , id_table_doctor , fullname_doctor , id_doctor , img_doctor ${select}
             FROM acc_doctor
             WHERE status_delete = ? AND ( INSTR( id_doctor , ? ) OR INSTR( fullname_doctor , ? ) )
-            ORDER BY status_account DESC , id_table_doctor DESC
+            ORDER BY status_account DESC , time_online DESC
             LIMIT ${Limit} OFFSET ${StartRow};
           ` 
         , 
@@ -61,7 +62,7 @@ module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB
     
   })
 
-  app.post('/api/admin/doctor/get' , async (req , res)=>{
+  app.get('/api/admin/doctor/:id_table' , async (req , res)=>{
     let username = req.session.user_admin
     let password = req.session.pass_admin
   
@@ -75,7 +76,7 @@ module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB
     try {
       const auth = await apifunc.auth(con , username , password , res , "admin")
       if(auth['result'] === "pass") {
-        let data = req.body
+        let data = req.params
         con.query(
           `
             SELECT 
@@ -188,6 +189,7 @@ module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB
             } else {
               con.query(`INSERT INTO acc_doctor
                             (
+                              id_table_doctor,
                               fullname_doctor , 
                               id_doctor , 
                               uid_line_doctor , 
@@ -199,7 +201,7 @@ module.exports = function apiAdmin (app , Database , apifunc , dbpacket , listDB
                               time_online
                             ) 
                             VALUES ('',?,'',SHA2(?,256),'','',1,0,"")` , 
-                [req.body['id_doctor'],req.body['passwordDT']] , 
+                [apifunc.generateID_TABLE(10) , req.body['id_doctor'],req.body['passwordDT']] , 
                 (err , result)=>{
                   if(err) {
                     dbpacket.dbErrorReturn(con , err , res)

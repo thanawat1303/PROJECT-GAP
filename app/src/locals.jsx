@@ -76,10 +76,11 @@ const Locals = {
         select_plant_category : "เลือกชนิดพืช",
         ex : "เช่น",
         exam_tomato : "เช่น มะเขือเทศ",
-        exam_royal : "เช่น ศูนย์โครงการหลวง"
+        exam_royal : "เช่น ศูนย์โครงการหลวง",
+        click : "คลิก",
     },
     eng : {
-        home : "หน้าแรก",
+        home : "Home",
 
         add : "Add",
         add_data : "Add",
@@ -129,7 +130,7 @@ const Locals = {
             row_1 : "Data",
             row_2 : "Related"
         },
-        doctor : "เจ้าหน้าที่",
+        doctor : "Doctor",
         session : "Session expired",
         ok : "OK",
         online : "Online",
@@ -156,7 +157,8 @@ const Locals = {
         select_plant_category : "Select category",
         ex : "Ex :",
         exam_tomato : "Ex : tomato",
-        exam_royal : "Ex : Royal project"
+        exam_royal : "Ex : Royal project",
+        click : "Click",
     }
 }
 

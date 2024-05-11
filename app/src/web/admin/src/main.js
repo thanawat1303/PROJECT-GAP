@@ -4,6 +4,7 @@ import Login from "./Login";
 import Admin from "./Admin";
 
 import './assets/style/main.scss'
+import { ButtonChangeLang } from "../../../assets/js/module";
 
 export const AdminProvider = createContext(null)
 const MainAdmin = ({socket}) => {
@@ -45,6 +46,7 @@ const MainAdmin = ({socket}) => {
                 }}
             >
                 {body}
+                <ButtonChangeLang getLang={getLang} setLang={setLang}/>
             </div>
         </AdminProvider.Provider>
     )

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import liff from "@line/liff"
 
 import "../style/camera.scss"
@@ -7,6 +7,8 @@ import { clientMo } from "./moduleClient";
 import "../style/moduleStyle.scss"
 
 import { ThaiDatePicker } from "thaidatepicker-react";
+import Locals from "../../locals";
+import { AdminProvider } from "../../web/admin/src/main";
 
 const MapsJSX = ({lat , lng , w , h}) => {
     const [latitude , setLag] = useState(0)
@@ -338,13 +340,16 @@ const Loading = ({size , MaxSize = 0 , border , color="green" , animetion = fals
 }
 
 const ButtonMenu = ({type , textRow1 , textRow2 , action}) => {
+
+    const { lg } = useContext(AdminProvider)
+
     return(
         <div onClick={action} className={`bt-menu-frame ${type}`}>
             <img src={`/iconBt/icon-bt-${type}.png`}></img>
             <div className="text-one">{textRow1}</div>
             <div className="text-two">{textRow2}</div>
             <div className="action">
-                <button>คลิก</button>
+                <button>{Locals[lg]["click"]}</button>
             </div>
         </div>
     )
@@ -813,6 +818,34 @@ const ConvertDate = (date) => {
     })
 }
 
+const ButtonChangeLang = ({getLang = "" , setLang = (lg) => {}}) => {
+    return(
+        <div style={{
+            display : "flex",
+            justifyContent : "center",
+            alignItems : "center",
+            position : "fixed",
+            bottom : "0.5%",
+            right : "0.5%",
+            textTransform : "uppercase",
+            width : "40px",
+            height : "40px",
+            backgroundColor : "green",
+            borderRadius : "50%",
+            color : "white",
+            cursor : "pointer"
+        }}
+            onClick={()=>{
+                setLang((lg)=>
+                    lg === "th" ? "eng" : "th"
+                )
+            }}  
+        >
+            {getLang}
+        </div>
+    )
+}
+
 class TabLoad {
     constructor(Ref) {
         this.timeOut = new Array();
@@ -886,4 +919,4 @@ class HrefData {
 //     })
 // }
 
-export {MapsJSX , GetLinkUrlOfSearch , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , OpenImageMax , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , DateSelect , DatePickerThai , ConvertDate , TabLoad , HrefData}
+export {MapsJSX , GetLinkUrlOfSearch , DayJSX , TimeJSX , TimeDiff , ClosePopUp , useLiff , Camera , ResizeImg , OpenImageMax , Loading , ButtonMenu , ReportAction , PopupDom , LoadOtherDom , LoadOtherOffset , PatternCheck , DownLoadImage , SetMaxLength , DateSelect , DatePickerThai , ConvertDate , ButtonChangeLang , TabLoad , HrefData}

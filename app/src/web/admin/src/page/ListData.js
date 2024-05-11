@@ -179,6 +179,10 @@ const ManageList = ({socket , Data , setBecause , ListCount , setListCount , Tab
         }
     } , [Data])
 
+    useEffect(()=>{
+        manageList()
+    } , [lg])
+
     const sizeScreen = () => {
         if(window.innerWidth < 820) {
             setBodyFromData(1)

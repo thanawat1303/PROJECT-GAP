@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Login from "../Login";
 import { clientMo } from "../../../../assets/js/moduleClient";
 
 import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
 import { PopupDom } from "../../../../assets/js/module";
+import { AdminProvider } from "../main";
+import Locals from "../../../../locals";
 
 const DesktopNev = ({setBodyFileMain , socket , auth , setBodyFileAdmin , modify , TabOn , HrefData}) => {
+    const { lg } = useContext(AdminProvider)
+    
     let selectPage = true
     const RefMenu = useRef()
     const [BodyMenu , setBodyMenu] = useState(<></>)
@@ -71,11 +75,11 @@ const DesktopNev = ({setBodyFileMain , socket , auth , setBodyFileAdmin , modify
                     </a>
                 </span>
                 <span className="bt-action">
-                    {/* <a onClick={(e)=>clickMenu(e , "HOME")} title="หน้าแรก" href="/admin">หน้าแรก</a> */}
-                    <a onClick={(e)=>clickMenu(e , "HOME")} title="หน้าแรก" href="/admin">หน้าแรก</a>
+                    {/* <a onClick={(e)=>clickMenu(e , "HOME")} title={Locals[lg]["home"]} href="/admin">{Locals[lg]["home"]}</a> */}
+                    <a onClick={(e)=>clickMenu(e , "HOME")} title={Locals[lg]["home"]} href="/admin">{Locals[lg]["home"]}</a>
                     {/* <a title="การแจ้งเตือน" href="/admin">การแจ้งเตือน</a>
                     <a title="โปรไฟล์" href="/admin">โปรไฟล์</a> */}
-                    <a className="logout" onClick={Logout} title="ออกจากระบบ" href="/admin/logout">ออกจากระบบ</a>
+                    <a className="logout" onClick={Logout} title={Locals[lg]["logout"]} href="/admin/logout">{Locals[lg]["logout"]}</a>
                 </span>
                 </> :
                 <span className="pg-action">
@@ -101,6 +105,7 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
     LogoutClick : null
 }}) => {
 
+    const { lg } = useContext(AdminProvider)
     const [ Menu , setMenu ] = useState(false)
 
     useEffect(()=>{
@@ -145,7 +150,7 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
                     <div className="fullname">
                         <div style={{
                             fontWeight : "900"
-                        }} className="head-name">ผู้ดูแลระบบ</div>
+                        }} className="head-name">{Locals[lg]["admin"]}</div>
                     </div>
                 </div>
                 <div className="menu-list">
@@ -157,7 +162,7 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
                             <path d="M3.0802 9.15381L12.0802 2.15381L21.0802 9.15381V20.1538C21.0802 20.6842 20.8695 21.1929 20.4944 21.568C20.1193 21.9431 19.6106 22.1538 19.0802 22.1538H5.0802C4.54977 22.1538 4.04106 21.9431 3.66599 21.568C3.29091 21.1929 3.0802 20.6842 3.0802 20.1538V9.15381Z" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M9.0802 22.1538V12.1538H15.0802V22.1538" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>หน้าแรก</span>
+                        <span>{Locals[lg]["home"]}</span>
                     </div>
                 </div>
             </div>
@@ -172,7 +177,7 @@ const MenuMobile = ({RefMenu , setBodyMenu , Profile , Click = {
                             <path d="M16 17L21 12L16 7" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M21 12H9" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>ออกจากระบบ</span>
+                        <span>{Locals[lg]["logout"]}</span>
                     </div>
                 </div>
             </div>

@@ -8,6 +8,7 @@ const Locals = {
         add_station : "เพิ่มรายการศูนย์",
 
         cancel : "ยกเลิก",
+        confirm : "ยืนยัน",
 
         success : "สำเร็จ",
         account_doctor : "บัญชีเจ้าหน้าที่ส่งเสริม",
@@ -34,12 +35,18 @@ const Locals = {
         admin : "ผู้ดูแลระบบ",
         admin_password_incorrect : "รหัสผู้ดูแลไม่ถูกต้อง",
         admin_password : "รหัสผ่านผู้ดูแลระบบ",
+        admin_password_short : "รหัสผ่านผู้ดูแล",
 
         welcome : "ยินดีต้อนรับ",
         username : "ชื่อผู้ใช้",
         password : "รหัสผ่าน",
         login : "เข้าสู่ระบบ",
+        logout : "ออกจากระบบ",
+
         err_login : "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
+        err_password : "รหัสผ่านไม่ถูกต้อง",
+        err_server : "เกิดปัญหาทางเซิร์ฟเวอร์",
+
         menu : "เมนู",
         BtMenuAdminRegister : {
             row_1 : "ทะเบียน",
@@ -60,8 +67,22 @@ const Locals = {
         station_anonymous : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ",
         id : "รหัสประจำตัว",
         stationing : "Stationing",
+
+        history_reason_on_off : "ประวัติและเหตุผลการเปิด/ปิดบัญชี",
+        history_reason_delete : "ประวัติและเหตุผลการลบบัญชี",
+
         reason : "เหตุผล",
+        reason_off_account : "เหตุผลการปิดบัญชี",
+        reason_on_account : "เหตุผลการเปิดบัญชี",
+        reason_delete_account : "เหตุผลการลบบัญชี",
+
+        off_account : "ปิดบัญชี",
+        on_account : "เปิดบัญชี",
         delete_account : "ลบบัญชี",
+        account_has_deleted : "บัญชีนี้ถูกลบไปแล้ว",
+        type_manage : "ประเภท",
+        manager : "ผู้จัดการ",
+
         edit : "แก้ไข",
         not_data : "ไม่พบข้อมูล",
         found : "พบ",
@@ -78,6 +99,8 @@ const Locals = {
         exam_tomato : "เช่น มะเขือเทศ",
         exam_royal : "เช่น ศูนย์โครงการหลวง",
         click : "คลิก",
+
+        loading_data_doctor : "กำลังโหลดข้อมูลผู้ส่งเสริม"
     },
     eng : {
         home : "Home",
@@ -89,6 +112,7 @@ const Locals = {
         add_station : "Add Plant",
 
         cancel : "Cancel",
+        confirm : "Confirm",
 
         success : "Success",
         account_doctor : "Accounts doctor",
@@ -100,7 +124,7 @@ const Locals = {
         account_delete : "Accounts deleted",
         account_not_delete : "Accounts not deleted",
         station_list : "Station",
-        __station : "station",
+        __station : "Station",
         station_name : "Station Name",
 
         plant_list : "Plant",
@@ -115,12 +139,18 @@ const Locals = {
         admin : "Admin",
         admin_password_incorrect : "Password incorrect",
         admin_password : "Password Admin",
+        admin_password_short : "Password Admin",
 
         welcome : "Welcome",
         username : "Username",
         password : "Password",
         login : "Login",
+        logout : "Logout",
+
         err_login : "Username or password incorrect",
+        err_password : "Password incorrect",
+        err_server : "Server Error",
+
         menu : "Menu",
         BtMenuAdminRegister : {
             row_1 : "Doctor",
@@ -141,8 +171,22 @@ const Locals = {
         station_anonymous : "Anonymous",
         id : "ID",
         stationing : "Stationing",
+
+        history_reason_on_off : "History and Reason for on/off accounts",
+        history_reason_delete : "History and Reason for delete accounts",
+
         reason : "Reason",
+        reason_off_account : "Reason off account",
+        reason_on_account : "Reason on account",
+        reason_delete_account : "Reason delete account",
+
+        off_account : "Off",
+        on_account : "On",
         delete_account : "Delete",
+        account_has_deleted : "Account has been deleted",
+        type_manage : "Manage type",
+        manager : "Manager",
+        
         edit : "Edit",
         not_data : "Emply",
         found : "Found",
@@ -159,6 +203,8 @@ const Locals = {
         exam_tomato : "Ex : tomato",
         exam_royal : "Ex : Royal project",
         click : "Click",
+
+        loading_data_doctor : "Loading doctor information"
     }
 }
 

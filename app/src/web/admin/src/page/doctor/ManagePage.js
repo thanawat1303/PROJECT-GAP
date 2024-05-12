@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../assets/js/moduleClient";
 
 import "../../assets/style/page/PopupManage.scss"
 import { Loading, ReportAction } from "../../../../../assets/js/module";
+import { AdminProvider } from "../../main";
+import Locals from "../../../../../locals";
 const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , TabOn , session , ReloadFetch}) => {
+    const { lg } = useContext(AdminProvider)
+    
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
@@ -79,16 +83,16 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
             setOpen(1)
             const result = await clientMo.post("/api/admin/manage/doctor" , data)
             if(result === "133") {
-                setText(`${type === "status_account" ? status ? "ปิดบัญชี" : "เปิดบัญชี" : "ลบบัญชี"}สำเร็จ`)
+                setText(`${type === "status_account" ? status ? Locals[lg]["off_account"] : Locals[lg]["on_account"] : Locals[lg]["delete_account"]}${ lg === "th" ? Locals[lg]["success"] : ` ${Locals[lg]["success"]}` }`)
                 setStatus(1)
             } else if(result === "delete") {
-                setText("บัญชีนี้ถูกลบไปแล้ว")
+                setText(Locals[lg]["account_has_deleted"])
                 setStatus(2)
             } else if(result === "because") {
-                setText("เกิดปัญหาทางเซิร์ฟเวอร์")
+                setText(Locals[lg]["err_server"])
                 setStatus(3)
             } else if(result === "password") {
-                setText("รหัสผ่านไม่ถูกต้อง")
+                setText(Locals[lg]["err_password"])
                 setStatus(3)
                 PasswordRef.current.value = ""
             } else session()
@@ -133,13 +137,13 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                         color="#1CFFF1" action={AfterConfirm}/>
         <div className="manage-page">
             <div className="head-page">
-                {type === "status_account" ? status ? "เหตุผลการปิดบัญชี" : "เหตุผลการเปิดบัญชี" : "เหตุผลการลบบัญชี"}
+                {type === "status_account" ? status ? Locals[lg]["reason_off_account"] : Locals[lg]["reason_on_account"] : Locals[lg]["reason_delete_account"]}
             </div>
             <div className="detail-content">
                 {LoadingStatus ? 
                     <div className="Loading">
                         <Loading size={4/100 * ScreenW >= 41 ? 4/100 * ScreenW : 41} border={0.5/100 * ScreenW >= 5 ? 0.5/100 * ScreenW : 5} color="#1CFFF1" animetion={LoadingStatus}/>
-                        <span>กำลังโหลดข้อมูลผู้ส่งเสริม</span>
+                        <span>{Locals[lg]["loading_data_doctor"]}</span>
                     </div>
                     : <></>
                 }
@@ -149,7 +153,7 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                         Profile.isdelete ? 
                             <div className="data-delete">
                                 <img src="/error-cross-svgrepo-com.svg"></img>
-                                <div>บัญชีนี้ถูกลบไปแล้ว</div>
+                                <div>{Locals[lg]["account_has_deleted"]}</div>
                             </div>
                             :
                             <>
@@ -158,15 +162,15 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                                 </div>
                                 <div className="detail-text">
                                     <div className="text-preview">
-                                        <span className="fullname">{Profile.fullname ? Profile.fullname : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ"}</span>
+                                        <span className="fullname">{Profile.fullname ? Profile.fullname : Locals[lg]["not_name"]}</span>
                                     </div>
                                     <div className="text-preview">
-                                        <span className="head-data">รหัสประจำตัว</span>
+                                        <span className="head-data">{Locals[lg]["id"]}</span>
                                         <div>{Profile.id}</div>
                                     </div>
                                     <div className="text-preview">
-                                        <span className="head-data">ศูนย์</span> 
-                                        <div>{Profile.station ? Profile.station : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ"}</div>
+                                        <span className="head-data">{Locals[lg]["__station"]}</span> 
+                                        <div>{Profile.station ? Profile.station : Locals[lg]["station_anonymous"]}</div>
                                     </div>
                                 </div>
                             </> 
@@ -176,7 +180,7 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
             </div>
             <div className="form-manage">
                 <label className="column">
-                    <span>เหตุผล</span>
+                    <span>{Locals[lg]["reason"]}</span>
                     { Profile.isdelete ? 
                         <textarea readOnly ref={BecauseRef} className="input-text"></textarea>
                         :
@@ -184,19 +188,19 @@ const ManageDoctorPage = ({RefOnPage , id_table , type , status , setBecause , T
                     }
                 </label>
                 <label className="column">
-                    <span>รหัสผ่านผู้ดูแล</span>
+                    <span>{Locals[lg]["admin_password_short"]}</span>
                     { Profile.isdelete ? 
-                        <input placeholder="กรอกรหัสผ่าน" readOnly ref={PasswordRef} type="password" className="input-text input-pw"></input>
+                        <input placeholder={Locals[lg]["please_password"]} readOnly ref={PasswordRef} type="password" className="input-text input-pw"></input>
                         : 
-                        <input placeholder="กรอกรหัสผ่าน" ref={PasswordRef} type="password" className="input-text input-pw"></input>
+                        <input placeholder={Locals[lg]["please_password"]} ref={PasswordRef} type="password" className="input-text input-pw"></input>
                     }
                 </label>
                 <div className="bt-manage">
-                    <button onClick={close} className="close">ยกเลิก</button>
+                    <button onClick={close} className="close">{Locals[lg]["cancel"]}</button>
                     { Profile.isdelete ?
                         <></>
                         : 
-                        <button onClick={Submit} className="submit">ยืนยัน</button>
+                        <button onClick={Submit} className="submit">{Locals[lg]["confirm"]}</button>
                     }
                 </div>
             </div>

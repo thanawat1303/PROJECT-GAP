@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { clientMo } from "../../../../../assets/js/moduleClient";
 import { DayJSX, Loading } from "../../../../../assets/js/module";
 
 import "../../assets/style/page/doctor/Because.scss"
+import { AdminProvider } from "../../main";
+import Locals from "../../../../../locals";
 const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
+    const { lg } = useContext(AdminProvider)
+
     const [LoadingState , setLoading] = useState(false)
     const [ListBecause , setList] = useState(<></>)
 
@@ -88,7 +92,7 @@ const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
         <section className="show-because">
             <div className="head">
                 <div className="head-text">
-                    {type === "status_account" ? "ประวัติและเหตุผลการเปิด/ปิดบัญชี" : type === "status_delete" ? "ประวัติและเหตุผลการลบบัญชี" : ""}
+                    {type === "status_account" ? Locals[lg]["history_reason_on_off"] : type === "status_delete" ? Locals[lg]["history_reason_on_off"] : ""}
                 </div>    
                 <img onClick={close} src="/close.svg"></img>            
             </div>
@@ -99,14 +103,14 @@ const ShowBecause = ({RefOnPage , id_table , type , TabOn , setBecause}) => {
                         <tr>
                             { type === "status_account" ? 
                                 <>
-                                <td style={{ textAlign: "center" , width : "20%"}}>ประเภท</td> 
-                                <td style={{ textAlign: "center" , width : "60%"}}>เหตุผล</td>
-                                <td style={{ textAlign: "center" , width : "20%"}}>ผู้จัดการ</td>
+                                <td style={{ textAlign: "center" , width : "20%"}}>{Locals[lg]["type_manage"]}</td> 
+                                <td style={{ textAlign: "center" , width : "60%"}}>{Locals[lg]["reason"]}</td>
+                                <td style={{ textAlign: "center" , width : "20%"}}>{Locals[lg]["manager"]}</td>
                                 </>
                                 : type === "status_delete" ? 
                                 <>
-                                <td style={{ textAlign: "center" , width : "80%"}}>เหตุผล</td>
-                                <td style={{ textAlign: "center" , width : "20%"}}>ผู้จัดการ</td>
+                                <td style={{ textAlign: "center" , width : "80%"}}>{Locals[lg]["reason"]}</td>
+                                <td style={{ textAlign: "center" , width : "20%"}}>{Locals[lg]["manager"]}</td>
                                 </> : <></>
                             }
                         </tr>

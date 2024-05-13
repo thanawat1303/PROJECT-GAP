@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../assets/js/moduleClient";
 
 import "../../assets/style/page/PopupManage.scss"
 import { GetLinkUrlOfSearch, Loading, MapsJSX, ReportAction } from "../../../../../assets/js/module";
+import { AdminProvider } from "../../main";
+import Locals from "../../../../../locals";
 const EditPage = ({RefOnPage , id_table , type , setBecause , TabOn , session , ReloadData}) => {
+    const { lg } = useContext(AdminProvider)
+    
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
@@ -84,16 +88,16 @@ const EditPage = ({RefOnPage , id_table , type , setBecause , TabOn , session , 
             setOpen(1)
             const result = await clientMo.post("/api/admin/data/edit" , Validate)
             if(result === "133") {
-                setText(`แก้ไข${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}สำเร็จ`)
+                setText(`${ lg === "th" ? Locals[lg]["edit"] : `${Locals[lg]["edit"]} ` }${type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}${ lg === "th" ? Locals[lg]["success"] : ` ${Locals[lg]["success"]}` }`)
                 setStatus(1)
             } else if(result === "over") {
-                setText(`มี${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}ใช้งานอยู่`)
+                setText(`${type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}${lg === "th" ? Locals[lg]["use"] : ` ${Locals[lg]["use"]}`}`)
                 setStatus(3)
             } else if(result === "because") {
-                setText("เกิดปัญหาทางเซิร์ฟเวอร์")
+                setText(Locals[lg]["err_server"])
                 setStatus(3)
             } else if(result === "password") {
-                setText("รหัสผ่านไม่ถูกต้อง")
+                setText(Locals[lg]["err_password"])
                 setStatus(3)
                 PasswordRef.current.value = ""
             } else {
@@ -176,39 +180,39 @@ const EditPage = ({RefOnPage , id_table , type , setBecause , TabOn , session , 
                         color="#1CFFF1" action={AfterConfirm}/>
         <div className="manage-page">
             <div className="head-page">
-                {`แก้ไข${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}`}
+                {`${ lg === "th" ? Locals[lg]["edit"] : `${Locals[lg]["edit"]} ` }${type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}`}
             </div>
             <div className="detail-content">
                 {LoadingStatus ? 
                     <div className="Loading">
                         <Loading size={4/100 * ScreenW >= 41 ? 4/100 * ScreenW : 41} border={0.5/100 * ScreenW >= 5 ? 0.5/100 * ScreenW : 5} color="#1CFFF1" animetion={LoadingStatus}/>
-                        <span>กำลังโหลดข้อมูล{type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}</span>
+                        <span>{lg === "th" ? Locals[lg]["loadingData"] : `${Locals[lg]["loadingData"]} `}{type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}</span>
                     </div>
                     : <></>
                 }
                 <div className="detail-data-report">
                     <div className="data-popup" maxsize="" flex={type}>
                         <div className="name column">
-                            {type === "plant" ? <span className={type}>ชื่อพืช</span> : <span className={type}>ชื่อศูนย์</span>}
-                            <input onChange={()=>validateValue()} className="input-value" ref={NameRef} placeholder="ชื่อศูนย์ในโครงการ" defaultValue={Data.name}></input>
+                            {type === "plant" ? <span className={type}>{Locals[lg]["plant_name"]}</span> : <span className={type}>{Locals[lg]["ชื่อศูนย์ส่งเสริม"]}</span>}
+                            <input onChange={()=>validateValue()} className="input-value" ref={NameRef} placeholder="กรอกข้อมูล" defaultValue={Data.name}></input>
                         </div>
                         <div className={type === "plant" ? "type_plant" : "location column"}>
                             {
-                                type === "plant" ? <span>ชนิดพืช</span> : <></>
+                                type === "plant" ? <span>{Locals[lg]["plant_type"]}</span> : <></>
                             }
                             {
                                 type === "plant" ? <div>{Data.dataOther}</div> :
                                 Data.dataOther ? 
                                     <>
                                     <div className="flied-location-edit" w={type}>
-                                        <span className="head-flied">ตำแหน่งที่ตั้ง</span>
+                                        <span className="head-flied">{Locals[lg]["map_local"]}</span>
                                         <input onChange={ async (e)=>{
                                             clearTimeout(getTimeOutChange)
                                             await GenerateMap(e)
                                             setTimeOutChange(setTimeout(()=>{
                                                 validateValue()
                                             } , 1))
-                                        }} className="input-value" placeholder="ลิ้งค์ใน Google map"></input>
+                                        }} className="input-value" placeholder={Locals[lg]["link_google_map"]}></input>
                                         <input ref={OtherRef} hidden value={`${getLag}:${getLng}`} readOnly></input>
                                     </div>
                                     <MapsJSX lat={getLag} lng={getLng} w={"300vw"} h={"80vw"}/>
@@ -222,13 +226,13 @@ const EditPage = ({RefOnPage , id_table , type , setBecause , TabOn , session , 
             </div>
             <div className="form-manage">
                 <label className="column">
-                    <span>รหัสผ่านผู้ดูแล</span>
-                    <input onChange={()=>validateValue()} placeholder="กรอกรหัสผ่าน" ref={PasswordRef} type="password" className="input-text input-pw"></input>
+                    <span>{Locals[lg]["admin_password_short"]}</span>
+                    <input onChange={()=>validateValue()} placeholder={Locals[lg]["please_password"]} ref={PasswordRef} type="password" className="input-text input-pw"></input>
                 </label>
                 <div className="bt-manage">
-                    <button onClick={close} className="close">ยกเลิก</button>
+                    <button onClick={close} className="close">{Locals[lg]["cancel"]}</button>
                     { Data.id ?
-                        <button onClick={Submit} h={getHide ? "" : null} className="submit">ยืนยัน</button> : <></>
+                        <button onClick={Submit} h={getHide ? "" : null} className="submit">{Locals[lg]["confirm"]}</button> : <></>
                     }
                 </div>
             </div>

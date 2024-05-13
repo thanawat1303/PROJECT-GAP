@@ -1,4 +1,4 @@
-import React , {Component, useEffect, useRef, useState} from "react";
+import React , {Component, useContext, useEffect, useRef, useState} from "react";
 import { clientMo } from "../../../assets/js/moduleClient";
 import Login from "./Login";
 
@@ -12,8 +12,12 @@ import SessionOut from "./sesionOut";
 import PageFormPlant from "./page/form/PageFormPlant";
 import PageFarmer from "./page/farmer/PageFarmer";
 import PageData from "./page/data/PageData";
+import Locals from "../../../locals";
+import { DoctorProvider } from "./main";
 
 const Doctor = ({setMain , socket , isClick = 0 , username , password}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [body , setBody] = useState(<div></div>)
     const [session , setSession] = useState(<div></div>)
     const [TextPage , setTextPage] = useState([])
@@ -122,7 +126,7 @@ const Doctor = ({setMain , socket , isClick = 0 , username , password}) => {
                     <>
                     <div className="text-cover">
                         <div className="icon">
-                            <span>ยินดีต้อนรับ</span>
+                            <span>{Locals[lg]["welcome"]}</span>
                             <img src="/Logo-white.png"></img>
                         </div>
                         <div className="status">
@@ -141,8 +145,8 @@ const Doctor = ({setMain , socket , isClick = 0 , username , password}) => {
                     <>
                     <div className="text-icon-cover" ref={frameImage}>
                         <div className="text">
-                            <span>ยินดีต้อนรับ</span>
-                            <span style={{fontWeight : 900}}>หมอพืช</span>
+                            <span>{Locals[lg]["welcome"]}</span>
+                            <span style={{fontWeight : 900}}>{Locals[lg]["doctor"]}</span>
                         </div>
                         <div className="icon-profile" style={{
                             borderRadius : "50%",

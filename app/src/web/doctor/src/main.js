@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {clientMo}  from "../../../assets/js/moduleClient";
 
 import Login from "./Login";
@@ -6,8 +6,10 @@ import Doctor from "./Doctor";
 
 import './assets/style/main.scss'
 
+export const DoctorProvider = createContext(null)
 const MainDoctor = ({socket}) => {
     const [Body , setBody] = useState()
+    const [ getLang , setLang ] = useState("th")
 
     useEffect(()=>{
         FetchCheck()
@@ -27,7 +29,14 @@ const MainDoctor = ({socket}) => {
         }
     }
 
-    return (Body)
+    return (
+        <DoctorProvider.Provider value={{
+            lg : getLang ,
+            setLang
+        }}>
+            {Body}
+        </DoctorProvider.Provider>
+    )
 }
 
 export default MainDoctor

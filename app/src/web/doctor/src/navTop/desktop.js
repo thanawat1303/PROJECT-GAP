@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Login from "../Login";
 import SessionOut from "../sesionOut";
 import { clientMo } from "../../../../assets/js/moduleClient";
@@ -8,8 +8,12 @@ import "../assets/style/NevTop/Desktop.scss"
 import NavFirst from "../navFirst";
 import { DayJSX, Loading, PopupDom, TimeDiff } from "../../../../assets/js/module";
 import ProfilePage from "../page/profile/Profile";
+import Locals from "../../../../locals";
+import { DoctorProvider } from "../main";
 
 const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCover , eleBody , setTextStatus , getProfile , FetchProfile}) => {
+    const { lg } = useContext(DoctorProvider)
+     
     const RefPopup = useRef()
     const RefMenu = useRef()
     const [BodyPopup , setBodyPopup] = useState(<></>)
@@ -127,19 +131,19 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
             { Responsive > 800 ?
                 <>
                 <span className="pg-action">
-                    <a onClick={Home} className="Logo" href="/doctor" title="หมอพืช">
+                    <a onClick={Home} className="Logo" href="/doctor" title={Locals[lg]["doctor"]}>
                         <img src="/logo2.png"></img>
-                        <span>หมอพืช</span>
+                        <span>{Locals[lg]["doctor"]}</span>
                     </a>
                 </span>
                 <span className="bt-action">
                     {/* <a title="หน้าแรก" href="/doctor">หน้าแรก</a> */}
                     <div className="menu-content">
-                        <a title="เมนู" href="/doctor" onClick={Home}>เมนู</a>
+                        <a title={Locals[lg]["menu"]} href="/doctor" onClick={Home}>{Locals[lg]["menu"]}</a>
                     </div>
                     <div className="menu-content">
-                        <a title="การแจ้งเตือน" href="/doctor" onClick={Notify} notify="">
-                            การแจ้งเตือน
+                        <a title={Locals[lg]["notify"]} href="/doctor" onClick={Notify} notify="">
+                            {Locals[lg]["notify"]}
                             { getNotifyCount ?
                                 <div notify="" className="count-notify">{getNotifyCount < 10 ? getNotifyCount : "9+"}</div>
                                 : <></>
@@ -153,10 +157,10 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
                         </div>
                     </div>
                     <div className="menu-content">
-                        <a title="โปรไฟล์" href="/doctor" onClick={Profile}>โปรไฟล์</a>
+                        <a title={Locals[lg]["profile"]} href="/doctor" onClick={Profile}>{Locals[lg]["profile"]}</a>
                     </div>
                     <div className="menu-content">
-                        <a className="logout" onClick={Logout} title="ออกจากระบบ" href="/doctor/logout">ออกจากระบบ</a>
+                        <a className="logout" onClick={Logout} title={Locals[lg]["logout"]} href="/doctor/logout">{Locals[lg]["logout"]}</a>
                     </div>
                     {/* <a className="alarm">
                         <img src="/alarm-svgrepo-com.svg"></img>
@@ -170,7 +174,7 @@ const DesktopNev = ({setMain , socket = io() , setSession , setBody , eleImageCo
                                 ข้อมูลส่วนตัว
                             </a>
                             <a onClick={Logout} id="logout">
-                                ออกจากระบบ
+                                {Locals[lg]["logout"]}
                             </a>
                         </div>
                     </section> */}
@@ -220,6 +224,8 @@ NotifyContent = {
     getNotifyList : []
 } , getNotifyContent , setNotifyContent
 , FetchNotify , setCountNotify , session}) => {
+
+    const { lg } = useContext(DoctorProvider)
 
     const [ Menu , setMenu ] = useState(false)
     const [getShowNotify , setShowNotify] = useState(false)
@@ -274,7 +280,7 @@ NotifyContent = {
                     <div className="fullname">
                         <div style={{
                             fontWeight : "900"
-                        }} className="head-name">หมอพืช</div>
+                        }} className="head-name">{Locals[lg]["doctor"]}</div>
                         <div className="text-name">{Profile.fullname_doctor}</div>
                     </div>
                 </div>
@@ -287,7 +293,7 @@ NotifyContent = {
                             <path d="M3.0802 9.15381L12.0802 2.15381L21.0802 9.15381V20.1538C21.0802 20.6842 20.8695 21.1929 20.4944 21.568C20.1193 21.9431 19.6106 22.1538 19.0802 22.1538H5.0802C4.54977 22.1538 4.04106 21.9431 3.66599 21.568C3.29091 21.1929 3.0802 20.6842 3.0802 20.1538V9.15381Z" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M9.0802 22.1538V12.1538H15.0802V22.1538" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>เมนู</span>
+                        <span>{Locals[lg]["menu"]}</span>
                     </div>
                     <div className="menu-name-list" notify="" onClick={Notify}>
                         <div notify="" className="notify-content" show={getShowNotify ? "" : null}>
@@ -300,7 +306,7 @@ NotifyContent = {
                             <path d="M18.5904 8.59888C18.5904 7.00758 17.9582 5.48145 16.833 4.35624C15.7078 3.23102 14.1817 2.59888 12.5904 2.59888C10.9991 2.59888 9.47294 3.23102 8.34772 4.35624C7.2225 5.48145 6.59036 7.00758 6.59036 8.59888C6.59036 15.5989 3.59036 17.5989 3.59036 17.5989H21.5904C21.5904 17.5989 18.5904 15.5989 18.5904 8.59888Z" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M14.3204 21.5989C14.1445 21.902 13.8922 22.1535 13.5886 22.3284C13.285 22.5033 12.9407 22.5953 12.5904 22.5953C12.24 22.5953 11.8957 22.5033 11.5921 22.3284C11.2885 22.1535 11.0362 21.902 10.8604 21.5989" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span notify="">การแจ้งเตือน</span>
+                        <span notify="">{Locals[lg]["notify"]}</span>
                         {NotifyContent.getNotifyCount ? <div notify="" className="count-notify">{NotifyContent.getNotifyCount}</div> : <></>}
                     </div>
                     <div className="menu-name-list" onClick={()=>{
@@ -310,7 +316,7 @@ NotifyContent = {
                         <svg viewBox="0 0 26 22" fill="none">
                             <path d="M23.7206 0H2.15642C0.965895 0 0 1.04116 0 2.32445V19.3704C0 20.6537 0.965895 21.6949 2.15642 21.6949H23.7206C24.9111 21.6949 25.877 20.6537 25.877 19.3704V2.32445C25.877 1.04116 24.9111 0 23.7206 0ZM7.90686 4.6489C9.49273 4.6489 10.7821 6.03873 10.7821 7.74817C10.7821 9.45761 9.49273 10.8474 7.90686 10.8474C6.321 10.8474 5.03164 9.45761 5.03164 7.74817C5.03164 6.03873 6.321 4.6489 7.90686 4.6489ZM12.9385 16.1162C12.9385 16.6295 12.4892 17.046 11.9322 17.046H3.88155C3.32448 17.046 2.87522 16.6295 2.87522 16.1162V15.1864C2.87522 13.6465 4.22748 12.3971 5.89421 12.3971H6.11883C6.67142 12.6441 7.27341 12.7845 7.90686 12.7845C8.54031 12.7845 9.1468 12.6441 9.69489 12.3971H9.91952C11.5862 12.3971 12.9385 13.6465 12.9385 15.1864V16.1162ZM23.0018 13.5593C23.0018 13.7724 22.8401 13.9467 22.6424 13.9467H16.1731C15.9755 13.9467 15.8137 13.7724 15.8137 13.5593V12.7845C15.8137 12.5714 15.9755 12.3971 16.1731 12.3971H22.6424C22.8401 12.3971 23.0018 12.5714 23.0018 12.7845V13.5593ZM23.0018 10.46C23.0018 10.6731 22.8401 10.8474 22.6424 10.8474H16.1731C15.9755 10.8474 15.8137 10.6731 15.8137 10.46V9.68522C15.8137 9.47214 15.9755 9.29781 16.1731 9.29781H22.6424C22.8401 9.29781 23.0018 9.47214 23.0018 9.68522V10.46ZM23.0018 7.36077C23.0018 7.57384 22.8401 7.74817 22.6424 7.74817H16.1731C15.9755 7.74817 15.8137 7.57384 15.8137 7.36077V6.58595C15.8137 6.37287 15.9755 6.19854 16.1731 6.19854H22.6424C22.8401 6.19854 23.0018 6.37287 23.0018 6.58595V7.36077Z" fill="#22C7A9"/>
                         </svg>
-                        <span>โปรไฟล์</span>
+                        <span>{Locals[lg]["profile"]}</span>
                     </div>
                 </div>
             </div>
@@ -327,7 +333,7 @@ NotifyContent = {
                             <path d="M16 17L21 12L16 7" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             <path d="M21 12H9" stroke="#22C7A9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>ออกจากระบบ</span>
+                        <span>{Locals[lg]["logout"]}</span>
                     </div>
                 </div>
             </div>
@@ -336,6 +342,8 @@ NotifyContent = {
 }
 
 const Notification = ({setShow , setContent , dataNotification , FetchNotifyData , FetchNotify , setCount , session}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [getLoadGet , setLoadGet] = useState(true)
     const [getListNew , setListNew] = useState([0])
     const [getWaitContent , setWaitContent] = useState("w")
@@ -401,7 +409,7 @@ const Notification = ({setShow , setContent , dataNotification , FetchNotifyData
                                 </div>
                             </div>
                         ) 
-                    : <div>ไม่มีการแจ้งเตือน</div>
+                    : <div>{Locals[lg]["no_notify"]}</div>
                 : <Loading size={30} MaxSize={30} border={8} color="#22C7A9" animetion={true}/>
                 }
             </div>

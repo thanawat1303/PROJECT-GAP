@@ -1,12 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {clientMo}  from "../../../assets/js/moduleClient";
 import './assets/style/Login.scss'
 
 import Doctor from "./Doctor";
 import { PatternCheck, PopupDom, useLiff } from "../../../assets/js/module";
 import env from "../../../env";
+import { DoctorProvider } from "./main";
+import Locals from "../../../locals";
 
 const Login = ({setMain , socket , isClick = 0}) => {
+    const { lg } = useContext(DoctorProvider)
     // const [Body , setBody] = useState(<></>)
     const [InputUser , setInput] = useState("")
     const [getLoadUid , setLoadUid] = useState(false)
@@ -25,7 +28,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
 
     let timeoutEmply = 0
 
-    const [init , liff] = useLiff("1661049098-dorebKYg")
+    const [init , liff] = useLiff(process.env.REACT_APP_LINE_DOCTOR)
 
     useEffect(()=>{
         if(isClick) window.history.pushState({} , null , '/doctor')
@@ -78,7 +81,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
                     if(context === "pass") {
                         setMain(<Doctor setMain={setMain} socket={socket} isClick={1} username={formData.username} password={formData.password}/>)
                     } else if(context === "account") {
-                        ErrorLogin.current.innerHTML = "บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"
+                        ErrorLogin.current.innerHTML = Locals[lg]["stop_account"]
                         ErrorLogin.current.setAttribute("show" , "")
                         for(let x = 0; x < e.target.length-1; x++) {
                             let prevent = e.target[x].parentElement;
@@ -97,7 +100,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
                         }
                     }
                     else {
-                        ErrorLogin.current.innerHTML = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"
+                        ErrorLogin.current.innerHTML = Locals[lg]["err_login"]
                         ErrorLogin.current.setAttribute("show" , "")
                         for(let x = 0; x < e.target.length-1; x++) {
                             let prevent = e.target[x].parentElement;
@@ -141,7 +144,7 @@ const Login = ({setMain , socket , isClick = 0}) => {
                 <form ref={Form} autoComplete="off" onSubmit={submitFrom}>
                     <div className="Logo-App">
                         <img src="/logo2.png"></img>
-                        <span>หมอพืช</span>
+                        <span>{Locals[lg]["doctor"]}</span>
                     </div>
                     <label>
                         <span>
@@ -150,9 +153,9 @@ const Login = ({setMain , socket , isClick = 0}) => {
                             </svg>
                         </span>
                         { getLoadUid ?
-                            <input defaultValue={InputUser} id="username-doctor-login" autoComplete="off" type="text" name="username-doctor" placeholder="รหัสประจำตัวหมอพืช"/>
+                            <input defaultValue={InputUser} id="username-doctor-login" autoComplete="off" type="text" name="username-doctor" placeholder={Locals[lg]["doctor_username"]}/>
                             :
-                            <input autoComplete="off" id="username-doctor-login" type="text" name="username-doctor" placeholder="รหัสประจำตัวหมอพืช"/>
+                            <input autoComplete="off" id="username-doctor-login" type="text" name="username-doctor" placeholder={Locals[lg]["doctor_username"]}/>
                         }
                     </label>
                     <label>
@@ -161,9 +164,9 @@ const Login = ({setMain , socket , isClick = 0}) => {
                                 <path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/>
                             </svg>
                         </span>
-                        <input ref={pw} autoComplete="off" id="password-doctor-login" type="password" name="password-doctor" placeholder="รหัสผ่าน"/>
+                        <input ref={pw} autoComplete="off" id="password-doctor-login" type="password" name="password-doctor" placeholder={Locals[lg]["password"]}/>
                     </label>
-                    <button type="submit" className="bt-submit-form">เข้าสู่ระบบ</button>
+                    <button type="submit" className="bt-submit-form">{Locals[lg]["login"]}</button>
                 </form>
                 <p ref={ErrorLogin} className="error-login"></p>
             </div>
@@ -172,6 +175,8 @@ const Login = ({setMain , socket , isClick = 0}) => {
 }
 
 const FormPersonal = ({ main = {setMain : null , socket : null} , id_doctor , Ref , setPopup , Err}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [ListStation , setListStation] = useState(null)
 
     const firstname = useRef()
@@ -224,10 +229,10 @@ const FormPersonal = ({ main = {setMain : null , socket : null} , id_doctor , Re
                     main.setMain(<Doctor isClick={1} setMain={main.setMain} socket={main.socket} username={id_doctor} password={pw.value}/>)
                 } else if(result === "password") {
                     pw.setAttribute('err' , "")
-                    pw.setAttribute('placeholder' , "รหัสผ่านไม่ถูกต้อง")
+                    pw.setAttribute('placeholder' , Locals[lg]["err_password"])
                     pw.value = ""
                 } else if (result === "account") {
-                    Err.current.innerHTML = "บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"
+                    Err.current.innerHTML = Locals[lg]["stop_account"]
                     Err.current.setAttribute("show" , "")
                     close()
                 }
@@ -251,36 +256,36 @@ const FormPersonal = ({ main = {setMain : null , socket : null} , id_doctor , Re
 
     return (
         <section id="form-personal-doctor">
-            <span className="head">ยืนยันตัวตนเจ้าหน้าที่</span>
+            <span className="head">{Locals[lg]["doctor_confirm_title"]}</span>
             <div className="form">
                 <div className="id">
-                    <span>รหัสประตัวเจ้าหน้าที่</span>
+                    <span>{Locals[lg]["doctor_id_title"]}</span>
                     <input readOnly value={id_doctor}></input>
                 </div>
                 <div className="profile">
                     <div className="input-field">
-                        <span>ชื่อ</span>
-                        <input onChange={checkValue} ref={firstname} placeholder="ภาษาไทย ไม่มีคำนำหน้า เช่น สมชาย"></input>
+                        <span>{Locals[lg]["doctor_firstname"]}</span>
+                        <input onChange={checkValue} ref={firstname} placeholder={Locals[lg]["doctor_placehoder_first"]}></input>
                     </div>
                     <div className="input-field">
-                        <span>นามสกุล</span>
-                        <input onChange={checkValue} ref={lastname} placeholder="ภาษาไทย เช่น สุขใจ"></input>
+                        <span>{Locals[lg]["doctor_surname"]}</span>
+                        <input onChange={checkValue} ref={lastname} placeholder={Locals[lg]["doctor_placehoder_sur"]}></input>
                     </div>
                     <div className="input-field">
-                        <span>ศูนย์ปฏิบัติหน้าที่</span>
+                        <span>{Locals[lg]["doctor_station"]}</span>
                         <select onChange={checkValue} ref={station} defaultValue={""}>
-                            <option value={""} disabled>เลือกศูนย์</option>
+                            <option value={""} disabled>{Locals[lg]["doctor_placehoder_station"]}</option>
                             {ListStation}
                         </select>
                     </div>
                 </div>
                 <div className="password">
-                    <input onChange={checkValue} ref={password} autoComplete="off" type="password" placeholder="รหัสผ่าน"/>
+                    <input onChange={checkValue} ref={password} autoComplete="off" type="password" placeholder={Locals[lg]["password"]}/>
                 </div>
             </div>
             <div className="bt">
-                <button onClick={close} className="cancel">ยกเลิก</button>
-                <button ref={btConfirm} onClick={confirm} className="submit">ยืนยัน</button>
+                <button onClick={close} className="cancel">{Locals[lg]["cancel"]}</button>
+                <button ref={btConfirm} onClick={confirm} className="submit">{Locals[lg]["confirm"]}</button>
             </div>
         </section>
     )
@@ -373,9 +378,9 @@ export default Login
         //         </label>
         //         <label className="content-pw">
         //             <span className="label-login">รหัสผ่าน</span>
-        //             <input autoComplete="off" onChange={changeValPw} className="inputForm" type="password" name="password" placeholder="รหัสผ่าน"/>
+        //             <input autoComplete="off" onChange={changeValPw} className="inputForm" type="password" name="password" placeholder={Locals[lg]["password"]}/>
         //         </label>
-        //         <button type="submit" className="bt-submit-form">เข้าสู่ระบบ</button>
+        //         <button type="submit" className="bt-submit-form">{Locals[lg]["login"]}</button>
         //         <p className="error-login hide"></p>
         //     </form>
         // </div>
@@ -486,10 +491,10 @@ export default Login
 //                     </div>
 //                 </div>
 //                 <div id="field-password">
-//                     <input id="password" placeholder="รหัสผ่าน" type="password" className="field-personal"></input>
+//                     <input id="password" placeholder={Locals[lg]["password"]} type="password" className="field-personal"></input>
 //                 </div>
 //                 <div id="confirm">
-//                     <button id="bt-cancel" onClick={this.cancel}>ยกเลิก</button>
+//                     <button id="bt-cancel" onClick={this.cancel}>{Locals[lg]["cancel"]}</button>
 //                     <button id="bt-confirm" onClick={this.confirm}>บันทึกข้อมูล</button>
 //                 </div>
 //             </div>

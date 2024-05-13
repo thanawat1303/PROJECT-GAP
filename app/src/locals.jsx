@@ -56,7 +56,28 @@ const Locals = {
             row_1 : "เพิ่มเติม",
             row_2 : "ข้อมูล"
         },
+
+        BtMenuDoctorRegister : {
+            row_1 : "ทะเบียน",
+            row_2 : "เกษตรกร"
+        },
+        BtMenuDoctorFrom : {
+            row_1 : "แบบบันทึก",
+            row_2 : "และการปลูก"
+        },
+        
         doctor : "เจ้าหน้าที่",
+        doctor_username : "รหัสประจำตัวหมอพืช",
+        doctor_confirm_title : "ยืนยันตัวตนเจ้าหน้าที่",
+        doctor_id_title : "รหัสประตัวเจ้าหน้าที่",
+        doctor_firstname : "ชื่อ",
+        doctor_surname : "นามสกุล",
+        doctor_station : "ศูนย์ปฏิบัติหน้าที่",
+
+        doctor_placehoder_first : "ภาษาไทย ไม่มีคำนำหน้า เช่น สมชาย",
+        doctor_placehoder_sur : "ภาษาไทย เช่น สุขใจ",
+        doctor_placehoder_station : "เลือกศูนย์",
+
         session : "เซสชั่นหมดอายุ",
         ok : "ตกลง",
         online : "กำลังใช้งาน",
@@ -90,6 +111,7 @@ const Locals = {
 
         link_google_map : "ลิ้งค์ปักหมุดจาก Google Map",
         url_red_marker : "URL ที่ทำการปักหมุดสีแดง",
+        map_local : "ตำแหน่งที่ตั้ง",
         reload_map : "รีโหลดพิกัด",
 
         please_id : "กรอกรหัสประจำตัว",
@@ -99,8 +121,17 @@ const Locals = {
         exam_tomato : "เช่น มะเขือเทศ",
         exam_royal : "เช่น ศูนย์โครงการหลวง",
         click : "คลิก",
+        notify : "การแจ้งเตือน",
+        no_notify : "ไม่มีการแจ้งเตือน",
+        profile : "โปรไฟล์",
 
-        loading_data_doctor : "กำลังโหลดข้อมูลผู้ส่งเสริม"
+        loadingData : "กำลังโหลดข้อมูล",
+        loading_data_doctor : "กำลังโหลดข้อมูลผู้ส่งเสริม",
+        use : "ใช้งานอยู่",
+        enable : "เปิด",
+        disable : "ปิด",
+
+        stop_account : "บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"
     },
     eng : {
         home : "Home",
@@ -152,15 +183,37 @@ const Locals = {
         err_server : "Server Error",
 
         menu : "Menu",
+
         BtMenuAdminRegister : {
             row_1 : "Doctor",
-            row_2 : "Register"
+            row_2 : "Account"
         },
         BtMenuAdminData : {
             row_1 : "Data",
             row_2 : "Related"
         },
+
+        BtMenuDoctorRegister : {
+            row_1 : "Farmer",
+            row_2 : "Account"
+        },
+        BtMenuDoctorFrom : {
+            row_1 : "Record",
+            row_2 : "Agriculture"
+        },
+
         doctor : "Doctor",
+        doctor_username : "รหัสประจำตัวหมอพืช",
+        doctor_confirm_title : "Confirm Account Doctor",
+        doctor_id_title : "Doctor ID",
+        doctor_firstname : "ชื่อ",
+        doctor_surname : "นามสกุล",
+        doctor_station : "ศูนย์ปฏิบัติหน้าที่",
+
+        doctor_placehoder_first : "please enter firstname is THAI",
+        doctor_placehoder_sur : "please enter surname is THAI",
+        doctor_placehoder_station : "please enter station",
+
         session : "Session expired",
         ok : "OK",
         online : "Online",
@@ -194,6 +247,7 @@ const Locals = {
 
         link_google_map : "Link marker google map",
         url_red_marker : "URL form marker",
+        map_local : "Location",
         reload_map : "Reload",
 
         please_id : "Please enter ID",
@@ -203,8 +257,17 @@ const Locals = {
         exam_tomato : "Ex : tomato",
         exam_royal : "Ex : Royal project",
         click : "Click",
+        notify : "Notifications",
+        no_notify : "No notifications",
+        profile : "Profile",
 
-        loading_data_doctor : "Loading doctor information"
+        loadingData : "Loading",
+        loading_data_doctor : "Loading doctor information",
+        use : "Use",
+        enable : "Enable",
+        disable : "Disable",
+
+        stop_account : "Account suspended Please contact the system administrator."
     }
 }
 

@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../assets/js/moduleClient";
 
 import "../../assets/style/page/PopupManage.scss"
 import { Loading, MapsJSX, ReportAction } from "../../../../../assets/js/module";
+import Locals from "../../../../../locals";
+import { AdminProvider } from "../../main";
 const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , TabOn , session , ReloadData}) => {
+    const { lg } = useContext(AdminProvider)
+    
     const [LoadingStatus , setLoading] = useState(true)
 
     const [ScreenW , setScreenW] = useState(window.innerWidth)
@@ -72,16 +76,17 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
             setOpen(1)
             const result = await clientMo.post("/api/admin/data/change" , data)
             if(result === "133") {
-                setText(`${status == 1 ? "ปิด" : "เปิด"}${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}สำเร็จ`)
+                const status_lang = status == 1 ? Locals[lg]["disable"] : Locals[lg]["enable"]
+                setText(`${lg === "th" ? status_lang : `${status_lang} `}${type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}${ lg === "th" ? Locals[lg]["success"] : ` ${Locals[lg]["success"]}` }`)
                 setStatus(1)
             } else if(result === "over") {
-                setText(`มี${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}ใช้งานอยู่`)
+                setText(`${type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}${lg === "th" ? Locals[lg]["use"] : ` ${Locals[lg]["use"]}`}`)
                 setStatus(3)
             } else if(result === "because") {
-                setText("เกิดปัญหาทางเซิร์ฟเวอร์")
+                setText(Locals[lg]["err_server"])
                 setStatus(3)
             } else if(result === "password") {
-                setText("รหัสผ่านไม่ถูกต้อง")
+                setText(Locals[lg]["err_password"])
                 setStatus(3)
                 PasswordRef.current.value = ""
             } else {
@@ -119,25 +124,25 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
                         color="#1CFFF1" action={AfterConfirm}/>
         <div className="manage-page">
             <div className="head-page">
-                {`ยืนยันการ${status == 1 ? "ปิด" : "เปิด"}${type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}`}
+                {`${ lg === "th" ? Locals[lg]["confirm"] : `${Locals[lg]["confirm"]} ` }${ lg === "th" ? status == 1 ? Locals[lg]["disable"] : Locals[lg]["enable"] : `${status == 1 ? Locals[lg]["disable"] : Locals[lg]["enable"]} ` }${type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}`}
             </div>
             <div className="detail-content">
                 {LoadingStatus ? 
                     <div className="Loading">
                         <Loading size={4/100 * ScreenW >= 41 ? 4/100 * ScreenW : 41} border={0.5/100 * ScreenW >= 5 ? 0.5/100 * ScreenW : 5} color="#1CFFF1" animetion={LoadingStatus}/>
-                        <span>กำลังโหลดข้อมูล{type === "plant" ? "ชนิดพืช" : type === "station" ? "ศูนย์ส่งเสริม" : ""}</span>
+                        <span>{lg === "th" ? Locals[lg]["loadingData"] : `${Locals[lg]["loadingData"]} `}{type === "plant" ? Locals[lg]["plant_type"] : type === "station" ? Locals[lg]["__station"] : ""}</span>
                     </div>
                     : <></>
                 }
                 <div className="detail-data-report">
                     <div className="data-popup" maxsize="" flex={type}>
                         <div className="name" w={type}>
-                            {type === "plant" ? <span className={type}>ชื่อพืช</span> : <></>}
+                            {type === "plant" ? <span className={type}>{Locals[lg]["plant_name"]}</span> : <></>}
                             <div>{Data.name}</div>
                         </div>
                         <div className={type === "plant" ? "type_plant" : "location"}>
                             {
-                                type === "plant" ? <span>ชนิดพืช</span> : <></>
+                                type === "plant" ? <span>{Locals[lg]["plant_type"]}</span> : <></>
                             }
                             {
                                 type === "plant" ? <div>{Data.dataOther}</div> :
@@ -151,12 +156,12 @@ const ManageDataPage = ({RefOnPage , id_table , type , status , setBecause , Tab
             </div>
             <div className="form-manage">
                 <label className="column">
-                    <span>รหัสผ่านผู้ดูแล</span>
-                    <input placeholder="กรอกรหัสผ่าน" ref={PasswordRef} type="password" className="input-text input-pw"></input>
+                    <span>{Locals[lg]["admin_password_short"]}</span>
+                    <input placeholder={Locals[lg]["please_password"]} ref={PasswordRef} type="password" className="input-text input-pw"></input>
                 </label>
                 <div className="bt-manage">
-                    <button onClick={close} className="close">ยกเลิก</button>
-                    <button onClick={Submit} className="submit">ยืนยัน</button>
+                    <button onClick={close} className="close">{Locals[lg]["cancel"]}</button>
+                    <button onClick={Submit} className="submit">{Locals[lg]["confirm"]}</button>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 
 import "./assets/style/Navfirst.scss"
 import PageFormPlant from "./page/form/PageFormPlant"
@@ -7,7 +7,12 @@ import PageFarmer from "./page/farmer/PageFarmer"
 import { clientMo } from "../../../assets/js/moduleClient"
 import { ButtonMenu } from "./page/modules"
 import PageData from "./page/data/PageData"
+
+import { DoctorProvider } from "./main"
+import Locals from "../../../locals"
 const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [ Responsive , setResponsive ] = useState(window.innerWidth)
     
     useEffect(()=>{
@@ -65,21 +70,21 @@ const NavFirst = ({setMain , setSession , setdoctor , socket , type = 0 , eleIma
     return (
         <section className="nav-first" onLoad={clientMo.unLoadingPage}>
             <div className="head">
-                <span>Menu</span>
+                <span>{Locals[lg]["menu"]}</span>
             </div>
             <div className={`content-menu${Responsive > 800 ? "" : " column"}`}>
                 { Responsive > 800 ?
                     <>
-                    <ButtonMenu type={"farmer"} textRow1={"ทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
-                    <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
+                    <ButtonMenu type={"farmer"} textRow1={Locals[lg]["BtMenuDoctorRegister"]["row_1"]} textRow2={Locals[lg]["BtMenuDoctorRegister"]["row_2"]} action={farmer}/>
+                    <ButtonMenu type={"form"} textRow1={Locals[lg]["BtMenuDoctorFrom"]["row_1"]} textRow2={Locals[lg]["BtMenuDoctorFrom"]["row_2"]} action={form}/>
                     </>
                     :
                     <div className="row">
-                        <ButtonMenu type={"farmer"} textRow1={"ทะเบียน"} textRow2={"เกษตรกร"} action={farmer}/>
-                        <ButtonMenu type={"form"} textRow1={"แบบบันทึก"} textRow2={"และการปลูก"} action={form}/>
+                        <ButtonMenu type={"farmer"} textRow1={Locals[lg]["BtMenuDoctorRegister"]["row_1"]} textRow2={Locals[lg]["BtMenuDoctorRegister"]["row_2"]} action={farmer}/>
+                        <ButtonMenu type={"form"} textRow1={Locals[lg]["BtMenuDoctorFrom"]["row_1"]} textRow2={Locals[lg]["BtMenuDoctorFrom"]["row_2"]} action={form}/>
                     </div>
                 }
-                <ButtonMenu type={"data"} textRow1={"เพิ่มเติม"} textRow2={"ข้อมูล"} action={data}/>
+                <ButtonMenu type={"data"} textRow1={Locals[lg]["BtMenuAdminData"]["row_1"]} textRow2={Locals[lg]["BtMenuAdminData"]["row_2"]} action={data}/>
             </div>
         </section>
     )

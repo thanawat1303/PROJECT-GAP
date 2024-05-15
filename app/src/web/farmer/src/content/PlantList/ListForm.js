@@ -20,7 +20,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
     
     useEffect(()=>{
         setPage("HOME")
-        setBodyList(<></>)
+        setBodyList([])
         if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}`)
 
         ListPlantForm()
@@ -58,7 +58,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
 
     return (
         <Template PopUp={{PopupRef : PopupRef , PopupBody : PopupAdd}}
-            List={
+            List={(
                 BodyList.map((val , key)=>
                     <div key={val.id} className={`plant-content ${val.state_status == 2 ? "submit" : ""}`} style={
                         (val.report || val.form || val.plant || val.success) && val.state_status < 2 ? {
@@ -112,7 +112,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
                         </div>
                     </div>
                 )
-            } 
+            )} 
             Loading={Loading} action={popupPlant} Option={{TextHead : Locals[lg]["form_farmer"] , img : "/plant_glow.jpg"}}
         />
     )

@@ -61,7 +61,7 @@ const ListData = ({socket , status , PageAddRef , auth , session , TabOn , HrefP
         clearInterval(getInterval)
 
         const ObjectData = 
-                HrefPage.get().split("?")[0] === "list" ? await clientMo.get("/api/admin/doctor/list" , {
+                HrefPage.get().split("?")[0] === "list" ? await clientMo.post("/api/admin/doctor/list" , {
                     typeDelete : (status.status === "default" ? 0 : status.status === "delete" ? 1 : -1) , 
                     limit : Limit ? Limit : 10,
                     startRow : StartRow,

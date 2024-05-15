@@ -578,7 +578,7 @@ const Locals = {
         date : "Date",
 
         The_time : "The time",
-        recommendations : "Recommendations",
+        recommendations : "Recommend",
         edit_suggestions : "Edit suggestions",
         recorder : "Recorder",
 

@@ -489,7 +489,7 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
 const ManageList = ({Data , session , fetch , count , setCount}) => {
     const { lg } = useContext(DoctorProvider)
     
-    const [Body , setBody] = useState(<></>)
+    const [Body , setBody] = useState([])
     const RefPop = useRef()
     const [PopBody , setPop] = useState(<></>)
     
@@ -528,87 +528,9 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
             // for(let x = 0 ; x < Data.length ; x += Max) Row.push(Data.slice(x , Max + x))
 
             // let countKey = 0
-            const body = Data.map((Data , keyRow)=>{
-                const Ref = refData[keyRow]
-                const DateHarvestDiff = ((new Date(Data.date_harvest) - new Date()) / (24 * 60 * 60 * 1000)).toString().split(".")[0]
-                return (
-                    <a key={keyRow} className="list-some-data-on-page" title="เปิดแบบฟอร์ม"
-                        ref={Ref} status={Data.state_status} onClick={()=>showPopup(Data.id , Ref)}
-                        >
-                        { Data.state_status == 0 && (DateHarvestDiff <= 15 || DateHarvestDiff < 0) ?
-                            <div className="report-list">
-                                <div className="text">
-                                {
-                                    (DateHarvestDiff < 0) ?
-                                        `${Locals[lg]["the_harvest_is_overdue"]} ${Math.abs(DateHarvestDiff)} ${Locals[lg]["day"]}` :
-                                    (DateHarvestDiff == 0) ? 
-                                        Locals[lg]["harvest_is_due"] :
-                                    (DateHarvestDiff <= 15) ?
-                                        `${Locals[lg]["harvest_in_another"]} ${DateHarvestDiff} ${Locals[lg]["day"]}`
-                                        : <></>
-                                }
-                                </div>
-                            </div> : <></>
-                        }
-                        <div className="frame-data-list">
-                            <div className="inrow">
-                                <div className="column">
-                                    <div className="type-main">
-                                        {Data.type_main}
-                                    </div>
-                                    <div className="type">
-                                        {Data.name_plant}
-                                    </div>
-                                </div>
-                                <div className="date">
-                                    <span>{Locals[lg]["__plant"]}</span>
-                                    <DayJSX DATE={Data.date_plant} TYPE="SMALL"/>
-                                </div>
-                            </div>
-                            <div className="inrow">
-                                <div className="system-glow">
-                                    <span>{Locals[lg]["system_glow"]}</span> 
-                                    <div>{" "+Data.system_glow}</div>
-                                </div>
-                                <div className="factor">
-                                    <div className="content">
-                                        <span>{Locals[lg]["fertilizer"]}</span> {Data.ctFer} {Locals[lg]["time"]}
-                                    </div>
-                                    <div className="dot">|</div>
-                                    <div className="content">
-                                        <span>{Locals[lg]["chemical"]}</span> {Data.ctChe} {Locals[lg]["time"]}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="inrow">
-                                <div className="insect">
-                                    <span>{Locals[lg]["pests"]}</span> {Data.insect}
-                                </div>
-                                <div className="factor">
-                                    <div className="content">
-                                        <span>{Locals[lg]["__generation"]}</span> {Data.generation}
-                                    </div>
-                                    <div className="content">
-                                        <span>{Locals[lg]["quantity"]}</span> {Data.qty} {Locals[lg]["tree"]}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="inrow">
-                                <div className="content">
-                                    <span>{Locals[lg]["farmer_name"]}</span> {Data.farmer}
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                )
-            })
-            setBody(body)
+            setBody(Data)
         } else {
-            setBody(
-                <section>
-                    <div>ไม่พบข้อมูล</div>
-                </section>
-            )
+            setBody([])
         }
     }
 
@@ -623,7 +545,86 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
     return(
         <>
         <div className="body-page-content">
-            {Body}
+            {
+                Body.length ?
+                    Body.map((Data , keyRow)=>{
+                        const Ref = refData[keyRow]
+                        const DateHarvestDiff = ((new Date(Data.date_harvest) - new Date()) / (24 * 60 * 60 * 1000)).toString().split(".")[0]
+                        return (
+                            <a key={keyRow} className="list-some-data-on-page" title="เปิดแบบฟอร์ม"
+                                ref={Ref} status={Data.state_status} onClick={()=>showPopup(Data.id , Ref)}
+                                >
+                                { Data.state_status == 0 && (DateHarvestDiff <= 15 || DateHarvestDiff < 0) ?
+                                    <div className="report-list">
+                                        <div className="text">
+                                        {
+                                            (DateHarvestDiff < 0) ?
+                                                `${Locals[lg]["the_harvest_is_overdue"]} ${Math.abs(DateHarvestDiff)} ${Locals[lg]["day"]}` :
+                                            (DateHarvestDiff == 0) ? 
+                                                Locals[lg]["harvest_is_due"] :
+                                            (DateHarvestDiff <= 15) ?
+                                                `${Locals[lg]["harvest_in_another"]} ${DateHarvestDiff} ${Locals[lg]["day"]}`
+                                                : <></>
+                                        }
+                                        </div>
+                                    </div> : <></>
+                                }
+                                <div className="frame-data-list">
+                                    <div className="inrow">
+                                        <div className="column">
+                                            <div className="type-main">
+                                                {Data.type_main}
+                                            </div>
+                                            <div className="type">
+                                                {Data.name_plant}
+                                            </div>
+                                        </div>
+                                        <div className="date">
+                                            <span>{Locals[lg]["__plant"]}</span>
+                                            <DayJSX DATE={Data.date_plant} TYPE="SMALL"/>
+                                        </div>
+                                    </div>
+                                    <div className="inrow">
+                                        <div className="system-glow">
+                                            <span>{Locals[lg]["system_glow"]}</span> 
+                                            <div>{" "+Data.system_glow}</div>
+                                        </div>
+                                        <div className="factor">
+                                            <div className="content">
+                                                <span>{Locals[lg]["fertilizer"]}</span> {Data.ctFer} {Locals[lg]["time"]}
+                                            </div>
+                                            <div className="dot">|</div>
+                                            <div className="content">
+                                                <span>{Locals[lg]["chemical"]}</span> {Data.ctChe} {Locals[lg]["time"]}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inrow">
+                                        <div className="insect">
+                                            <span>{Locals[lg]["pests"]}</span> {Data.insect}
+                                        </div>
+                                        <div className="factor">
+                                            <div className="content">
+                                                <span>{Locals[lg]["__generation"]}</span> {Data.generation}
+                                            </div>
+                                            <div className="content">
+                                                <span>{Locals[lg]["quantity"]}</span> {Data.qty} {Locals[lg]["tree"]}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inrow">
+                                        <div className="content">
+                                            <span>{Locals[lg]["farmer_name"]}</span> {Data.farmer}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        )
+                    }) :
+                    <section>
+                        <div>ไม่พบข้อมูล</div>
+                    </section>
+            }
         </div>
         <div className="footer">
             <LoadOtherDom Fetch={fetch} count={count} setCount={setCount} Limit={10}

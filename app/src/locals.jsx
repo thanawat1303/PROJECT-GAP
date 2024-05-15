@@ -96,7 +96,7 @@ const Locals = {
         not_name : "เจ้าหน้าที่ส่งเสริมยังไม่ทำการระบุชื่อ",
         station_anonymous : "เจ้าหน้าที่ส่งเสริมยังไม่ระบุ",
         id : "รหัสประจำตัว",
-        stationing : "Stationing",
+        stationing : "ศูนย์ปฏิบัติงาน",
 
         history_reason_on_off : "ประวัติและเหตุผลการเปิด/ปิดบัญชี",
         history_reason_delete : "ประวัติและเหตุผลการลบบัญชี",

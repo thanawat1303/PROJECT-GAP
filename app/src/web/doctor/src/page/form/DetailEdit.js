@@ -1,9 +1,13 @@
-import React, { useEffect, useState , useRef } from "react";
+import React, { useEffect, useState , useRef, useContext } from "react";
 import "../../assets/style/page/form/DetailEdit.scss"
 import { clientMo } from "../../../../../assets/js/moduleClient";
 import { DayJSX, Loading, ReportAction } from "../../../../../assets/js/module";
+import { DoctorProvider } from "../../main";
+import Locals from "../../../../../locals";
 
 const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_plant , session}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [Data , setData] = useState(null)
     const [HeadEdit , setHead] = useState([])
     const [BodyEdit , setBody] = useState(<></>)
@@ -24,33 +28,33 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
     
     const subject = type === "plant" ? 
                     {
-                        name_plant : "ชนิดพืช" ,
-                        generation : "รุ่นที่ปลูก" ,
-                        date_glow : "วันที่เพราะกล้า" ,
-                        date_plant : "วันที่ปลูก",
-                        posi_w : "ระยะการปลูก ความกว้าง",
-                        posi_h : "ระยะการปลูก ความยาว",
-                        qty : "จำนวนต้น",
-                        area : "พื้นที่",
-                        date_harvest : "วันที่คาดว่าจะเก็บเกี่ยว",
-                        system_glow : "รูปแบบการปลูก",
-                        water : "แหล่งน้ำ",
-                        water_flow : "วิธีการให้น้ำ",
-                        history : "ประวัติการใช้พื้นที่",
-                        insect : "โรคและแมลงที่พบ",
-                        qtyInsect : "ปริมาณการเกิดโรค และแมลงที่พบ",
-                        seft : "การป้องกัน กำจัด",
+                        name_plant : Locals[lg]["plant_type"] ,
+                        generation : Locals[lg]["generation"] ,
+                        date_glow : Locals[lg]["date_glow"] ,
+                        date_plant : Locals[lg]["date_plant"],
+                        posi_w : Locals[lg]["posi_w"],
+                        posi_h : Locals[lg]["posi_h"],
+                        qty : Locals[lg]["qty"],
+                        area : Locals[lg]["area"],
+                        date_harvest : Locals[lg]["date_harvest"],
+                        system_glow : Locals[lg]["system_glow"],
+                        water : Locals[lg]["water"],
+                        water_flow : Locals[lg]["water_flow"],
+                        history : Locals[lg]["history"],
+                        insect : Locals[lg]["insect"],
+                        qtyInsect : Locals[lg]["qtyInsect"],
+                        seft : Locals[lg]["seft"],
                     } : 
                     {
-                        name : type === "z" ? "ชื่อสิ่งที่ใช้" : "ชื่อสารเคมี" ,
-                        formula_name : type === "z" ? "ชื่อสูตรปุ๋ย" : "ชื่อสามัญสารเคมี" ,
-                        insect : "ศัตรูพืชที่พบ" ,
-                        use_is : "วิธีการใช้" ,
-                        rate : "อัตราที่ผสม" ,
-                        volume : "ปริมาณที่ใช้" ,
-                        source : "แหล่งที่ซื้อ" ,
-                        date_safe : "วันที่ปลอดภัย" ,
-                        date : type === "z" ? "ว/ด/ป ที่ใช้" : "ว/ด/ป ที่พ่นสาร" ,
+                        name : type === "z" ? Locals[lg]["name_equip_fertilizer"] : Locals[lg]["name_equip_chemicals"] ,
+                        formula_name : type === "z" ? Locals[lg]["formula_name_fertilizer"] : Locals[lg]["formula_name_chemicals"] ,
+                        insect : Locals[lg]["insect_equip"] ,
+                        use_is : Locals[lg]["use_is"] ,
+                        rate : Locals[lg]["rate"] ,
+                        volume : Locals[lg]["volume"] ,
+                        source : Locals[lg]["source"] ,
+                        date_safe : Locals[lg]["date_safe"] ,
+                        date : type === "z" ? Locals[lg]["date_fertilizer"] : Locals[lg]["date_chemicals"] ,
                     }
     
     useEffect(()=>{
@@ -111,7 +115,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
 
             if(result) {
                 setStatusReport(resultBt)
-                setTextReport(resultBt == 1 ? "อนุมัติสำเร็จ" : "ไม่อนุมัติสำเร็จ")
+                setTextReport(resultBt == 1 ? Locals[lg]["approval"] : Locals[lg]["disapproved"])
             } else session()
         }
     }
@@ -174,22 +178,22 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                             <div className="body-edit">
                                 <div className="head-detail-edit">
                                     <div className="row-detail">
-                                        <DayJSX DATE={HeadEdit.date} TYPE="small" TEXT="วันที่แก้ไข"/>
+                                        <DayJSX DATE={HeadEdit.date} TYPE="small" TEXT={Locals[lg]["date_edit"]}/>
                                     </div>
                                     <div className="line"></div>
                                     <div className="row-detail column">
-                                        <span>เหตุผล</span>
+                                        <span>{Locals[lg]["reason"]}</span>
                                         <textarea readOnly defaultValue={HeadEdit.because}></textarea>
                                     </div>
                                     { HeadEdit.status != 0 ?
                                         <>
                                         <div className="line"></div>
                                         <div className="row-detail">
-                                            <span>สถานะตรวจสอบ</span>
+                                            <span>{Locals[lg]["status_check"]}</span>
                                             <span className="dot">:</span>
                                             <div>
                                                 {
-                                                HeadEdit.status == 1 ? "ผ่าน" : "ไม่ผ่าน"
+                                                HeadEdit.status == 1 ? Locals[lg]["pass"] : Locals[lg]["not_pass"]
                                                 }
                                             </div>
                                         </div> 
@@ -199,7 +203,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                                     {
                                         HeadEdit.status !== 0 ? 
                                             <div className="row-detail column">
-                                                <span>หมายเหตุ</span>
+                                                <span>{Locals[lg]["note"]}</span>
                                                 <textarea readOnly defaultValue={HeadEdit.note}></textarea>
                                             </div>
                                             : <></>
@@ -208,15 +212,15 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                                 <div className="detail">
                                     <div className="detail-body">
                                         <div className="head">
-                                            <span>ข้อมูลที่ถูกแก้ไข</span>
+                                            <span>{Locals[lg]["corrected_information"]}</span>
                                             <span className="advice">
                                                 <div className="row-advice">
                                                     <div className="dot old"></div>
-                                                    ข้อมูลเก่า
+                                                    {Locals[lg]["old_data"]}
                                                 </div>
                                                 <div className="row-advice">
                                                     <div className="dot new"></div>
-                                                    ข้อมูลใหม่
+                                                    {Locals[lg]["new_data"]}
                                                 </div>
                                             </span>
                                         </div>
@@ -233,7 +237,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                                                                 val.subject_form.indexOf("date") >= 0 ? 
                                                                     <DayJSX DATE={val.old_content} TYPE="small"/>
                                                                     :
-                                                                    <span>{val.old_content ? val.old_content : "ไม่ระบุ"}</span>
+                                                                    <span>{val.old_content ? val.old_content : Locals[lg]["not_specified"]}</span>
                                                             }
                                                             </span>
                                                             <span className="new">
@@ -241,7 +245,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                                                                 val.subject_form.indexOf("date") >= 0 ? 
                                                                     <DayJSX DATE={val.new_content} TYPE="small"/>
                                                                     :
-                                                                    <span>{val.new_content ? val.new_content : "ไม่ระบุ"}</span>
+                                                                    <span>{val.new_content ? val.new_content : Locals[lg]["not_specified"]}</span>
                                                             }
                                                             </span>
                                                             </div>
@@ -258,7 +262,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                                         <div className="detail">
                                             <div className="detail-body">
                                                 <div className="head">
-                                                    <span>หมายเหตุ</span>
+                                                    <span>{Locals[lg]["note"]}</span>
                                                 </div>
                                                 <div className="line"></div>
                                                 <div className="body-because">
@@ -266,8 +270,8 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                                                 </div>
                                             </div>
                                             <div className="bt-confirm-edit">
-                                                <a onClick={()=>ApiResultCheck(HeadEdit.id_edit , 2)} ref={RefBtNot} className="not" click-not="">ไม่ผ่าน</a>
-                                                <a onClick={()=>ApiResultCheck(HeadEdit.id_edit , 1)} ref={RefBtPass} className="pass" click-not="">ผ่าน</a>
+                                                <a onClick={()=>ApiResultCheck(HeadEdit.id_edit , 2)} ref={RefBtNot} className="not" click-not="">{Locals[lg]["not_pass"]}</a>
+                                                <a onClick={()=>ApiResultCheck(HeadEdit.id_edit , 1)} ref={RefBtPass} className="pass" click-not="">{Locals[lg]["pass"]}</a>
                                             </div>
                                         </div>
                                         : <></>
@@ -285,7 +289,7 @@ const DetailEdit = ({Ref , setRef , setDetailData , type , id_form , id_from_pla
                         </svg>
                     </div>
                     <div className="not-edit">
-                        ไม่พบการแก้ไขข้อมูล
+                        {Locals[lg]["No_found_edit"]}
                     </div>
                     </>
                 }

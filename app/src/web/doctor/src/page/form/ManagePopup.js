@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { clientMo } from "../../../../../assets/js/moduleClient"
 import "../../assets/style/page/form/ManagePopup.scss"
 import { DayJSX, Loading, MapsJSX, PopupDom, ResizeImg } from "../../../../../assets/js/module"
 import DetailEdit from "./DetailEdit"
 import { ExportPDF } from "../../../../../assets/js/Export"
 import { DoctorDetail, ListCheckForm, ListCheckPlant, ListReport, ListSuccess } from "./ListManageDoctor"
+import { DoctorProvider } from "../../main"
+import Locals from "../../../../../locals"
 
 const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [Content , setContent] = useState(<></>)
     // const [ID_farmer , setID_farmer] = useState("")
     const [LoadContent , setLoadContent] = useState(true)
@@ -60,67 +64,67 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                         <div className="data-row">
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">ชนิดพืช</span>
+                                                    <span className="head-data">{Locals[lg]["plant_type"]}</span>
                                                     <span className="data-show">{data.type_main}</span>
                                                 </div>
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">ชื่อพืช</span>
+                                                    <span className="head-data">{Locals[lg]["plant_name"]}</span>
                                                     <span className="data-show">{data.name_plant}</span>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">วันที่เพาะกล้า</span>
-                                                    <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_glow}/>
+                                                    <span className="head-data">{Locals[lg]["date_glow"]}</span>
+                                                    <DayJSX TYPE="small" TEXT={Locals[lg]["date"]} DATE={data.date_glow}/>
                                                 </div>
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">วันที่ปลูก</span>
-                                                    <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_plant}/>
+                                                    <span className="head-data">{Locals[lg]["date_plant"]}</span>
+                                                    <DayJSX TYPE="small" TEXT={Locals[lg]["date"]} DATE={data.date_plant}/>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">วันที่คาดว่าจะเก็บเกี่ยว</span>
-                                                    <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_harvest}/>
+                                                    <span className="head-data">{Locals[lg]["date_harvest"]}</span>
+                                                    <DayJSX TYPE="small" TEXT={Locals[lg]["date"]} DATE={data.date_harvest}/>
                                                 </div>
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">วันที่เก็บเกี่ยว</span>
+                                                    <span className="head-data">{Locals[lg]["harvest_date"]}</span>
                                                     { data.date_success ? 
-                                                        <DayJSX TYPE="small" TEXT="วันที่" DATE={data.date_success}/> 
-                                                        : <span className="data-show">ยังไม่เก็บเกี่ยว</span>}
+                                                        <DayJSX TYPE="small" TEXT={Locals[lg]["date"]} DATE={data.date_success}/> 
+                                                        : <span className="data-show">{Locals[lg]["not_yet_harvested"]}</span>}
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">พื้นที่</span>
+                                                    <span className="head-data">{Locals[lg]["area"]}</span>
                                                     <span className="data-show">
                                                         {data.area}
                                                         <div className="unit">
-                                                            ตารางเมตร
+                                                            {Locals[lg]["square_meter"]}
                                                         </div>
                                                     </span>
                                                 </div>
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">จำนวนต้น</span>
+                                                    <span className="head-data">{Locals[lg]["qty"]}</span>
                                                     <span className="data-show">{data.qty}</span>
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <span className="head-text">ระยะการปลูก</span>
+                                                <span className="head-text">{Locals[lg]["planting_period"]}</span>
                                                 <div className="text-body">
                                                     <div className={`data-main ${getResize >= 450 ? "in-2 column" : "in-1 screen-small"}`}>
-                                                        <span className="head-data">ระหว่างต้น</span>
+                                                        <span className="head-data">{Locals[lg]["between_trees"]}</span>
                                                         <span className="data-show">{data.posi_w}</span>
                                                     </div>
                                                     <div className={`data-main ${getResize >= 450 ? "in-2 column" : "in-1 screen-small"}`}>
-                                                        <span className="head-data">ระหว่างแถว</span>
+                                                        <span className="head-data">{Locals[lg]["between_rows"]}</span>
                                                         <span className="data-show">{data.posi_h}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">รุ่นที่ปลูก</span>
+                                                    <span className="head-data">{Locals[lg]["generation"]}</span>
                                                     <span className="data-show">{data.generation}</span>
                                                 </div>
                                             </div>
@@ -131,7 +135,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                         <div className="data-row">
                                             <div className="row">
                                                 <div className={`data-main in-1 column ${getResize < 450 ? "screen-small" : ""}`}>
-                                                    <span className="head-data" style={{width : "110px"}}>รูปแบบการปลูก</span>
+                                                    <span className="head-data" style={{width : "110px"}}>{Locals[lg]["system_glow"]}</span>
                                                     <span className="data-show">{data.system_glow}</span>
                                                 </div>
                                             </div>
@@ -142,7 +146,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                         <div className="data-row">
                                             <div className="row">
                                                 <div className={`data-main in-1 ${getResize < 450 ? "screen-small" : ""}`}>
-                                                    <span className="head-data" style={{width : "110px"}}>แหล่งน้ำ</span>
+                                                    <span className="head-data" style={{width : "110px"}}>{Locals[lg]["water"]}</span>
                                                     <span className="data-show">{data.water}</span>
                                                 </div>
                                             </div>
@@ -153,7 +157,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                         <div className="data-row">
                                             <div className="row">
                                                 <div className={`data-main in-1 ${getResize < 450 ? "screen-small" : ""}`}>
-                                                    <span className="head-data" style={{width : "110px"}}>วิธีการให้น้ำ</span>
+                                                    <span className="head-data" style={{width : "110px"}}>{Locals[lg]["water_flow"]}</span>
                                                     <span className="data-show">{data.water_flow}</span>
                                                 </div>
                                             </div>
@@ -164,27 +168,27 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                         <div className="data-row">
                                             <div className="row">
                                                 <div className={`data-main in-1 ${getResize < 450 ? "screen-small" : ""}`}>
-                                                    <span style={{width : "100%"}} className="head-data">ประวัติการใช้พื้นที่และการเกิดโรค</span>
+                                                    <span style={{width : "100%"}} className="head-data">{Locals[lg]["history_area"]}</span>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">ชนิดพืชก่อนหน้า</span>
-                                                    <span className="data-show">{data.history ? data.history : "ไม่ระบุ"}</span>
+                                                    <span className="head-data">{Locals[lg]["previous_plant_type"]}</span>
+                                                    <span className="data-show">{data.history ? data.history : Locals[lg]["not_specified"]}</span>
                                                 </div>
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">โรค/แมลงที่พบ</span>
-                                                    <span className="data-show">{data.insect ? data.insect : "ไม่ระบุ"}</span>
+                                                    <span className="head-data">{Locals[lg]["diseases_insects_found"]}</span>
+                                                    <span className="data-show">{data.insect ? data.insect : Locals[lg]["not_specified"]}</span>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">ปริมาณการเกิด</span>
-                                                    <span className="data-show">{data.qtyInsect ? data.qtyInsect : "ไม่ระบุ"}</span>
+                                                    <span className="head-data">{Locals[lg]["diseases_qty"]}</span>
+                                                    <span className="data-show">{data.qtyInsect ? data.qtyInsect : Locals[lg]["not_specified"]}</span>
                                                 </div>
                                                 <div className={`data-main ${getResize >= 450 ? "in-2" : "in-1 screen-small"}`}>
-                                                    <span className="head-data">การป้องกันกำจัด</span>
-                                                    <span className="data-show">{data.seft ? data.seft : "ไม่ระบุ"}</span>
+                                                    <span className="head-data">{Locals[lg]["seft"]}</span>
+                                                    <span className="data-show">{data.seft ? data.seft : Locals[lg]["not_specified"]}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -196,7 +200,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                                 <div className="data-row">
                                                     <div className="row">
                                                         <div className="data-main in-1 column">
-                                                            <span className="head-data">ตำแหน่งที่ทำการเกษตรกร</span>
+                                                            <span className="head-data">{Locals[lg]["location_farm"]}</span>
                                                             <MapsJSX lat={data.location_house.x} lng={data.location_house.y}/>
                                                         </div>
                                                     </div>
@@ -211,33 +215,33 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                 <div key={key} className="row-factor">
                                     <div className="row-in">
                                         <div className="in-data date">
-                                            <span>ว/ด/ป ที่ใช้</span>
-                                            <DayJSX DATE={data.date} TYPE="small" TEXT="วันที่"/>
+                                            <span>{Locals[lg]["date_fertilizer"]}</span>
+                                            <DayJSX DATE={data.date} TYPE="small" TEXT={Locals[lg]["date"]}/>
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data">
-                                            <span>การค้า</span>
+                                            <span>{Locals[lg]["__name_equip_fertilizer"]}</span>
                                             <div>{data.name}</div>
                                         </div>
                                         <div className="in-data">
-                                            <span>สูตร</span>
-                                            <div>{data.formula_name ? data.formula_name : "ไม่ระบุ"}</div>
+                                            <span>{Locals[lg]["__formula_name_fertilizer"]}</span>
+                                            <div>{data.formula_name ? data.formula_name : Locals[lg]["not_specified"]}</div>
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data">
-                                            <span>วิธีการใช้</span>
+                                            <span>{Locals[lg]["use_is"]}</span>
                                             <div>{data.use_is}</div>
                                         </div>
                                         <div className="in-data">
-                                            <span>ปริมาณ</span>
+                                            <span>{Locals[lg]["__volume"]}</span>
                                             <div>{data.volume}</div>
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data">
-                                            <span>แหล่งที่ซื้อ</span>
+                                            <span>{Locals[lg]["source"]}</span>
                                             <div>{" " + data.source}</div>
                                         </div>
                                     </div>
@@ -246,7 +250,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                             { data.countStatus ?
                                                 <div className="dot-report"></div> : <></>
                                             }
-                                            <button onClick={()=>GetDetailEdit(data.id , type_form === 1 ? "fertilizer" : "chemical" )}>ตรวจการแก้ไข</button>
+                                            <button onClick={()=>GetDetailEdit(data.id , type_form === 1 ? "fertilizer" : "chemical" )}>{Locals[lg]["check_corrections"]}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -256,57 +260,57 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                 <div key={key} className="row-factor">
                                     <div className="row-in">
                                         <div className="in-data date">
-                                            <span>ว/ด/ป ที่พ่นสาร</span>
-                                            <DayJSX DATE={data.date} TYPE="small" TEXT="วันที่"/>
+                                            <span>{Locals[lg]["date_chemicals"]}</span>
+                                            <DayJSX DATE={data.date} TYPE="small" TEXT={Locals[lg]["date"]}/>
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data">
-                                            <span>การค้า</span>
+                                            <span>{Locals[lg]["__name_equip_fertilizer"]}</span>
                                             <div>{data.name}</div>
                                         </div>
                                         <div className="in-data">
-                                            <span>สามัญ</span>
+                                            <span>{Locals[lg]["__name_equip_chemicals"]}</span>
                                             <div>{data.formula_name}</div>
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data">
-                                            <span>ศัตรูพืช</span>
+                                            <span>{Locals[lg]["pests"]}</span>
                                             <div>{data.insect}</div>
                                         </div>
                                         <div className="in-data">
-                                            <span>วิธีการใช้</span>
+                                            <span>{Locals[lg]["use_is"]}</span>
                                             <div>{data.use_is}</div>
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data">
-                                            <span>อัตรา</span>
-                                            <div>{data.rate}/น้ำ20ล.</div>
+                                            <span>{Locals[lg]["rate"]}</span>
+                                            <div>{data.rate}/{Locals[lg]["water_20"]}</div>
                                         </div>
                                         <div className="in-data">
-                                            <span>ปริมาณ</span>
+                                            <span>{Locals[lg]["__volume"]}</span>
                                             {data.volume}
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data">
-                                            <span>แหล่งที่ซื้อ</span>
+                                            <span>{Locals[lg]["source"]}</span>
                                             <div>{" " + data.source}</div>
                                         </div>
                                     </div>
                                     <div className="row-in">
                                         <div className="in-data safe">
-                                            <span>ปลอดภัย</span>
-                                            <DayJSX DATE={data.date_safe} TYPE="small" TEXT="วันที่"/>
+                                            <span>{Locals[lg]["safe__"]}</span>
+                                            <DayJSX DATE={data.date_safe} TYPE="small" TEXT={Locals[lg]["date"]}/>
                                         </div>
                                     </div>
                                     <div className="bt-factor">
                                         { data.countStatus ?
                                             <div className="dot-report"></div> : <></>
                                         }
-                                        <button onClick={()=>GetDetailEdit(data.id , type_form === 1 ? "fertilizer" : "chemical" )}>ตรวจการแก้ไข</button>
+                                        <button onClick={()=>GetDetailEdit(data.id , type_form === 1 ? "fertilizer" : "chemical" )}>{Locals[lg]["check_corrections"]}</button>
                                     </div>
                                 </div>
                             )
@@ -362,38 +366,38 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                         </div>
                         <div className="detail-text">
                             <div className="row">
-                                <span className="head-text">รหัสเกษตรกร</span>
+                                <span className="head-text">{Locals[lg]["id_farmer"]}</span>
                                 <div className="body-text">{val.id_farmer}</div>
                             </div>
                             <div className="row">
-                                <span className="head-text">ชื่อ - นามสกุล</span>
+                                <span className="head-text">{Locals[lg]["fullname"]}</span>
                                 <div className="body-text">{val.fullname}</div>
                             </div>
                             <div className="row">
-                                <span className="head-text">เบอร์โทร</span>
-                                <div className="body-text">{val.tel_number ? val.tel_number : "ไม่ระบุ"}</div>
+                                <span className="head-text">{Locals[lg]["phone"]}</span>
+                                <div className="body-text">{val.tel_number ? val.tel_number : Locals[lg]["not_specified"]}</div>
                             </div>
                             <div className="row">
-                                <span className="head-text">วันที่สมัคร</span>
+                                <span className="head-text">{Locals[lg]["date_sign"]}</span>
                                 <div className="body-text">
-                                    <DayJSX DATE={val.date_register} TYPE="small" TEXT="วันที่"/>
+                                    <DayJSX DATE={val.date_register} TYPE="small" TEXT={Locals[lg]["date"]}/>
                                 </div>
                             </div>
                             <div className="row">
-                                <span className="head-text">วันที่เจ้าหน้าที่ยืนยัน</span>
+                                <span className="head-text">{Locals[lg]["doctor_submit"]}</span>
                                 <div className="body-text">
                                     {val.date_doctor_confirm ?
-                                        <DayJSX DATE={val.date_doctor_confirm} TYPE="small" TEXT="วันที่"/>
-                                        : "ยังไม่ผ่านการตรวจสอบ"
+                                        <DayJSX DATE={val.date_doctor_confirm} TYPE="small" TEXT={Locals[lg]["date"]}/>
+                                        : Locals[lg]["not_yet_validated"]
                                     }
                                 </div>
                             </div>
                             <div className="row">
-                                <span className="head-text">ที่อยู่</span>
-                                <div className="body-text">{val.text_location ? val.text_location : "ไม่ระบุ"}</div>
+                                <span className="head-text">{Locals[lg]["address"]}</span>
+                                <div className="body-text">{val.text_location ? val.text_location : Locals[lg]["not_specified"]}</div>
                             </div>
                             <div className="row">
-                                <span className="head-text">ตำแหน่งที่ตั้ง</span>
+                                <span className="head-text">{Locals[lg]["map_local"]}</span>
                                 <div className="body-text map">
                                     <MapsJSX lat={val.location.x} lng={val.location.y} w={"100%"}/>
                                 </div>
@@ -616,7 +620,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                         {
                             TypePage === 0 || TypePage === 1 || TypePage === 2 || TypePage === 4 ? 
                             <div className="fullname-farmer">
-                                <span>ชื่อเกษตรกร</span>
+                                <span>{Locals[lg]["farmer_name"]}</span>
                                 <div className="frame-text">
                                     <div className="text">
                                         {getNameFarmer}
@@ -625,7 +629,7 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                             </div> : <></>
                         }
                         <div className="head-content">
-                            <div className="text">{TypePage === 0 ? "ข้อมูลการปลูกพืช" : TypePage === 1 ? "ข้อมูลการใช้ปัจจัยการผลิต" : TypePage === 2 ? "ข้อมูลการใช้สารเคมี" : TypePage === 3 ? "ข้อมูลเกษตรกร" : TypePage === 4 ? "บันทึกเจ้าหน้าที่" : ""}</div>
+                            <div className="text">{TypePage === 0 ? Locals[lg]["glowing_information"] : TypePage === 1 ? Locals[lg]["fertilizer_information"] : TypePage === 2 ? Locals[lg]["chemical_information"] : TypePage === 3 ? Locals[lg]["farmer_information"] : TypePage === 4 ? Locals[lg]["staff_report"] : ""}</div>
                             { TypePage === 0 ?
                                 (
                                     <a className="bt-edit" onClick={()=>GetDetailEdit(id_form , "plant")}>
@@ -656,18 +660,18 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                     <>
                                     <div className="menu-manage-form">
                                         <div className="flex-center" select="" onClick={(e)=>MenuManageFormByDoctor("success" , e)} ref={MenuBTManage.success}>
-                                            <div>เก็บเกี่ยว</div>
+                                            <div>{Locals[lg]["harvest"]}</div>
                                         </div>
                                         <div className="flex-center" onClick={(e)=>MenuManageFormByDoctor("report" , e)} ref={MenuBTManage.report}>
-                                            <div>ข้อแนะนำ</div>
+                                            <div>{Locals[lg]["recommendations"]}</div>
                                         </div>
                                         <div className="flex-center" onClick={(e)=>MenuManageFormByDoctor("CheckForm" , e)} ref={MenuBTManage.CheckForm}>
-                                            <div>ตรวจสอบ</div>
-                                            <div>แบบบันทึก</div>
+                                            <div>{Locals[lg]["examine"]}</div>
+                                            <div>{Locals[lg]["record_form"]}</div>
                                         </div>
                                         <div className="flex-center" onClick={(e)=>MenuManageFormByDoctor("CheckPlant" , e)} ref={MenuBTManage.CheckPlant}>
-                                            <div>วิเคราะห์</div>
-                                            <div>ผลผลิต</div>
+                                            <div>{Locals[lg]["analyze"]}</div>
+                                            <div>{Locals[lg]["product"]}</div>
                                         </div>
                                     </div>
                                     <div className="bt-add-content">
@@ -677,27 +681,27 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
                                                 <a className="success-0" 
                                                     not={!DataFormManage.option[0].Check_success_after ? null : ""} 
                                                     onClick={!DataFormManage.option[0].Check_success_after ? ()=>SuccessResult(0) : null}>
-                                                        <div>สั่งเก็บผลผลิตตัวอย่าง</div>
+                                                        <div>{Locals[lg]["order_sample_collection"]}</div>
                                                     {/* <div>ตัวอย่าง</div> */}
                                                 </a>
                                                 <a className="success-1" 
                                                     not={(DataFormManage.option[0].check_plant_before && !DataFormManage.option[0].Check_success_after) ? null : ""} 
                                                     onClick={(DataFormManage.option[0].check_plant_before && !DataFormManage.option[0].Check_success_after) ? ()=>SuccessResult(1) : null}>
-                                                        <div>สั่งเก็บผลผลิตทั้งหมด</div>
+                                                        <div>{Locals[lg]["order_all_produce_collected"]}</div>
                                                     {/* <div>ทั้งหมด</div> */}
                                                 </a>
                                             </div>
                                             </> 
                                             : StatePage === "report" ? 
-                                                <a onClick={()=>PopupReport("report")}>เพิ่มข้อแนะนำ</a>
+                                                <a onClick={()=>PopupReport("report")}>{Locals[lg]["add_suggestion"]}</a>
                                             : StatePage === "CheckForm" ? 
                                                 DataFormManage.list.length === 0 ? 
-                                                    <a onClick={()=>PopupReport("CheckForm")}>เพิ่มผลตรวจสอบ</a> : <></>
+                                                    <a onClick={()=>PopupReport("CheckForm")}>{Locals[lg]["add_inspection_results"]}</a> : <></>
                                             : StatePage === "CheckPlant" ? 
                                                 !DataFormManage.option[0].check_plant_after ?
                                                     <a not={!DataFormManage.option[0].check_success_before ? "" : null} 
                                                         onClick={!DataFormManage.option[0].check_success_before ? null : ()=>PopupReport("CheckPlant" , DataFormManage.option[0])}
-                                                        >เพิ่มผลวิเคราะห์</a> 
+                                                        >{Locals[lg]["add_analysis_results"]}</a> 
                                                 : <></>
                                             : <></>
                                                      
@@ -727,6 +731,8 @@ const ManagePopup = ({setPopup , RefPop , id_form , session , Fecth , RefData}) 
 
 const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_plant}) => {
 
+    const { lg } = useContext(DoctorProvider)
+
     const BtConfirm = useRef()
     const Password = useRef()
     
@@ -748,7 +754,7 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
                 close()
             } else if (result === "password") {
                 Password.current.value = ""
-                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+                Password.current.placeholder = Locals[lg]["err_login"]
             } else if (result === "not") {
                 console.log("not")
             } else session()
@@ -779,17 +785,19 @@ const PopupConfirmAction = ({Ref , setPopup , session , FetchData , Result , id_
 
     return (
         <div className="content-confirm-manage">
-            <span>{Result ? "ยืนยันเก็บเกี่ยวผลผลิตทั้งหมด" : "ยืนยันเก็บเกี่ยวผลผลิตตัวอย่าง"}</span>
-            <input onChange={CheckEmply} ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่" type="password"></input>
+            <span>{Result ? Locals[lg]["confirm_produce_harvest"] : Locals[lg]["confirm_sample_harvest"]}</span>
+            <input onChange={CheckEmply} ref={Password} placeholder={Locals[lg]["doctor_password_own"]} type="password"></input>
             <div className="bt-content">
-                <button style={{backgroundColor : "red"}} onClick={close}>ยกเลิก</button>
-                <button ref={BtConfirm} not="" onClick={Confirm}>ยืนยัน</button>
+                <button style={{backgroundColor : "red"}} onClick={close}>{Locals[lg]["cancel"]}</button>
+                <button ref={BtConfirm} not="" onClick={Confirm}>{Locals[lg]["confirm"]}</button>
             </div>
         </div>
     )
 }
 
 const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeInsert , id_plant , statusSuccess}) => {
+    const { lg } = useContext(DoctorProvider)
+
     const NoteText = useRef()
     const ImgReport = useRef()
     const [QtyNote , setQtyNote] = useState(0)
@@ -901,7 +909,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                 close()
             } else if (result === "password") {
                 Password.current.value = ""
-                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+                Password.current.placeholder = Locals[lg]["err_login"]
             } else if (result === "not") {
                 console.log("not")
             } else if (result === "not image") {
@@ -914,7 +922,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
     return(
         <div className="insert-manage-doctor">
             <div className="head-content">
-                {typeInsert === "report" ? "เพิ่มข้อแนะนำ" : typeInsert === "CheckPlant" ? "เพิ่มผลตรวจสอบผลผลิต" : "เพิ่มผลตรวจสอบแบบบันทึก" }
+                {typeInsert === "report" ? Locals[lg]["add_suggestion"] : typeInsert === "CheckPlant" ? Locals[lg]["add_results_productivity"] : Locals[lg]["add_recorded_results"] }
             </div>
             <div className="content-insert">
                 { typeInsert === "report" ? 
@@ -944,7 +952,7 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                                     <span className="delete" onClick={()=>{
                                         setImgPreview("")
                                         ImgReport.current.value = ""
-                                    }}>ลบรูปภาพ</span> : <></>
+                                    }}>{Locals[lg]["delete_picture"]}</span> : <></>
                                 }
                                 <label>
                                     <input capture="user" ref={ImgReport} onChange={(e)=>{
@@ -954,11 +962,11 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                                             e.preventDefault()
                                         }
                                     }} hidden type="file"></input>
-                                    <span className="add">เพิ่มรูปภาพ</span>
+                                    <span className="add">{Locals[lg]["add_picture"]}</span>
                                 </label>
                             </div>
                         </div>
-                        <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
+                        <input value={`${Locals[lg]["recorder"]} ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div> :
                     typeInsert === "CheckPlant" ? 
                     <div className="check">
@@ -967,15 +975,19 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                         </div>
                         <div className="result">
                             <div className="box-result">
-                                <a ref={StateCheckBefore} not={!statusSuccess.check_success_before ? "" : null} onClick={!statusSuccess.check_success_before ? null : ()=>CheckData(1)}>ก่อน</a>
-                                <a ref={StateCheckAfter} not={!statusSuccess.check_plant_after && !statusSuccess.check_success_after ? "" : null} onClick={!statusSuccess.check_plant_after && !statusSuccess.check_success_after ? null : ()=>CheckData(2)}>หลัง</a>
+                                <a ref={StateCheckBefore} not={!statusSuccess.check_success_before ? "" : null} onClick={!statusSuccess.check_success_before ? null : ()=>CheckData(1)}>
+                                    {Locals[lg]["before"]}
+                                </a>
+                                <a ref={StateCheckAfter} not={!statusSuccess.check_plant_after && !statusSuccess.check_success_after ? "" : null} onClick={!statusSuccess.check_plant_after && !statusSuccess.check_success_after ? null : ()=>CheckData(2)}>
+                                    {Locals[lg]["after"]}
+                                </a>
                             </div>
                             <div className="box-result">
-                                <input placeholder="ผลตรวจสอบ 0-5" min={0} max={5} onInput={CheckOffsetNumber} onChange={()=>CheckData()} ref={StatusCheck} type="number"></input>
+                                <input placeholder={`${Locals[lg]["inspection_results"]} 0-5`} min={0} max={5} onInput={CheckOffsetNumber} onChange={()=>CheckData()} ref={StatusCheck} type="number"></input>
                             </div>
                         </div>
-                        <input maxLength={10} className="note" ref={NoteText} onChange={()=>CheckData()} placeholder="หมายเหตุ"></input>
-                        <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
+                        <input maxLength={10} className="note" ref={NoteText} onChange={()=>CheckData()} placeholder={Locals[lg]["note"]}></input>
+                        <input value={`${Locals[lg]["recorder"]} ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div> : 
                     <div className="form">
                         <div className="date">
@@ -983,27 +995,27 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
                         </div>
                         <div className="result">
                             <select onChange={()=>CheckData()} ref={StatusCheck} defaultValue={""}>
-                                <option disabled value={""}>เลือกผลตรวจสอบ</option>
-                                <option value={"0"}>ไม่ผ่าน</option>
-                                <option value={"1"}>ผ่าน</option>
+                                <option disabled value={""}>{Locals[lg]["select_inspection_result"]}</option>
+                                <option value={"0"}>{Locals[lg]["not_pass"]}</option>
+                                <option value={"1"}>{Locals[lg]["pass"]}</option>
                             </select>
                         </div>
                         { StateShowNote ?
                             <>
                             <div className="show-max-text">{QtyNote}/70</div>
-                            <textarea onInput={(e)=>setQtyNote(e.target.value.length)} onChange={()=>CheckData()} maxLength={70} ref={NoteText} placeholder="การแก้ไข"></textarea>
+                            <textarea onInput={(e)=>setQtyNote(e.target.value.length)} onChange={()=>CheckData()} maxLength={70} ref={NoteText} placeholder={Locals[lg]["editing"]}></textarea>
                             </>
                             : <></>
                         }
-                        <input value={`ผู้บันทึก ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
+                        <input value={`${Locals[lg]["recorder"]} ${NameDoctor}`} readOnly className="name-doctor" type="text"></input>
                     </div>
                 }
             </div>
             <div className="appove">
-                <input onChange={()=>CheckData()} placeholder="รหัสผ่านเจ้าหน้าที่" ref={Password} type="password"></input>
+                <input onChange={()=>CheckData()} placeholder={Locals[lg]["doctor_password_own"]} ref={Password} type="password"></input>
                 <div className="bt-insert">
-                    <button onClick={close} className="cancel">ยกเลิก</button>
-                    <button ref={BtConfirm} className="submit" onClick={Confirm}>ยืนยัน</button>
+                    <button onClick={close} className="cancel">{Locals[lg]["cancel"]}</button>
+                    <button ref={BtConfirm} className="submit" onClick={Confirm}>{Locals[lg]["confirm"]}</button>
                 </div>
             </div>
         </div>
@@ -1011,6 +1023,9 @@ const InsertManage = ({Ref , setPopup , session , FetchData , NameDoctor , typeI
 }
 
 const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
+
+    const { lg } = useContext(DoctorProvider)
+
     const NoteText = useRef()
     const ImgReport = useRef()
     const [QtyNote , setQtyNote] = useState(Data.report_text.length)
@@ -1071,7 +1086,7 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
                 close()
             } else if (result === "password") {
                 Password.current.value = ""
-                Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+                Password.current.placeholder = Locals[lg]["err_login"]
             } else if (result === "not") {
                 // console.log("not")
             } else session()
@@ -1080,7 +1095,7 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
 
     return(
         <div className="insert-manage-doctor">
-            <div className="head-content">แก้ไขข้อแนะนำ</div>
+            <div className="head-content">{Locals[lg]["edit_suggestions"]}</div>
             <div className="content-insert">
                 <div className="report">
                     <div className="date">
@@ -1110,7 +1125,7 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
                                     setReadyImage(true)
                                     ImgReport.current.value = ""
                                     CheckData(true)
-                                }}>ลบรูปภาพ</span> : <></>
+                                }}>{Locals[lg]["delete_picture"]}</span> : <></>
                             }
                             <label>
                                 <input capture="user" ref={ImgReport} onChange={(e)=>{
@@ -1121,18 +1136,18 @@ const EditReport = ({Ref , setPopup , session , FetchData , Data}) => {
                                         e.preventDefault()
                                     }
                                 }} hidden type="file"></input>
-                                <span className="add">เพิ่มรูปภาพ</span>
+                                <span className="add">{Locals[lg]["add_picture"]}</span>
                             </label>
                         </div>
                     </div>
-                    <input value={`ผู้บันทึก ${Data.name_doctor}`} readOnly className="name-doctor" type="text"></input>
+                    <input value={`${Locals[lg]["recorder"]} ${Data.name_doctor}`} readOnly className="name-doctor" type="text"></input>
                 </div>
             </div>
             <div className="appove">
-                <input onChange={()=>CheckData()} placeholder="รหัสผ่านเจ้าหน้าที่" ref={Password} type="password"></input>
+                <input onChange={()=>CheckData()} placeholder={Locals[lg]["doctor_password_own"]} ref={Password} type="password"></input>
                 <div className="bt-insert">
-                    <button onClick={close} className="cancel">ยกเลิก</button>
-                    <button ref={BtConfirm} className="submit" onClick={Confirm}>ยืนยัน</button>
+                    <button onClick={close} className="cancel">{Locals[lg]["cancel"]}</button>
+                    <button ref={BtConfirm} className="submit" onClick={Confirm}>{Locals[lg]["confirm"]}</button>
                 </div>
             </div>
         </div>

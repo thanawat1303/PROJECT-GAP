@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../assets/js/moduleClient";
 import "../../assets/style/page/profile/Profile.scss"
 import { Loading, ResizeImg } from "../../../../../assets/js/module";
-
+import { DoctorProvider } from "../../main"
+import Locals from "../../../../../locals";
 const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileReload , FetchNotify}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [getProfileOld , setProfileOld] = useState([])
     const [getProfile , setProfile] = useState([])
 
@@ -149,7 +152,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                     setStateEditPassword(false)
                 } else if(Edit === "password") {
                     Password.current.value = ""
-                    Password.current.placeholder = "รหัสผ่านไม่ถูกต้อง"
+                    Password.current.placeholder = Locals[lg]["err_password"]
                     if(PasswordNew && PasswordAgain) {
                         PasswordNew.current.value = ""
                         PasswordAgain.current.value = ""
@@ -166,7 +169,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                 <div className="frame-profile">
                     <div className="profile-detail">
                         <div className="frame-head">
-                            <span className="head">ข้อมูลส่วนตัว</span>
+                            <span className="head">{Locals[lg]["personal_information"]}</span>
                             <a className="close" onClick={Close}>
                                 <svg viewBox="0 0 30 30">    
                                     <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z"/>
@@ -175,7 +178,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                         </div>
                         <div className="frame-detail">
                             <div className="row-detail">
-                                <span className="head-detail img">รูปโปรไฟล์</span>
+                                <span className="head-detail img">{Locals[lg]["profile_picture"]}</span>
                                 <div className="detail-in-row img">
                                     <div className="frame-img">
                                         { LoadImage ?
@@ -189,7 +192,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                                                     <path d="M201.08,0C109.387,0,34.788,74.598,34.788,166.292c0,91.693,74.598,166.292,166.292,166.292 s166.292-74.598,166.292-166.292C367.372,74.598,292.773,0,201.08,0z M201.08,317.584c-30.099-0.001-58.171-8.839-81.763-24.052 c0.82-22.969,11.218-44.503,28.824-59.454c6.996-5.941,17.212-6.59,25.422-1.615c8.868,5.374,18.127,8.099,27.52,8.099 c9.391,0,18.647-2.724,27.511-8.095c8.201-4.97,18.39-4.345,25.353,1.555c17.619,14.93,28.076,36.526,28.895,59.512 C259.25,308.746,231.178,317.584,201.08,317.584z M296.981,283.218c-3.239-23.483-15.011-45.111-33.337-60.64 c-11.89-10.074-29.1-11.256-42.824-2.939c-12.974,7.861-26.506,7.86-39.483-0.004c-13.74-8.327-30.981-7.116-42.906,3.01 c-18.31,15.549-30.035,37.115-33.265,60.563c-33.789-27.77-55.378-69.868-55.378-116.915C49.788,82.869,117.658,15,201.08,15 c83.423,0,151.292,67.869,151.292,151.292C352.372,213.345,330.778,255.448,296.981,283.218z"></path> 
                                                 </svg>
                                             }
-                                            <a className="edit-pic" title="แก้ไขรูปโปรไฟล์" onClick={()=>Image.current.click()}>
+                                            <a className="edit-pic" title={Locals[lg]["edit_profile_picture"]} onClick={()=>Image.current.click()}>
                                                 <svg viewBox="0 0 528.899 528.899">
                                                     <g>
                                                         <path d="M328.883,89.125l107.59,107.589l-272.34,272.34L56.604,361.465L328.883,89.125z M518.113,63.177l-47.981-47.981   c-18.543-18.543-48.653-18.543-67.259,0l-45.961,45.961l107.59,107.59l53.611-53.611   C532.495,100.753,532.495,77.559,518.113,63.177z M0.3,512.69c-1.958,8.812,5.998,16.708,14.811,14.565l119.891-29.069   L27.473,390.597L0.3,512.69z"/>
@@ -205,7 +208,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                             </div>
                             <div className="row-detail">
                                 <div className="head-content">
-                                    <span className="head-detail">ชื่อ - นามสกุล</span>
+                                    <span className="head-detail">{Locals[lg]["fullname"]}</span>
                                     { !StateEditName ?
                                         !StateEditStation && !StateEditPassword?
                                             <a onClick={()=>{
@@ -214,8 +217,8 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                                                 setStateEditPassword(false)
                                                 setbtEditNot(true)
                                                 if(Password.current) Password.current.value = ""
-                                            }}>แก้ไข</a> : <></>
-                                        : <a onClick={()=>setStateEditName(false)}>ยกเลิก</a>
+                                            }}>{Locals[lg]["edit"]}</a> : <></>
+                                        : <a onClick={()=>setStateEditName(false)}>{Locals[lg]["cancel"]}</a>
                                     }
                                 </div>
                                 { StateEditName ?
@@ -228,7 +231,7 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                             </div>
                             <div className="row-detail not-bm">
                                 <div className="head-content">
-                                    <span className="head-detail">ศูนย์ที่ทำงาน</span>
+                                    <span className="head-detail">{Locals[lg]["station_work"]}</span>
                                     { !StateEditStation ?
                                         !StateEditName && !StateEditPassword ?
                                             <a onClick={async ()=>{
@@ -241,13 +244,13 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                                                     setStateEditName(false)
                                                     setStateEditPassword(false)
                                                 } else session()
-                                            }}>แก้ไข</a> : <></>
-                                        : <a onClick={()=>setStateEditStation(false)}>ยกเลิก</a>
+                                            }}>{Locals[lg]["edit"]}</a> : <></>
+                                        : <a onClick={()=>setStateEditStation(false)}>{Locals[lg]["cancel"]}</a>
                                     }
                                 </div>
                                 { StateEditStation ?
                                     <select ref={Station} className="detail-input" onChange={CheckEdit} defaultValue={getProfile.station_doctor}>
-                                        <option disabled value={""}>เลือกศูนย์</option>
+                                        <option disabled value={""}>{Locals[lg]["doctor_placehoder_station"]}</option>
                                         { ListStation.map((val)=>
                                             <option key={val.id} value={val.id}>{val.name}</option>
                                         )
@@ -269,15 +272,15 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                                                 setStateEditPassword(true)
                                                 setbtEditNot(true)
                                                 if(Password.current) Password.current.value = ""
-                                            }}>เปลี่ยนรหัสผ่าน</a>
+                                            }}>{Locals[lg]["change_password"]}</a>
                                             : 
-                                            <a onClick={()=>setStateEditPassword(false)}>ยกเลิก</a>
+                                            <a onClick={()=>setStateEditPassword(false)}>{Locals[lg]["cancel"]}</a>
                                         }
                                     </div>
                                     { StateEditPassword ?
                                         <>
-                                        <input className="input-password bt" onChange={CheckEdit} type="password" ref={PasswordNew} placeholder="รหัสผ่านใหม่" defaultValue={""}></input>
-                                        <input className="input-password" onChange={CheckEdit} type="password" ref={PasswordAgain} placeholder="รหัสผ่านใหม่อีกครั้ง" defaultValue={""}></input>
+                                        <input className="input-password bt" onChange={CheckEdit} type="password" ref={PasswordNew} placeholder={Locals[lg]["new_password"]} defaultValue={""}></input>
+                                        <input className="input-password" onChange={CheckEdit} type="password" ref={PasswordAgain} placeholder={Locals[lg]["new_password_again"]} defaultValue={""}></input>
                                         </>
                                         : <></>
                                     }
@@ -287,11 +290,11 @@ const ProfilePage = ({RefPop , setPopup , session , returnToHome , FetchProfileR
                         { StateEditName || StateEditStation || StateEditPassword ?
                             <div className="content-check-edit">
                                 <div className="input-edit">
-                                    <input className="input-password" onChange={CheckEdit} type="password" ref={Password} placeholder="รหัสผ่านเจ้าหน้าที่"></input>
+                                    <input className="input-password" onChange={CheckEdit} type="password" ref={Password} placeholder={Locals[lg]["doctor_password_own"]}></input>
                                 </div>
                                 <div className="bt-edit">
                                     { FetchEditLoad ?
-                                        <button onClick={EnterEdit} no={btEditNot ? "" : null}>ยืนยัน</button> :
+                                        <button onClick={EnterEdit} no={btEditNot ? "" : null}>{Locals[lg]["confirm"]}</button> :
                                         <div className="bt-loading">
                                             <Loading size={20} border={3} color="white" animetion={true}/>
                                         </div>

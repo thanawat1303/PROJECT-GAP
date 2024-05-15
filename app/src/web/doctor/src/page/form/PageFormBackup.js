@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FormList from "./PageFormPlant";
 
 import "../../assets/style/page/form/Pageform.scss"
 import { ButtonMenu } from "../modules";
 import { clientMo } from "../../../../../assets/js/moduleClient";
+import Locals from "../../../../../locals";
+import { DoctorProvider } from "../../main";
 const PageForm = ({main , session , setBodyDoctor , socket , type = 0 , eleImageCover , eleBody , setTextStatus}) =>{
+    const { lg } = useContext(DoctorProvider)
     const [Body , setBody] = useState(<></>)
 
     useEffect(()=>{
@@ -14,7 +17,7 @@ const PageForm = ({main , session , setBodyDoctor , socket , type = 0 , eleImage
         
         eleImageCover.current.style.height = "50%"
         eleBody.current.style.height = "50%"
-        setTextStatus(["หน้าหลัก" , "แบบบันทึกการปลูก"])
+        setTextStatus([Locals[lg]["home"] , "แบบบันทึกการปลูก"])
 
         console.log(type)
         // if(path.length >= 2) {

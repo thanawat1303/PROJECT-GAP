@@ -1,13 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../assets/js/moduleClient";
 import "../../assets/style/page/form/PageFormPlant.scss"
 import "../../assets/style/TemplantList.scss"
 import { DayJSX , LoadOtherDom, Loading, PopupDom } from "../../../../../assets/js/module";
 import ManagePopup from "./ManagePopup";
 import { ExportExcel, ExportPDF } from "../../../../../assets/js/Export";
+import { DoctorProvider } from "../../main";
+import Locals from "../../../../../locals";
 
 const PageFormPlant = ({setMain , session , socket , type = false , eleImageCover , LoadType , eleBody , setTextStatus}) => {
     // const [Body , setBody] = useState(<></>)
+
+    const { lg } = useContext(DoctorProvider)
+
     const [Loading , setLoading] = useState(false)
     // const [statusPage , setStatus] = useState({
     //     status : LoadType.split(":")[0],
@@ -47,12 +52,12 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
     const [defaultStartYear , setDefaultStartYear] = useState("")
     const [defaultEndMount , setDefaultEndMount] = useState("")
     const [defaultEndYear , setDefaultEndYear] = useState("")
-    let month = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
+    let month = Locals[lg]["month"]
     
     useEffect(()=>{
         eleImageCover.current.style.height = "30%"
         eleBody.current.style.height = "70%"
-        setTextStatus(["หน้าหลัก" , "แบบบันทึกการปลูก" , "รายการแบบบันทึก"])
+        setTextStatus([Locals[lg]["home"] , Locals[lg]["planting_record_form"] , Locals[lg]["recorded_list"]])
         clientMo.unLoadingPage()
         // FetchPlantList()
         GetDate()
@@ -100,7 +105,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
         setYear(yearArr)
 
         // ต้องมีการแยกตาม url
-        setMount(["เลือกเดือน", ...month])
+        setMount([Locals[lg]["select_month"], ...month])
         setOffsetMountStart(12)
     }
 
@@ -261,7 +266,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
         <section className="data-list-content-page form-page">
             <div className="search-form" ref={Search}>
                 <div className="bt-select-option">
-                    <a title="ค้นหา" className="bt-search-show" onClick={()=>OpenOption(Search , 0)}>
+                    <a title={Locals[lg]["search"]} className="bt-search-show" onClick={()=>OpenOption(Search , 0)}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                             <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
                                 <path d="m11.25 11.25l3 3"/>
@@ -269,7 +274,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                             </g>
                         </svg>
                     </a>
-                    <a title="ส่งออกข้อมูล" className="bt-export-show" onClick={()=>OpenOption(Search , 1)} style={{
+                    <a title={Locals[lg]["search"]} className="bt-export-show" onClick={()=>OpenOption(Search , 1)} style={{
                         padding : "0"
                     }}>
                         {/* <svg viewBox="0 0 24 24">
@@ -293,9 +298,9 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                             </div>
                             <div className="row">
                                 <label className="field-select">
-                                    <span>ชนิดพืช :</span>
+                                    <span>{Locals[lg]["plant_type"]} :</span>
                                     <select onChange={(e)=>searchList(e , "typePlant")} defaultValue={DataProcess.get("typePlant")} className="width-100" ref={TypePlant}>
-                                        <option value={""}>ทั้งหมด</option>
+                                        <option value={""}>{Locals[lg]["all"]}</option>
                                         { 
                                             DataPlantList.map((data , key)=>
                                                 <option key={key} value={data.name}>{`${data.name} ${data.count}`}</option>
@@ -304,30 +309,30 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                                     </select>
                                 </label>
                                 <label className="field-select">
-                                    <span>สถานะแบบฟอร์ม :</span>
+                                    <span>{Locals[lg]["form_status"]} :</span>
                                     <select onChange={(e)=>searchList(e , "statusForm")} defaultValue={DataProcess.get("statusForm")} className="width-100" ref={StatusForm}>
-                                        <option value={""}>ทั้งหมด</option>
-                                        <option value={0}>กำลังปลูก</option>
-                                        <option value={1}>ตรวจสอบผลผลิต</option>
-                                        <option value={2}>เก็บเกี่ยวแล้ว</option>
+                                        <option value={""}>{Locals[lg]["all"]}</option>
+                                        <option value={0}>{Locals[lg]["planting"]}</option>
+                                        <option value={1}>{Locals[lg]["check_plant"]}</option>
+                                        <option value={2}>{Locals[lg]["harvested"]}</option>
                                     </select>
                                 </label>
                             </div>
                             <div className="row">
                                 <label className="field-select">
-                                    <span>สถานะผู้บันทึก :</span>
+                                    <span>{Locals[lg]["recorder_status"]} :</span>
                                     <select onChange={(e)=>searchList(e , "statusFarmer")} defaultValue={DataProcess.get("statusFarmer")} className="width-100" ref={StatusFarmer}>
-                                        <option value={""}>ทั้งหมด</option>
-                                        <option value={1}>ตรวจสอบแล้ว</option>
-                                        <option value={0}>ยังไม่ตรวจสอบ</option>
+                                        <option value={""}>{Locals[lg]["all"]}</option>
+                                        <option value={1}>{Locals[lg]["verified"]}</option>
+                                        <option value={0}>{Locals[lg]["not_yet_verified"]}</option>
                                     </select>
                                 </label>
                                 <label className="field-select">
-                                    <span>ประเภทช่วงเวลา :</span>
+                                    <span>{Locals[lg]["period_type"]} :</span>
                                     <select onChange={(e)=>searchList(e , "typeDate")} defaultValue={DataProcess.get("typeDate")} className="width-100" ref={TypeDate}>
-                                        <option value={""}>ทั้งหมด</option>
-                                        <option value={0}>วันที่เพาะปลูก</option>
-                                        <option value={1}>วันที่เก็บเกี่ยวผลผลิต</option>
+                                        <option value={""}>{Locals[lg]["all"]}</option>
+                                        <option value={0}>{Locals[lg]["planting_date"]}</option>
+                                        <option value={1}>{Locals[lg]["__harvest_date"]}</option>
                                     </select>
                                 </label>
                             </div>
@@ -335,7 +340,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                             {ShowDate ? 
                                 <div className="row">
                                     <div className="field-select">
-                                        <span>เลือกช่วงเวลา :</span>
+                                        <span>{Locals[lg]["choose_time_period"]} :</span>
                                         <div>
                                             <select value={defaultStartMount} ref={StartMount} onChange={ManageDateSelect}>
                                                 {Mount.map((val , index)=>{
@@ -347,14 +352,14 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                                                 })}
                                             </select>
                                             <select value={defaultStartYear} ref={StartYear} onChange={ManageDateSelect}>
-                                                <option disabled value={""}>เลือกปี</option>
+                                                <option disabled value={""}>{Locals[lg]["choose_year"]}</option>
                                                 {
                                                     Year.map((val , index)=>(
                                                         <option key={index} value={val - 543}>{val}</option>)
                                                     )
                                                 }
                                             </select>
-                                            ถึง
+                                                {Locals[lg]["to"]}
                                             <select value={defaultEndMount} ref={EndMount} disabled={DataProcess.get("EndDate") ? false : true} onChange={ManageDateSelect}>
                                                 {Mount.map((val , index)=>{
                                                     if(index === 0) return <option disabled key={index} value={""}>{val}</option>
@@ -366,7 +371,7 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                                                 })}
                                             </select>
                                             <select value={defaultEndYear} ref={EndYear} disabled={DataProcess.get("EndDate") ? false : true} onChange={ManageDateSelect}>
-                                                <option disabled value={""}>เลือกปี</option>
+                                                <option disabled value={""}>{Locals[lg]["choose_year"]}</option>
                                                 {
                                                     YearContinue.map((val , index)=>(
                                                         <option key={index} value={val - 543}>{val}</option>)
@@ -382,9 +387,9 @@ const PageFormPlant = ({setMain , session , socket , type = false , eleImageCove
                             : 
                             <div className="export">
                                 <div className="head">
-                                    <span>ส่งออกข้อมูล</span>
+                                    <span>{Locals[lg]["search"]}</span>
                                     <div className="quesion_mask">
-                                        <div className="desciption">ส่งออกข้อมูลที่มีเงื่อนไขตรงกับการค้นหา <br></br> หากไม่กำหนดเงื่อนไข จะส่งออกข้อมูลทั้งหมด <br></br> ข้อมูลเฉพาะภายในศูนย์เท่านั้น</div>
+                                        <div className="desciption">{Locals[lg]["export_data_match_the_search"]} <br></br> {Locals[lg]["all_export_tooltip"]} <br></br> {Locals[lg]["end_tootip"]}</div>
                                         <svg viewBox="0 0 93.936 93.936">
                                             <g>
                                                 <path d="M80.179,13.758c-18.342-18.342-48.08-18.342-66.422,0c-18.342,18.341-18.342,48.08,0,66.421   c18.342,18.342,48.08,18.342,66.422,0C98.521,61.837,98.521,32.099,80.179,13.758z M44.144,83.117   c-4.057,0-7.001-3.071-7.001-7.305c0-4.291,2.987-7.404,7.102-7.404c4.123,0,7.001,3.044,7.001,7.404   C51.246,80.113,48.326,83.117,44.144,83.117z M54.73,44.921c-4.15,4.905-5.796,9.117-5.503,14.088l0.097,2.495   c0.011,0.062,0.017,0.125,0.017,0.188c0,0.58-0.47,1.051-1.05,1.051c-0.004-0.001-0.008-0.001-0.012,0h-7.867   c-0.549,0-1.005-0.423-1.047-0.97l-0.202-2.623c-0.676-6.082,1.508-12.218,6.494-18.202c4.319-5.087,6.816-8.865,6.816-13.145   c0-4.829-3.036-7.536-8.548-7.624c-3.403,0-7.242,1.171-9.534,2.913c-0.264,0.201-0.607,0.264-0.925,0.173   s-0.575-0.327-0.693-0.636l-2.42-6.354c-0.169-0.442-0.02-0.943,0.364-1.224c3.538-2.573,9.441-4.235,15.041-4.235   c12.36,0,17.894,7.975,17.894,15.877C63.652,33.765,59.785,38.919,54.73,44.921z"/>
@@ -482,6 +487,8 @@ const List = ({ session , socket , DataFillter , setDataPlant , setDataId}) => {
 }
 
 const ManageList = ({Data , session , fetch , count , setCount}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const [Body , setBody] = useState(<></>)
     const RefPop = useRef()
     const [PopBody , setPop] = useState(<></>)
@@ -533,11 +540,11 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
                                 <div className="text">
                                 {
                                     (DateHarvestDiff < 0) ?
-                                        `เลยกำหนดเก็บเกี่ยว ${Math.abs(DateHarvestDiff)} วัน` :
+                                        `${Locals[lg]["the_harvest_is_overdue"]} ${Math.abs(DateHarvestDiff)} ${Locals[lg]["day"]}` :
                                     (DateHarvestDiff == 0) ? 
-                                        "ครบกำหนดเก็บเกี่ยว" :
+                                        Locals[lg]["harvest_is_due"] :
                                     (DateHarvestDiff <= 15) ?
-                                        `เก็บเกี่ยวในอีก ${DateHarvestDiff} วัน`
+                                        `${Locals[lg]["harvest_in_another"]} ${DateHarvestDiff} ${Locals[lg]["day"]}`
                                         : <></>
                                 }
                                 </div>
@@ -554,13 +561,13 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
                                     </div>
                                 </div>
                                 <div className="date">
-                                    <span>ปลูก</span>
+                                    <span>{Locals[lg]["__plant"]}</span>
                                     <DayJSX DATE={Data.date_plant} TYPE="SMALL"/>
                                 </div>
                             </div>
                             <div className="inrow">
                                 <div className="system-glow">
-                                    <span>รูปแบบการปลูก</span> 
+                                    <span>{Locals[lg]["system_glow"]}</span> 
                                     <div>{" "+Data.system_glow}</div>
                                 </div>
                                 <div className="factor">

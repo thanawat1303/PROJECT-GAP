@@ -1,17 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { DayJSX, Loading, OpenImageMax, PopupDom } from "../../../../../assets/js/module";
 import { clientMo } from "../../../../../assets/js/moduleClient";
+import { DoctorProvider } from "../../main";
+import Locals from "../../../../../locals";
 
 const ListSuccess = ({data , index , DoctorSuccess}) => {
+    const { lg } = useContext(DoctorProvider)
     return(
         <>
             <div className="row">
                 <div className="field">
-                    <span className="subject">ไอดีเก็บเกี่ยว</span>
+                    <span className="subject">{Locals[lg]["Harvest_ID"]}</span>
                     <div className="value">{data.id_success}</div>
                 </div>
                 <div className="field date">
-                    <span>วันที่</span>
+                    <span>{Locals[lg]["date"]}</span>
                     <DayJSX DATE={data.date_of_doctor} TYPE="small"/>
                 </div>
             </div>
@@ -21,6 +24,8 @@ const ListSuccess = ({data , index , DoctorSuccess}) => {
 }
 
 const ListReport = ({data , index , EditReport , DoctorReport}) => {
+    const { lg } = useContext(DoctorProvider)
+    
     const RefOpenImage = useRef()
 
     const Menu = useRef()
@@ -56,17 +61,17 @@ const ListReport = ({data , index , EditReport , DoctorReport}) => {
             <PopupDom Ref={RefOpenImage} Body={getOpenImg} zIndex={999} Background="#000000b3"/>
             <div className="row">
                 <div className="field">
-                    <span className="subject">ครั้งที่</span>
+                    <span className="subject">{Locals[lg]["The_time"]}</span>
                     <div className="value">{index + 1}</div>
                 </div>
                 <div className="field date">
-                    <span>วันที่</span>
+                    <span>{Locals[lg]["date"]}</span>
                     <DayJSX DATE={data.date_report} TYPE="small"/>
                 </div>
             </div>
             <div className="row">
                 <div className="field column">
-                    <span className="subject">ข้อแนะนำ</span>
+                    <span className="subject">{Locals[lg]["recommendations"]}</span>
                     <div className="value">{data.report_text}</div>
                 </div>
             </div>
@@ -84,10 +89,10 @@ const ListReport = ({data , index , EditReport , DoctorReport}) => {
                         <path ref={PathMenu} d="M160 448a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V160.064a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32V416a32 32 0 0 1-32 32H608zM160 896a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H160zm448 0a32 32 0 0 1-32-32V608a32 32 0 0 1 32-32h255.936a32 32 0 0 1 32 32v256a32 32 0 0 1-32 32H608z"/>
                     </svg>
                     <div ref={Menu} show={getStateMenu ? "" : null} className="menu-popup">
-                        <span ref={ListMenuNameRef} onClick={()=>DoctorReport(data)}>ผู้บันทึก</span>
+                        <span ref={ListMenuNameRef} onClick={()=>DoctorReport(data)}>{Locals[lg]["recorder"]}</span>
                         {
                             data.check_doctor ?
-                            <span ref={ListMenuEditRef} onClick={()=>EditReport(data , "report")}>แก้ไข</span> 
+                            <span ref={ListMenuEditRef} onClick={()=>EditReport(data , "report")}>{Locals[lg]["edit"]}</span> 
                             : <></>
                         }
                     </div>
@@ -99,24 +104,25 @@ const ListReport = ({data , index , EditReport , DoctorReport}) => {
 }
 
 const ListCheckForm = ({data , index , DoctorCheck}) => {
+    const { lg } = useContext(DoctorProvider)
 
     return(
         <>
             <div className="row">
                 <div className="field">
-                    <span className="subject">ผลตรวจสอบ</span>
-                    <div className="value">{data.status_check ? "ผ่าน" : "ไม่ผ่าน"}</div>
+                    <span className="subject">{Locals[lg]["inspection_results"]}</span>
+                    <div className="value">{data.status_check ? Locals[lg]["pass"] : Locals[lg]["not_pass"]}</div>
                 </div>
                 <div className="field date">
-                    <span>วันที่</span>
+                    <span>{Locals[lg]["date"]}</span>
                     <DayJSX DATE={data.date_check} TYPE="small"/>
                 </div>
             </div>
             { data.status_check ? <></> :
                 <div className="row">
                     <div className="field column">
-                        <span className="subject">การแก้ไข</span>
-                        <div className="value">{data.note_text ? data.note_text : "ไม่ระบุ"}</div>
+                        <span className="subject">{Locals[lg]["editing"]}</span>
+                        <div className="value">{data.note_text ? data.note_text : Locals[lg]["not_specified"]}</div>
                     </div>
                 </div>
             }
@@ -126,22 +132,24 @@ const ListCheckForm = ({data , index , DoctorCheck}) => {
 }
 
 const ListCheckPlant = ({data , index , DoctorPlant}) => {
+    const { lg } = useContext(DoctorProvider)
+
     return(
         <>
             <div className="row">
                 <div className="field">
-                    <span className="subject">ผลวิเคราะห์</span>
-                    <div className="value">{!data.state_check ? "ก่อน" : "หลัง"} : {data.status_check}</div>
+                    <span className="subject">{Locals[lg]["analysis_results"]}</span>
+                    <div className="value">{!data.state_check ? Locals[lg]["before"] : Locals[lg]["after"]} : {data.status_check}</div>
                 </div>
                 <div className="field date">
-                    <span>วันที่</span>
+                    <span>{Locals[lg]["date"]}</span>
                     <DayJSX DATE={data.date_check} TYPE="small"/>
                 </div>
             </div>
             <div className="row">
                 <div className="field column">
-                    <span className="subject">หมายเหตุ</span>
-                    <div className="value">{data.note_text ? data.note_text : "ไม่ระบุ"}</div>
+                    <span className="subject">{Locals[lg]["note"]}</span>
+                    <div className="value">{data.note_text ? data.note_text : Locals[lg]["not_specified"]}</div>
                 </div>
             </div>
             <BtDoctorShow DoctorDetailFunc={DoctorPlant} data={data}/>
@@ -169,6 +177,9 @@ const BtDoctorShow = ({DoctorDetailFunc , data}) => {
 }
 
 const DoctorDetail = ({Ref , setPopup , session , Data}) => {
+
+    const { lg } = useContext(DoctorProvider)
+
     const [getLoad , setLoad] = useState(true)
 
     useEffect(()=>{
@@ -196,11 +207,11 @@ const DoctorDetail = ({Ref , setPopup , session , Data}) => {
     return(
         !getLoad ?
             <section className="doctor-detail">
-                <div className="head-detail">รายละเอียด</div>
+                <div className="head-detail">{Locals[lg]["details"]}</div>
                 <div className="doctor-detail-body">
                     <div className="box-detail">
                         <div className="subject-detail">
-                            ชื่อเจ้าหน้าที่
+                            {Locals[lg]["doctor_name"]}
                         </div>
                         <div className="value-detail">
                             {Data.name_doctor}
@@ -208,7 +219,7 @@ const DoctorDetail = ({Ref , setPopup , session , Data}) => {
                     </div>
                     <div className="box-detail">
                         <div className="subject-detail">
-                            รหัสประจำตัว
+                            {Locals[lg]["id"]}
                         </div>
                         <div className="value-detail">
                             {Data.id_doctor}
@@ -216,7 +227,7 @@ const DoctorDetail = ({Ref , setPopup , session , Data}) => {
                     </div>
                 </div>
                 <div onClick={close} className="close">
-                    ปิด
+                    {Locals[lg]["disable"]}
                 </div>
             </section>
         : 

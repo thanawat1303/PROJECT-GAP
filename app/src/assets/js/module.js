@@ -818,22 +818,21 @@ const ConvertDate = (date) => {
     })
 }
 
-const ButtonChangeLang = ({getLang = "" , setLang = (lg) => {}}) => {
+const ButtonChangeLang = ({getLang = "" , setLang = (lg) => {} , style = {}}) => {
     return(
         <div style={{
             display : "flex",
             justifyContent : "center",
             alignItems : "center",
             position : "fixed",
-            bottom : "0.5%",
-            right : "0.5%",
             textTransform : "uppercase",
             width : "40px",
             height : "40px",
-            backgroundColor : "green",
+            // backgroundColor : "green",
             borderRadius : "50%",
             color : "white",
-            cursor : "pointer"
+            cursor : "pointer",
+            ...style
         }}
             onClick={()=>{
                 setLang((lg)=>
@@ -841,7 +840,12 @@ const ButtonChangeLang = ({getLang = "" , setLang = (lg) => {}}) => {
                 )
             }}  
         >
-            {getLang}
+            {
+                getLang === "th" ?
+                    <img style={{ width : "100%" }} src="/thailand.png"></img> :
+                getLang === "eng" ?
+                    <img style={{ width : "100%" }} src="/eng.png"></img> : <></>
+            }
         </div>
     )
 }

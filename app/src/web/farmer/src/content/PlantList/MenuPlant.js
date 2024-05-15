@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import "./Menu.scss"
 import { clientMo } from "../../../../../assets/js/moduleClient";
@@ -8,7 +8,12 @@ import Success from "../Success/Success";
 import DataForm from "../DataForm/DataForm";
 import Report from "../Report/Report";
 
+import Locals from "../../../../../locals";
+import {FarmerProvider} from "../../main"
+
 const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 0}) => {
+    const { lg } = useContext(FarmerProvider)
+    
     const NavBody = useRef()
     const [DotReport , setDotReport] = useState([])
     const [getDotEditPlant , setDotEditPlant] = useState(false)
@@ -64,14 +69,14 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                         <div className="img">
                             <img src="/plant_glow.jpg"></img>
                         </div>
-                        <span>ข้อมูลการปลูก</span>
+                        <span>{Locals[lg]["cul_info"]}</span>
                         {DotReport.checkEditPlant ? <div className="dot-someting"></div> : <></>}
                     </div>
                     <div onClick={()=>selectMenu("z")} className="frame-menu frame-ferti">
                         <div className="img">
                             <img src="/fertilizer.jpg"></img>
                         </div>
-                        <span>ปัจจัยการผลิต</span>
+                        <span>{Locals[lg]["fertilizer_farmer"]}</span>
                         {DotReport.checkEditFertilizer ? <div className="dot-someting"></div> : <></>}
                     </div>
                 </div>
@@ -80,14 +85,14 @@ const MenuPlant = ({ setBody , id_house , id_plant , liff , setPage , isClick = 
                         <div className="img">
                             <img src="/chemical.jpg"></img>
                         </div>
-                        <span>สารเคมีที่ใช้</span>
+                        <span>{Locals[lg]["chemical_farmer"]}</span>
                         {DotReport.checkEditChemical ? <div className="dot-someting"></div> : <></>}
                     </div>
                     <div onClick={()=>selectMenu("h")} className="frame-menu frame-success">
                         <div className="img">
                             <img src="/เก็บ.png"></img>
                         </div>
-                        <span>การเก็บเกี่ยว</span>
+                        <span>{Locals[lg]["harvesting"]}</span>
                         {DotReport[0] ? DotReport[0].success || DotReport[0].form || DotReport[0].plant ? <div className="dot-someting"></div> : <></> : <></>}
                     </div>
                 </div>

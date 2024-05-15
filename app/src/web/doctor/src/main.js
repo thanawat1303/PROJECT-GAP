@@ -5,6 +5,7 @@ import Login from "./Login";
 import Doctor from "./Doctor";
 
 import './assets/style/main.scss'
+import { ButtonChangeLang } from "../../../assets/js/module";
 
 export const DoctorProvider = createContext(null)
 const MainDoctor = ({socket}) => {
@@ -35,6 +36,14 @@ const MainDoctor = ({socket}) => {
             setLang
         }}>
             {Body}
+            <ButtonChangeLang 
+                getLang={getLang} 
+                setLang={setLang}
+                style={{
+                    bottom : "0.5%",
+                    right : "0.5%",
+                }}  
+            />
         </DoctorProvider.Provider>
     )
 }

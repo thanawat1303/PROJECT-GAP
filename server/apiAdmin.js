@@ -8,7 +8,7 @@ module.exports = function apiAdmin (app = express() , Database , apifunc , dbpac
   })
   
 // doctor page
-  app.get('/api/admin/doctor/list' , async (req , res)=>{
+  app.post('/api/admin/doctor/list' , async (req , res)=>{
     const username = req.session.user_admin
     const password = req.session.pass_admin
   
@@ -23,7 +23,7 @@ module.exports = function apiAdmin (app = express() , Database , apifunc , dbpac
 
       const result = await apifunc.auth(con , username , password , res , "admin")
       if(result['result'] === "pass") {
-        let data = req.query
+        let data = req.body
         let select = data.typeDelete === 0 ? ", status_account , time_online" : ""
         const Limit = isNaN(parseInt(data.limit)) ? 0 : parseInt(data.limit)
         const StartRow = isNaN(parseInt(data.startRow)) ? 0 : parseInt(data.startRow)

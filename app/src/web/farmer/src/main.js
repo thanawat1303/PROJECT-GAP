@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {clientMo}  from "../../../assets/js/moduleClient";
 import {useLiff} from "../../../assets/js/module";
 
@@ -7,8 +7,13 @@ import MenuMain from "../src/content/mainFarmHouse";
 import House from "../src/houseFile/House";
 import Signup from "../src/singupFile/Signup"
 import { CloseAccount } from "./method";
+import Locals from "../../../locals";
 
+export const FarmerProvider = createContext(null)
 const MainFarmer = ({socket , idLiff , Path}) => {
+
+    const [ getLang , setLang ] = useState("th")
+
     const [body , setBody] = useState(<></>)
     const [init , liff] = useLiff(idLiff)
 
@@ -59,54 +64,59 @@ const MainFarmer = ({socket , idLiff , Path}) => {
 
     return(
         <>
-            {body}
-            <section style={{
-                display : "flex",
-                position : "fixed",
-                justifyContent : "center",
-                alignItems : "center",
-                top : "0",
-                left : "0",
-                width : "100vw",
-                height : "100vh",
-                backgroundColor : "transparent",
-                backdropFilter : "blur(8px)",
-                opacity : "0",
-                visibility : "hidden",
-                transition : "0.5s opacity , 0.5s visibility",
-                zIndex : "999",
-                padding : "8px"
-            }} id="session-farmer">
-                <div className="body" style={{
+            <FarmerProvider.Provider value={{
+                lg : getLang,
+                setLang
+            }}>
+                {body}
+                <section style={{
                     display : "flex",
+                    position : "fixed",
                     justifyContent : "center",
                     alignItems : "center",
-                    flexDirection : "column",
-                    backgroundColor : "white",
-                    boxShadow : "0px 4px 4px gray",
-                    borderRadius : "18px",
-                    padding : "6px 14px"
-                }}>
-                    <div id="session-text" style={{
-                        font : "20px Sans-font",
-                        textAlign : "center",
-                        // fontFamily : "Sans-font",
-                        // fontSize : "20px",
-                        marginBottom : "11px"
-                    }}></div>
-                    <button onClick={()=>liff.closeWindow()} style={{
-                        fontFamily : "Sans-font",
-                        fontSize : "20px",
+                    top : "0",
+                    left : "0",
+                    width : "100vw",
+                    height : "100vh",
+                    backgroundColor : "transparent",
+                    backdropFilter : "blur(8px)",
+                    opacity : "0",
+                    visibility : "hidden",
+                    transition : "0.5s opacity , 0.5s visibility",
+                    zIndex : "999",
+                    padding : "8px"
+                }} id="session-farmer">
+                    <div className="body" style={{
+                        display : "flex",
+                        justifyContent : "center",
+                        alignItems : "center",
+                        flexDirection : "column",
+                        backgroundColor : "white",
+                        boxShadow : "0px 4px 4px gray",
                         borderRadius : "18px",
-                        border : "0",
-                        outline : "0",
-                        padding : "0 14px",
-                        backgroundColor : "red",
-                        fontWeight : "900",
-                        color : "white"
-                    }}>ตกลง</button>
-                </div>
-            </section>
+                        padding : "6px 14px"
+                    }}>
+                        <div id="session-text" style={{
+                            font : "20px Sans-font",
+                            textAlign : "center",
+                            // fontFamily : "Sans-font",
+                            // fontSize : "20px",
+                            marginBottom : "11px"
+                        }}></div>
+                        <button onClick={()=>liff.closeWindow()} style={{
+                            fontFamily : "Sans-font",
+                            fontSize : "20px",
+                            borderRadius : "18px",
+                            border : "0",
+                            outline : "0",
+                            padding : "0 14px",
+                            backgroundColor : "red",
+                            fontWeight : "900",
+                            color : "white"
+                        }}>{Locals[getLang]["ok"]}</button>
+                    </div>
+                </section>
+            </FarmerProvider.Provider>
         </>
     )
 }

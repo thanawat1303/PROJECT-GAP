@@ -1,11 +1,16 @@
-import React , { useEffect , useRef, useState } from "react";
-import { Loading, MapsJSX, PatternCheck, ReportAction, ResizeImg, SetMaxLength } from "../../../../assets/js/module";
+import React , { useContext, useEffect , useRef, useState } from "react";
+import { ButtonChangeLang, Loading, MapsJSX, PatternCheck, ReportAction, ResizeImg, SetMaxLength } from "../../../../assets/js/module";
 
 import './Signup.scss'
 import {clientMo}  from "../../../../assets/js/moduleClient";
 import { CloseAccount } from "../method";
+import Locals from "../../../../locals";
+import { FarmerProvider } from "../main";
 
 const SignUp = ({liff , uid}) => {
+
+    const { lg , setLang } = useContext(FarmerProvider)
+
     const [step , setStep] = useState(1)
     const [stepOn , setstepOn] = useState(1)
     const [stepApprov , setApprov] = useState(1)
@@ -115,8 +120,15 @@ const SignUp = ({liff , uid}) => {
                     <Loading size={"29vw"} border={"2.9vw"} MaxSize={136.3} animetion={animetion}/>
                 </div>
                 <div className="title">
-                    <div className="title-form">ทะเบียนเกษตรกร</div>
-                    <div className="subtitle">สมัครบัญชี</div>
+                    <ButtonChangeLang 
+                        getLang={lg} 
+                        setLang={setLang}
+                        style={{
+                            left : "0px"
+                        }}
+                    />
+                    <div className="title-form">{Locals[lg]["signup_farmer"]["row_1"]}</div>
+                    <div className="subtitle">{Locals[lg]["signup_farmer"]["row_2"]}</div>
                 </div>
                 <div className="form-sigup">
                     <div className="detail-profile" ref={DetailProfile}>
@@ -160,6 +172,9 @@ const SignUp = ({liff , uid}) => {
 }
 
 const StepOne = (props) => {
+
+    const { lg } = useContext(FarmerProvider)
+
     const Firstname = useRef()
     const Lastname = useRef()
     const Password = useRef()
@@ -205,30 +220,30 @@ const StepOne = (props) => {
     return (
         <section className="step-one">
             <div className="head-step">
-                ข้อมูลส่วนตัว
+                {Locals[lg]["personal_information"]}
             </div>
             <div className="detail-farmer">
                 <label>
                     <span>
-                        <span>ชื่อ</span><span className="dot">*</span>
+                        <span>{Locals[lg]["doctor_firstname"]}</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" placeholder="ชื่อภาษาไทย" defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
+                    <input autoComplete="false" placeholder={Locals[lg]["thai_language"]} defaultValue={props.profile.get("firstname")} onChange={checkData} type="text" ref={Firstname} data="firstname"></input> 
                 </label>
                 <label>
                     <span>
-                        <span>นามสกุล</span><span className="dot">*</span>
+                        <span>{Locals[lg]["doctor_surname"]}</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" placeholder="นามสกุลภาษาไทย" defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
+                    <input autoComplete="false" placeholder={Locals[lg]["sure_thai"]} defaultValue={props.profile.get("lastname")} onChange={checkData} type="text" ref={Lastname} data="lastname"></input> 
                 </label>
                 <label>
                     <span>
-                        <span>รหัสผ่าน</span><span className="dot">*</span>
+                        <span>{Locals[lg]["password"]}</span><span className="dot">*</span>
                     </span>
-                    <input autoComplete="false" defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password} data="password" placeholder="กรอกตัวอักษรที่จำได้"></input> 
+                    <input autoComplete="false" defaultValue={props.profile.get("password")} onChange={checkData} type="password" ref={Password} data="password" placeholder={Locals[lg]["characters_remember"]}></input> 
                 </label>
                 <label>
                     <span>
-                        <span>เบอร์มือถือเกษตรกร</span><span className="dot">*</span><span className="qty">{getQtyPhone}/10</span>
+                        <span>{Locals[lg]["phone_farmer"]}</span><span className="dot">*</span><span className="qty">{getQtyPhone}/10</span>
                     </span>
                     <input autoComplete="false" defaultValue={props.profile.get("telnumber")} onChange={checkData} onInput={(e)=>{
                         SetMaxLength(e , setQtyPhone , 10)
@@ -240,6 +255,9 @@ const StepOne = (props) => {
 }
 
 const StepTwo = (props) => {
+
+    const { lg } = useContext(FarmerProvider)
+
     const Station = useRef()
 
     const LoadingMap = useRef()
@@ -299,7 +317,7 @@ const StepTwo = (props) => {
 
     const pullMapEJS = () => {
         // setTimeout(()=>{
-        //     setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
+        //     setCurrent(<div>{Locals[lg]["unable_position"]}</div>)
         // } , 10000)
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -349,7 +367,7 @@ const StepTwo = (props) => {
                         }
                     })
                     CheckData()
-                    setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
+                    setCurrent(<div>{Locals[lg]["unable_position"]}</div>)
                 } , null , {
                     enableHighAccuracy: true
                 })
@@ -369,7 +387,7 @@ const StepTwo = (props) => {
                 }
             })
             CheckData()
-            setCurrent(<div>ไม่สามารถดึงตำแหน่ง</div>)
+            setCurrent(<div>{Locals[lg]["unable_position"]}</div>)
         }
     }
 
@@ -412,12 +430,12 @@ const StepTwo = (props) => {
     return (
         <section className="step-two">
             <div className="head-step">
-                ตำแหน่ง
+                {Locals[lg]["__location"]}
             </div>
             <div className="detail-farmer">
                 <label className="location-text">
                     <span>
-                        <span>ที่อยู่ปัจจุบัน</span><span className="dot">*</span>
+                        <span>{Locals[lg]["current_add"]}</span><span className="dot">*</span>
                     </span>
                     <textarea placeholder="เช่น บ้านเลขที่ 99/99 หมู่ 14 ต.เมืองนะ อ.เชียงดาว จ.เชียงใหม่" defaultValue={getTextLocation} type="text" onChange={(e)=>{
                         props.data.set("text-location" , e.target.value)
@@ -426,8 +444,8 @@ const StepTwo = (props) => {
                     }}></textarea>
                 </label>
                 <label className="location">
-                    <div className="head-map">ตำแหน่งที่อยู่</div>
-                    <div className="warning">* เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่อยู่ปัจจุบันของท่าน</div>
+                    <div className="head-map">{Locals[lg]["__location__"]}</div>
+                    <div className="warning">* {Locals[lg]["suggress_map"]}</div>
                     <div className="map-genarate">
                         <div onLoad={MapLoad} ref={MapEle} className="map">
                             {LocationCurrent}
@@ -437,19 +455,19 @@ const StepTwo = (props) => {
                         </div>
                     </div>
                     <div className="box-bt">
-                        <button className="bt-map-reload" onClick={reloadMap}>โหลดตำแหน่ง</button>
+                        <button className="bt-map-reload" onClick={reloadMap}>{Locals[lg]["map_load"]}</button>
                     </div>
                 </label>
                 <label className="station">
                     <div className="content-station">
                         <span>
-                            <div className="head-station">ศูนย์ที่เกษตรกรอยู่ในการดูแล <span className="dot">*</span></div>
+                            <div className="head-station">{Locals[lg]["station_farmer"]} <span className="dot">*</span></div>
                         </span>
                         {(Listready) ?
                             <div className="content-select">
                                 <select value={Selected ?? ""} ref={Station} onChange={CheckData}>
                                     <option value="" disabled>
-                                        เลือกศูนย์
+                                        {Locals[lg]["doctor_placehoder_station"]}
                                     </option>
                                     {
                                     (Listready) ? 
@@ -462,7 +480,7 @@ const StepTwo = (props) => {
                             </div>
                             : 
                             <div className="loading-content">
-                                <Loading size={"6.5vw"} border={"1vw"} animetion={true}/><span>โหลดตัวเลือกศูนย์</span>  
+                                <Loading size={"6.5vw"} border={"1vw"} animetion={true}/><span>{Locals[lg]["loading_station"]}</span>  
                             </div>}
                     </div>
                 </label>
@@ -722,10 +740,12 @@ const StepThree = (props) => {
         ]))
     }
 
+    const { lg } = useContext(FarmerProvider)
+
     return (
         <div className="step-three">
             <div className="head-step">
-                รูปประจำตัว
+                {Locals[lg]["profile_picture_user"]}
             </div>
             <div onLoad={LoadPic} ref={Frame} className="frame-picture">
                 {(LoadingImg) ? 
@@ -738,7 +758,7 @@ const StepThree = (props) => {
                 <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
             </div>
             <div className="content-bt">
-                <div onClick={()=>ControlImage.current.click()} className="bt-upload">ถ่ายรูป</div>
+                <div onClick={()=>ControlImage.current.click()} className="bt-upload">{Locals[lg]["take_photo"]}</div>
             </div>
             <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input>
             <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
@@ -747,6 +767,9 @@ const StepThree = (props) => {
 }
 
 const PopUpPreview = (props) => {
+
+    const { lg } = useContext(FarmerProvider)
+
     const FrameBody = useRef()
     const [Feedback , setFeed] = useState(<></>)
     const [getLoadPage , setLoadPage] = useState(true)
@@ -767,7 +790,7 @@ const PopUpPreview = (props) => {
         clientMo.postForm("/api/farmer/signup" , props.data).then((result)=>{
             console.log(props.data)
             if(result === "insert complete"){
-                setText("เพิ่มสำเร็จ")
+                setText(Locals[lg]["add_success"])
                 setResult(1)
             } else if (result === "search") {
                 setText("บัญชีรอการตรวจสอบ")
@@ -834,7 +857,7 @@ const PopUpPreview = (props) => {
                 opacity : "1",
                 visibility : "visible"
             }}>
-                <div className="head">เช็คข้อมูล</div>
+                <div className="head">{Locals[lg]["check_info"]}</div>
                 <div className="body">
                     <div ref={FrameBody} className="frame-body">
                         <div className="detail">
@@ -843,27 +866,27 @@ const PopUpPreview = (props) => {
                             </div>
                             <div className="text-detail">
                                 <div className="firstname">
-                                    <div>ชื่อ</div>
+                                    <div>{Locals[lg]["doctor_firstname"]}</div>
                                     <input readOnly value={props.data['firstname']}></input>
                                 </div>
                                 <div className="lastname">
-                                    <div>นามสกุล</div>
+                                    <div>{Locals[lg]["doctor_surname"]}</div>
                                     <input readOnly value={props.data['lastname']}></input>
                                 </div>
                                 <div className="password">
-                                    <div>รหัสผ่าน</div>
+                                    <div>{Locals[lg]["password"]}</div>
                                     <input type="password" readOnly value={props.data['password']}></input>
                                 </div>
                                 <div className="telnumber">
-                                    <div>เบอร์มือถือเกษตรกร</div>
+                                    <div>{Locals[lg]["phone_farmer"]}</div>
                                     <input readOnly value={props.data['telnumber']}></input>
                                 </div>
                                 <div className="station">
-                                    <div>ศูนย์ที่อยู่ในการดูแล</div>
+                                    <div>{Locals[lg]["center_under_care"]}</div>
                                     <input readOnly value={Station}></input>
                                 </div>
                                 <div className="telnumber">
-                                    <div>ที่อยู่เกษตรกร</div>
+                                    <div>{Locals[lg]["farmer_address"]}</div>
                                     <textarea readOnly value={props.data['text_location']}></textarea>
                                 </div>
                             </div>
@@ -882,8 +905,8 @@ const PopUpPreview = (props) => {
                     </div>
                 </div>
                 <div className="action">
-                    <div className="cancel" onClick={()=>props.previewData(<></>)}>ยกเลิก</div>
-                    <div className="submit" onClick={ConfirmSave}>ยืนยัน</div>
+                    <div className="cancel" onClick={()=>props.previewData(<></>)}>{Locals[lg]["cancel"]}</div>
+                    <div className="submit" onClick={ConfirmSave}>{Locals[lg]["confirm"]}</div>
                 </div>
             </div>
         </section>

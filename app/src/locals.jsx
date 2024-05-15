@@ -301,6 +301,55 @@ const Locals = {
         __plant : "ปลูก",
         fertilizer : "ปุ๋ย",
         chemical : "สารเคมี",
+        time : "ครั้ง",
+        __generation : "รุ่น",
+        quantity : "จำนวน",
+        tree : "ต้น",
+
+        signup_farmer : {
+            row_1 : "ทะเบียนเกษตรกร",
+            row_2 : "สมัครบัญชี"
+        },
+
+        thai_language : "ชื่อภาษาไทย",
+        sure_thai : "นามสกุลภาษาไทย",
+
+        characters_remember : "กรอกตัวอักษรที่จำได้",
+        phone_farmer : "เบอร์มือถือเกษตรกร",
+        unable_position : "ไม่สามารถดึงตำแหน่ง",
+
+        __location : "ตำแหน่ง",
+        __location__ : "ตำแหน่งที่อยู่",
+        current_add : "ที่อยู่ปัจจุบัน",
+        suggress_map : "เพื่อการดึงข้อมูลที่ถูกต้อง โปรดอยู่ในตำแหน่งที่อยู่ปัจจุบันของท่าน",
+        map_load : "โหลดตำแหน่ง",
+        station_farmer : "ศูนย์ที่เกษตรกรอยู่ในการดูแล",
+        loading_station : "โหลดตัวเลือกศูนย์",
+        profile_picture_user : "รูปประจำตัว",
+        take_photo : "ถ่ายรูป",
+
+        add_success : "เพิ่มสำเร็จ",
+
+        check_info : "เช็คข้อมูล",
+        center_under_care : "ศูนย์ที่อยู่ในการดูแล",
+        farmer_address : "ที่อยู่เกษตรกร",
+
+        add_house_success : "เพิ่มโรงเรือนสำเร็จ",
+
+        add_house : "เพิ่มโรงเรือน",
+        house_name : "ชื่อโรงเรือน",
+        recomment_charect : "แนะนำ 12 ตัวอักษร",
+        upload_image : "อัปโหลดรูปภาพ",
+        house_location : "ตำแหน่งโรงเรือน",
+        save : "บันทึก",
+
+        cul_info : "ข้อมูลการปลูก",
+        fertilizer_farmer : "ปัจจัยการผลิต",
+        chemical_farmer : "สารเคมีที่ใช้",
+        harvesting : "การเก็บเกี่ยว",
+
+        planting_list : "รายการปลูก",
+        edit_house : "แก้ไขโรงเรือน"
     },
     eng : {
         home : "Home",
@@ -376,12 +425,12 @@ const Locals = {
         },
 
         doctor : "Doctor",
-        doctor_username : "รหัสประจำตัวหมอพืช",
+        doctor_username : "Doctor ID",
         doctor_confirm_title : "Confirm Account Doctor",
         doctor_id_title : "Doctor ID",
-        doctor_firstname : "ชื่อ",
-        doctor_surname : "นามสกุล",
-        doctor_station : "ศูนย์ปฏิบัติหน้าที่",
+        doctor_firstname : "firstname",
+        doctor_surname : "surname",
+        doctor_station : "stationing",
 
         doctor_placehoder_first : "please enter firstname is THAI",
         doctor_placehoder_sur : "please enter surname is THAI",
@@ -603,7 +652,58 @@ const Locals = {
         harvest_is_due : "Harvest is due",
         harvest_in_another : "Harvest in another",
 
-        __plant : "Date plant"
+        __plant : "Date plant",
+        fertilizer : "Fer",
+        chemical : "che",
+        time : "time",
+        __generation : "gen",
+        quantity : "qty",
+        tree : "tree",
+
+        signup_farmer : {
+            row_1 : "Signup",
+            row_2 : "Account"
+        },
+
+        thai_language : "Thai language",
+        sure_thai : "thai surname",
+
+        characters_remember : "Enter the characters you remember",
+        phone_farmer : "Phone number",
+        unable_position : "Unable to retrieve position",
+
+        __location : "Address",
+        __location__ : "Location",
+        current_add : "Current address",
+        suggress_map : "for accurate data retrieval Please stay in your current location",
+        map_load : "Map Load",
+        station_farmer : "Center where farmers are looked after",
+        loading_station : "Load Center Options",
+        profile_picture_user : "Profile picture",
+        take_photo : "Take photo",
+
+        add_success : "Add success",
+
+        check_info : "Check Info",
+        center_under_care : "Center under care",
+        farmer_address : "Farmer address",
+
+        add_house_success : "Add house success",
+
+        add_house : "Add house",
+        house_name : "House name",
+        recomment_charect : "Recommended 12 characters",
+        upload_image : "Upload picture",
+        house_location : "House location",
+        save : "Save",
+
+        cul_info : "Cultivation info",
+        fertilizer_farmer : "Fertilizer",
+        chemical_farmer : "Chemical",
+        harvesting : "Harvesting",
+
+        planting_list : "Planting list",
+        edit_house : "Edit house"
     }
 }
 

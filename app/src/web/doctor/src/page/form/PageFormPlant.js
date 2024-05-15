@@ -572,30 +572,30 @@ const ManageList = ({Data , session , fetch , count , setCount}) => {
                                 </div>
                                 <div className="factor">
                                     <div className="content">
-                                        <span>ปุ๋ย</span> {Data.ctFer} ครั้ง
+                                        <span>{Locals[lg]["fertilizer"]}</span> {Data.ctFer} {Locals[lg]["time"]}
                                     </div>
                                     <div className="dot">|</div>
                                     <div className="content">
-                                        <span>สารเคมี</span> {Data.ctChe} ครั้ง
+                                        <span>{Locals[lg]["chemical"]}</span> {Data.ctChe} {Locals[lg]["time"]}
                                     </div>
                                 </div>
                             </div>
                             <div className="inrow">
                                 <div className="insect">
-                                    <span>ศัตรูพืช</span> {Data.insect}
+                                    <span>{Locals[lg]["pests"]}</span> {Data.insect}
                                 </div>
                                 <div className="factor">
                                     <div className="content">
-                                        <span>รุ่น</span> {Data.generation}
+                                        <span>{Locals[lg]["__generation"]}</span> {Data.generation}
                                     </div>
                                     <div className="content">
-                                        <span>จำนวน</span> {Data.qty} ต้น
+                                        <span>{Locals[lg]["quantity"]}</span> {Data.qty} {Locals[lg]["tree"]}
                                     </div>
                                 </div>
                             </div>
                             <div className="inrow">
                                 <div className="content">
-                                    <span>ชื่อเกษตรกร</span> {Data.farmer}
+                                    <span>{Locals[lg]["farmer_name"]}</span> {Data.farmer}
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,14 @@
-import React, { useEffect , useRef , useState } from "react";
+import React, { useContext, useEffect , useRef , useState } from "react";
 import { clientMo } from "../../../../assets/js/moduleClient";
-import { Loading , MapsJSX, ReportAction, ResizeImg } from "../../../../assets/js/module";
+import { ButtonChangeLang, Loading , MapsJSX, ReportAction, ResizeImg } from "../../../../assets/js/module";
 
 import "./House.scss"
+import { FarmerProvider } from "../main"
+import Locals from "../../../../locals";
 
 const House = ({liff , uid}) => {
+    const { lg , setLang } = useContext(FarmerProvider)
+
     const ImageCurrent = useRef()
     const [PreviewImage , setPreview] = useState("/view-preview-img.svg")
     const ControlImage = useRef()
@@ -213,7 +217,7 @@ const House = ({liff , uid}) => {
             if(data.img && data.name && data.lag && data.lng) {
                 clientMo.postForm("/api/farmer/farmhouse/add" , data).then((result)=>{
                     if(result === "133") {
-                        setText("เพิ่มโรงเรือนสำเร็จ")
+                        setText(Locals[lg]["add_house_success"])
                         setResult(1)
                     } else if (result === "130") {
                         setText("พบปัญหาในการเพิ่มโรงเรือน")
@@ -279,7 +283,16 @@ const House = ({liff , uid}) => {
     return (
         <section ref={bodySection} onLoad={clientMo.unLoadingPage} className="house-add">
             <div className="content-max-width">
-                <div className="title">เพิ่มโรงเรือน</div>
+                <div className="title">
+                    <ButtonChangeLang 
+                        getLang={lg} 
+                        setLang={setLang}
+                        style={{
+                            left : "0px"
+                        }}
+                    />
+                    {Locals[lg]["add_house"]}
+                </div>
                 <div className="frame-house-add">
                     <div className="frame-content-house">
                         {/* <div className="loading-show" ref={LoadingPreview}>
@@ -289,8 +302,8 @@ const House = ({liff , uid}) => {
                             setText={setText} setOpen={setOpen} setResult={setResult}/> */}
                         <div className="content">
                             <div className="name-farmhouse">
-                                <span>ชื่อโรงเรือน</span>
-                                <input type="text" ref={namefarm} placeholder="แนะนำ 12 ตัวอักษร" onInput={(e)=>{
+                                <span>{Locals[lg]["house_name"]}</span>
+                                <input type="text" ref={namefarm} placeholder={Locals[lg]["recomment_charect"]} onInput={(e)=>{
                                     e.target.value = e.target.value.slice(0 , 45)
                                 }}></input>
                             </div>
@@ -306,13 +319,13 @@ const House = ({liff , uid}) => {
                                     <img pox={CurrentP.x} poy={CurrentP.y} onTouchEnd={setCurrent} onTouchStart={setStartMove} onTouchMove={movePicture} ref={ImageCurrent} src={PreviewImage}></img>
                                 </div>
                                 <div className="content-bt-image">
-                                    <div onClick={()=>ControlImage.current.click()} className="bt-upload">อัปโหลดรูปภาพ</div>
+                                    <div onClick={()=>ControlImage.current.click()} className="bt-upload">{Locals[lg]["upload_image"]}</div>
                                 </div>
                                 <input ref={ControlImage} hidden type="file"  accept="image/*" capture="user" onInput={InputImage} ></input>
                                 <canvas w={sizeWidthImg} h={sizeHeightImg} hidden ref={CropImg}></canvas>
                             </div>
                             <div className="generate-map">
-                                <span>ตำแหน่งโรงเรือน</span>
+                                <span>{Locals[lg]["house_location"]}</span>
                                 <div className="frame-map">
                                     { getLoadingMap ?
                                         <div className="frame-background-loading-map">
@@ -340,8 +353,8 @@ const House = ({liff , uid}) => {
                     </div>
                 </div>
                 <div className="content-bt">
-                    <button onClick={()=>liff.closeWindow()} className="bt cancel">ยกเลิก</button>
-                    <button onClick={confirmData} className="bt submit">บันทึก</button>
+                    <button onClick={()=>liff.closeWindow()} className="bt cancel">{Locals[lg]["cancel"]}</button>
+                    <button onClick={confirmData} className="bt submit">{Locals[lg]["save"]}</button>
                 </div>
             </div>
             <ReportAction Open={OpenPop} Text={Textdata} Status={ResultPop}

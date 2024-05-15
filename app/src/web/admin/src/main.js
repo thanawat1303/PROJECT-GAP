@@ -46,7 +46,14 @@ const MainAdmin = ({socket}) => {
                 }}
             >
                 {body}
-                <ButtonChangeLang getLang={getLang} setLang={setLang}/>
+                <ButtonChangeLang 
+                    getLang={getLang} 
+                    setLang={setLang}
+                    style={{
+                        bottom : "0.5%",
+                        right : "0.5%",
+                    }}  
+                />
             </div>
         </AdminProvider.Provider>
     )

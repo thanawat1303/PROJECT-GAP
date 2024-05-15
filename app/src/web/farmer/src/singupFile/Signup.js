@@ -124,7 +124,7 @@ const SignUp = ({liff , uid}) => {
                         getLang={lg} 
                         setLang={setLang}
                         style={{
-                            left : "0px"
+                            left : "5px"
                         }}
                     />
                     <div className="title-form">{Locals[lg]["signup_farmer"]["row_1"]}</div>

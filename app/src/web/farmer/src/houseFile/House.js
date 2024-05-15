@@ -288,7 +288,7 @@ const House = ({liff , uid}) => {
                         getLang={lg} 
                         setLang={setLang}
                         style={{
-                            left : "0px"
+                            left : "5px"
                         }}
                     />
                     {Locals[lg]["add_house"]}

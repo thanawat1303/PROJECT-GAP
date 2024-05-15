@@ -303,6 +303,7 @@ const Locals = {
         chemical : "สารเคมี",
         time : "ครั้ง",
         __generation : "รุ่น",
+        __generation_this : "รุ่นที่",
         quantity : "จำนวน",
         tree : "ต้น",
 
@@ -349,7 +350,12 @@ const Locals = {
         harvesting : "การเก็บเกี่ยว",
 
         planting_list : "รายการปลูก",
-        edit_house : "แก้ไขโรงเรือน"
+        edit_house : "แก้ไขโรงเรือน",
+
+        have_msg_doctor : "มีข้อความจากผู้ส่งเสริม",
+        form_farmer : "แบบบันทึกเกษตรกร",
+        save_data : "บันทึกข้อมูล",
+        view : "ดูข้อมูล"
     },
     eng : {
         home : "Home",
@@ -652,12 +658,13 @@ const Locals = {
         harvest_is_due : "Harvest is due",
         harvest_in_another : "Harvest in another",
 
-        __plant : "Date plant",
+        __plant : "Date",
         fertilizer : "Fer",
-        chemical : "che",
+        chemical : "Che",
         time : "time",
-        __generation : "gen",
-        quantity : "qty",
+        __generation : "Gen",
+        __generation_this : "Gen",
+        quantity : "Qty",
         tree : "tree",
 
         signup_farmer : {
@@ -703,7 +710,12 @@ const Locals = {
         harvesting : "Harvesting",
 
         planting_list : "Planting list",
-        edit_house : "Edit house"
+        edit_house : "Edit house",
+
+        have_msg_doctor : "There is a message from the promoter",
+        form_farmer : "Farmer's Record",
+        save_data : "Save Data",
+        view : "View"
     }
 }
 

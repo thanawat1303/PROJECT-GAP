@@ -178,13 +178,14 @@ const FarmBody = ({liff , uid , id_farmhouse}) => {
                                 </svg>
                                 <span>{Locals[lg]["edit_house"]}</span>
                             </div>
-                            <div className="menu-list">
-                                <ButtonChangeLang 
-                                    getLang={lg} 
-                                    setLang={setLang}
-                                />
-                            </div>
                         </div>
+                        <ButtonChangeLang 
+                            getLang={lg} 
+                            setLang={setLang}
+                            style={{
+                                bottom : "5px"
+                            }}
+                        />
                     </div>
                 </div>
             </div>

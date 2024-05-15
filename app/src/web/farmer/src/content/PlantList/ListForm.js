@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { clientMo } from "../../../../../assets/js/moduleClient";
 
 import { DayJSX } from "../../../../../assets/js/module";
@@ -6,9 +6,13 @@ import PopupInsertPlant from "./InsertPlant";
 import Template from "../TemplateList";
 import MenuPlant from "./MenuPlant";
 import { CloseAccount } from "../../method";
+import { FarmerProvider } from "../../main";
+import Locals from "../../../../../locals";
 
 const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
-    const [BodyList , setBodyList] = useState(<></>)
+    const { lg } = useContext(FarmerProvider)
+    
+    const [BodyList , setBodyList] = useState([])
     const [Loading , setLoading] = useState(false)
     const [PopupAdd , setPopupAdd] = useState(<></>)
 
@@ -27,59 +31,7 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
         setLoading(false)
         const auth = await clientMo.post('/api/farmer/formplant/select' , {id_farmhouse : id_house})
         if(await CloseAccount(auth)) {
-            setBodyList(JSON.parse(auth).map((val , key)=>
-                        <div key={val.id} className={`plant-content ${val.state_status == 2 ? "submit" : ""}`} style={
-                            (val.report || val.form || val.plant || val.success) && val.state_status < 2 ? {
-                            marginTop : "25px",
-                            position : "relative"
-                            } : {}}>
-                            { (val.report || val.form || val.plant || val.success) && val.state_status < 2 ?
-                                <div className="report-of-doctor" style={{
-                                    position : "absolute",
-                                    bottom : "100%",
-                                    right : "0.5em"
-                                }}>
-                                    <span style={{
-                                        backgroundColor : "red",
-                                        padding : "1px 4px",
-                                        borderRadius : "5px",
-                                        fontWeight : "900",
-                                        color : "white"
-                                    }}>มีข้อความจากผู้ส่งเสริม</span>
-                                </div> : <></>
-                            }
-                            <div className="top">
-                                <div className="type-main">
-                                    <input readOnly value={val.type_plant ? val.type_plant : "ไม่ระบุ"}></input>
-                                </div>
-                                <div className="date">
-                                    <span>วันที่ปลูก</span>
-                                    <DayJSX DATE={val.date_plant} TYPE="short"/>
-                                </div>
-                            </div>
-                            <div className="body">
-                                <div className="content">
-                                    <span>ชนิดพืช :</span>
-                                    <div>{val.name_plant}</div>
-                                </div>
-                                <div className="content">
-                                    <span>จำนวน :</span>
-                                    <div>{`${val.qty} ต้น`}</div>
-                                    {/* <input readOnly value=></input> */}
-                                </div>
-                                
-                            </div>
-                            <div className="bottom">
-                                <div className="content">
-                                    <span>รุ่นที่ :</span>
-                                    <div>{val.generation}</div>
-                                </div>
-                                <div className="bt">
-                                    <button onClick={()=>OpenMenuPlant(val.id)}>{val.state_status < 2 ? "บันทึกข้อมูล" : "ดูข้อมูล"}</button>
-                                </div>
-                            </div>
-                        </div>
-                    ))
+            setBodyList(JSON.parse(auth))
         }
 
         setLoading(true)
@@ -106,7 +58,63 @@ const ListForm = ({setBody , setPage , id_house , liff , isClick = 0}) => {
 
     return (
         <Template PopUp={{PopupRef : PopupRef , PopupBody : PopupAdd}}
-            List={BodyList} Loading={Loading} action={popupPlant} Option={{TextHead : "แบบบันทึกเกษตรกร" , img : "/plant_glow.jpg"}}/>
+            List={
+                BodyList.map((val , key)=>
+                    <div key={val.id} className={`plant-content ${val.state_status == 2 ? "submit" : ""}`} style={
+                        (val.report || val.form || val.plant || val.success) && val.state_status < 2 ? {
+                        marginTop : "25px",
+                        position : "relative"
+                        } : {}}>
+                        { (val.report || val.form || val.plant || val.success) && val.state_status < 2 ?
+                            <div className="report-of-doctor" style={{
+                                position : "absolute",
+                                bottom : "100%",
+                                right : "0.5em"
+                            }}>
+                                <span style={{
+                                    backgroundColor : "red",
+                                    padding : "1px 4px",
+                                    borderRadius : "5px",
+                                    fontWeight : "900",
+                                    color : "white"
+                                }}>{Locals[lg]["have_msg_doctor"]}</span>
+                            </div> : <></>
+                        }
+                        <div className="top">
+                            <div className="type-main">
+                                <input readOnly value={val.type_plant ? val.type_plant : "ไม่ระบุ"}></input>
+                            </div>
+                            <div className="date">
+                                <span>{Locals[lg]["date_plant"]}</span>
+                                <DayJSX DATE={val.date_plant} TYPE="short"/>
+                            </div>
+                        </div>
+                        <div className="body">
+                            <div className="content">
+                                <span>{Locals[lg]["plant_type"]} :</span>
+                                <div>{val.name_plant}</div>
+                            </div>
+                            <div className="content">
+                                <span>{Locals[lg]["quantity"]} :</span>
+                                <div>{`${val.qty} ${Locals[lg]["tree"]}`}</div>
+                                {/* <input readOnly value=></input> */}
+                            </div>
+                            
+                        </div>
+                        <div className="bottom">
+                            <div className="content">
+                                <span>{Locals[lg]["__generation_this"]} :</span>
+                                <div>{val.generation}</div>
+                            </div>
+                            <div className="bt">
+                                <button onClick={()=>OpenMenuPlant(val.id)}>{val.state_status < 2 ? Locals[lg]["save_data"] : Locals[lg]["view"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            } 
+            Loading={Loading} action={popupPlant} Option={{TextHead : Locals[lg]["form_farmer"] , img : "/plant_glow.jpg"}}
+        />
     )
 }
 

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1cc5fe9d.css",
+    "main.js": "/static/js/main.660820ef.js",
+    "static/js/52.501e1145.chunk.js": "/static/js/52.501e1145.chunk.js",
+    "static/js/760.4a04278a.chunk.js": "/static/js/760.4a04278a.chunk.js",
+    "static/js/583.a16b7651.chunk.js": "/static/js/583.a16b7651.chunk.js",
+    "static/media/ดอย.jpg": "/static/media/ดอย.9904dbe334196182f46e.jpg",
+    "index.html": "/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.1cc5fe9d.css",
+    "static/js/main.660820ef.js"
+  ]
+}

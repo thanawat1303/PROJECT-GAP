@@ -53,6 +53,10 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
     } , [])
 
     useEffect(()=>{
+        if(YearOut.current) YearOut.current.classList.add("report-not")
+    } , [YearOut.current])
+
+    useEffect(()=>{
         return() => {
             clearTimeout(getTimeOut)
         }
@@ -64,7 +68,6 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
 
     const FetchPlant = async () => {
         const Data = await clientMo.post("/api/farmer/plant/list")
-        YearOut.current.classList.add("report-not")
         if(await CloseAccount(Data , setPage)) {
             const LIST = JSON.parse(Data)
             setDataPlant(LIST)

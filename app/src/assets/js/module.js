@@ -629,9 +629,9 @@ Ref = {
         YearCK : useRef()
     }
 
-    Ref.DayCK = Ref.DayCK ?? RefDate.DayCK
-    Ref.MountCK = Ref.MountCK ?? RefDate.MountCK
-    Ref.YearCK = Ref.YearCK ?? RefDate.YearCK
+    RefDate.DayCK = Ref.DayCK ?? RefDate.DayCK
+    RefDate.MountCK = Ref.MountCK ?? RefDate.MountCK
+    RefDate.YearCK = Ref.YearCK ?? RefDate.YearCK
 
     const Mount = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"]
     const YearCurrent = new Date().getFullYear()

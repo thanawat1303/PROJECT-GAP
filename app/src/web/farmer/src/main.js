@@ -31,9 +31,9 @@ const MainFarmer = ({socket , idLiff , Path}) => {
                     liff.login()
                 }
             } else {
-                let UID = "Uceb5937bcd2edc0de5341022f8d59e9f"
-                LoadPage(UID , liff)
-                // CloseAccount("not line" , null , "กรุณาเข้าผ่านไลน์แอปพลิเคชั่น")
+                // let UID = "Uceb5937bcd2edc0de5341022f8d59f"
+                // LoadPage(UID , liff)
+                CloseAccount("not line" , null , "กรุณาเข้าผ่านไลน์แอปพลิเคชั่น")
             }
         }).catch(err=>{
             CloseAccount("not line" , null , "พบปัญหาจากระบบ")

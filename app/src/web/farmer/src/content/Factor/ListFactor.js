@@ -20,27 +20,6 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
     const RefPopHistory = useRef()
 
     const [getLoadCheckSubmit , setLoadCheckSubmit] = useState(-1)
-    
-    useEffect(()=>{
-        setPage(typeHraf.type)
-        setBodyList(<></>)
-        if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/${typeHraf.type}/${typeHraf.id_form_plant}`)
-
-        // if(document.getElementById("loading").classList[0] !== "hide") 
-        clientMo.unLoadingPage();
-        
-        setLoadCheckSubmit(-1);
-        fetchCheck();
-
-        (typeHraf.type === "z") && ListFerti() 
-        (typeHraf.type === "c") && ListChemi()
-
-        window.addEventListener("touchstart" , CloseManage)
-
-        return () => {
-            window.removeEventListener("touchstart" , CloseManage)
-        }
-    } , [typeHraf])
 
     // Load Data List
 
@@ -228,6 +207,27 @@ const ListFactor = ({setBody , setPage , id_house , typeHraf = {id_form_plant : 
             setBody(<MenuPlant setBody={setBody} id_house={id_house} id_plant={typeHraf.id_form_plant} setPage={setPage} liff={liff} isClick={1} />)
         }
     }
+
+    useEffect(()=>{
+        setPage(typeHraf.type)
+        setBodyList(<></>)
+        if(isClick === 1) window.history.pushState({} , null , `/farmer/form/${id_house}/${typeHraf.type}/${typeHraf.id_form_plant}`)
+
+        // if(document.getElementById("loading").classList[0] !== "hide") 
+        clientMo.unLoadingPage();
+        
+        setLoadCheckSubmit(-1);
+        fetchCheck();
+
+        (typeHraf.type === "z") && ListFerti();
+        (typeHraf.type === "c") && ListChemi();
+
+        window.addEventListener("touchstart" , CloseManage)
+
+        return () => {
+            window.removeEventListener("touchstart" , CloseManage)
+        }
+    } , [typeHraf])
  
     return (
         <>

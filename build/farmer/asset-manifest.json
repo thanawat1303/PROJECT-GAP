@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "/static/css/main.bfc9f3f2.css",
-    "main.js": "/static/js/main.9b11367e.js",
+    "main.js": "/static/js/main.3a9e987d.js",
     "static/media/ดอย.jpg": "/static/media/ดอย.9904dbe334196182f46e.jpg",
     "index.html": "/index.html"
   },
   "entrypoints": [
     "static/css/main.bfc9f3f2.css",
-    "static/js/main.9b11367e.js"
+    "static/js/main.3a9e987d.js"
   ]
 }

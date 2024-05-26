@@ -664,21 +664,6 @@ Ref = {
         setReady(true)
     } , [])
 
-    // useEffect(()=>{
-    //     // setDefault(new Date(Value) != "Invalid Date" ? new Date(Value) : "")
-    //     const DefaultDate = Value.toString().indexOf("#") >= 0 ? 
-    //                             Value.split("-") : 
-    //                         new Date(Value) != "Invalid Date" ? 
-    //                             [new Date(Value).getFullYear() , new Date(Value).getMonth() + 1 , new Date(Value).getDate()] 
-    //                         : "";
-    //     RefDate.DayCK.current.value = DefaultDate[2] ? DefaultDate[2] : ""
-    //     RefDate.MountCK.current.value = DefaultDate[1] ? parseInt(DefaultDate[1]) - 1 : ""
-    //     RefDate.YearCK.current.value = DefaultDate[0] ? DefaultDate[0] : ""
-
-    //     setDefault(DefaultDate)
-    //     console.log(DefaultDate , Value)
-    // } , [Value])
-
     useEffect(()=>{
         SetDay()
     } , [getDefault])

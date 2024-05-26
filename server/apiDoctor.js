@@ -649,7 +649,7 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                         SELECT date
                         FROM message_user
                         WHERE message_user.uid_line_farmer = acc_farmer.uid_line 
-                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , ?) , 0) = 0
                                 and type = ""
                         ORDER BY message_user.date DESC
                         LIMIT 1
@@ -696,7 +696,7 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                             LIMIT 1
                         ) as farmer
                         WHERE message_user.uid_line_farmer = farmer.uid_line
-                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , ?) , 0) = 0
                                 and type = ""
                         ORDER BY message_user.date DESC
                         LIMIT 1
@@ -720,7 +720,7 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                         SELECT date
                         FROM message_user
                         WHERE message_user.uid_line_farmer = acc_farmer.uid_line 
-                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
+                                and COALESCE(JSON_CONTAINS(id_read , '"read"' , ?) , 0) = 0
                                 and type = ""
                         ORDER BY message_user.date DESC
                         LIMIT 1
@@ -747,9 +747,9 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                     LIMIT ${Limit};
                     `;
                 
-                const queryParams = req.body.approve === 0 ? [ result['data']['id_table_doctor'] , result['data']['station_doctor'] , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch ] :
-                                    req.body.approve === 1 ? [ result['data']['id_table_doctor'] , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch] :
-                                    [ result['data']['id_table_doctor'] , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch ]
+                const queryParams = req.body.approve === 0 ? [ `$."${result.data.id_table_doctor.toString()}"` , result['data']['station_doctor'] , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch ] :
+                                    req.body.approve === 1 ? [ `$."${result.data.id_table_doctor.toString()}"` , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch] :
+                                    [ `$."${result.data.id_table_doctor.toString()}"` , result['data']['station_doctor'] , req.body.textSearch , req.body.textSearch ]
                 
                 con.query(queryType , queryParams ,  (err , result)=>{
                     if (!err){
@@ -1259,9 +1259,9 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                         WHERE id_table = ? OR link_user = ?
                     ) as farmer
                     WHERE message_user.uid_line_farmer = farmer.uid_line
-                            and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
+                            and COALESCE(JSON_CONTAINS(id_read , '"read"' , ?) , 0) = 0
                             and type = ""
-                    ` , [req.body.id_table , req.body.link_user , result["data"].id_table_doctor] , 
+                    ` , [req.body.id_table , req.body.link_user , `$."${result.data.id_table_doctor.toString()}"`] , 
                     (err , count)=>{
                         con.end()
                         res.send(count)
@@ -1293,9 +1293,9 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                 con.query(
                     `
                     UPDATE message_user
-                    SET id_read = JSON_SET(id_read, '$."?"', 'read')
+                    SET id_read = JSON_SET(id_read, ?, 'read')
                     WHERE uid_line_farmer = ?
-                    ` , [result["data"].id_table_doctor , req.body.uid_line] , 
+                    ` , [`$."${result.data.id_table_doctor.toString()}"` , req.body.uid_line] , 
                     (err , read)=>{
                         socket.to(req.body.uid_line).emit("new_msg" , "read")
                         con.end()
@@ -1330,8 +1330,8 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                     con.query(
                         `
                         INSERT INTO message_user
-                        ( message , uid_line_farmer , id_read , type , type_message ) VALUES ( ? , ? , '{"?" : "read"}' , ? , "text")
-                        ` , [ TextSend , req.body.uid_line , result["data"].id_table_doctor , result["data"].id_table_doctor ] , 
+                        ( message , uid_line_farmer , id_read , type , type_message ) VALUES ( ? , ? , ? , ? , "text")
+                        ` , [ TextSend , req.body.uid_line , `{"${result["data"].id_table_doctor}" : "read"}` , result["data"].id_table_doctor ] , 
                         async (err , insertMsg) => {
                             if(err) con.end()
                             else {
@@ -1388,8 +1388,8 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                             SELECT COUNT(*) as count_unread
                             FROM message_user
                             WHERE uid_line_farmer = ? 
-                                    and COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0
-                            ` , [ req.body.uid_line , result['data']['id_table_doctor'] ] , 
+                                    and COALESCE(JSON_CONTAINS(id_read , '"read"' , ?) , 0) = 0
+                            ` , [ req.body.uid_line , `$."${result.data.id_table_doctor.toString()}"` ] , 
                             (err , list_unread)=>{
                                 resole(parseInt(list_unread[0].count_unread))
                             }
@@ -3197,9 +3197,9 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                         `
                         SELECT COUNT(id) as count
                         FROM notify_doctor
-                        WHERE COALESCE(JSON_CONTAINS(id_read , '"read"' , '$."?"') , 0) = 0 
+                        WHERE COALESCE(JSON_CONTAINS(id_read , '"read"' , ?) , 0) = 0 
                                 AND station = ?
-                        ` , [ result.data.id_table_doctor , result.data.station_doctor ] , 
+                        ` , [ `$."${result.data.id_table_doctor.toString()}"` , result.data.station_doctor ] , 
                         (err , COUNT) => {
                             resole(isNaN(parseInt(COUNT[0].count)) ? 0 : parseInt(COUNT[0].count))
                         }
@@ -3232,9 +3232,9 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                             con.query(
                                 `
                                 UPDATE notify_doctor
-                                SET id_read = JSON_SET(id_read, '$."?"', 'read')
+                                SET id_read = JSON_SET(id_read, ?, 'read')
                                 WHERE id <= ?
-                                ` , [result["data"].id_table_doctor , list[0] ? list[0].id : 0] , 
+                                ` , [ `$."${result.data.id_table_doctor.toString()}"` , list[0] ? list[0].id : 0] , 
                                 (err , read)=>{
                                     resole(list)
                                 }
@@ -3278,9 +3278,9 @@ module.exports = function apiDoctor (app , Database , apifunc , dbpacket , listD
                 con.query(
                     `
                     UPDATE notify_doctor
-                    SET id_read = JSON_SET(id_read, '$."?"', 'read')
+                    SET id_read = JSON_SET(id_read, ?, 'read')
                     WHERE id <= ?
-                    ` , [result["data"].id_table_doctor , req.body.id_notify] , 
+                    ` , [`$."${result.data.id_table_doctor.toString()}"` , req.body.id_notify] , 
                     (err , read)=>{
                         // socket.to(req.body.uid_line).emit("new_msg" , "read")
                         con.end()

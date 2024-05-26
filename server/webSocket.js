@@ -1,14 +1,18 @@
-module.exports = function WebSocketServ (server , sessionMiddleware , Database , listDB , apifunc) {
+module.exports = function WebSocketServ (server , sessionMiddleware , Database , listDB , apifunc , origins) {
     // const WebSoc = require('ws')
     // const Socket = new WebSoc.Server({server})
 
     // let Push = new Map()
     
     const {Server} = require('socket.io')
-    const io = new Server(server)
+    const io = new Server(server , {
+        cors : {
+            origin : origins,
+            methods : ["*"]
+        }
+    })
     io.engine.use(sessionMiddleware);
     io.on("connection" , (socket_client)=>{
-
         //admin
         socket_client.on("connect-doctor-list" , ()=>{
             socket_client.join("admin:doctor:list")
@@ -20,6 +24,7 @@ module.exports = function WebSocketServ (server , sessionMiddleware , Database ,
 
         //doctor
         socket_client.on("connect-account" , async (username , password)=>{
+
             try {
 
                 const JsonOB = {

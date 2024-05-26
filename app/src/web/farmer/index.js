@@ -2,10 +2,11 @@ import React from "react";
 import ReactDOM  from "react-dom/client";
 import io from "socket.io-client"
 import MainFarmer from "./src/main";
+import { HOST_API } from "../../assets/js/moduleClient";
 
 
 // const socket = new WebSocket();
-const socket = io(window.location.protocol+"//"+window.location.host)
+const socket = io(HOST_API)
 
 // socket.on('connect' , ()=>{
 //     let Path = window.location.pathname.split("/").reverse()[0]

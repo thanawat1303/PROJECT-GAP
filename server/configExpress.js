@@ -53,19 +53,21 @@ module.exports = function appConfig(username , password , UrlNgrok ) {
         resave : false
     })
 
-    // protocal websocket
-    const io = WebSocket(server , sessionMiddleware , db , listDB , apifunc)
-
     const jsonDataNgrok = JSON.parse(fs.readFileSync(__dirname.replace('\server' , "/UrlServer.json")).toString())
+    const origins = [
+        `http://${process.env.REACT_APP_API_LOCAL}:3001`, 
+        `http://${process.env.REACT_APP_API_LOCAL}:3002`, 
+        `http://${process.env.REACT_APP_API_LOCAL}:3003`, 
+        `http://${process.env.REACT_APP_API_LOCAL}:3004`, 
+        ...Object.entries(jsonDataNgrok).map((Data)=>Data[1]), 
+        `https://${process.env.REACT_APP_API_PUBLIC}:${process.env.REACT_APP_API_PORT}`
+    ]
+
+    // protocal websocket
+    const io = WebSocket(server , sessionMiddleware , db , listDB , apifunc , origins)
+
     app.use(cors({
-        origin : [
-            `http://${process.env.REACT_APP_API_LOCAL}:3001`, 
-            `http://${process.env.REACT_APP_API_LOCAL}:3002`, 
-            `http://${process.env.REACT_APP_API_LOCAL}:3003`, 
-            `http://${process.env.REACT_APP_API_LOCAL}:3004`, 
-            ...Object.entries(jsonDataNgrok).map((Data)=>Data[1]), 
-            `https://${process.env.REACT_APP_API_PUBLIC}:${process.env.REACT_APP_API_PORT}`
-        ],
+        origin : origins,
         credentials: true,
     }))
     app.use(sessionMiddleware)

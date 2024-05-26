@@ -615,7 +615,7 @@ const SetMaxLength = (e , setQty , max) => {
     setQty(e.target.value.length)
 }
 
-const DateSelect = ({RefDate , Value = "" , methodCheckValue , 
+const DateSelect = ({RefDateValue , Value = "" , methodCheckValue , 
 Ref = {
     DayCK : null , 
     MountCK : null , 
@@ -623,7 +623,7 @@ Ref = {
 }}) => {
     {/* ใน server ทดลอง เดือนจะไม่ตรง แต่ใน  server จริง จะตรง ไม่จำเป็นต้องแก้หากเดือนเพี้ยน */}
 
-    RefDate = {
+    const RefDate = {
         DayCK : useRef() , 
         MountCK : useRef() , 
         YearCK : useRef()
@@ -716,7 +716,7 @@ Ref = {
     }
 
     const ChangeDate = (day , mount , year) => {
-        RefDate.current.value = `${year}-${mount ? parseInt(mount) + 1 : "##"}-${day ? day : "##"}`
+        RefDateValue.current.value = `${year}-${mount ? parseInt(mount) + 1 : "##"}-${day ? day : "##"}`
         methodCheckValue()
     }
 
@@ -759,7 +759,7 @@ Ref = {
                     )
                 }
             </select>
-            <input hidden ref={RefDate} defaultValue={Value}></input>
+            <input hidden ref={RefDateValue} defaultValue={Value}></input>
         </div> : <></>
     )
 }

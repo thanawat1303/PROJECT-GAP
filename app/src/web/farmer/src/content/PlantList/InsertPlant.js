@@ -207,17 +207,20 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
         ]
 
         ListCheck.forEach(current=>{
-            if(current.value != "") {
-                if(current == DateGlow.current) {
-                    YearOut.current.classList.remove("report-not")
+            console.log(current)
+            if(current) {
+                if(current.value != "") {
+                    if(current == DateGlow.current) {
+                        YearOut.current.classList.remove("report-not")
+                    }
+                    else current.classList.remove("report-not")
                 }
-                else current.classList.remove("report-not")
-            }
-            else {
-                if(current == DateGlow.current) {
-                    YearOut.current.classList.add("report-not")
+                else {
+                    if(current == DateGlow.current) {
+                        YearOut.current.classList.add("report-not")
+                    }
+                    else current.classList.add("report-not")
                 }
-                else current.classList.add("report-not")
             }
         })
         
@@ -313,7 +316,7 @@ const PopupInsertPlant = ({setPopup , RefPop , id_house , ReloadData , setPage})
                                         }
                                         <label className="frame-textbox">
                                             <span>วันที่เพาะกล้า (เฉพาะปีได้)</span>
-                                            <DateSelect RefDate={DateGlow} methodCheckValue={ChangeCHK} Ref={{
+                                            <DateSelect RefDateValue={DateGlow} methodCheckValue={ChangeCHK} Ref={{
                                                 DayCK : DayOut,
                                                 MountCK : MountOut,
                                                 YearCK : YearOut
